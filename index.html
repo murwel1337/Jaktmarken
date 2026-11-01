@@ -179,6 +179,71 @@ label{display:block;font-size:12px;color:var(--muted);margin:10px 0 4px}
 .menubody summary{cursor:pointer;font-weight:800}
 .kbd{display:inline-block;background:#26324a;border:1px solid #4a5f85;border-radius:4px;padding:0 5px;font-size:12px;font-weight:700}
 
+/* Förbrukningsvaror, scrolls, monsterbok */
+.r-cons{border-color:#6c7c98}
+.cnt{position:absolute;right:3px;bottom:1px;font-size:11px;font-weight:900;color:#fff;text-shadow:0 1px 2px #000,0 0 2px #000;pointer-events:none;z-index:3}
+.hs .hi{width:30px;height:30px;display:block}
+.slot.elig{box-shadow:0 0 0 2px #7dff8a,0 0 10px rgba(125,255,138,.6)}
+.slot.inelig{opacity:.35}
+.plus{color:#ffe066}
+.bookhead{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:8px}
+.tiers{display:flex;gap:4px;flex-wrap:wrap}
+.tierp{font-size:11px;padding:2px 7px;border-radius:999px;border:1px solid #3e5680;background:#16203a;color:#9fb1cb}
+.tierp.on{background:#2d5a2f;border-color:#7ee08f;color:#fff}
+.bookgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;max-width:920px}
+.bcard{background:#141d2d;border:2px solid #33456a;border-radius:12px;padding:8px 10px;font-size:12.5px}
+.bcard canvas{display:block;width:120px;height:90px;margin:0 auto}
+.bcard .bn{font-weight:900;font-size:15px;text-align:center}
+.bstars{text-align:center;color:#ffd23f;letter-spacing:2px}
+.bk{margin-top:2px}
+.bprog{height:6px;background:#0b0f18;border-radius:4px;overflow:hidden;margin:3px 0}
+.bprog i{display:block;height:100%;background:linear-gradient(90deg,#4fdc5b,#ffd23f)}
+.binfo{margin-top:6px;padding-top:6px;border-top:1px solid #26344f;line-height:1.5}
+.bdrop{display:flex;align-items:center;gap:6px}
+.bdrop img{width:22px;height:22px}
+.bdrop span{margin-left:auto;color:#9fb1cb}
+.lockedtxt{color:#9fb1cb}
+.tbtn.pot{width:52px;height:52px}
+.tbtn.pot img{width:30px;height:30px;position:relative;z-index:1}
+.pot0{right:270px;bottom:20px}.pot1{right:270px;bottom:82px}
+
+/* Party & sidoflöde för EXP/guld */
+#rightCol{position:absolute;right:8px;top:62px;display:flex;flex-direction:column;align-items:flex-end;gap:6px;pointer-events:none!important;max-width:60vw}
+#gainFeed{display:flex;flex-direction:column;align-items:flex-end;gap:2px;pointer-events:none}
+#questLog{pointer-events:auto;background:var(--panel);border:1px solid var(--pborder);border-radius:10px;padding:6px 10px;min-width:190px;max-width:260px;font-size:12.5px;cursor:pointer}
+#questLog .qh{font-size:11px;color:var(--muted);font-weight:800;letter-spacing:.5px;margin-bottom:2px}
+#questLog .ql b{display:block}
+#questLog .ok{color:#7ee787}
+#questLog .ql.offer{color:#ffe066}
+#questLog .ql.done b{color:#7ee787}
+.qgoal{display:flex;justify-content:space-between;gap:10px}
+.qgoal.ok{color:#7ee787}
+.qchoices{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.qchoice{background:#141d2d;border:2px solid #3fbf4a;border-radius:10px;padding:8px;text-align:center;cursor:pointer}
+.qchoice:hover{filter:brightness(1.15)}
+.qchoice img{width:48px;height:48px}
+.qchoice small{display:block;color:var(--muted)}
+#questBody{min-width:300px;max-width:520px;font-size:13.5px;line-height:1.45}
+.gf{font-size:13px;font-weight:800;color:#ffe066;text-shadow:0 1px 2px #000,0 0 3px #000;transition:opacity .8s;white-space:nowrap}
+.gf.gold{color:#ffd25a}.gf.party{color:#9fe0ff}
+.gf.fade{opacity:0}
+#partyHud{position:absolute;left:8px;top:112px;display:flex;flex-direction:column;gap:4px;pointer-events:none!important}
+.pm{background:var(--panel);border:1px solid var(--pborder);border-radius:8px;padding:3px 8px;font-size:11.5px;min-width:150px}
+.pm b{font-size:12px}.pm small{color:var(--muted)}
+.pm .ph{height:5px;background:#0b0f18;border-radius:3px;overflow:hidden;margin-top:2px}
+.pm .ph i{display:block;height:100%;background:linear-gradient(90deg,#ff7b7b,#d22f35)}
+.pstat{background:#0f1520;border:1px solid #2c3a55;border-radius:8px;padding:8px 10px;margin:8px 0;font-weight:700}
+.plist{display:flex;flex-direction:column;gap:4px}
+.prow{background:#141d2d;border:1px solid #2c3a55;border-radius:8px;padding:6px 10px}
+.prow small{color:var(--muted)}
+#partyBody{min-width:300px;max-width:560px}
+body.touch #rightCol{top:56px;right:8px}
+body.touch #questLog{min-width:150px;max-width:200px;font-size:11.5px;padding:4px 8px}
+body.touch .gf{font-size:11.5px}
+body.touch #partyHud{top:58px;left:156px;flex-direction:row;flex-wrap:wrap;max-width:46vw}
+body.touch .pm{min-width:0;padding:2px 6px}
+body.touch #buffs{top:auto;bottom:14px;left:50%;transform:translateX(-50%)}
+
 /* ---------- Toast, hint, död ---------- */
 #toast{position:fixed;left:50%;top:70px;transform:translateX(-50%);z-index:70;display:flex;flex-direction:column;gap:6px;align-items:center;pointer-events:none}
 .tst{background:rgba(12,18,30,.94);border:1px solid #5a6f94;border-radius:10px;padding:8px 14px;font-size:13.5px;max-width:92vw;text-align:center;box-shadow:0 6px 20px rgba(0,0,0,.4);transition:opacity .6s}
@@ -229,6 +294,8 @@ body.touch #hint{bottom:auto;top:60px}
     <button data-open="bag" title="Karaktär & väska (I)">🎒<span>I</span></button>
     <button data-open="tal" title="Talanger (T)">✨<span>T</span><i id="talDot" class="dot hidden"></i></button>
     <button data-open="shop" title="Butik (B)">🏪<span>B</span></button>
+    <button data-open="book" title="Monsterbok (M)">📖<span>M</span></button>
+    <button data-open="party" title="Spela tillsammans (P)">👥<span>P</span></button>
     <button data-open="menu" title="Meny (Esc)">☰<span>Esc</span></button>
   </div>
   <div id="status">
@@ -241,6 +308,8 @@ body.touch #hint{bottom:auto;top:60px}
     <div class="goldbox">🪙 <span id="hudGold">0</span></div>
   </div>
   <div id="buffs"></div>
+  <div id="partyHud" class="hidden"></div>
+  <div id="rightCol"><div id="questLog" class="hidden"></div><div id="gainFeed"></div></div>
   <div id="hotbar"></div>
   <div id="log"></div>
   <div id="expBar"><i id="expFill"></i><span id="expTxt"></span></div>
@@ -252,6 +321,7 @@ body.touch #hint{bottom:auto;top:60px}
   <button id="tJump" class="tbtn"><span>⤒</span></button>
   <button id="tAtk" class="tbtn"><span>⚔️</span></button>
   <div id="tSkills"></div>
+  <div id="tPots"></div>
 </div>
 
 <div id="win-bag" class="win hidden" data-w="bag">
@@ -272,6 +342,18 @@ body.touch #hint{bottom:auto;top:60px}
 <div id="win-shop" class="win hidden" data-w="shop">
   <div class="whead"><span>🏪 Butik</span><button class="x" data-close="shop">✕</button></div>
   <div class="wbody" id="shopBody"></div>
+</div>
+<div id="win-book" class="win hidden" data-w="book">
+  <div class="whead"><span>📖 Monsterbok</span><button class="x" data-close="book">✕</button></div>
+  <div class="wbody" id="bookBody"></div>
+</div>
+<div id="win-party" class="win hidden" data-w="party">
+  <div class="whead"><span>👥 Spela tillsammans</span><button class="x" data-close="party">✕</button></div>
+  <div class="wbody" id="partyBody"></div>
+</div>
+<div id="win-quest" class="win hidden" data-w="quest">
+  <div class="whead"><span>📜 Uppdrag</span><button class="x" data-close="quest">✕</button></div>
+  <div class="wbody" id="questBody"></div>
 </div>
 <div id="win-menu" class="win hidden" data-w="menu">
   <div class="whead"><span>☰ Meny</span><button class="x" data-close="menu">✕</button></div>
@@ -313,6 +395,8 @@ const pick = a => a[Math.floor(Math.random()*a.length)];
 const uid = () => Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-5);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt1 = v => { const r = Math.round(v*10)/10; return Number.isInteger(r) ? String(r) : r.toFixed(1); };
+const fmtExp = v => { const r = Math.round(v*100)/100; return Number.isInteger(r) ? String(r) : String(r); };
+const fmtSv = v => (Math.round(v*100)/100).toLocaleString('sv-SE',{maximumFractionDigits:2});
 function seeded(s){ return () => { s = (s*16807) % 2147483647; return (s-1)/2147483646; }; }
 function hexA(hex,a){ const n=parseInt(hex.slice(1),16); return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`; }
 function rr(c,x,y,w,h,r){ c.beginPath(); c.moveTo(x+r,y); c.arcTo(x+w,y,x+w,y+h,r); c.arcTo(x+w,y+h,x,y+h,r); c.arcTo(x,y+h,x,y,r); c.arcTo(x,y,x+w,y,r); c.closePath(); }
@@ -331,7 +415,13 @@ const RARITIES = [
   {id:'legendary', name:'Legendary', color:'#ff9d2b', chance:2,  flat:4, pct:25, sell:100},
 ];
 const RAR = Object.fromEntries(RARITIES.map(r=>[r.id,r]));
-function rollRarity(){ let r=Math.random()*100; for(const x of RARITIES){ if(r<x.chance) return x.id; r-=x.chance; } return 'common'; }
+function rollRarity(boost){
+  let r=Math.random()*100;
+  if(boost){   // silvermonster: aldrig Common, 3x chans till Rare/Epic/Legendary, resten Uncommon
+    if(r<6) return 'legendary'; r-=6; if(r<15) return 'epic'; r-=15; if(r<30) return 'rare'; return 'uncommon';
+  }
+  for(const x of RARITIES){ if(r<x.chance) return x.id; r-=x.chance; } return 'common';
+}
 
 const STATS = ['str','int','agi'];
 const STATN = {str:'Str', int:'Int', agi:'Agi'};
@@ -352,14 +442,26 @@ for(const [slot,n2,n5] of GEAR){
   BASES[slot+'2'] = {id:slot+'2', slot, name:n2, req:2, armor:1, smin:0, smax:1};
   BASES[slot+'5'] = {id:slot+'5', slot, name:n5, req:5, armor:3, smin:1, smax:2};
 }
-const WTYPE = {yxa:'Yxa', bage:'Pilbåge', stav:'Stav'};
+const WTYPE = {yxa:'Yxa', bage:'Pilbåge', stav:'Stav', pinne:'Pinne'};
 for(const [id,wtype,name,req,atk] of [
-  ['yxa1','yxa','Övningsyxa',1,[1,2]],   ['yxa2','yxa','Vedyxa',2,[2,3]],     ['yxa5','yxa','Skogsyxa',5,[4,6]],
-  ['bage1','bage','Övningsbåge',1,[1,1]],['bage2','bage','Kvistbåge',2,[1,2]],['bage5','bage','Almbåge',5,[2,4]],
-  ['stav1','stav','Övningsstav',1,[1,1]],['stav2','stav','Pinnstav',2,[1,2]], ['stav5','stav','Viskstav',5,[2,4]],
+  ['pinne1','pinne','Träpinne',1,[1,1]],   // startvapen för alla klasser – endast närstrid
+  ['yxa2','yxa','Vedyxa',2,[2,3]],     ['yxa5','yxa','Skogsyxa',5,[4,6]],
+  ['bage2','bage','Kvistbåge',2,[1,2]],['bage5','bage','Almbåge',5,[2,4]],
+  ['stav2','stav','Pinnstav',2,[1,2]], ['stav5','stav','Viskstav',5,[2,4]],
 ]) BASES[id] = {id, slot:'vapen', wtype, name, req, atk};
-const WEAPON_POOL = ['yxa2','yxa5','bage2','bage5','stav2','stav5'];   // vapen som kräver level 1–5
-const GEAR_POOL = GEAR.flatMap(g=>[g[0]+'2', g[0]+'5']);              // utrustning (ej vapen) level 1–5
+
+/* Förbrukningsvaror (köps i butiken, staplas upp till 20 per plats i väskan) */
+const STACK_MAX = 20, SCROLL_SLOTS = 6, SCROLL_CHANCE = 0.6;
+const CONS = {
+  hpPot: {kind:'pot',    name:'HP-dryck',    price:10, hp:50, desc:'Återställer 50 HP.'},
+  mpPot: {kind:'pot',    name:'Mana-dryck',  price:10, mp:50, desc:'Återställer 50 mana.'},
+  scrStr:{kind:'scroll', name:'Scroll: Str +1',        price:20, target:'gear',   stat:'str', amt:1, desc:'Utrustning (ej vapen): 60% chans till +1 Str.'},
+  scrInt:{kind:'scroll', name:'Scroll: Int +1',        price:20, target:'gear',   stat:'int', amt:1, desc:'Utrustning (ej vapen): 60% chans till +1 Int.'},
+  scrAgi:{kind:'scroll', name:'Scroll: Agi +1',        price:20, target:'gear',   stat:'agi', amt:1, desc:'Utrustning (ej vapen): 60% chans till +1 Agi.'},
+  scrAtk:{kind:'scroll', name:'Scroll: Vapenskada +2', price:20, target:'weapon', stat:'atk', amt:2, desc:'Vapen: 60% chans till +2 attack.'},
+};
+const isCons = it => !!(it && CONS[it.base]);
+const itemName = it => isCons(it) ? CONS[it.base].name : it.name + (it.plus ? ` (+${it.plus})` : '');
 
 function makeItem(baseId, rarity='common'){
   const b = BASES[baseId], r = RAR[rarity];
@@ -375,15 +477,15 @@ function makeItem(baseId, rarity='common'){
   }
   return it;
 }
-const sellPrice = it => Math.round(5*it.req*(100+RAR[it.rarity].sell)/100);
+const sellPrice = it => isCons(it) ? 0 : Math.round(5*it.req*(100+RAR[it.rarity].sell)/100);
 
 const CLASSES = {
-  skog:{id:'skog', name:'Skogshuggare', main:'str', wtype:'yxa', starter:'yxa1', aspd:0, trees:['smash','skog_b','skog_c'],
-    desc:'Närstrid med yxa. Slår alltid med sitt vapen, vilket vapen han än håller. Styrka (Str) ger extra attack.'},
-  hippie:{id:'hippie', name:'Hippie', main:'agi', wtype:'bage', starter:'bage1', aspd:0, trees:['hippie','hippie_b','hippie_c'],
-    desc:'Skjuter pilar med pilbåge – inga pilar behövs. Smidighet (Agi) ger extra attack.'},
-  viskare:{id:'viskare', name:'Viskare', main:'int', wtype:'stav', starter:'stav1', aspd:0.2, trees:['schh','visk_b','visk_c'],
-    desc:'Kastar målsökande viskningar med stav (1 mana per stavens level). Intellekt (Int) ger extra attack. +20% attackhastighet.'},
+  skog:{id:'skog', name:'Skogshuggare', main:'str', mainMult:1.2, wtype:'yxa', starter:'pinne1', aspd:0, trees:['smash','skog_b','skog_c'],
+    desc:'Närstrid med yxa. Slår alltid med sitt vapen, vilket vapen han än håller. Varje Styrka (Str) ger +1,2 attack.'},
+  hippie:{id:'hippie', name:'Hippie', main:'agi', mainMult:1, wtype:'bage', starter:'pinne1', aspd:0, trees:['hippie','hippie_b','hippie_c'],
+    desc:'Skjuter pilar när hon har en pilbåge – inga pilar behövs. Smidighet (Agi) ger extra attack. Börjar med en träpinne (närstrid).'},
+  viskare:{id:'viskare', name:'Viskare', main:'int', mainMult:1, wtype:'stav', starter:'pinne1', aspd:0.2, trees:['schh','visk_b','visk_c'],
+    desc:'Kastar målsökande viskningar med stav (1 mana per stavens level). Intellekt (Int) ger extra attack. +20% attackhastighet. Börjar med en träpinne (närstrid).'},
 };
 
 /* Talangträd. v = värde per rank (1/2/3). active = förmåga som kan läggas på 1–9. */
@@ -408,10 +510,13 @@ const TREES = {
   ]},
   // Kontoträdet delas av alla gubbar på kontot
   konto:{name:'Konto', account:true, talents:[
-    {id:'erfaren', tier:1, max:3, icon:'📚', name:'Erfaren', v:[10,20,30], d:v=>`${v}% chans till dubbel EXP när du dödar ett monster.`},
-    {id:'guldnasa', tier:1, max:3, icon:'💰', name:'Guldnäsa', v:[10,20,30], d:v=>`${v}% chans till dubbelt guld från monster.`},
-    {id:'hardad', tier:2, max:3, icon:'❤️', name:'Härdad', v:[10,20,30], d:v=>`+${v} max-HP.`},
-    {id:'skattjagare', tier:2, max:3, icon:'🍀', name:'Skattjägare', v:[10,20,30], d:v=>`+${v}% högre chans att monster droppar föremål.`},
+    {id:'k_exp',   tier:1, max:3, icon:'📚', name:'Vishet',        v:[5,10,15], d:v=>`+${v}% EXP från monster.`},
+    {id:'k_atk',   tier:1, max:3, icon:'⚔️', name:'Slagkraft',     v:[2,4,6],   d:v=>`+${v} attack.`},
+    {id:'k_stats', tier:1, max:3, icon:'💪', name:'Allround',      v:[1,2,3],   d:v=>`+${v} Str, Int och Agi.`},
+    {id:'k_move',  tier:2, max:3, icon:'🏃', name:'Lätta steg',    v:[2,4,6],   d:v=>`+${v}% rörelsehastighet.`},
+    {id:'k_drop',  tier:2, max:3, icon:'🍀', name:'Skattjägare',   v:[2,4,6],   d:v=>`+${v}% större chans att vapen och utrustning droppar.`},
+    {id:'k_aspd',  tier:2, max:3, icon:'⚡', name:'Snabba händer', v:[2,4,6],   d:v=>`+${v}% attackhastighet.`},
+    {id:'k_cdr',   tier:3, max:3, icon:'⏳', name:'Tålamod',       v:[5,10,15], d:v=>`${v}% kortare nedkylning på förmågor.`},
   ]},
 };
 for(const k of ['skog_b','skog_c','hippie_b','hippie_c','visk_b','visk_c']) TREES[k] = {name:k.endsWith('_b')?'Träd 2':'Träd 3', locked:true, talents:[]};
@@ -425,19 +530,33 @@ const ABIL = {
   himla:    {cost:()=>10, cd:()=>20, atk:true, rope:true},
   eldboll:  {cost:r=>[5,10,20][r-1], cd:()=>5, atk:true},
 };
-const abilName = id => id==='attack' ? 'Basattack' : TAL[id].name;
-const abilIcon = id => id==='attack' ? '⚔️' : TAL[id].icon;
+const abilName = id => id==='attack' ? 'Basattack' : CONS[id] ? CONS[id].name : TAL[id].name;
+const abilIcon = id => id==='attack' ? '⚔️' : CONS[id] ? `<img class="hi" src="${iconURL({base:id})}" alt="">` : TAL[id].icon;
 
 const MOBS = {
-  blabar:{name:'Blåbär',    hp:10, exp:1, gold:1, touch:1, speed:52, w:34, h:34, drop:0.03, pool:'weapon'},
-  mossa: {name:'Mossaboll', hp:25, exp:2, gold:2, touch:2, speed:68, w:44, h:44, drop:0.05, pool:'gear'},
+  blabar:   {name:'Blåbär',    hp:10, exp:1, gold:1, touch:1, speed:52, w:34, h:34, drop:0.03, pool:['yxa2','bage2','stav2'],         map:1},
+  mossa:    {name:'Mossaboll', hp:25, exp:2, gold:2, touch:2, speed:68, w:44, h:44, drop:0.03, pool:['brost2','byxor2','hjalm2'],     map:1},
+  kissekatt:{name:'Kissekatt', hp:45, exp:3, gold:3, touch:3, speed:78, w:42, h:36, drop:0.02, pool:['handskar5','mantel5','skor5'], map:2},
+  vildhund: {name:'Vildhund',  hp:45, exp:3, gold:3, touch:3, speed:88, w:50, h:42, drop:0.02, pool:['yxa5','bage5','stav5'],         map:2},
 };
+const MOB_ORDER = ['blabar','mossa','kissekatt','vildhund'];
+/* Silvermonster: 1% chans vid varje spawn. Dubbelt så stort, 5x HP och skada, 3x EXP, droppar alltid ett föremål. */
+const RARE_CHANCE = 0.01;
+const RARE_DEFS = {};
+for(const [k,b] of Object.entries(MOBS)) RARE_DEFS[k] = {...b, name:'Silver'+b.name.toLowerCase(), hp:b.hp*5, touch:b.touch*5, exp:b.exp*3, w:b.w*2, h:b.h*2, rare:true};
+const mobDef = (type, rare) => rare ? RARE_DEFS[type] : MOBS[type];
+/* Monsterbok: nivå vid 10/100/300/1000 dödade, +5% EXP per nivå, 1 poäng per nivå */
+const BOOK_LVLS = [10,100,300,1000];
+const BOOK_TIERS = [[2,1],[6,2],[10,3],[15,4],[25,5]];   // [poäng, +alla basstats]
+const bookLvl = k => BOOK_LVLS.filter(x=>k>=x).length;
+function bookPoints(ch){ return MOB_ORDER.reduce((s,t)=>s+bookLvl((ch.kills||{})[t]||0),0); }
+function bookStatBonus(ch){ const pts=bookPoints(ch); let b=0; for(const [n,v] of BOOK_TIERS) if(pts>=n) b=v; return b; }
 
 const INV_MAX = 32;
 const BASE_ATK_T = 0.75;          // sekunder per attack vid 100% attackhastighet
 const MELEE_RANGE = 88, BOW_RANGE = 360, WHISPER_RANGE = 270;
 const PHY = {g:1900, jump:620, walk:210, climb:135, maxFall:950};
-const expReq = l => Math.round(20*Math.pow(1.2, l-1));
+const expReq = l => Math.round(20*Math.pow(1.3, l-1));   // +30% per level
 
 /* =====================================================================
    VÄRLD: Jaktmarken I (inspirerad av Henesys Hunting Ground I)
@@ -463,15 +582,36 @@ const ROPES = [
   {x:690,  top:620, bottom:760}, {x:2120, top:620, bottom:760},
   {x:1040, top:480, bottom:620}, {x:2340, top:480, bottom:620},
 ];
-const START = {x:150, y:900};
-// 30 spawnpoints: 22 Blåbär (8 i gropen), 8 Mossabollar (bara plan 3 och 4)
-const SPAWN_DEFS = [
-  ['blabar','pit',[1300,1370,1440,1510,1580,1650,1720,1790]],
-  ['blabar','g1',[420,760,1060]], ['blabar','g2',[2050,2350,2700,3050]],
-  ['blabar','p2a',[300,600]], ['blabar','p2b',[2200,2550]],
-  ['blabar','p3a',[520]], ['blabar','p3b',[1820]], ['blabar','p4a',[1380]],
-  ['mossa','p3a',[820,980]], ['mossa','p3b',[2000,2260]], ['mossa','p4a',[920,1180]], ['mossa','p4b',[2450,2700]],
-];
+/* Kartor – samma terräng, olika monster, skylt, färger och portaler */
+const MAPS = {
+  1:{name:'Jaktmarken I', start:{x:150,y:900}, sign:{x:66,y:900},
+    // 30 spawnpoints: 22 Blåbär (8 i gropen), 8 Mossabollar (bara plan 3 och 4)
+    spawns:[
+      ['blabar','pit',[1300,1370,1440,1510,1580,1650,1720,1790]],
+      ['blabar','g1',[420,760,1060]], ['blabar','g2',[2050,2350,2700,3050]],
+      ['blabar','p2a',[300,600]], ['blabar','p2b',[2200,2550]],
+      ['blabar','p3a',[520]], ['blabar','p3b',[1820]], ['blabar','p4a',[1380]],
+      ['mossa','p3a',[820,980]], ['mossa','p3b',[2000,2260]], ['mossa','p4a',[920,1180]], ['mossa','p4b',[2450,2700]],
+    ],
+    portals:[{x:2950, y:480, to:2, toX:70, toY:900}],
+    theme:{sky:['#57aef0','#a7dcfb','#e8f8ff'], mount:'#a6cfe3', hill:'#97d38a', hillTree:'#82c477', trees:'#6cb866', sun:'rgba(255,250,220,'}},
+  2:{name:'Jaktmarken II', start:{x:150,y:900}, sign:{x:200,y:900},
+    // 30 spawnpoints: 15 Kissekatt, 15 Vildhund
+    spawns:[
+      ['vildhund','pit',[1300,1440,1580,1720]], ['kissekatt','pit',[1370,1510,1650,1790]],
+      ['vildhund','g1',[420,1060]], ['kissekatt','g1',[760]],
+      ['kissekatt','g2',[2050,2700]], ['vildhund','g2',[2350,3050]],
+      ['kissekatt','p2a',[300]], ['vildhund','p2a',[600]],
+      ['vildhund','p2b',[2200]], ['kissekatt','p2b',[2550]],
+      ['kissekatt','p3a',[520,980]], ['vildhund','p3a',[820]],
+      ['vildhund','p3b',[1820,2260]], ['kissekatt','p3b',[2000]],
+      ['kissekatt','p4a',[920,1380]], ['vildhund','p4a',[1180]],
+      ['vildhund','p4b',[2450]], ['kissekatt','p4b',[2700]],
+    ],
+    portals:[{x:70, y:900, to:1, toX:2950, toY:480}],
+    theme:{sky:['#5b8fe0','#f5c9a0','#ffe9cf'], mount:'#b7b6d6', hill:'#a8cf82', hillTree:'#90bb6e', trees:'#78ae5c', sun:'rgba(255,225,170,'}},
+};
+const curMap = () => MAPS[G.mapId] || MAPS[1];
 const RESPAWN_EVERY = 10, RESPAWN_MIN_DEAD = 3, RESPAWN_CHANCE = 0.75;
 
 const DECO = {back:[], front:[], pebbles:{}, bottoms:{}};
@@ -492,7 +632,7 @@ const DECO = {back:[], front:[], pebbles:{}, bottoms:{}};
     DECO.pebbles[p.id]=arr;
   }
   DECO.back.push({t:'tree',x:300,y:900,s:1.15},{t:'tree',x:1010,y:900,s:.95},{t:'tree',x:2180,y:900,s:1.3},{t:'tree',x:3060,y:900,s:1.05},{t:'tree',x:560,y:620,s:.7},{t:'tree',x:2860,y:480,s:.75},{t:'tree',x:1250,y:480,s:.62});
-  DECO.back.push({t:'sign',x:66,y:900},{t:'fence',x1:2870,x2:3170,y:900});
+  DECO.back.push({t:'fence',x1:2870,x2:3170,y:900});
   DECO.back.push({t:'mush',x:1180,y:480,s:1},{t:'mush',x:1330,y:970,s:.8},{t:'mush',x:2500,y:900,s:1.1},{t:'mush',x:1440,y:480,s:.7},{t:'mush',x:240,y:760,s:.8});
   DECO.back.push({t:'rock',x:1560,y:970,s:1.2},{t:'rock',x:640,y:900,s:.9},{t:'rock',x:1795,y:970,s:.8});
   DECO.back.sort((a,b)=>(a.t==='tree'?0:1)-(b.t==='tree'?0:1));
@@ -503,7 +643,7 @@ const MOSS = (()=>{ const R=seeded(99), a=[]; for(let i=0;i<34;i++) a.push({r:4+
    SPELTILLSTÅND
    ===================================================================== */
 const G = {
-  mode:'title', acct:null, ch:null, p:null, stats:null,
+  mode:'title', mapId:1, acct:null, ch:null, p:null, stats:null, others:{}, monById:{}, monSeq:0, dropSeq:0,
   monsters:[], drops:[], projs:[], fx:[], nums:[], spawns:[],
   time:0, spawnTimer:0, cam:{x:600,y:420}, zoom:1, view:{x1:0,y1:0,x2:0,y2:0},
   assigning:null, dirty:false, touch:false, mouse:{x:0,y:0,in:false},
@@ -554,7 +694,16 @@ function localSave(a){ try{ localStorage.setItem(LS_PREFIX+a.id, JSON.stringify(
 function newAccount(name){ return {v:1, id:name.trim().toLowerCase(), name:name.trim(), savedAt:0, talents:{}, chars:[]}; }
 function fixAccount(a){
   a.talents = a.talents||{}; a.chars = a.chars||[];
-  for(const c of a.chars){ c.talents=c.talents||{}; c.inv=(c.inv||[]).filter(Boolean); c.eq=c.eq||{}; c.hotbar=c.hotbar||Array(9).fill(null); while(c.hotbar.length<9) c.hotbar.push(null); c.gold=c.gold||0; c.exp=c.exp||0; c.level=c.level||1; }
+  for(const k of Object.keys(a.talents)) if(!TAL[k]) delete a.talents[k];
+  const OLD_STARTERS=['yxa1','bage1','stav1'];
+  const known = it => it && (BASES[it.base] || CONS[it.base]);
+  for(const c of a.chars){
+    c.talents=c.talents||{}; c.eq=c.eq||{}; c.hotbar=c.hotbar||Array(9).fill(null); while(c.hotbar.length<9) c.hotbar.push(null);
+    c.gold=c.gold||0; c.exp=c.exp||0; c.level=c.level||1; c.kills=c.kills||{}; c.map=MAPS[c.map]?c.map:1; c.quests=c.quests||{};
+    c.inv=(c.inv||[]).filter(Boolean).map(it=>OLD_STARTERS.includes(it.base)?makeItem('pinne1'):it).filter(known);
+    for(const k in c.eq){ if(c.eq[k] && OLD_STARTERS.includes(c.eq[k].base)) c.eq[k]=makeItem('pinne1'); if(c.eq[k] && !known(c.eq[k])) c.eq[k]=null; }
+    c.hotbar=c.hotbar.map(x=>(x && (x==='attack'||TAL[x]||CONS[x]))?x:null);
+  }
   return a;
 }
 let saveTimer=null, saving=false;
@@ -604,18 +753,19 @@ function acctAvail(){ return acctPoints(G.acct) - Object.values(G.acct.talents).
 
 function calcStats(ch){
   const C = CLASSES[ch.cls], L = ch.level-1;
-  const s = {str:5+L, int:5+L, agi:5+L, armor:0};
+  const bb = bookStatBonus(ch), ka = tv('k_stats');
+  const s = {str:5+L+bb+ka, int:5+L+bb+ka, agi:5+L+bb+ka, armor:0, book:bb};
   for(const k in ch.eq){ const it=ch.eq[k]; if(!it) continue; s.armor+=it.armor||0; for(const st of STATS) s[st]+=it[st]||0; }
-  s.maxHp = 50 + s.str*10 + tv('hardad');
+  s.maxHp = 50 + s.str*10;
   s.maxMp = 20 + s.int*10;
   s.hpReg = s.str*0.1 + tv('segved');
   s.mpReg = s.int*0.1 + tv('inrelugn');
-  s.aspd = 1 + s.agi*0.01 + C.aspd + tv('snabbvisk')/100 + (G.p && G.p.buffT>0 ? 0.5 : 0);
-  s.move = 1 + tv('snabbafotter')/100;
+  s.aspd = 1 + s.agi*0.01 + C.aspd + tv('snabbvisk')/100 + tv('k_aspd')/100 + (G.p && G.p.buffT>0 ? 0.5 : 0);
+  s.move = 1 + tv('snabbafotter')/100 + tv('k_move')/100;
   s.range = 1 + tv('synfalt')/100;
   const w = ch.eq.vapen;
   s.wMin = w ? w.atkMin : 1; s.wMax = w ? w.atkMax : 1;
-  s.statAtk = s[C.main];
+  s.statAtk = s[C.main]*(C.mainMult||1) + tv('k_atk');
   s.atkMin = s.wMin + s.statAtk; s.atkMax = s.wMax + s.statAtk;
   s.mode = (ch.cls==='hippie' && w && w.wtype==='bage') ? 'bow' : (ch.cls==='viskare' && w && w.wtype==='stav') ? 'whisper' : 'melee';
   s.manaCost = s.mode==='whisper' ? w.req : 0;
@@ -625,9 +775,11 @@ function recalc(){
   if(!G.ch) return;
   G.stats = calcStats(G.ch);
   G.ch.hp = Math.min(G.ch.hp, G.stats.maxHp); G.ch.mp = Math.min(G.ch.mp, G.stats.maxMp);
+  if(typeof Net!=='undefined') Net.lookDirty = true;
 }
 const atkInterval = () => BASE_ATK_T / G.stats.aspd;
-const rollAtk = () => randInt(G.stats.atkMin, G.stats.atkMax);
+// Vapnets slag + attack från huvudstat. Decimaler (t.ex. 1,2 per Str) avrundas slumpvis så snittet blir rätt.
+const rollAtk = () => { const v=randInt(G.stats.wMin,G.stats.wMax)+G.stats.statAtk, f=Math.floor(v); return f + (Math.random()<v-f?1:0); };
 
 /* =====================================================================
    INPUT (tangentbord, mus, touch)
@@ -648,6 +800,9 @@ window.addEventListener('keydown', e=>{
     if(c==='KeyI'||c==='KeyC') toggleWin('bag');
     else if(c==='KeyT'||c==='KeyK') toggleWin('tal');
     else if(c==='KeyB') toggleWin('shop');
+    else if(c==='KeyM') toggleWin('book');
+    else if(c==='KeyP') toggleWin('party');
+    else if(c==='KeyQ') toggleWin('quest');
     else if(c==='Escape') escPressed();
   }
 });
@@ -667,10 +822,11 @@ function input(){
     jump:  !!keys.Space || Touch.jump,
     jumpEdge: jumpEdge || Touch.jumpEdge,
     upEdge: upEdge,
+    touchUpEdge: Touch.jy < -0.5 && !Touch.wasUp,
     attack: !!(keys.ControlLeft||keys.ControlRight) || Touch.atk,
     hot: [1,2,3,4,5,6,7,8,9].map(i=>!!(keys['Digit'+i]||keys['Numpad'+i])),
   };
-  jumpEdge=false; upEdge=false; Touch.jumpEdge=false;
+  jumpEdge=false; upEdge=false; Touch.jumpEdge=false; Touch.wasUp = Touch.jy < -0.5;
   return I;
 }
 function setTouch(on){
@@ -720,6 +876,7 @@ function screenToWorld(x,y){ return {x:G.cam.x + x/G.zoom, y:G.cam.y + y/G.zoom}
 function tapPick(sx,sy,r=44){
   if(G.mode!=='game' || !G.p || G.p.dead) return;
   const w = screenToWorld(sx,sy); let best=null, bd=r/G.zoom+6;
+  for(const o of curMap().portals){ if(Math.abs(w.x-o.x)<45 && w.y>o.y-110 && w.y<o.y+10){ if(portalNear(G.p)) { G.portalTap=true; return; } else throttleMsg('portal','Gå fram till portalen först.','#cfe0ff'); } }
   for(const d of G.drops){ if(d.picking) continue; const dd=Math.hypot(d.x-w.x, d.y-14-w.y); if(dd<bd){ bd=dd; best=d; } }
   if(best) tryPick(best);
 }
@@ -727,10 +884,12 @@ function tapPick(sx,sy,r=44){
 /* =====================================================================
    SPELARE OCH FYSIK
    ===================================================================== */
-function makePlayer(){
-  return {x:START.x, y:START.y, vx:0, vy:0, w:28, h:58, face:1, onGround:true, plat:platById.g1, climb:null, ropeCd:0,
-    drop:null, dropT:0, atkCd:0, atkAnim:0, atkDur:.3, atkMode:'swing', walkT:0, climbT:0, inv:1.5, knockT:0, cds:{}, buffT:0, dead:false};
+function makePlayer(x,y){
+  const st=curMap().start; x=x??st.x; y=y??st.y;
+  return {x, y, vx:0, vy:0, w:28, h:58, face:1, onGround:true, plat:platAt(x,y)||platById.g1, climb:null, ropeCd:0,
+    drop:null, dropT:0, atkCd:0, atkAnim:0, atkDur:.3, atkMode:'swing', walkT:0, climbT:0, inv:1.5, knockT:0, cds:{}, buffT:0, dead:false, potCd:0, portalCd:0.6};
 }
+const portalNear = p => p.onGround && !p.climb ? curMap().portals.find(o=>Math.abs(p.x-o.x)<32 && Math.abs(p.y-o.y)<4) : null;
 const platAt = (x,y) => PLATS.find(p=>Math.abs(p.y-y)<2 && x>=p.x1-1 && x<=p.x2+1) || null;
 const ropeNear = p => ROPES.find(r=>Math.abs(p.x-r.x)<14 && p.y>=r.top-4 && p.y<=r.bottom+4) || null;
 
@@ -741,6 +900,7 @@ function updatePlayer(dt){
   ch.mp = Math.min(s.maxMp, ch.mp + s.mpReg*dt);
   p.atkCd=Math.max(0,p.atkCd-dt); p.atkAnim=Math.max(0,p.atkAnim-dt); p.inv=Math.max(0,p.inv-dt);
   p.knockT=Math.max(0,p.knockT-dt); p.ropeCd=Math.max(0,p.ropeCd-dt); p.dropT=Math.max(0,p.dropT-dt); if(p.dropT<=0) p.drop=null;
+  p.potCd=Math.max(0,p.potCd-dt); p.portalCd=Math.max(0,p.portalCd-dt);
   for(const k in p.cds) p.cds[k]=Math.max(0,p.cds[k]-dt);
   if(p.buffT>0){ p.buffT-=dt; if(Math.random()<dt*14) fxPetal(p); if(p.buffT<=0){ p.buffT=0; recalc(); log('🌸 Flower power tog slut.','#ffb3de'); } }
   const I = input();
@@ -775,8 +935,17 @@ function updatePlayer(dt){
     if(I.down && p.onGround && Math.abs(p.y-rope.top)<3){ p.climb=rope; p.x=rope.x; p.y=rope.top+6; p.vx=p.vy=0; p.onGround=false; return; }
   }
 
+  // Portal: tryck upp (W/↑ eller styrspak uppåt) när du står i den
+  const portal = portalNear(p);
+  if(portal && p.portalCd<=0 && (I.upEdge || I.touchUpEdge || G.portalTap)){
+    G.portalTap=false;
+    if(isGuestNet()) throttleMsg('ptl','Bara party-ledaren kan byta karta – du följer med automatiskt.','#cfe0ff');
+    else { changeMap(portal.to, portal.toX, portal.toY); return; }
+  }
+  G.portalTap=false;
+
   // Hopp (mellanslag, eller W/upp när inget rep finns) – nedåt + hopp = släpp genom plattform
-  const wantJump = I.jump || I.jumpEdge || (I.upEdge && !rope);
+  const wantJump = I.jump || I.jumpEdge || (I.upEdge && !rope && !portal);
   if(wantJump && p.onGround && p.knockT<=0){
     if(I.down && p.plat && !p.plat.solid){ p.drop=p.plat; p.dropT=0.3; p.onGround=false; p.vy=60; }
     else if(!I.down){ p.vy=-PHY.jump; p.onGround=false; }
@@ -801,7 +970,7 @@ function updatePlayer(dt){
       if(land){ p.y=land.y; p.vy=0; p.onGround=true; p.plat=land; if(p.knockT>0) p.vx*=0.3; }
     }
   } else if(!p.plat || p.x<p.plat.x1 || p.x>p.plat.x2){ p.onGround=false; p.vy=0; }
-  if(p.y > WORLD.h){ p.x=START.x; p.y=START.y; p.vy=0; p.onGround=true; p.plat=platById.g1; }
+  if(p.y > WORLD.h){ const st=curMap().start; p.x=st.x; p.y=st.y; p.vy=0; p.onGround=true; p.plat=platAt(st.x,st.y); }
 
   useInputs(I);
 }
@@ -846,7 +1015,7 @@ $('#btnRespawn').addEventListener('click', respawn);
 function inFrontMonsters(range, maxN){
   const p=G.p, res=[];
   for(const m of G.monsters){
-    if(m.dead || m.spawnT>0) continue;
+    if(m.dead || m.spawnT>0 || m.pend) continue;
     const dx=(m.x-p.x)*p.face;
     if(dx<-20 || dx>range+m.d.w/2) continue;
     if(m.y-m.d.h > p.y+10 || m.y < p.y-p.h-10) continue;
@@ -855,30 +1024,31 @@ function inFrontMonsters(range, maxN){
   res.sort((a,b)=>a[0]-b[0]);
   return res.slice(0,maxN).map(a=>a[1]);
 }
-function rangedTarget(range){
+function rangedTarget(range, down=72, up=72){
   const p=G.p; let best=null, bd=1e9; const py=p.y-30;
   for(const m of G.monsters){
-    if(m.dead || m.spawnT>0) continue;
+    if(m.dead || m.spawnT>0 || m.pend) continue;
     const dx=(m.x-p.x)*p.face; if(dx<-10 || dx>range) continue;
-    if(Math.abs((m.y-m.d.h/2)-py) > 72) continue;
+    const dy=(m.y-m.d.h/2)-py; if(dy>down || dy<-up) continue;
     if(dx<bd){ bd=dx; best=m; }
   }
   return best;
 }
 function nearestMonster(x,y,maxR,exclude){
   let best=null, bd=maxR;
-  for(const m of G.monsters){ if(m.dead || m.spawnT>0 || (exclude&&exclude.has(m))) continue; const d=Math.hypot(m.x-x,(m.y-m.d.h/2)-y); if(d<bd){ bd=d; best=m; } }
+  for(const m of G.monsters){ if(m.dead || m.spawnT>0 || m.pend || (exclude&&exclude.has(m))) continue; const d=Math.hypot(m.x-x,(m.y-m.d.h/2)-y); if(d<bd){ bd=d; best=m; } }
   return best;
 }
+// Viskaren siktar bara framåt och når inte lika högt upp (WHISPER_UP)
+const WHISPER_UP = 165;
+function whisperOk(m, ox, oy, face){
+  if(m.dead || m.spawnT>0 || m.pend) return false;
+  const dx=m.x-ox, dy=(m.y-m.d.h/2)-oy;
+  return dx*face >= -12 && dy >= -WHISPER_UP && Math.hypot(dx,dy) <= WHISPER_RANGE;
+}
 function whisperTarget(){
-  const p=G.p; let best=null, bs=1e9;
-  for(const m of G.monsters){
-    if(m.dead || m.spawnT>0) continue;
-    const dx=m.x-p.x, dy=(m.y-m.d.h/2)-(p.y-34), d=Math.hypot(dx,dy);
-    if(d>WHISPER_RANGE) continue;
-    const sc = d + (dx*p.face<0 ? 90 : 0);
-    if(sc<bs){ bs=sc; best=m; }
-  }
+  const p=G.p, ox=p.x, oy=p.y-34; let best=null, bd=1e9;
+  for(const m of G.monsters){ if(!whisperOk(m,ox,oy,p.face)) continue; const d=Math.hypot(m.x-ox,(m.y-m.d.h/2)-oy); if(d<bd){ bd=d; best=m; } }
   return best;
 }
 function startAtkAnim(mode){
@@ -898,12 +1068,14 @@ function basicAttack(){
   const p=G.p, s=G.stats;
   if(s.mode==='bow'){
     startAtkAnim('shoot');
-    const range = BOW_RANGE*s.range, t = rangedTarget(range);
+    const range = BOW_RANGE*s.range, t = rangedTarget(range, 115, 72);   // hippie når lite längre nedåt
     G.projs.push({type:'arrow', x:p.x+p.face*18, y:p.y-33, vx:p.face*900, vy:0, speed:900, homing:1, target:t, dmg:rollAtk(), dist:0, maxDist:t?99999:range, life:1.6, hit:new Set(), canBounce:true, chain:0});
+    netShot(G.projs[G.projs.length-1]);
   } else if(s.mode==='whisper' && G.ch.mp>=s.manaCost){
     G.ch.mp -= s.manaCost; startAtkAnim('cast');
     const t = whisperTarget();
-    G.projs.push({type:'whisper', x:p.x+p.face*22, y:p.y-44, vx:p.face*320, vy:-30, speed:470, homing:0.9, target:t, seek:150, dmg:rollAtk(), dist:0, maxDist:WHISPER_RANGE+80, life:1.6, hit:new Set()});
+    G.projs.push({type:'whisper', x:p.x+p.face*22, y:p.y-44, vx:p.face*320, vy:-20, speed:470, homing:0.9, target:t, seek:150, face:p.face, ox:p.x, oy:p.y-34, dmg:rollAtk(), dist:0, maxDist:WHISPER_RANGE+60, life:1.6, hit:new Set()});
+    netShot(G.projs[G.projs.length-1]);
   } else {
     if(s.mode==='whisper') throttleMsg('mana','Inte tillräckligt med mana – du slår med staven.','#9cc6ff');
     startAtkAnim('swing'); meleeStrike(1,1,MELEE_RANGE);
@@ -918,65 +1090,159 @@ const ABIL_USE = {
     for(const m of G.monsters){ if(m.dead||m.spawnT>0) continue; if(Math.hypot(m.x-p.x,(m.y-m.d.h/2)-(p.y-30))<235) hitMonster(m, Math.max(1,Math.round(rollAtk()*v/100)), {dir:Math.sign(m.x-p.x)||1}); }
     if(p.climb){ p.climb=null; p.ropeCd=0.4; }
     p.vy=-860; p.onGround=false; p.drop=null; p.knockT=0;
-    G.fx.push({type:'radial', x:p.x, y:p.y-30, t:0, dur:.4});
+    G.fx.push({type:'radial', x:p.x, y:p.y-30, t:0, dur:.4}); netFx('radial', p.x, p.y-30);
     for(let i=0;i<20;i++) particle(p.x, p.y, pick(['#ffd93d','#ff8fd0','#9ef0a0']), rand(-120,120), rand(20,160), .6, 3, 300);
   },
   eldboll(r){
     const p=G.p; startAtkAnim('cast');
     const t = rangedTarget(440) || whisperTarget();
     G.projs.push({type:'fire', x:p.x+p.face*24, y:p.y-44, vx:p.face*540, vy:0, speed:540, homing:0.6, target:t, dmg:rollAtk()+TAL.eldboll.v[r-1], dist:0, maxDist:460, life:1.4, hit:new Set()});
+    netShot(G.projs[G.projs.length-1]);
   },
 };
 function useAbility(id){
   const p=G.p; if(!p || p.dead || G.mode!=='game') return false;
   if(id==='attack'){ if(p.atkCd>0 || p.climb) return false; return basicAttack(); }
+  if(CONS[id]) return usePot(id);
   const a=ABIL[id], r=rank(id); if(!a || !r) return false;
   if(p.climb && !a.rope) return false;
   if((p.cds[id]||0)>0) return false;
   if(a.atk && p.atkCd>0) return false;
   const cost=a.cost(r);
   if(G.ch.mp<cost){ throttleMsg('mana2','Inte tillräckligt med mana!','#9cc6ff'); return false; }
-  G.ch.mp-=cost; p.cds[id]=a.cd(r); p.cdMax=p.cdMax||{}; p.cdMax[id]=a.cd(r);
+  const cd=a.cd(r)*(1-tv('k_cdr')/100);
+  G.ch.mp-=cost; p.cds[id]=cd; p.cdMax=p.cdMax||{}; p.cdMax[id]=cd;
   ABIL_USE[id](r);
   return true;
 }
 
+/* ---------- Drycker & staplar ---------- */
+const consCount = base => G.ch ? G.ch.inv.reduce((s,it)=>s+(it.base===base?it.count:0),0) : 0;
+function stackRoom(base){ const ch=G.ch; let r=0; for(const it of ch.inv) if(it.base===base) r+=STACK_MAX-it.count; return r+(INV_MAX-ch.inv.length)*STACK_MAX; }
+function addStack(base, n){
+  const ch=G.ch; let left=n;
+  for(const it of ch.inv){ if(!left) break; if(it.base===base && it.count<STACK_MAX){ const a=Math.min(STACK_MAX-it.count,left); it.count+=a; left-=a; } }
+  while(left>0 && ch.inv.length<INV_MAX){ const a=Math.min(STACK_MAX,left); ch.inv.push({uid:uid(), base, count:a}); left-=a; }
+  return n-left;
+}
+function takeOne(base){
+  const ch=G.ch; for(let i=ch.inv.length-1;i>=0;i--){ const it=ch.inv[i]; if(it.base===base){ it.count--; if(it.count<=0) ch.inv.splice(i,1); return true; } }
+  return false;
+}
+function usePot(base){
+  const p=G.p, c=CONS[base], s=G.stats, ch=G.ch;
+  if(!p || p.dead || c.kind!=='pot' || p.potCd>0) return false;
+  if(!consCount(base)){ throttleMsg('no'+base,`Du har inga ${c.name.toLowerCase()}r. Köp i butiken (B).`,'#ff9b9b'); return false; }
+  if(c.hp && ch.hp>=s.maxHp-0.01){ throttleMsg('hpfull','HP är redan fullt.','#cfe0ff'); return false; }
+  if(c.mp && ch.mp>=s.maxMp-0.01){ throttleMsg('mpfull','Manan är redan full.','#cfe0ff'); return false; }
+  takeOne(base); p.potCd=0.5;
+  if(c.hp){ ch.hp=Math.min(s.maxHp,ch.hp+c.hp); G.fx.push({type:'text',x:p.x,y:p.y-p.h-20,text:`+${c.hp} HP`,color:'#7dff8a',t:0,dur:1,size:13}); }
+  if(c.mp){ ch.mp=Math.min(s.maxMp,ch.mp+c.mp); G.fx.push({type:'text',x:p.x,y:p.y-p.h-20,text:`+${c.mp} MP`,color:'#8fc2ff',t:0,dur:1,size:13}); }
+  for(let i=0;i<8;i++) particle(p.x+rand(-12,12),p.y-rand(10,50),c.hp?'#ff8a8a':'#8fc2ff',rand(-20,20),rand(-90,-30),.6,3,0);
+  markDirty(); refreshOpen(); return true;
+}
+
+/* ---------- Byta karta via portal ---------- */
+function changeMap(to, x, y){
+  if(!MAPS[to]) return;
+  G.mapId=to; G.ch.map=to;
+  const keep={cds:G.p.cds, cdMax:G.p.cdMax, buffT:G.p.buffT};
+  G.p=makePlayer(x,y); Object.assign(G.p,keep); G.p.portalCd=0.8;
+  initSpawns(); G.drops=[]; G.projs=[]; G.nums=[]; G.fx=[];
+  $('#mapName').textContent=curMap().name; snapCam();
+  for(let i=0;i<24;i++) particle(G.p.x+rand(-20,20),G.p.y-rand(0,70),pick(['#8fd0ff','#c9a2ff','#fff']),rand(-60,60),rand(-120,20),.7,3,0);
+  toast(`🌀 <b>${curMap().name}</b>`); log(`Du gick till <b>${curMap().name}</b>.`,'#ffe9a8');
+  if(isHostNet()){ netToGuests({t:'map', to, x:Math.round(G.p.x), y:G.p.y}); Net.monT=0; }
+  hostUpdatePresence();
+  markDirty(true);
+}
+
 function hitMonster(m, dmg, o={}){
-  if(m.dead) return;
-  m.hp -= dmg; m.showHp = 4;
+  if(m.dead || m.pend) return;
+  const by = o.by || Net.myId;
+  if(isGuestNet()){
+    // Gäst: visa direkt, låt värden avgöra (värden äger monstren)
+    m.hp -= dmg; m.showHp=4; m.predT=G.time+0.7;
+    if(!o.noKb){ m.hurtT=0.4; m.dir=-(o.dir||1); }
+    addNum(m.x, m.y-m.d.h-6, dmg, o.kind||'dmg', m);
+    sparks(m.x, m.y-m.d.h/2, '#fff3b0', 6);
+    let burn=null; if(!o.noBurn && G.ch.cls==='viskare'){ const v=tv('glod'); if(v) burn={per:dmg*v/100/5, left:5}; }
+    netToHost({t:'hit', id:m.id, d:Math.round(dmg*100)/100, dir:o.dir||0, k:o.kind||'', nk:o.noKb?1:0, b:burn});
+    if(m.hp<=0.001) m.pend=true;
+    return;
+  }
+  m.hp -= dmg; m.showHp = 4; m.lastBy = by;
   if(!o.noKb){ m.kb=(o.dir||Math.sign(m.x-G.p.x)||1)*70; m.kbT=0.15; m.hurtT=0.45; m.dir=-(o.dir||1); }
   addNum(m.x, m.y-m.d.h-6, dmg, o.kind||'dmg', m);
   sparks(m.x, m.y-m.d.h/2, o.kind==='burn' ? '#ff9a3a' : '#fff3b0', o.kind==='burn'?2:6);
-  if(!o.noBurn && G.ch && G.ch.cls==='viskare'){ const v=tv('glod'); if(v) m.burn={left:5, tick:1, per:dmg*v/100/5}; }
+  if(o.burn) m.burn={left:o.burn.left||5, tick:1, per:o.burn.per, by};
+  else if(!o.noBurn && by===Net.myId && G.ch && G.ch.cls==='viskare'){ const v=tv('glod'); if(v) m.burn={left:5, tick:1, per:dmg*v/100/5, by}; }
+  if(isHostNet()) netToGuests({t:'dmg', id:m.id, v:Math.round(dmg*100)/100, k:o.kind||'', by});
   if(m.hp<=0.001) killMonster(m);
 }
 function killMonster(m){
-  m.dead=true; m.dieT=0.6; m.burn=null; m.sp.monster=null; m.sp.deadAt=G.time;
-  const d=m.d;
-  let exp=d.exp; if(Math.random()*100<tv('erfaren')) exp*=2;
-  let gold=d.gold; if(Math.random()*100<tv('guldnasa')) gold*=2;
-  spawnDrop(m, {kind:'gold', amount:gold});
-  if(Math.random() < d.drop*(1+tv('skattjagare')/100)){
-    const it = makeItem(pick(d.pool==='weapon'?WEAPON_POOL:GEAR_POOL), rollRarity());
-    spawnDrop(m, {kind:'item', item:it});
+  m.dead=true; m.dieT=0.6; m.burn=null; if(m.sp){ m.sp.monster=null; m.sp.deadAt=G.time; }
+  const d=m.d, killer=m.lastBy||Net.myId, party=isHostNet();
+  if(party) netToGuests({t:'kill', id:m.id});
+  // EXP: ensam 100 %. I party: den som dödar får 75 %, övriga 30 % var (+5 % party-bonus på allt)
+  const ids = party ? netMemberIds() : [Net.myId];
+  for(const id of ids){
+    const share = ids.length>1 ? (id===killer?0.75:0.30) : 1;
+    const mult = m.rare ? 3 : 1;
+    if(id===Net.myId) gainKillExp(m.type, share, ids.length>1, id===killer, mult);
+    else netTo(id, {t:'exp', ty:m.type, s:share, kill:id===killer?1:0, x:mult});
   }
-  gainExp(exp, m);
+  spawnDrop(m, {kind:'gold', amount:d.gold});
+  const db = killer===Net.myId ? tv('k_drop') : ((G.others[killer]&&G.others[killer].db)||0);
+  if(m.rare || Math.random() < d.drop*(1+db/100)) spawnDrop(m, {kind:'item', item:makeItem(pick(d.pool), rollRarity(m.rare)), owner:killer});
 }
-function gainExp(n, m){
+function gainKillExp(type, share, party, isKill, mult=1){
+  const ch=G.ch, d=MOBS[type]; ch.kills=ch.kills||{};
+  if(isKill){
+    const before=bookLvl(ch.kills[type]||0), statBefore=bookStatBonus(ch);
+    ch.kills[type]=(ch.kills[type]||0)+1;
+    const lv=bookLvl(ch.kills[type]);
+    if(lv>before){
+      log(`📖 Monsterbok: <b>${d.name}</b> nivå ${lv}! +${lv*5}% EXP från ${d.name}. (+1 monsterbokspoäng, totalt ${bookPoints(ch)})`,'#9fe0ff');
+      toast(`📖 <b>${d.name}</b> – monsterbok nivå ${lv}`);
+      if(bookStatBonus(ch)>statBefore){ recalc(); log(`📖 Monsterbokbonus: nu +${bookStatBonus(ch)} på alla basstats!`,'#9fe0ff'); }
+      markDirty(true);
+    }
+  }
+  const lv=bookLvl(ch.kills[type]||0);
+  questKill(type);
+  const base=d.exp*mult*(1+lv*0.05)*(1+tv('k_exp')/100)*share;
+  const bonus=party?base*0.05:0;
+  gainExp(base+bonus, party, bonus, party && !isKill);
+  if(isOpen('book')) renderBook();
+}
+function gainExp(n, party, bonus, fromParty){
   const ch=G.ch; ch.exp += n;
-  G.fx.push({type:'text', x:G.p.x, y:G.p.y-G.p.h-26, text:`+${n} EXP`, color:'#ffe066', t:0, dur:1.1, size:12});
+  feed(`+${fmtSv(n)} EXP${fromParty?' från partyt':''}${party?` (+${fmtSv(bonus)} party-bonus)`:''}`, party?'party':'');
   let up=false;
   while(ch.exp >= expReq(ch.level)){ ch.exp -= expReq(ch.level); ch.level++; up=true; }
   if(up) onLevelUp();
   markDirty();
 }
+function addGold(a, party){
+  const ch=G.ch; ch.goldFrac=(ch.goldFrac||0)+a;
+  const w=Math.floor(ch.goldFrac+1e-9); ch.gold+=w; ch.goldFrac-=w;
+  feed(`+${fmtSv(a)} guld${party?' (delat i partyt)':''}`, 'gold');
+  markDirty();
+}
+function feed(text, cls){
+  const box=$('#gainFeed'), d=document.createElement('div'); d.className='gf '+(cls||''); d.textContent=text;
+  box.appendChild(d); while(box.children.length>7) box.firstChild.remove();
+  setTimeout(()=>d.classList.add('fade'),3200); setTimeout(()=>d.remove(),4100);
+}
 function onLevelUp(){
   const ch=G.ch; recalc(); ch.hp=G.stats.maxHp; ch.mp=G.stats.maxMp;
-  const p=G.p; G.fx.push({type:'beam', x:p.x, y:p.y, t:0, dur:1.6});
+  const p=G.p; G.fx.push({type:'beam', x:p.x, y:p.y, t:0, dur:1.6}); netFx('beam', p.x, p.y); hostUpdatePresence();
   for(let i=0;i<30;i++) particle(p.x+rand(-20,20), p.y-rand(0,60), pick(['#ffe066','#fff','#ffb341']), rand(-60,60), rand(-260,-80), 1.1, 3, 120);
   log(`⭐ Level ${ch.level}! +1 Str, Int och Agi samt +1 talangpoäng.`, '#ffe066');
   if(ch.level%5===0) log('🌍 Du fick ett kontopoäng till det gemensamma kontoträdet!', '#9fe0ff');
   toast(`<b style="font-size:20px;color:#ffe066">LEVEL UP!</b><br>Du är nu level ${ch.level}`);
+  if(QUEST_ORDER.some(id=>QUESTS[id].lvl===ch.level && !(ch.quests||{})[id])){ log('❗ Nytt uppdrag tillgängligt – se uppdragsloggen uppe till höger.','#ffe066'); }
   updateTalDot(); refreshOpen(); markDirty(true);
 }
 
@@ -984,18 +1250,20 @@ function onLevelUp(){
    MONSTER & SPAWNPOINTS
    ===================================================================== */
 function initSpawns(){
-  G.spawns=[]; G.monsters=[];
-  for(const [type,pid,xs] of SPAWN_DEFS) for(const x of xs) G.spawns.push({type, plat:platById[pid], x, monster:null, deadAt:-99});
+  G.spawns=[]; G.monsters=[]; G.monById={};
+  for(const [type,pid,xs] of curMap().spawns) for(const x of xs) G.spawns.push({type, plat:platById[pid], x, monster:null, deadAt:-99});
   for(const sp of G.spawns) spawnMonster(sp, true);
   G.spawnTimer=0;
 }
 function spawnMonster(sp, instant){
-  const d=MOBS[sp.type];
+  const rare=Math.random()<RARE_CHANCE, d=mobDef(sp.type, rare);
+  if(rare && G.mode==='game') log(`✦ En <b style="color:#e8eef6">${d.name}</b> har dykt upp!`,'#cfd8e6');
   const m={type:sp.type, d, sp, plat:sp.plat, x:sp.x, y:sp.plat.y, hp:d.hp, maxHp:d.hp, dir:Math.random()<.5?-1:1, state:'idle', timer:rand(.3,2),
-    t:rand(0,10), rot:0, kb:0, kbT:0, hurtT:0, showHp:0, dead:false, dieT:0, spawnT:instant?0:0.5, burn:null, stack:0, stackT:-9};
-  sp.monster=m; G.monsters.push(m);
+    t:rand(0,10), rot:0, kb:0, kbT:0, hurtT:0, showHp:0, dead:false, dieT:0, spawnT:instant?0:0.5, burn:null, stack:0, stackT:-9, id:++G.monSeq, rare};
+  sp.monster=m; G.monsters.push(m); G.monById[m.id]=m;
 }
 function spawnTick(dt){
+  if(isGuestNet()) return;
   G.spawnTimer += dt;
   if(G.spawnTimer >= RESPAWN_EVERY){
     G.spawnTimer -= RESPAWN_EVERY;
@@ -1003,14 +1271,15 @@ function spawnTick(dt){
   }
 }
 function updateMonsters(dt){
+  if(isGuestNet()) return updateMonstersNet(dt);
   for(let i=G.monsters.length-1;i>=0;i--){
     const m=G.monsters[i]; m.t+=dt;
-    if(m.dead){ m.dieT-=dt; if(m.dieT<=0) G.monsters.splice(i,1); continue; }
+    if(m.dead){ m.dieT-=dt; if(m.dieT<=0){ G.monsters.splice(i,1); delete G.monById[m.id]; } continue; }
     if(m.spawnT>0) m.spawnT=Math.max(0,m.spawnT-dt);
     if(m.showHp>0) m.showHp-=dt;
     if(m.burn){
       m.burn.tick-=dt;
-      if(m.burn.tick<=0){ m.burn.tick+=1; m.burn.left--; const b=m.burn; if(b.left<=0) m.burn=null; hitMonster(m, b.per, {noBurn:true, noKb:true, kind:'burn'}); if(m.dead) continue; }
+      if(m.burn.tick<=0){ m.burn.tick+=1; m.burn.left--; const b=m.burn; if(b.left<=0) m.burn=null; hitMonster(m, b.per, {noBurn:true, noKb:true, kind:'burn', by:b.by}); if(m.dead) continue; }
       if(m.burn && Math.random()<dt*10) particle(m.x+rand(-10,10), m.y-rand(5,m.d.h), pick(['#ff9a3a','#ffd23f']), rand(-10,10), rand(-60,-20), .5, 2.5, -40);
     }
     const ox=m.x;
@@ -1024,18 +1293,36 @@ function updateMonsters(dt){
     const mg=m.d.w/2+2;
     if(m.x<m.plat.x1+mg){ m.x=m.plat.x1+mg; if(m.state==='walk') m.dir=1; }
     if(m.x>m.plat.x2-mg){ m.x=m.plat.x2-mg; if(m.state==='walk') m.dir=-1; }
-    if(m.type==='mossa') m.rot += (m.x-ox)/21;
+    if(m.type==='mossa') m.rot += (m.x-ox)/(m.rare?42:21);
+    if(m.rare && Math.random()<dt*5) particle(m.x+rand(-m.d.w/2,m.d.w/2), m.y-rand(0,m.d.h), pick(['#ffffff','#dfe7f2','#b8c4d4']), rand(-10,10), rand(-50,-15), .7, 2.5, 0);
   }
 }
 
 /* =====================================================================
    PROJEKTILER
    ===================================================================== */
+function updateMonstersNet(dt){
+  for(let i=G.monsters.length-1;i>=0;i--){
+    const m=G.monsters[i]; m.t+=dt;
+    if(m.dead){ m.dieT-=dt; if(m.dieT<=0){ G.monsters.splice(i,1); delete G.monById[m.id]; } continue; }
+    if(m.spawnT>0) m.spawnT=Math.max(0,m.spawnT-dt);
+    if(m.showHp>0) m.showHp-=dt;
+    if(m.hurtT>0) m.hurtT-=dt;
+    const ox=m.x; m.x += (m.tx-m.x)*Math.min(1,dt*10);
+    if(m.type==='mossa') m.rot += (m.x-ox)/(m.rare?42:21);
+    if(m.rare && Math.random()<dt*5) particle(m.x+rand(-m.d.w/2,m.d.w/2), m.y-rand(0,m.d.h), pick(['#ffffff','#dfe7f2','#b8c4d4']), rand(-10,10), rand(-50,-15), .7, 2.5, 0);
+    if(m.burning && Math.random()<dt*10) particle(m.x+rand(-10,10), m.y-rand(5,m.d.h), pick(['#ff9a3a','#ffd23f']), rand(-10,10), rand(-60,-20), .5, 2.5, -40);
+  }
+}
 function updateProjs(dt){
   for(let i=G.projs.length-1;i>=0;i--){
     const pr=G.projs[i]; pr.t=(pr.t||0)+dt; pr.life-=dt;
     let tg=pr.target; if(tg && tg.dead) tg=pr.target=null;
-    if(!tg && pr.seek && pr.t>0.05){ tg=pr.target=nearestMonster(pr.x,pr.y,pr.seek,pr.hit); }
+    if(!tg && pr.seek && !pr.cos && pr.t>0.05){
+      let best=null, bd=pr.seek;
+      for(const m of G.monsters){ if(pr.hit.has(m) || !whisperOk(m,pr.ox,pr.oy,pr.face)) continue; const d=Math.hypot(m.x-pr.x,(m.y-m.d.h/2)-pr.y); if(d<bd){ bd=d; best=m; } }
+      tg=pr.target=best;
+    }
     if(tg){
       const dx=tg.x-pr.x, dy=(tg.y-tg.d.h/2)-pr.y, d=Math.hypot(dx,dy)||1;
       if(pr.homing>=1){ pr.vx=dx/d*pr.speed; pr.vy=dy/d*pr.speed; }
@@ -1053,6 +1340,7 @@ function updateProjs(dt){
 }
 function projHit(pr, m){
   const dir=Math.sign(pr.vx)||1;
+  if(pr.cos){ if(pr.type==='fire') explode(pr); else sparks(m.x, m.y-m.d.h/2, pr.type==='whisper'?'#c9a2ff':'#fff3b0', 4); return; }
   if(pr.type==='fire'){ explode(pr); return; }
   hitMonster(m, pr.dmg, {dir});
   pr.hit.add(m);
@@ -1071,20 +1359,47 @@ function bounceArrow(from, count, dmg, hitSet){
 function explode(pr){
   G.fx.push({type:'ring', x:pr.x, y:pr.y, t:0, dur:.35, r:85});
   for(let i=0;i<22;i++) particle(pr.x,pr.y,pick(['#ff7a1a','#ffd23f','#ff4a1a','#fff1b0']),rand(-220,220),rand(-220,120),.55,4,200);
+  if(pr.cos) return;
   for(const m of G.monsters){ if(m.dead||m.spawnT>0) continue; if(Math.hypot(m.x-pr.x,(m.y-m.d.h/2)-pr.y)<85+m.d.w/3) hitMonster(m, pr.dmg, {dir:Math.sign(m.x-pr.x)||1}); }
 }
 
 /* =====================================================================
    DROPS (guld och föremål)
    ===================================================================== */
-function spawnDrop(m, data){
+function spawnDrop(m, data, tossDir){
   const n = G.drops.filter(d=>G.time-d.born<0.05).length;
-  G.drops.push({...data, x:m.x, y:m.y-m.d.h/2, vx:(n%2?1:-1)*rand(20,60)+(n>1?rand(-30,30):0), vy:-380, plat:m.plat, landed:false, born:G.time, life:120, t:rand(0,6), picking:false, pickT:0});
+  const vx = tossDir ? tossDir*rand(150,190) : (n%2?1:-1)*rand(20,60)+(n>1?rand(-30,30):0);
+  const d={...data, id:data.id||('d'+(++G.dropSeq)+'_'+Net.myId.slice(0,4)), x:m.x, y:m.y-m.d.h/2, vx, vy:tossDir?-300:-380, plat:m.plat, landed:false, born:G.time, life:120, t:rand(0,6), picking:false, pickT:0,
+    owner:data.owner||null, ownerT:data.owner?G.time+60:0, blockBy:data.block||null, blockT:data.block?G.time+3:0};
+  G.drops.push(d);
+  if(isHostNet()) netToGuests({t:'drop', d:dropMsg(d)});
+  return d;
 }
+const canPick = (d, who) => !(d.kind==='item' && d.owner && d.owner!==who && G.time<d.ownerT);
+const blockedFor = (d, who) => d.blockBy===who && G.time<d.blockT;   // den som släppte något kan inte råka plocka upp det direkt igen
+function canFit(item){ return isCons(item) ? stackRoom(item.base)>=item.count : G.ch.inv.length+Net.pendingItems<INV_MAX; }
+function dropFromBag(u){
+  const ch=G.ch, p=G.p, i=ch.inv.findIndex(x=>x.uid===u); if(i<0 || !p || p.dead) return;
+  if(!p.onGround || !p.plat){ throttleMsg('dropair','Du måste stå på marken för att släppa saker.','#ff9b9b'); return; }
+  const it=ch.inv[i]; ch.inv.splice(i,1); G.ui.sel=null; G.ui.trash=null;
+  if(isGuestNet()) netToHost({t:'dropItem', item:it, x:Math.round(p.x), plat:p.plat.id, f:p.face});
+  else spawnDrop({x:p.x, y:p.plat.y, d:{h:40}, plat:p.plat}, {kind:'item', item:it, block:Net.myId}, p.face);
+  log(`⬇ Du släppte ${isCons(it)?it.count+' × ':''}${esc(itemName(it))} på marken.`,'#cfe0ff');
+  markDirty(); refreshOpen(); buildHotbar();
+}
+const nameOf = id => id===Net.myId ? (G.ch?G.ch.name:'du') : ((G.others[id]&&G.others[id].name)||'en annan spelare');
+const ownerName = id => id===Net.myId ? 'dig' : nameOf(id);
 function tryPick(d){
-  if(d.picking || G.time-d.born<0.3) return;
-  if(d.kind==='item' && G.ch.inv.length>=INV_MAX){ throttleMsg('full','Väskan är full! Sälj något i butiken.','#ff9b9b'); return; }
-  d.picking=true; d.pickT=0;
+  if(d.picking || G.time-d.born<0.3 || (d.reqT||0)>G.time || blockedFor(d, Net.myId)) return;
+  if(d.kind==='item' && !canFit(d.item)){ throttleMsg('full','Väskan är full! Sälj något i butiken.','#ff9b9b'); return; }
+  if(!canPick(d, Net.myId)){ throttleMsg('own','Föremålet tillhör '+esc(ownerName(d.owner))+' i '+Math.ceil(d.ownerT-G.time)+' s till.','#ff9b9b'); return; }
+  if(isGuestNet()){
+    d.reqT=G.time+1;
+    if(d.kind==='item'){ Net.pendingItems++; setTimeout(()=>{ Net.pendingItems=Math.max(0,Net.pendingItems-1); },1500); }
+    netToHost({t:'pick', id:d.id}); return;
+  }
+  d.picking=true; d.pickT=0; d.by=Net.myId;
+  if(isHostNet()) netToGuests({t:'gone', id:d.id, by:Net.myId});
 }
 function updateDrops(dt){
   const p=G.p;
@@ -1093,15 +1408,17 @@ function updateDrops(dt){
     const d=G.drops[i]; d.t+=dt;
     if(d.picking){
       d.pickT+=dt;
-      if(p){ d.x=lerp(d.x,p.x,Math.min(1,dt*14)); d.y=lerp(d.y,p.y-30,Math.min(1,dt*14)); }
-      if(d.pickT>0.22){ applyPick(d); G.drops.splice(i,1); }
+      const tgt = d.by===Net.myId ? p : G.others[d.by];
+      if(tgt){ d.x=lerp(d.x,tgt.x,Math.min(1,dt*14)); d.y=lerp(d.y,tgt.y-30,Math.min(1,dt*14)); }
+      if(d.pickT>0.22){ if(!d.applied && d.by===Net.myId) applyPick(d); G.drops.splice(i,1); }
       continue;
     }
     if(!d.landed){
       d.vy+=1900*dt; d.x+=d.vx*dt; d.y+=d.vy*dt; d.x=clamp(d.x,d.plat.x1+10,d.plat.x2-10);
       if(d.vy>0 && d.y>=d.plat.y){ d.y=d.plat.y; d.landed=true; }
     }
-    d.life-=dt; if(d.life<=0){ G.drops.splice(i,1); continue; }
+    d.life-=dt;
+    if(d.life<=0 && !isGuestNet()){ G.drops.splice(i,1); if(isHostNet()) netToGuests({t:'gone', id:d.id, by:null}); continue; }
     if(p && !p.dead && G.mode==='game' && G.time-d.born>0.35){
       if(Math.abs(d.x-p.x)<26 && Math.abs(d.y-p.y)<44) tryPick(d);
       else if(mw && Math.hypot(d.x-mw.x, d.y-14-mw.y)<24) tryPick(d);
@@ -1109,18 +1426,31 @@ function updateDrops(dt){
   }
 }
 function applyPick(d){
-  const ch=G.ch;
-  if(d.kind==='gold'){
-    ch.gold+=d.amount;
-    G.fx.push({type:'text', x:G.p.x, y:G.p.y-G.p.h-40, text:`+${d.amount} 🪙`, color:'#ffd25a', t:0, dur:1, size:12});
-  } else {
-    if(ch.inv.length>=INV_MAX){ throttleMsg('full','Väskan är full!','#ff9b9b'); G.drops.push({...d, picking:false, landed:true, x:G.p.x, y:d.plat.y, born:G.time}); return; }
-    ch.inv.push(d.item);
-    const r=RAR[d.item.rarity];
-    log(`Du plockade upp <b style="color:${r.color}">${esc(d.item.name)}</b> (${r.name}, Lv ${d.item.req})`, '#e9eef7');
-    refreshOpen();
-  }
+  if(d.kind==='gold'){ if(isHostNet()) splitGold(d.amount); else addGold(d.amount,false); }
+  else receiveItem(d.item, d);
   markDirty();
+}
+function receiveItem(item, d){
+  const ch=G.ch;
+  if(isCons(item) && stackRoom(item.base)>=item.count){
+    addStack(item.base, item.count);
+    log(`Du plockade upp ${item.count} × <b>${esc(itemName(item))}</b>`, '#e9eef7');
+    refreshOpen(); buildHotbar(); markDirty(); return;
+  }
+  if(isCons(item) || ch.inv.length>=INV_MAX){
+    throttleMsg('full','Väskan är full!','#ff9b9b');
+    if(isGuestNet()) netToHost({t:'redrop', item, x:Math.round(G.p.x), plat:(G.p.plat||platById.g1).id});
+    else spawnDrop({x:G.p.x, y:(G.p.plat||platById.g1).y, d:{h:20}, plat:G.p.plat||platById.g1}, {kind:'item', item, owner:Net.myId});
+    return;
+  }
+  ch.inv.push(item);
+  const r=RAR[item.rarity];
+  log(`Du plockade upp <b style="color:${r.color}">${esc(itemName(item))}</b> (${r.name}, Lv ${item.req})`, '#e9eef7');
+  refreshOpen(); markDirty();
+}
+function splitGold(amount){
+  const ids=netMemberIds(), share=amount/ids.length, party=ids.length>1;
+  for(const id of ids){ if(id===Net.myId) addGold(share, party); else netTo(id, {t:'gold', a:share}); }
 }
 
 /* =====================================================================
@@ -1173,27 +1503,28 @@ function setLayer(par){
 }
 function drawSkyAndLayers(){
   ctx.setTransform(DPR,0,0,DPR,0,0);
-  const g=ctx.createLinearGradient(0,0,0,VH); g.addColorStop(0,'#57aef0'); g.addColorStop(.55,'#a7dcfb'); g.addColorStop(1,'#e8f8ff');
+  const T=curMap().theme;
+  const g=ctx.createLinearGradient(0,0,0,VH); g.addColorStop(0,T.sky[0]); g.addColorStop(.55,T.sky[1]); g.addColorStop(1,T.sky[2]);
   ctx.fillStyle=g; ctx.fillRect(0,0,VW,VH);
-  ctx.fillStyle='rgba(255,250,220,.55)'; circ(ctx, VW*0.82, VH*0.13, 46); ctx.fillStyle='rgba(255,250,220,.25)'; circ(ctx, VW*0.82, VH*0.13, 70);
+  ctx.fillStyle=T.sun+'.55)'; circ(ctx, VW*0.82, VH*0.13, 46); ctx.fillStyle=T.sun+'.25)'; circ(ctx, VW*0.82, VH*0.13, 70);
   const span=VW+500;
   for(const c of CLOUDS){ let x=((c.x - G.cam.x*0.06*G.zoom + G.time*c.sp)%span+span)%span-250; drawCloud(x, c.fy*VH-(G.cam.y-CAMY0)*0.05*G.zoom, c.s*Math.max(.7,G.zoom)); }
   // Berg långt bort
   let v=setLayer(0.15);
-  ctx.fillStyle='#a6cfe3'; ctx.beginPath(); ctx.moveTo(v.x1,v.y2);
+  ctx.fillStyle=T.mount; ctx.beginPath(); ctx.moveTo(v.x1,v.y2);
   for(let x=v.x1;x<=v.x2;x+=24){ ctx.lineTo(x, 860-(160+60*Math.sin(x*.004+1)+40*Math.sin(x*.011+2)+18*Math.sin(x*.027))); }
   ctx.lineTo(v.x2,v.y2); ctx.fill();
   ctx.fillStyle='rgba(255,255,255,.5)';
   // Kullar
   v=setLayer(0.35);
-  ctx.fillStyle='#97d38a'; ctx.beginPath(); ctx.moveTo(v.x1,v.y2);
+  ctx.fillStyle=T.hill; ctx.beginPath(); ctx.moveTo(v.x1,v.y2);
   for(let x=v.x1;x<=v.x2;x+=20){ ctx.lineTo(x, 905-(90+40*Math.sin(x*.006+3)+25*Math.sin(x*.017+1))); }
   ctx.lineTo(v.x2,v.y2); ctx.fill();
-  ctx.fillStyle='#82c477';
+  ctx.fillStyle=T.hillTree;
   for(let x=Math.floor(v.x1/170)*170;x<v.x2;x+=170){ const h=905-(90+40*Math.sin(x*.006+3)+25*Math.sin(x*.017+1)); ctx.fillRect(x-3,h-34,6,34); circ(ctx,x,h-40,18+((x/170)%3)*3); }
   // Trädlinje
   v=setLayer(0.6);
-  ctx.fillStyle='#6cb866';
+  ctx.fillStyle=T.trees;
   for(let x=Math.floor(v.x1/90)*90;x<v.x2;x+=90){ const h=60+((x*7919)%50); circ(ctx,x,905-h,42); circ(ctx,x+40,905-h+18,34); }
   ctx.fillRect(v.x1,880,v.x2-v.x1,v.y2-880);
 }
@@ -1272,6 +1603,35 @@ function drawDecoBack(){
     }
   }
 }
+function drawSign(){
+  const sg=curMap().sign, d={x:sg.x,y:sg.y};
+  if(d.x<G.view.x1-80||d.x>G.view.x2+80) return;
+  ctx.fillStyle='#6b4423'; ctx.fillRect(d.x-4,d.y-70,8,70);
+  ctx.fillStyle='#b98a52'; rr(ctx,d.x-56,d.y-92,112,34,6); ctx.fill(); ctx.strokeStyle='#6b4423'; ctx.lineWidth=3; ctx.stroke();
+  ctx.fillStyle='#3a2410'; ctx.font='bold 13px system-ui'; ctx.textAlign='center'; ctx.fillText(curMap().name,d.x,d.y-70);
+}
+function drawPortals(){
+  const t=G.time;
+  for(const o of curMap().portals){
+    if(o.x<G.view.x1-90||o.x>G.view.x2+90) continue;
+    const cx=o.x, cy=o.y-46;
+    const g=ctx.createRadialGradient(cx,cy,4,cx,cy,54); g.addColorStop(0,'rgba(215,235,255,.95)'); g.addColorStop(.5,'rgba(120,170,255,.5)'); g.addColorStop(1,'rgba(120,120,255,0)');
+    ctx.fillStyle=g; ell(ctx,cx,cy,36,54);
+    ctx.lineWidth=3;
+    for(let i=0;i<4;i++){ const k=(t*0.8+i/4)%1; ctx.strokeStyle=`rgba(${150+i*25},${210-i*15},255,${(1-k).toFixed(2)})`; ctx.beginPath(); ctx.ellipse(cx,cy,Math.max(1,26*(1-k*0.7)),Math.max(1,42*(1-k*0.7)),0,0,Math.PI*2); ctx.stroke(); }
+    for(let i=0;i<7;i++){ const k=(t*0.55+i/7)%1; ctx.fillStyle=`rgba(255,255,255,${(1-k).toFixed(2)})`; circ(ctx,cx+Math.sin(i*2.1+t*2)*17,cy+42-k*92,2); }
+    const name=MAPS[o.to].name; ctx.font='bold 11px system-ui'; ctx.textAlign='center';
+    const tw=ctx.measureText(name).width+14; ctx.fillStyle='rgba(20,30,70,.78)'; rr(ctx,cx-tw/2,cy-76,tw,17,5); ctx.fill();
+    ctx.fillStyle='#cfe6ff'; ctx.fillText('🌀 '+name,cx,cy-63);
+  }
+}
+function drawPortalHint(){
+  if(G.mode!=='game'||!G.p||G.p.dead) return; const o=portalNear(G.p); if(!o) return;
+  const txt = G.touch ? '⬆ Styrspak uppåt eller tryck på portalen' : '⬆ Tryck W/↑ för att gå in';
+  ctx.font='bold 12px system-ui'; ctx.textAlign='center'; const tw=ctx.measureText(txt).width+16;
+  ctx.fillStyle='rgba(40,30,0,.85)'; rr(ctx,G.p.x-tw/2,G.p.y-G.p.h-46,tw,20,6); ctx.fill();
+  ctx.fillStyle='#ffe9a8'; ctx.fillText(txt,G.p.x,G.p.y-G.p.h-32);
+}
 function drawDecoFront(){
   const V=G.view;
   for(const d of DECO.front){
@@ -1306,25 +1666,47 @@ function leg(c,x,y,a,pants,shoe,flare){
 function drawWeapon(c,it,draw,glow){
   const rc=RAR[it.rarity].color, lv=it.req;
   c.lineCap='round';
-  if(it.wtype==='yxa'){
-    c.fillStyle='#8a5a2b'; rr(c,-2,-34,4,46,2); c.fill();
-    c.fillStyle= lv>=5?'#dfe5ec':lv>=2?'#bcc3cb':'#9aa1a8';
-    c.beginPath(); c.moveTo(1,-35); c.quadraticCurveTo(14,-42,17,-30); c.quadraticCurveTo(18,-21,14,-15); c.quadraticCurveTo(8,-21,1,-22); c.closePath(); c.fill();
-    c.strokeStyle=rc; c.lineWidth=1.8; c.beginPath(); c.moveTo(17,-30); c.quadraticCurveTo(18,-21,14,-15); c.stroke();
-    c.fillStyle='#868d95'; c.beginPath(); c.moveTo(-1,-33); c.lineTo(-7,-29); c.lineTo(-1,-25); c.fill();
+  if(it.wtype==='yxa' && lv>=5){
+    c.fillStyle='#6b4423'; rr(c,-2,-40,4,52,2); c.fill();
+    c.fillStyle='#c9a26b'; for(let y=0;y<10;y+=3) c.fillRect(-2.2,y,4.4,1.4);
+    c.fillStyle='#e1e6ec';
+    for(const sg of [1,-1]){ c.beginPath(); c.moveTo(sg*1,-41); c.quadraticCurveTo(sg*15,-48,sg*18,-35); c.quadraticCurveTo(sg*15,-22,sg*1,-28); c.closePath(); c.fill(); }
+    c.strokeStyle=rc; c.lineWidth=1.8; for(const sg of [1,-1]){ c.beginPath(); c.moveTo(sg*15,-44); c.quadraticCurveTo(sg*19,-35,sg*15,-26); c.stroke(); }
+  } else if(it.wtype==='yxa'){
+    c.fillStyle='#a87a48'; rr(c,-2,-30,4,40,2); c.fill();
+    c.fillStyle='#b4bbc3';
+    c.beginPath(); c.moveTo(1,-31); c.quadraticCurveTo(11,-36,13,-27); c.quadraticCurveTo(14,-20,11,-16); c.quadraticCurveTo(6,-20,1,-20); c.closePath(); c.fill();
+    c.strokeStyle=rc; c.lineWidth=1.6; c.beginPath(); c.moveTo(13,-27); c.quadraticCurveTo(14,-20,11,-16); c.stroke();
+  } else if(it.wtype==='bage' && lv>=5){
+    const pull=draw*10;
+    c.strokeStyle='#5e3a1e'; c.lineWidth=3.4; c.beginPath(); c.moveTo(-6,-27); c.quadraticCurveTo(1,-26,0,-21); c.quadraticCurveTo(14,0,0,21); c.quadraticCurveTo(1,26,-6,27); c.stroke();
+    c.fillStyle='#e8c34a'; circ(c,-6,-27,1.8); circ(c,-6,27,1.8);
+    c.fillStyle=rc; c.fillRect(4,-4,4,8);
+    c.strokeStyle='rgba(255,255,255,.9)'; c.lineWidth=1; c.beginPath(); c.moveTo(-6,-27); c.lineTo(-4-pull,0); c.lineTo(-6,27); c.stroke();
+    if(draw>0){ c.strokeStyle='#6b4a2a'; c.lineWidth=2; line(c,-4-pull,0,16,0); c.fillStyle='#ccd'; c.beginPath(); c.moveTo(19,0); c.lineTo(14,-3); c.lineTo(14,3); c.fill(); }
   } else if(it.wtype==='bage'){
     const pull=draw*10;
-    c.strokeStyle= lv>=5?'#7a4a22':'#a06c3a'; c.lineWidth=3.2; c.beginPath(); c.moveTo(-2,-25); c.quadraticCurveTo(13,0,-2,25); c.stroke();
+    c.strokeStyle='#a06c3a'; c.lineWidth=3; c.beginPath(); c.moveTo(-2,-23); c.quadraticCurveTo(12,0,-2,23); c.stroke();
+    c.fillStyle='#6fbf4a'; ell(c,6,-12,3.5,1.8,-0.8);
     c.fillStyle=rc; c.fillRect(3,-4,4,8);
-    c.strokeStyle='rgba(255,255,255,.9)'; c.lineWidth=1; c.beginPath(); c.moveTo(-2,-25); c.lineTo(-3-pull,0); c.lineTo(-2,25); c.stroke();
+    c.strokeStyle='rgba(255,255,255,.9)'; c.lineWidth=1; c.beginPath(); c.moveTo(-2,-23); c.lineTo(-3-pull,0); c.lineTo(-2,23); c.stroke();
     if(draw>0){ c.strokeStyle='#6b4a2a'; c.lineWidth=2; line(c,-3-pull,0,16,0); c.fillStyle='#ccd'; c.beginPath(); c.moveTo(19,0); c.lineTo(14,-3); c.lineTo(14,3); c.fill(); }
+  } else if(it.wtype==='pinne'){
+    c.fillStyle='#9a6a3a'; rr(c,-2,-32,4,42,2); c.fill();
+    c.strokeStyle='#9a6a3a'; c.lineWidth=2.4; line(c,0,-16,7,-22);
+    c.fillStyle='#6fbf4a'; ell(c,9,-24,4.5,2.4,-0.5); c.fillStyle='#5a3a1a'; circ(c,0,-6,1.4);
+  } else if(it.wtype==='stav' && lv>=5){
+    c.fillStyle='#5e3a1e'; rr(c,-2,-42,4,56,2); c.fill();
+    c.strokeStyle='#e8c34a'; c.lineWidth=2.6; c.beginPath(); c.arc(0,-50,9,Math.PI*0.75,Math.PI*2.25); c.stroke();
+    if(glow>0){ c.fillStyle=hexA('#c9a2ff',.35*glow); circ(c,0,-50,15); }
+    const g=c.createRadialGradient(-2,-52,1,0,-50,6); g.addColorStop(0,'#fff'); g.addColorStop(1,'#a06bff'); c.fillStyle=g; circ(c,0,-50,5.5);
+    c.strokeStyle=rc; c.lineWidth=1.4; c.beginPath(); c.arc(0,-50,11,0,Math.PI*2); c.stroke();
   } else if(it.wtype==='stav'){
-    c.fillStyle='#7a5230'; rr(c,-2,-44,4,58,2); c.fill();
-    const oc = lv>=5?'#b98cff':lv>=2?'#7fd6a0':'#9fb7d6';
-    if(glow>0){ c.fillStyle=hexA('#c9a2ff',.35*glow); circ(c,0,-49,14); }
-    const g=c.createRadialGradient(-2,-51,1,0,-49,7); g.addColorStop(0,'#fff'); g.addColorStop(1,oc);
-    c.fillStyle=g; circ(c,0,-49,6.5);
-    c.strokeStyle=rc; c.lineWidth=1.6; c.beginPath(); c.arc(0,-49,7.5,0,Math.PI*2); c.stroke();
+    c.strokeStyle='#8a5a2b'; c.lineWidth=4; c.beginPath(); c.moveTo(0,12); c.quadraticCurveTo(-3,-12,1,-24); c.quadraticCurveTo(4,-34,0,-40); c.stroke();
+    if(glow>0){ c.fillStyle=hexA('#9ef0b0',.35*glow); circ(c,0,-46,13); }
+    c.fillStyle='#7fd6a0'; c.beginPath(); c.moveTo(0,-53); c.lineTo(5,-46); c.lineTo(0,-39); c.lineTo(-5,-46); c.closePath(); c.fill();
+    c.fillStyle='#6fbf4a'; ell(c,4,-30,3.5,1.8,-0.6);
+    c.strokeStyle=rc; c.lineWidth=1.4; c.beginPath(); c.arc(0,-46,8,0,Math.PI*2); c.stroke();
   }
 }
 function drawChar(c,o){
@@ -1422,7 +1804,10 @@ function drawHead(c,cls,L,by,eq){
     c.strokeStyle=L.shirt2; c.lineWidth=5; c.beginPath(); c.arc(hx,hy,15,Math.PI*1.02,Math.PI*1.98); c.stroke();
     c.fillStyle=L.shirt2; c.beginPath(); c.arc(hx-2,hy,15.5,Math.PI*0.55,Math.PI*1.3); c.lineTo(hx-2,hy); c.closePath(); c.fill();
   }
-  if(eq.hjalm){ const it=eq.hjalm; c.fillStyle=it.req>=5?'#8d949e':'#9b6a3e'; c.beginPath(); c.arc(hx,hy-3,15.6,Math.PI,2*Math.PI); c.fill(); c.fillStyle=RAR[it.rarity].color; c.fillRect(hx-16,hy-5,32,3); }
+  if(eq.hjalm){ const it=eq.hjalm;
+    if(it.req>=5){ c.fillStyle='#6f8a4a'; ell(c,hx,hy-19,3,6,0.2); c.fillStyle='#7d6a55'; c.beginPath(); c.arc(hx,hy-3,15.8,Math.PI,2*Math.PI); c.fill(); c.fillStyle='#c3cad3'; c.fillRect(hx-16.5,hy-5,33,3.5); c.fillRect(hx+5,hy-4,3,9); c.fillStyle=RAR[it.rarity].color; c.fillRect(hx-16.5,hy-6,33,1.2); }
+    else { c.fillStyle='#c0563a'; c.beginPath(); c.arc(hx,hy-3,15.4,Math.PI,2*Math.PI); c.fill(); c.fillStyle='#9a3f28'; c.fillRect(hx-15.5,hy-6,31,4); c.fillStyle='#f3e6c8'; circ(c,hx-2,hy-19,3.6); c.fillStyle=RAR[it.rarity].color; c.fillRect(hx-15.5,hy-2.5,31,1); }
+  }
 }
 function drawBack(c,o,L){
   const ph=Math.sin((o.climbT||0)*11);
@@ -1435,52 +1820,143 @@ function drawBack(c,o,L){
   else if(o.cls==='hippie'){ c.fillStyle=L.hair; circ(c,0,-51,14); rr(c,-13,-55,26,28,8); c.fill(); c.fillStyle='#e8453c'; c.fillRect(-14,-60,28,3.5); }
   else { c.fillStyle=L.shirt2; circ(c,0,-51,17); c.beginPath(); c.moveTo(-6,-64); c.lineTo(0,-74); c.lineTo(6,-64); c.fill(); }
 }
-function drawBlabar(m){
+function drawBlabar(c,m){
   const moving=m.state==='walk'&&m.kbT<=0&&m.hurtT<=0;
   const ph=moving?Math.abs(Math.sin(m.t*6.5)):0, hop=ph*13, landK=moving?Math.max(0,1-ph*3):0;
   const sx=1+landK*0.14+(moving?0:Math.sin(m.t*3)*0.025), sy=1-landK*0.12+(moving?ph*0.05:-Math.sin(m.t*3)*0.025);
   const up=m.dead?(0.6-m.dieT)*40:0;
-  ctx.fillStyle='rgba(0,0,0,.18)'; ell(ctx,m.x,m.y,15-ph*4,4);
-  ctx.save(); ctx.translate(m.x,m.y-hop-up); ctx.scale(m.dir*sx,sy);
+  c.fillStyle='rgba(0,0,0,.18)'; ell(c,m.x,m.y,15-ph*4,4);
+  c.save(); c.translate(m.x,m.y-hop-up); c.scale(m.dir*sx,sy);
   const R=17;
-  const g=ctx.createRadialGradient(-6,-R-6,3,0,-R,R+3); g.addColorStop(0,'#acd4ff'); g.addColorStop(.45,'#4f7fe6'); g.addColorStop(1,'#2a49aa');
-  ctx.fillStyle=g; circ(ctx,0,-R,R);
-  ctx.fillStyle='#1f2f6e'; ctx.beginPath(); for(let i=0;i<10;i++){ const a=i*Math.PI/5-Math.PI/2, rr2=i%2?2.2:6; ctx.lineTo(Math.cos(a)*rr2, -2*R+3+Math.sin(a)*rr2); } ctx.closePath(); ctx.fill();
-  ctx.fillStyle='rgba(255,255,255,.55)'; ell(ctx,-7,-R-7,4.5,2.6,-0.5);
-  if(m.hurtT>0 || m.dead){ ctx.strokeStyle='#14193a'; ctx.lineWidth=2; line(ctx,1,-R-5,5,-R-2); line(ctx,1,-R+1,5,-R-2); line(ctx,13,-R-5,9,-R-2); line(ctx,13,-R+1,9,-R-2); ctx.fillStyle='#14193a'; ell(ctx,7,-R+6,2.5,2); }
-  else { ctx.fillStyle='#14193a'; ell(ctx,3,-R-2,2.2,3.3); ell(ctx,11,-R-2,2.2,3.3); ctx.fillStyle='#fff'; circ(ctx,3.6,-R-3.4,1); circ(ctx,11.6,-R-3.4,1);
-    ctx.strokeStyle='#14193a'; ctx.lineWidth=1.6; ctx.beginPath(); ctx.arc(7,-R+4,3.3,.1*Math.PI,.9*Math.PI); ctx.stroke(); }
-  ctx.fillStyle='rgba(255,130,170,.45)'; ell(ctx,-1,-R+3,2.5,1.6); ell(ctx,14,-R+3,2.2,1.5);
-  ctx.restore();
+  const g=c.createRadialGradient(-6,-R-6,3,0,-R,R+3); g.addColorStop(0,'#acd4ff'); g.addColorStop(.45,'#4f7fe6'); g.addColorStop(1,'#2a49aa');
+  c.fillStyle=g; circ(c,0,-R,R);
+  c.fillStyle='#1f2f6e'; c.beginPath(); for(let i=0;i<10;i++){ const a=i*Math.PI/5-Math.PI/2, rr2=i%2?2.2:6; c.lineTo(Math.cos(a)*rr2, -2*R+3+Math.sin(a)*rr2); } c.closePath(); c.fill();
+  c.fillStyle='rgba(255,255,255,.55)'; ell(c,-7,-R-7,4.5,2.6,-0.5);
+  if(m.hurtT>0 || m.dead){ c.strokeStyle='#14193a'; c.lineWidth=2; line(c,1,-R-5,5,-R-2); line(c,1,-R+1,5,-R-2); line(c,13,-R-5,9,-R-2); line(c,13,-R+1,9,-R-2); c.fillStyle='#14193a'; ell(c,7,-R+6,2.5,2); }
+  else { c.fillStyle='#14193a'; ell(c,3,-R-2,2.2,3.3); ell(c,11,-R-2,2.2,3.3); c.fillStyle='#fff'; circ(c,3.6,-R-3.4,1); circ(c,11.6,-R-3.4,1);
+    c.strokeStyle='#14193a'; c.lineWidth=1.6; c.beginPath(); c.arc(7,-R+4,3.3,.1*Math.PI,.9*Math.PI); c.stroke(); }
+  c.fillStyle='rgba(255,130,170,.45)'; ell(c,-1,-R+3,2.5,1.6); ell(c,14,-R+3,2.2,1.5);
+  c.restore();
 }
-function drawMossa(m){
+function drawMossa(c,m){
   const R=21, up=m.dead?(0.6-m.dieT)*40:0;
-  ctx.fillStyle='rgba(0,0,0,.2)'; ell(ctx,m.x,m.y,18,4.5);
-  ctx.save(); ctx.translate(m.x,m.y-R-up);
-  ctx.fillStyle='rgba(62,95,37,.9)'; circ(ctx,0,0,R*0.8);
-  ctx.save(); ctx.rotate(m.rot);
-  ctx.lineCap='round';
-  for(const s of MOSS.arcs){ ctx.strokeStyle=s.c; ctx.lineWidth=s.w; ctx.beginPath(); ctx.arc(0,0,s.r,s.a,s.a+s.l); ctx.stroke(); }
-  for(const [a,b,c] of MOSS.chords){ ctx.strokeStyle=c; ctx.lineWidth=1.4; ctx.beginPath(); ctx.moveTo(Math.cos(a)*R,Math.sin(a)*R); ctx.quadraticCurveTo(0,0,Math.cos(b)*R,Math.sin(b)*R); ctx.stroke(); }
-  ctx.fillStyle='#9bd35a'; ell(ctx,0,-R+1,4,2.2,0.4); ell(ctx,R-3,4,3.5,2,1.2);
-  ctx.restore();
-  ctx.scale(m.dir,1);
+  c.fillStyle='rgba(0,0,0,.2)'; ell(c,m.x,m.y,18,4.5);
+  c.save(); c.translate(m.x,m.y-R-up);
+  c.fillStyle='rgba(62,95,37,.9)'; circ(c,0,0,R*0.8);
+  c.save(); c.rotate(m.rot);
+  c.lineCap='round';
+  for(const s of MOSS.arcs){ c.strokeStyle=s.c; c.lineWidth=s.w; c.beginPath(); c.arc(0,0,s.r,s.a,s.a+s.l); c.stroke(); }
+  for(const [a,b,col] of MOSS.chords){ c.strokeStyle=col; c.lineWidth=1.4; c.beginPath(); c.moveTo(Math.cos(a)*R,Math.sin(a)*R); c.quadraticCurveTo(0,0,Math.cos(b)*R,Math.sin(b)*R); c.stroke(); }
+  c.fillStyle='#9bd35a'; ell(c,0,-R+1,4,2.2,0.4); ell(c,R-3,4,3.5,2,1.2);
+  c.restore();
+  c.scale(m.dir,1);
   const hurt=m.hurtT>0||m.dead;
-  ctx.fillStyle='#f4f0c0'; ell(ctx,4,-3,3.4,hurt?1.4:3.8); ell(ctx,12,-3,3.4,hurt?1.4:3.8);
-  if(!hurt){ ctx.fillStyle='#1b1b10'; circ(ctx,5,-2.5,1.7); circ(ctx,13,-2.5,1.7); }
-  ctx.strokeStyle='#22300f'; ctx.lineWidth=2; line(ctx,0.5,-9,7,-6.5); line(ctx,9.5,-6.5,15.5,-9);
-  ctx.restore();
+  c.fillStyle='#f4f0c0'; ell(c,4,-3,3.4,hurt?1.4:3.8); ell(c,12,-3,3.4,hurt?1.4:3.8);
+  if(!hurt){ c.fillStyle='#1b1b10'; circ(c,5,-2.5,1.7); circ(c,13,-2.5,1.7); }
+  c.strokeStyle='#22300f'; c.lineWidth=2; line(c,0.5,-9,7,-6.5); line(c,9.5,-6.5,15.5,-9);
+  c.restore();
+}
+function drawKatt(c,m){
+  const moving=m.state==='walk'&&m.kbT<=0&&m.hurtT<=0, ph=m.t*11;
+  const up=m.dead?(0.6-m.dieT)*40:0, bob=moving?Math.abs(Math.cos(ph))*1.5:Math.sin(m.t*2.5)*0.6;
+  const fur='#f2a650', dark='#c9762c', light='#ffe6c4', hurt=m.hurtT>0||m.dead;
+  c.fillStyle='rgba(0,0,0,.18)'; ell(c,m.x,m.y,18,4);
+  c.save(); c.translate(m.x,m.y-up); c.scale(m.dir,1);
+  c.lineCap='round';
+  c.strokeStyle=fur; c.lineWidth=5; c.beginPath(); c.moveTo(-14,-17-bob); c.quadraticCurveTo(-29,-20+Math.sin(m.t*4)*4,-24,-37+Math.sin(m.t*4+1)*3); c.stroke();
+  c.strokeStyle=dark; c.lineWidth=5; c.beginPath(); c.moveTo(-25,-33+Math.sin(m.t*4+1)*3); c.lineTo(-24,-37+Math.sin(m.t*4+1)*3); c.stroke();
+  const legK=(lx,o,far)=>{ const a=moving?Math.sin(ph+o)*0.55:0; c.save(); c.translate(lx,-11-bob); c.rotate(-a); c.fillStyle=far?dark:fur; rr(c,-2.6,0,5.2,10.5,2.6); c.fill(); c.fillStyle=light; ell(c,0.6,10.5,3.2,2); c.restore(); };
+  legK(-9,0,true); legK(9,Math.PI,true);
+  c.fillStyle=fur; ell(c,0,-17-bob,17,9.5);
+  c.strokeStyle=dark; c.lineWidth=2.2; for(const x of [-9,-4,1]) line(c,x,-26-bob,x+2,-20-bob);
+  c.fillStyle=light; ell(c,3,-11.5-bob,10,3.8);
+  legK(-6,Math.PI,false); legK(12,0,false);
+  const hx=15, hy=-27-bob;
+  c.fillStyle=fur; c.beginPath(); c.moveTo(hx-9,hy-5); c.lineTo(hx-6,hy-17); c.lineTo(hx-1,hy-8); c.fill(); c.beginPath(); c.moveTo(hx+1,hy-8); c.lineTo(hx+7,hy-17); c.lineTo(hx+9,hy-4); c.fill();
+  c.fillStyle='#ffb3b3'; c.beginPath(); c.moveTo(hx-7,hy-7); c.lineTo(hx-5.5,hy-13); c.lineTo(hx-3,hy-8); c.fill(); c.beginPath(); c.moveTo(hx+3,hy-8); c.lineTo(hx+6.5,hy-13); c.lineTo(hx+7.5,hy-6); c.fill();
+  c.fillStyle=fur; circ(c,hx,hy,10.5);
+  c.strokeStyle=dark; c.lineWidth=1.6; line(c,hx-2,hy-10,hx-1,hy-6); line(c,hx+2,hy-10.5,hx+2,hy-6.5);
+  c.fillStyle=light; ell(c,hx+4,hy+4,6.5,4.4);
+  if(hurt){ c.strokeStyle='#3a2a1a'; c.lineWidth=1.8; line(c,hx-3,hy-3,hx+1,hy-1); line(c,hx-3,hy+1,hx+1,hy-1); line(c,hx+9,hy-3,hx+5,hy-1); line(c,hx+9,hy+1,hx+5,hy-1); }
+  else { c.fillStyle='#4caf50'; ell(c,hx-1,hy-1.5,2.7,3.3); ell(c,hx+7,hy-1.5,2.7,3.3); c.fillStyle='#111'; ell(c,hx-0.6,hy-1.5,1,2.6); ell(c,hx+7.4,hy-1.5,1,2.6); c.fillStyle='#fff'; circ(c,hx-1.6,hy-2.8,.8); circ(c,hx+6.4,hy-2.8,.8); }
+  c.fillStyle='#ff8fa8'; c.beginPath(); c.moveTo(hx+3.2,hy+2); c.lineTo(hx+6.2,hy+2); c.lineTo(hx+4.7,hy+4); c.fill();
+  c.strokeStyle='#5a3a2a'; c.lineWidth=1.1; c.beginPath(); c.arc(hx+3.5,hy+5,1.5,0,Math.PI); c.stroke(); c.beginPath(); c.arc(hx+6.5,hy+5,1.5,0,Math.PI); c.stroke();
+  c.strokeStyle='rgba(255,255,255,.85)'; c.lineWidth=.8; line(c,hx+8,hy+3.5,hx+17,hy+1.5); line(c,hx+8,hy+5,hx+17,hy+6);
+  c.restore();
+}
+function drawHund(c,m){
+  const moving=m.state==='walk'&&m.kbT<=0&&m.hurtT<=0, ph=m.t*12;
+  const up=m.dead?(0.6-m.dieT)*40:0, bob=moving?Math.abs(Math.cos(ph))*2:Math.sin(m.t*3)*0.6;
+  const fur='#8b6b4a', dark='#5a4330', light='#d2b48f', hurt=m.hurtT>0||m.dead;
+  c.fillStyle='rgba(0,0,0,.2)'; ell(c,m.x,m.y,22,4.5);
+  c.save(); c.translate(m.x,m.y-up); c.scale(m.dir,1);
+  c.lineCap='round';
+  c.fillStyle=dark; ell(c,-24,-28-bob+Math.sin(m.t*9)*2,10,4.5,-0.55+Math.sin(m.t*9)*0.15);
+  const legH=(lx,o,far)=>{ const a=moving?Math.sin(ph+o)*0.6:0; c.save(); c.translate(lx,-16-bob); c.rotate(-a); c.fillStyle=far?dark:fur; rr(c,-3,0,6,16,3); c.fill(); c.fillStyle=far?'#3a2a1c':dark; ell(c,1,16,3.8,2.2); c.restore(); };
+  legH(-12,0,true); legH(11,Math.PI,true);
+  c.fillStyle=fur; ell(c,0,-23-bob,21,11);
+  c.fillStyle=dark; ell(c,-3,-29-bob,15,4.5);
+  c.fillStyle=light; ell(c,13,-19-bob,7,7);
+  legH(-8,Math.PI,false); legH(15,0,false);
+  const hx=21, hy=-33-bob;
+  c.fillStyle=dark; c.beginPath(); c.moveTo(hx-6,hy-5); c.lineTo(hx-13,hy-16); c.lineTo(hx-1,hy-9); c.fill();
+  c.beginPath(); c.moveTo(hx-1,hy-8); c.lineTo(hx-2,hy-19); c.lineTo(hx+5,hy-8); c.fill();
+  c.fillStyle=fur; circ(c,hx,hy,10);
+  c.fillStyle=light; ell(c,hx+9,hy+3.5,7.5,4.6);
+  c.fillStyle='#1a1410'; circ(c,hx+15.5,hy+1.6,2.3);
+  if(hurt){ c.strokeStyle='#1a1410'; c.lineWidth=1.8; line(c,hx+1,hy-2,hx+6,hy-1); }
+  else { c.fillStyle='#ffe14a'; ell(c,hx+3.5,hy-2,2.7,2.2); c.fillStyle='#111'; circ(c,hx+4,hy-2,1.2); }
+  c.strokeStyle='#2a1c10'; c.lineWidth=2; line(c,hx-1,hy-7,hx+7,hy-4);
+  c.strokeStyle='#3a2414'; c.lineWidth=1.2; line(c,hx+5,hy+7,hx+14,hy+5.5);
+  c.fillStyle='#fff'; c.beginPath(); c.moveTo(hx+8,hy+6.4); c.lineTo(hx+9.5,hy+9); c.lineTo(hx+10.5,hy+6.1); c.fill(); c.beginPath(); c.moveTo(hx+11.5,hy+5.9); c.lineTo(hx+12.7,hy+8.3); c.lineTo(hx+13.6,hy+5.7); c.fill();
+  c.restore();
+}
+const MOB_DRAW = {blabar:drawBlabar, mossa:drawMossa, kissekatt:drawKatt, vildhund:drawHund};
+const RARE_CV = document.createElement('canvas'), RARE_CX = RARE_CV.getContext('2d');
+function drawRareMonster(m){
+  const k=G.zoom*DPR, BW=220, BH=170, w=Math.ceil(BW*k), h=Math.ceil(BH*k);
+  if(RARE_CV.width!==w || RARE_CV.height!==h){ RARE_CV.width=w; RARE_CV.height=h; }
+  const c=RARE_CX; c.setTransform(1,0,0,1,0,0); c.clearRect(0,0,w,h);
+  c.setTransform(k,0,0,k,0,0); c.translate(BW/2, BH-6); c.scale(2,2);
+  MOB_DRAW[m.type](c, {...m, x:0, y:0, dead:false, d:MOBS[m.type]});
+  c.setTransform(1,0,0,1,0,0); c.globalCompositeOperation='source-atop';
+  const g=c.createLinearGradient(0,0,w,h); g.addColorStop(0,'rgba(245,248,252,.52)'); g.addColorStop(.5,'rgba(176,188,204,.48)'); g.addColorStop(1,'rgba(105,118,138,.55)');
+  c.fillStyle=g; c.fillRect(0,0,w,h);
+  const sx=((G.time*0.6+m.id*0.37)%1.6-0.3)*w;
+  const sg=c.createLinearGradient(sx-40*k,0,sx+40*k,0); sg.addColorStop(0,'rgba(255,255,255,0)'); sg.addColorStop(.5,'rgba(255,255,255,.55)'); sg.addColorStop(1,'rgba(255,255,255,0)');
+  c.fillStyle=sg; c.fillRect(0,0,w,h);
+  c.globalCompositeOperation='source-over';
+  const up=m.dead?(0.6-m.dieT)*40:0;
+  ctx.drawImage(RARE_CV, m.x-BW/2, m.y-BH+6-up, BW, BH);
 }
 function drawMonster(m){
   let a=1; if(m.spawnT>0) a=1-m.spawnT/0.5; if(m.dead) a=Math.max(0,m.dieT/0.6);
   ctx.globalAlpha=a;
-  if(m.type==='blabar') drawBlabar(m); else drawMossa(m);
+  if(m.rare) drawRareMonster(m); else MOB_DRAW[m.type](ctx,m);
   ctx.globalAlpha=1;
-  if(!m.dead && m.showHp>0){
-    const bw=40, x=m.x-bw/2, y=m.y-m.d.h-14;
+  if(!m.dead && (m.showHp>0 || m.rare)){
+    const bw=m.rare?60:40, x=m.x-bw/2, y=m.y-m.d.h-14;
     ctx.fillStyle='rgba(0,0,0,.65)'; ctx.fillRect(x-1,y-1,bw+2,6);
     ctx.fillStyle='#e8433b'; ctx.fillRect(x,y,bw*Math.max(0,m.hp)/m.maxHp,4);
-    ctx.font='bold 10px system-ui'; ctx.textAlign='center'; ctx.lineWidth=3; ctx.strokeStyle='rgba(0,0,0,.7)'; ctx.strokeText(m.d.name,m.x,y-3); ctx.fillStyle='#fff'; ctx.fillText(m.d.name,m.x,y-3);
+    const nm=(m.rare?'✦ ':'')+m.d.name;
+    ctx.font='bold 10px system-ui'; ctx.textAlign='center'; ctx.lineWidth=3; ctx.strokeStyle='rgba(0,0,0,.7)'; ctx.strokeText(nm,m.x,y-3); ctx.fillStyle=m.rare?'#e8eef6':'#fff'; ctx.fillText(nm,m.x,y-3);
+  }
+}
+function drawOthers(){
+  for(const o of Object.values(G.others)){
+    if(!o.seen || (o.map!==undefined && o.map!==G.mapId)) continue;
+    if(o.x<G.view.x1-80 || o.x>G.view.x2+80) continue;
+    if(o.pose!=='jump' && o.pose!=='climb'){ ctx.fillStyle='rgba(0,0,0,.2)'; ell(ctx,o.x,o.y,15,4); }
+    ctx.save(); ctx.translate(o.x,o.y); if(o.pose==='dead') ctx.globalAlpha=0.35;
+    drawChar(ctx,{cls:o.cls, face:o.face, pose:o.pose==='dead'?'stand':o.pose, t:o.t, walkT:o.walkT, climbT:o.climbT, eq:o.eq||{}});
+    ctx.restore(); ctx.globalAlpha=1;
+    if(o.buff && Math.random()<0.2) fxPetal(o);
+    ctx.font='bold 11px system-ui'; ctx.textAlign='center';
+    const tw=ctx.measureText(o.name||'').width+12;
+    ctx.fillStyle='rgba(25,60,120,.8)'; rr(ctx,o.x-tw/2,o.y+5,tw,16,4); ctx.fill();
+    ctx.fillStyle='#dff0ff'; ctx.fillText(o.name||'',o.x,o.y+17);
+    const hpw=36, hk=clamp((o.hp||0)/(o.mhp||1),0,1);
+    ctx.fillStyle='rgba(0,0,0,.6)'; ctx.fillRect(o.x-hpw/2-1,o.y+23,hpw+2,5); ctx.fillStyle='#e8433b'; ctx.fillRect(o.x-hpw/2,o.y+24,hpw*hk,3);
   }
 }
 function drawPlayer(){
@@ -1504,15 +1980,17 @@ function drawDrop(d){
   let a=1; if(d.life<4) a=Math.sin(d.t*18)>0?1:.35; if(d.picking) a=Math.max(0,1-d.pickT/0.22);
   ctx.globalAlpha=a;
   if(d.kind==='gold'){
-    ctx.save(); ctx.translate(d.x,d.y-11+bob); ctx.scale(Math.max(.2,Math.abs(Math.cos(d.t*4))),1);
-    const g=ctx.createRadialGradient(-2,-2,1,0,0,9); g.addColorStop(0,'#fff6b0'); g.addColorStop(.5,'#ffcf2a'); g.addColorStop(1,'#c58a00');
-    ctx.fillStyle=g; circ(ctx,0,0,8.5); ctx.strokeStyle='#8a5c00'; ctx.lineWidth=1.4; ctx.beginPath(); ctx.arc(0,0,5.5,0,7); ctx.stroke();
+    ctx.save(); ctx.translate(d.x,d.y-15+bob); ctx.scale(Math.max(.2,Math.abs(Math.cos(d.t*4))),1);
+    const g=ctx.createRadialGradient(-3,-3,1,0,0,13.5); g.addColorStop(0,'#fff6b0'); g.addColorStop(.5,'#ffcf2a'); g.addColorStop(1,'#c58a00');
+    ctx.fillStyle=g; circ(ctx,0,0,12.75); ctx.strokeStyle='#8a5c00'; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(0,0,8.25,0,7); ctx.stroke();
     ctx.restore();
   } else {
-    const rc=RAR[d.item.rarity].color;
-    if(d.item.rarity!=='common'){ const g=ctx.createLinearGradient(0,d.y-90,0,d.y); g.addColorStop(0,hexA(rc,0)); g.addColorStop(1,hexA(rc,.35)); ctx.fillStyle=g; ctx.fillRect(d.x-7,d.y-90,14,90); }
+    const rc=RAR[d.item.rarity||'common'].color;
+    if(d.item.rarity && d.item.rarity!=='common'){ const g=ctx.createLinearGradient(0,d.y-90,0,d.y); g.addColorStop(0,hexA(rc,0)); g.addColorStop(1,hexA(rc,.35)); ctx.fillStyle=g; ctx.fillRect(d.x-7,d.y-90,14,90); }
     ctx.fillStyle=hexA(rc,.45); ell(ctx,d.x,d.y-1,14,4);
     ctx.save(); ctx.translate(d.x-15,d.y-32+bob); drawIcon(ctx,d.item.base,d.item.rarity,30); ctx.restore();
+    if(isCons(d.item) && d.item.count>1){ ctx.font='bold 10px system-ui'; ctx.textAlign='center'; ctx.lineWidth=3; ctx.strokeStyle='rgba(0,0,0,.75)'; ctx.strokeText('×'+d.item.count,d.x+12,d.y-4+bob); ctx.fillStyle='#fff'; ctx.fillText('×'+d.item.count,d.x+12,d.y-4+bob); }
+    if(!d.picking && !canPick(d, Net.myId)){ ctx.font='bold 10px system-ui'; ctx.textAlign='center'; ctx.lineWidth=3; ctx.strokeStyle='rgba(0,0,0,.7)'; const tx=`🔒 ${Math.ceil(d.ownerT-G.time)}s`; ctx.strokeText(tx,d.x,d.y-36+bob); ctx.fillStyle='#fff'; ctx.fillText(tx,d.x,d.y-36+bob); }
   }
   ctx.globalAlpha=1;
 }
@@ -1576,94 +2054,239 @@ function render(){
   const cx=Math.round(G.cam.x*s)/s, cy=Math.round(G.cam.y*s)/s;
   ctx.setTransform(s,0,0,s,-cx*s,-cy*s);
   G.view={x1:cx,y1:cy,x2:cx+VW/Z,y2:cy+VH/Z};
-  drawDecoBack(); drawTerrain(); drawRopes(); drawDecoFront();
+  drawDecoBack(); drawSign(); drawTerrain(); drawRopes(); drawPortals(); drawDecoFront();
   for(const d of G.drops) drawDrop(d);
   for(const m of G.monsters) if(m.x>G.view.x1-60 && m.x<G.view.x2+60) drawMonster(m);
+  if(G.mode==='game') drawOthers();
   if(G.mode==='game' && G.p) drawPlayer();
   for(const pr of G.projs) drawProj(pr);
   for(const f of G.fx) drawFx(f);
-  drawNums();
+  drawNums(); drawPortalHint();
 }
 
 /* =====================================================================
    IKONER FÖR FÖREMÅL (ritas med kod, cachas som bild)
    ===================================================================== */
+function drawConsIcon(c,id,S){
+  const k=S/64, d=CONS[id]; c.save(); c.scale(k,k); c.lineJoin='round'; c.lineCap='round';
+  const ol='rgba(0,0,0,.55)';
+  if(d.kind==='pot'){
+    const col=d.hp?'#e53935':'#2f7df0', light=d.hp?'#ff8a80':'#8fc2ff';
+    c.fillStyle='rgba(220,235,255,.35)'; circ(c,32,41,17); c.strokeStyle=ol; c.lineWidth=2.5; c.beginPath(); c.arc(32,41,17,0,7); c.stroke();
+    c.fillStyle='rgba(220,235,255,.45)'; rr(c,26,13,12,16,3); c.fill(); c.stroke();
+    c.fillStyle=col; c.beginPath(); c.arc(32,41,14.5,-0.15,Math.PI+0.15); c.closePath(); c.fill();
+    c.fillStyle=light; ell(c,26,36,3.5,6,0.4);
+    c.fillStyle='#8a5a2b'; rr(c,25,8,14,8,2); c.fill(); c.stroke();
+    c.fillStyle='#fff'; c.font='bold 13px system-ui'; c.textAlign='center'; c.fillText(d.hp?'HP':'MP',32,49);
+  } else {
+    const col={str:'#e53935',int:'#2f7df0',agi:'#2fae4a',atk:'#f08a1a'}[d.stat];
+    c.fillStyle='#f3e3bf'; rr(c,14,14,36,36,3); c.fill(); c.strokeStyle=ol; c.lineWidth=2.5; c.stroke();
+    c.fillStyle='#d9c08e'; rr(c,10,9,44,9,4); c.fill(); c.stroke(); rr(c,10,46,44,9,4); c.fill(); c.stroke();
+    c.fillStyle=col; circ(c,32,32,10); c.fillStyle='#fff'; c.font='bold 10px system-ui'; c.textAlign='center';
+    c.fillText(d.stat==='atk'?'ATK':d.stat.toUpperCase(),32,36);
+  }
+  c.restore();
+}
 function drawIcon(c,baseId,rarity,S){
-  const b=BASES[baseId], rc=RAR[rarity].color, k=S/64, hi=b.req>=5, lo=b.req<=1;
+  if(CONS[baseId]) return drawConsIcon(c,baseId,S);
+  rarity=rarity||'common';
+  const b=BASES[baseId], rc=RAR[rarity].color, k=S/64, hi=b.req>=5;
   c.save(); c.scale(k,k); c.lineJoin='round'; c.lineCap='round';
   if(rarity!=='common'){ const g=c.createRadialGradient(32,34,4,32,34,30); g.addColorStop(0,hexA(rc,.45)); g.addColorStop(1,hexA(rc,0)); c.fillStyle=g; c.fillRect(0,0,64,64); }
-  const ol='rgba(0,0,0,.55)'; c.strokeStyle=ol; c.lineWidth=2.5;
-  const leather=hi?'#7b4f2c':'#a8754a', metal=hi?'#c3cad3':'#9aa2ab';
-  const P=(pts)=>{ c.beginPath(); c.moveTo(pts[0][0],pts[0][1]); for(let i=1;i<pts.length;i++) c.lineTo(pts[i][0],pts[i][1]); c.closePath(); c.fill(); c.stroke(); };
+  const ol='rgba(0,0,0,.55)';
+  const S_=()=>{ c.strokeStyle=ol; c.lineWidth=2.5; };
+  const P=(pts)=>{ c.beginPath(); c.moveTo(pts[0][0],pts[0][1]); for(let i=1;i<pts.length;i++) c.lineTo(pts[i][0],pts[i][1]); c.closePath(); c.fill(); S_(); c.stroke(); };
+  const stitch=(x1,y1,x2,y2,col)=>{ c.save(); c.setLineDash([3,3]); c.strokeStyle=col; c.lineWidth=1.3; line(c,x1,y1,x2,y2); c.restore(); };
+  S_();
   switch(b.slot==='vapen'?b.wtype:b.slot){
     case 'hjalm':
-      c.fillStyle=hi?'#8d949e':'#9b6a3e'; c.beginPath(); c.moveTo(12,40); c.quadraticCurveTo(12,13,32,13); c.quadraticCurveTo(52,13,52,40); c.closePath(); c.fill(); c.stroke();
-      c.fillStyle=hi?'#6c727b':'#7a4f2a'; rr(c,8,38,48,8,3); c.fill(); c.stroke();
-      if(hi){ c.fillStyle='#e3e8ee'; for(const x of [20,32,44]) circ(c,x,30,2.2); } else { c.fillStyle='#c9a26b'; c.fillRect(35,21,9,9); }
+      if(!hi){ // Lappad mössa: stickad mössa med tofs och lapp
+        c.fillStyle='#c0563a'; c.beginPath(); c.moveTo(13,42); c.quadraticCurveTo(12,16,32,15); c.quadraticCurveTo(52,16,51,42); c.closePath(); c.fill(); S_(); c.stroke();
+        c.fillStyle='#9a3f28'; rr(c,11,38,42,10,4); c.fill(); S_(); c.stroke();
+        c.strokeStyle='rgba(0,0,0,.25)'; c.lineWidth=1.5; for(let x=16;x<52;x+=5) line(c,x,40,x,46);
+        c.fillStyle='#e0bf72'; c.fillRect(35,22,10,10); stitch(35,22,45,22,'#7a5a2a'); stitch(35,32,45,32,'#7a5a2a');
+        c.fillStyle='#f3e6c8'; circ(c,32,13,6.5); S_(); c.beginPath(); c.arc(32,13,6.5,0,7); c.stroke();
+      } else { // Ekbarkshjälm: hjälm med nässkydd och lövkam
+        c.fillStyle='#6f8a4a'; ell(c,32,10,5,9,0.25); S_(); c.beginPath(); c.ellipse(32,10,5,9,0.25,0,7); c.stroke();
+        const g=c.createLinearGradient(0,14,0,42); g.addColorStop(0,'#9b8a72'); g.addColorStop(1,'#5f4d3a');
+        c.fillStyle=g; c.beginPath(); c.moveTo(11,41); c.quadraticCurveTo(10,15,32,15); c.quadraticCurveTo(54,15,53,41); c.closePath(); c.fill(); S_(); c.stroke();
+        c.strokeStyle='rgba(40,25,10,.45)'; c.lineWidth=1.4; for(const x of [20,27,37,44]) line(c,x,20,x+1,38);
+        c.fillStyle='#c3cad3'; rr(c,8,37,48,7,3); c.fill(); S_(); c.stroke();
+        c.fillStyle='#c3cad3'; rr(c,29,38,6,17,2); c.fill(); S_(); c.stroke();
+        c.fillStyle='#eef2f6'; for(const x of [14,22,42,50]) circ(c,x,40.5,1.6);
+      }
       break;
     case 'halsband':
-      c.strokeStyle='#d6b04a'; c.lineWidth=3; c.beginPath(); c.arc(32,16,17,.12*Math.PI,.88*Math.PI); c.stroke();
-      if(hi){ c.fillStyle='#ff9f1c'; ell(c,32,42,7,9); c.strokeStyle=ol; c.lineWidth=2; c.stroke(); c.fillStyle='rgba(255,255,255,.6)'; ell(c,30,39,2,3); }
-      else { c.fillStyle='#ffd9c9'; c.beginPath(); c.moveTo(32,48); c.arc(32,44,11,Math.PI*1.12,Math.PI*1.88); c.closePath(); c.fill(); c.strokeStyle=ol; c.lineWidth=2; c.stroke(); c.strokeStyle='#d99a8a'; c.lineWidth=1.2; for(const a of [-.5,-.17,.17,.5]) line(c,32,46,32+Math.sin(a)*10,46-Math.cos(a)*10); }
+      if(!hi){ // Snäckhalsband: tunn snodd med snäcka
+        c.strokeStyle='#8a5a2b'; c.lineWidth=2; c.beginPath(); c.arc(32,14,18,.12*Math.PI,.88*Math.PI); c.stroke();
+        c.fillStyle='#ffd9c9'; c.beginPath(); c.moveTo(32,50); c.arc(32,45,12,Math.PI*1.12,Math.PI*1.88); c.closePath(); c.fill(); S_(); c.stroke();
+        c.strokeStyle='#d99a8a'; c.lineWidth=1.2; for(const a of [-.55,-.2,.2,.55]) line(c,32,48,32+Math.sin(a)*11,48-Math.cos(a)*11);
+      } else { // Bärnstenshalsband: guldkedja med pärlor och bärnsten
+        for(let i=0;i<=12;i++){ const a=(.12+.76*i/12)*Math.PI; c.fillStyle=i%3===0?'#ffb347':'#e8c34a'; circ(c,32+Math.cos(a)*18,14+Math.sin(a)*18,i%3===0?2.6:1.9); }
+        c.fillStyle='#e8c34a'; rr(c,28,32,8,5,2); c.fill();
+        const g=c.createRadialGradient(30,40,1,32,44,10); g.addColorStop(0,'#ffe0a0'); g.addColorStop(1,'#d9780a');
+        c.fillStyle=g; c.beginPath(); c.moveTo(32,36); c.quadraticCurveTo(43,48,32,56); c.quadraticCurveTo(21,48,32,36); c.fill(); S_(); c.stroke();
+        c.fillStyle='rgba(255,255,255,.7)'; ell(c,29,45,1.8,3.2);
+      }
       break;
     case 'axel':
-      c.fillStyle=hi?'#8d949e':leather; ell(c,19,32,13,10); c.stroke(); ell(c,45,32,13,10); c.stroke();
-      c.fillStyle=hi?'#e3e8ee':'#5a3720'; circ(c,19,30,2.2); circ(c,45,30,2.2);
+      if(!hi){ // Läderaxlar: mjuka läderkuddar med söm
+        c.fillStyle='#b98656'; for(const x of [19,45]){ ell(c,x,33,12,9); S_(); c.beginPath(); c.ellipse(x,33,12,9,0,0,7); c.stroke(); c.save(); c.setLineDash([2.5,2.5]); c.strokeStyle='#6a4524'; c.lineWidth=1.2; c.beginPath(); c.ellipse(x,33,8,5.5,0,0,7); c.stroke(); c.restore(); }
+      } else { // Ekaxlar: lagrade plattor med pigg
+        for(const x of [19,45]){
+          c.fillStyle='#6b5038'; ell(c,x,38,13,8); S_(); c.beginPath(); c.ellipse(x,38,13,8,0,0,7); c.stroke();
+          c.fillStyle='#9aa3ad'; ell(c,x,30,12,8); S_(); c.beginPath(); c.ellipse(x,30,12,8,0,0,7); c.stroke();
+          c.fillStyle='#dfe5ec'; c.beginPath(); c.moveTo(x-3,24); c.lineTo(x,14); c.lineTo(x+3,24); c.closePath(); c.fill(); S_(); c.stroke();
+        }
+      }
       break;
     case 'mantel':
-      c.fillStyle=hi?'#3f7a3a':'#b08a5a'; c.beginPath(); c.moveTo(22,12); c.lineTo(42,12); c.quadraticCurveTo(54,40,50,55); c.quadraticCurveTo(32,59,14,55); c.quadraticCurveTo(10,40,22,12); c.closePath(); c.fill(); c.stroke();
-      c.fillStyle=hi?'#7fb04a':'#d4c08a'; rr(c,20,9,24,7,3); c.fill(); c.stroke();
+      if(!hi){ // Säckvävsmantel: kort, trasig kant, snöre
+        c.fillStyle='#b9956a'; c.beginPath(); c.moveTo(22,12); c.lineTo(42,12); c.lineTo(50,44);
+        for(let x=50;x>14;x-=6) c.lineTo(x-3,x%12?48:43); c.lineTo(14,44); c.closePath(); c.fill(); S_(); c.stroke();
+        c.fillStyle='#8f6e46'; c.fillRect(24,26,9,9); stitch(24,26,33,26,'#5a4020');
+        c.strokeStyle='#e8d6a8'; c.lineWidth=2; line(c,24,13,28,20); line(c,40,13,36,20);
+      } else { // Mossmantel: lång, lövkant, guldspänne
+        const g=c.createLinearGradient(0,10,0,58); g.addColorStop(0,'#4f8f45'); g.addColorStop(1,'#2f6a32');
+        c.fillStyle=g; c.beginPath(); c.moveTo(22,11); c.lineTo(42,11); c.quadraticCurveTo(56,36,52,52);
+        for(let x=52;x>12;x-=8){ c.quadraticCurveTo(x-4,60,x-8,52); } c.quadraticCurveTo(8,36,22,11); c.closePath(); c.fill(); S_(); c.stroke();
+        c.fillStyle='#a7d36a'; for(const [x,y] of [[24,30],[38,36],[30,44],[42,24]]) circ(c,x,y,2.2);
+        c.fillStyle='#e8c34a'; circ(c,32,13,5); S_(); c.beginPath(); c.arc(32,13,5,0,7); c.stroke();
+      }
       break;
     case 'brost':
-      c.fillStyle=hi?'#7a5a3a':'#e6dcc3'; P([[20,12],[26,16],[38,16],[44,12],[55,22],[48,31],[46,55],[18,55],[16,31],[9,22]]);
-      if(hi){ c.fillStyle='#d8dde3'; for(const [x,y] of [[24,26],[40,26],[24,40],[40,40],[32,48]]) circ(c,x,y,2.2); }
-      else { c.strokeStyle='#b8a888'; c.lineWidth=1.5; line(c,32,17,32,52); }
+      if(!hi){ // Linnetunika: ljus med snörning
+        c.fillStyle='#ece2c8'; P([[20,12],[26,15],[38,15],[44,12],[54,22],[47,29],[46,55],[18,55],[17,29],[10,22]]);
+        c.fillStyle='#d6c7a2'; c.beginPath(); c.moveTo(26,15); c.lineTo(32,30); c.lineTo(38,15); c.closePath(); c.fill();
+        c.strokeStyle='#8a5a2b'; c.lineWidth=1.4; for(let y=18;y<29;y+=4){ line(c,28,y,36,y+3); line(c,36,y,28,y+3); }
+      } else { // Nitläderpansar: mörkt läder, nitar, rem
+        c.fillStyle='#6a4a30'; P([[18,11],[26,15],[38,15],[46,11],[54,20],[48,28],[47,55],[17,55],[16,28],[10,20]]);
+        c.strokeStyle='#3a2414'; c.lineWidth=4; line(c,20,13,42,52);
+        c.fillStyle='#d8dde3'; for(const [x,y] of [[24,24],[32,24],[40,24],[24,34],[40,34],[24,44],[32,44],[40,44]]) circ(c,x,y,2);
+        c.fillStyle='#e0c050'; rr(c,30,47,6,5,1); c.fill();
+      }
       break;
     case 'handskar':
-      c.fillStyle=leather; for(const [x,y,h] of [[19,13,15],[25,10,18],[31,10,18],[37,13,15]]){ rr(c,x,y,5.5,h,2.5); c.fill(); c.stroke(); }
-      rr(c,18,24,25,24,5); c.fill(); c.stroke();
-      c.save(); c.translate(44,32); c.rotate(-.5); rr(c,-3,-4,13,8,3); c.fill(); c.stroke(); c.restore();
-      c.fillStyle=hi?'#4a3020':'#7a5230'; rr(c,16,45,29,9,3); c.fill(); c.stroke();
+      if(!hi){ // Arbetshandskar: tumvante med lapp
+        c.fillStyle='#d8c39a'; c.beginPath(); c.moveTo(18,46); c.lineTo(18,22); c.quadraticCurveTo(18,9,30,9); c.quadraticCurveTo(42,9,42,22); c.lineTo(42,46); c.closePath(); c.fill(); S_(); c.stroke();
+        c.save(); c.translate(44,32); c.rotate(-.6); rr(c,-4,-5,14,10,5); c.fill(); S_(); c.stroke(); c.restore();
+        c.fillStyle='#a48a5a'; rr(c,16,44,28,9,3); c.fill(); S_(); c.stroke();
+        c.fillStyle='#8fae6a'; c.fillRect(24,22,10,10);
+      } else { // Jägarhandskar: fingrar, utsvängd manschett med nitar
+        c.fillStyle='#7b4f2c';
+        for(const [x,y,h] of [[19,11,16],[25,8,19],[31,8,19],[37,11,16]]){ rr(c,x,y,5.5,h,2.5); c.fill(); S_(); c.stroke(); }
+        rr(c,18,23,25,20,5); c.fill(); S_(); c.stroke();
+        c.save(); c.translate(44,30); c.rotate(-.5); rr(c,-3,-4,12,8,3); c.fill(); S_(); c.stroke(); c.restore();
+        c.fillStyle='#4a2f1a'; P([[16,42],[45,42],[50,56],[11,56]]);
+        c.fillStyle='#e0c050'; for(const x of [18,26,34,42]) circ(c,x,49,1.8);
+      }
       break;
     case 'balte':
-      c.fillStyle=hi?'#5a3a20':'#c2a172'; rr(c,5,26,54,12,3); c.fill(); c.stroke();
-      c.strokeStyle=hi?'#e0c050':'#9a8a6a'; c.lineWidth=3.2; c.strokeRect(25,23,13,18); line(c,31,32,40,32);
+      if(!hi){ // Repbälte: tvinnat rep med knut
+        c.fillStyle='#d2b47a'; rr(c,5,27,54,10,5); c.fill(); S_(); c.stroke();
+        c.strokeStyle='#9a7a44'; c.lineWidth=1.6; for(let x=8;x<58;x+=5) line(c,x,28,x+4,36);
+        c.fillStyle='#c2a46a'; circ(c,32,32,6); S_(); c.beginPath(); c.arc(32,32,6,0,7); c.stroke();
+        c.strokeStyle='#c2a46a'; c.lineWidth=4; line(c,30,37,26,52); line(c,34,37,38,50);
+      } else { // Spännbälte: brett läder, stort spänne, pung
+        c.fillStyle='#4a3020'; rr(c,4,25,56,14,3); c.fill(); S_(); c.stroke();
+        c.fillStyle='#8a6038'; rr(c,40,36,13,14,4); c.fill(); S_(); c.stroke();
+        c.strokeStyle='#e0c050'; c.lineWidth=3.5; c.strokeRect(23,21,18,22); c.fillStyle='#e0c050'; c.fillRect(31,27,3,10);
+      }
       break;
     case 'byxor':
-      c.fillStyle=hi?'#5a6e8a':'#8a6a4a'; P([[18,10],[46,10],[49,55],[36,55],[32,27],[28,55],[15,55]]);
-      c.strokeStyle=hi?'#3a4a60':'#6a4a2a'; c.lineWidth=2; line(c,18,16,46,16);
+      if(!hi){ // Lappade byxor: korta, lappar
+        c.fillStyle='#9a6e45'; P([[17,10],[47,10],[49,44],[36,44],[32,24],[28,44],[15,44]]);
+        c.fillStyle='#5f8fbf'; c.fillRect(19,28,8,8); c.fillStyle='#c25a4a'; c.fillRect(38,20,7,7);
+        c.strokeStyle='#6a4524'; c.lineWidth=2; line(c,17,15,47,15);
+      } else { // Ridbyxor: långa, knäskydd, sömmar
+        c.fillStyle='#4d5f7a'; P([[17,8],[47,8],[50,57],[37,57],[32,24],[27,57],[14,57]]);
+        c.fillStyle='#7b4f2c'; ell(c,22,40,5,6); ell(c,42,40,5,6);
+        stitch(20,14,18,54,'#a8b8d0'); stitch(44,14,46,54,'#a8b8d0');
+        c.strokeStyle='#2c3a50'; c.lineWidth=2; line(c,17,13,47,13);
+      }
       break;
     case 'skor':
-      c.fillStyle=hi?'#6b4a2a':'#c89a5a'; c.beginPath(); c.moveTo(20,10); c.lineTo(36,10); c.lineTo(36,35); c.quadraticCurveTo(53,37,55,46); c.lineTo(55,53); c.lineTo(18,53); c.closePath(); c.fill(); c.stroke();
-      c.fillStyle=hi?'#3a2614':'#8a6234'; c.fillRect(18,49,37,5);
+      if(!hi){ // Träskor: rundad träsko med ådring
+        c.fillStyle='#d2a466'; c.beginPath(); c.moveTo(14,50); c.lineTo(14,34); c.quadraticCurveTo(16,24,30,26); c.quadraticCurveTo(54,28,56,44); c.lineTo(56,50); c.closePath(); c.fill(); S_(); c.stroke();
+        c.strokeStyle='rgba(120,80,40,.6)'; c.lineWidth=1.3; c.beginPath(); c.moveTo(20,36); c.quadraticCurveTo(34,32,50,40); c.stroke(); c.beginPath(); c.moveTo(18,44); c.quadraticCurveTo(34,40,54,46); c.stroke();
+        c.fillStyle='#2a1c10'; ell(c,26,31,7,3);
+      } else { // Vandrarkängor: hög känga med snörning
+        c.fillStyle='#6b4a2a'; c.beginPath(); c.moveTo(19,8); c.lineTo(37,8); c.lineTo(37,34); c.quadraticCurveTo(54,36,56,46); c.lineTo(56,52); c.lineTo(17,52); c.closePath(); c.fill(); S_(); c.stroke();
+        c.fillStyle='#8a6a4a'; rr(c,17,6,22,7,2); c.fill(); S_(); c.stroke();
+        c.strokeStyle='#e8d6a8'; c.lineWidth=1.4; for(let y=16;y<34;y+=5){ line(c,25,y,33,y+4); line(c,33,y,25,y+4); }
+        c.fillStyle='#2a1c10'; c.fillRect(17,50,40,5);
+      }
       break;
     case 'ring':
-      c.strokeStyle='rgba(0,0,0,.5)'; c.lineWidth=9; c.beginPath(); c.arc(32,38,13,0,7); c.stroke();
-      c.strokeStyle=hi?'#d5dbe2':'#c27b3e'; c.lineWidth=5.5; c.beginPath(); c.arc(32,38,13,0,7); c.stroke();
-      c.fillStyle=rarity==='common'?'#9ad3e0':rc; circ(c,32,23,7); c.strokeStyle=ol; c.lineWidth=2; c.stroke(); c.fillStyle='rgba(255,255,255,.7)'; circ(c,30,21,2);
+      if(!hi){ // Kopparring: slät koppar, ingraverad
+        c.strokeStyle='rgba(0,0,0,.5)'; c.lineWidth=9; c.beginPath(); c.arc(32,36,14,0,7); c.stroke();
+        c.strokeStyle='#c27b3e'; c.lineWidth=5.5; c.beginPath(); c.arc(32,36,14,0,7); c.stroke();
+        c.strokeStyle='#ffb27a'; c.lineWidth=1.4; c.beginPath(); c.arc(32,36,14,-2.4,-1.2); c.stroke();
+        c.strokeStyle='#7a4a20'; c.lineWidth=1.4; line(c,30,21,34,23);
+      } else { // Silverring: stor slipad sten i klor
+        c.strokeStyle='rgba(0,0,0,.5)'; c.lineWidth=9; c.beginPath(); c.arc(32,40,13,0,7); c.stroke();
+        c.strokeStyle='#d5dbe2'; c.lineWidth=5.5; c.beginPath(); c.arc(32,40,13,0,7); c.stroke();
+        c.fillStyle='#d5dbe2'; for(const dx of [-8,8]) { c.beginPath(); c.moveTo(32+dx*0.6,28); c.lineTo(32+dx,18); c.lineTo(32+dx*0.3,22); c.fill(); }
+        c.fillStyle=rarity==='common'?'#5ad1e6':rc; c.beginPath(); c.moveTo(32,10); c.lineTo(42,19); c.lineTo(32,29); c.lineTo(22,19); c.closePath(); c.fill(); S_(); c.stroke();
+        c.fillStyle='rgba(255,255,255,.75)'; c.beginPath(); c.moveTo(32,12); c.lineTo(37,18); c.lineTo(32,18); c.fill();
+      }
       break;
     case 'yxa':
-      c.strokeStyle='#3a2410'; c.lineWidth=7; line(c,16,55,42,14); c.strokeStyle='#8a5a2b'; c.lineWidth=4.5; line(c,16,55,42,14);
-      c.save(); c.translate(40,18); c.rotate(.57); c.fillStyle=hi?'#dfe5ec':lo?'#9aa1a8':'#bcc3cb';
-      c.beginPath(); c.moveTo(0,-4); c.quadraticCurveTo(16,-12,19,2); c.quadraticCurveTo(20,12,15,18); c.quadraticCurveTo(8,10,0,10); c.closePath(); c.fill(); c.stroke();
-      c.strokeStyle=rc; c.lineWidth=2.2; c.beginPath(); c.moveTo(19,2); c.quadraticCurveTo(20,12,15,18); c.stroke(); c.restore();
+      if(!hi){ // Vedyxa: kort skaft, litet enkelblad
+        c.strokeStyle='#3a2410'; c.lineWidth=7; line(c,20,54,40,22); c.strokeStyle='#a87a48'; c.lineWidth=4.5; line(c,20,54,40,22);
+        c.save(); c.translate(39,24); c.rotate(.57); c.fillStyle='#b4bbc3';
+        c.beginPath(); c.moveTo(0,-3); c.quadraticCurveTo(11,-8,13,1); c.quadraticCurveTo(14,8,10,12); c.quadraticCurveTo(5,7,0,7); c.closePath(); c.fill(); S_(); c.stroke();
+        c.strokeStyle=rc; c.lineWidth=2; c.beginPath(); c.moveTo(13,1); c.quadraticCurveTo(14,8,10,12); c.stroke(); c.restore();
+      } else { // Skogsyxa: långt lindat skaft, stort dubbelblad
+        c.strokeStyle='#3a2410'; c.lineWidth=7; line(c,14,58,44,10); c.strokeStyle='#6b4423'; c.lineWidth=4.5; line(c,14,58,44,10);
+        c.strokeStyle='#c9a26b'; c.lineWidth=2; for(let t=0;t<4;t++){ const x=18+t*3.2, y=52-t*5; line(c,x-2,y-1,x+2,y+1); }
+        c.save(); c.translate(41,15); c.rotate(.56); c.fillStyle='#e1e6ec';
+        for(const sgn of [1,-1]){ c.beginPath(); c.moveTo(0,-5); c.quadraticCurveTo(sgn*15,-14,sgn*19,0); c.quadraticCurveTo(sgn*15,14,0,5); c.closePath(); c.fill(); S_(); c.stroke(); }
+        c.strokeStyle=rc; c.lineWidth=2.4; for(const sgn of [1,-1]){ c.beginPath(); c.moveTo(sgn*16,-9); c.quadraticCurveTo(sgn*20,0,sgn*16,9); c.stroke(); }
+        c.fillStyle='#8a929c'; circ(c,0,0,3.5); c.restore();
+      }
       break;
     case 'bage':
-      c.strokeStyle='#3a2410'; c.lineWidth=7; c.beginPath(); c.moveTo(18,8); c.quadraticCurveTo(60,32,18,56); c.stroke();
-      c.strokeStyle=hi?'#7a4a22':'#a06c3a'; c.lineWidth=4.5; c.beginPath(); c.moveTo(18,8); c.quadraticCurveTo(60,32,18,56); c.stroke();
-      c.strokeStyle='#eee'; c.lineWidth=1.3; line(c,18,8,18,56);
-      c.fillStyle=rc; c.fillRect(35,27,6,10);
+      if(!hi){ // Kvistbåge: enkel kvist med löv
+        c.strokeStyle='#3a2410'; c.lineWidth=6.5; c.beginPath(); c.moveTo(20,8); c.quadraticCurveTo(54,32,20,56); c.stroke();
+        c.strokeStyle='#a87a48'; c.lineWidth=4; c.beginPath(); c.moveTo(20,8); c.quadraticCurveTo(54,32,20,56); c.stroke();
+        c.strokeStyle='#eee'; c.lineWidth=1.2; line(c,20,8,20,56);
+        c.fillStyle='#6fbf4a'; ell(c,42,20,5,2.6,-0.8); ell(c,40,46,4,2.2,0.8);
+      } else { // Almbåge: recurve, mörkt trä, lindat grepp, guldspetsar
+        c.strokeStyle='#3a2410'; c.lineWidth=7; c.beginPath(); c.moveTo(14,6); c.quadraticCurveTo(26,10,24,16); c.quadraticCurveTo(52,32,24,48); c.quadraticCurveTo(26,54,14,58); c.stroke();
+        c.strokeStyle='#5e3a1e'; c.lineWidth=4.5; c.beginPath(); c.moveTo(14,6); c.quadraticCurveTo(26,10,24,16); c.quadraticCurveTo(52,32,24,48); c.quadraticCurveTo(26,54,14,58); c.stroke();
+        c.strokeStyle='#eee'; c.lineWidth=1.2; line(c,15,7,15,57);
+        c.fillStyle=rc==='#b9bec7'?'#c9a26b':rc; c.fillRect(35,26,7,12);
+        c.fillStyle='#e8c34a'; circ(c,14,6,2.6); circ(c,14,58,2.6);
+      }
       break;
     case 'stav':
-      c.strokeStyle='#3a2410'; c.lineWidth=7; line(c,16,57,42,16); c.strokeStyle='#7a5230'; c.lineWidth=4.5; line(c,16,57,42,16);
-      { const oc=hi?'#b98cff':lo?'#9fb7d6':'#7fd6a0'; const g=c.createRadialGradient(43,11,1,45,13,9); g.addColorStop(0,'#fff'); g.addColorStop(1,oc); c.fillStyle=g; circ(c,45,13,8); c.strokeStyle=rc; c.lineWidth=2.2; c.beginPath(); c.arc(45,13,9.5,0,7); c.stroke(); }
+      if(!hi){ // Pinnstav: knotig kvist, grön kristall med snöre
+        c.strokeStyle='#3a2410'; c.lineWidth=7; c.beginPath(); c.moveTo(18,58); c.quadraticCurveTo(26,40,30,34); c.quadraticCurveTo(34,26,40,18); c.stroke();
+        c.strokeStyle='#8a5a2b'; c.lineWidth=4.5; c.beginPath(); c.moveTo(18,58); c.quadraticCurveTo(26,40,30,34); c.quadraticCurveTo(34,26,40,18); c.stroke();
+        c.fillStyle='#7fd6a0'; c.beginPath(); c.moveTo(43,6); c.lineTo(49,14); c.lineTo(43,22); c.lineTo(37,14); c.closePath(); c.fill(); S_(); c.stroke();
+        c.strokeStyle='#d8c08a'; c.lineWidth=1.6; line(c,38,18,46,20);
+        c.fillStyle='#6fbf4a'; ell(c,33,27,4,2,-0.6);
+        c.strokeStyle=rc; c.lineWidth=1.6; c.beginPath(); c.arc(43,14,9,0,7); c.stroke();
+      } else { // Viskstav: rak stav, halvmåne med lila klot
+        c.strokeStyle='#3a2410'; c.lineWidth=7; line(c,16,58,40,22); c.strokeStyle='#5e3a1e'; c.lineWidth=4.5; line(c,16,58,40,22);
+        c.strokeStyle='#e8c34a'; c.lineWidth=3.5; c.beginPath(); c.arc(44,15,11,Math.PI*0.75,Math.PI*2.25); c.stroke();
+        const g=c.createRadialGradient(42,13,1,44,15,7); g.addColorStop(0,'#fff'); g.addColorStop(1,'#a06bff'); c.fillStyle=g; circ(c,44,15,6.5);
+        c.strokeStyle=rc; c.lineWidth=1.8; c.beginPath(); c.arc(44,15,14,0,7); c.stroke();
+        c.fillStyle='#e8dcff'; circ(c,54,6,1.5); circ(c,34,6,1.2);
+      }
+      break;
+    case 'pinne':
+      c.strokeStyle='#3a2410'; c.lineWidth=7; line(c,16,54,46,12); c.strokeStyle='#9a6a3a'; c.lineWidth=4.5; line(c,16,54,46,12);
+      c.strokeStyle='#9a6a3a'; c.lineWidth=3; line(c,32,32,42,30);
+      c.fillStyle='#6fbf4a'; ell(c,45,28,6,3,-0.4); c.fillStyle='#5a3a1a'; circ(c,26,40,1.8);
       break;
   }
   c.restore();
 }
 const ICONS = {};
 function iconURL(it){
-  const key=it.base+'|'+it.rarity;
+  const key=it.base+'|'+(it.rarity||'common');
   if(!ICONS[key]){ const cc=document.createElement('canvas'); cc.width=cc.height=64; drawIcon(cc.getContext('2d'),it.base,it.rarity,64); ICONS[key]=cc.toDataURL(); }
   return ICONS[key];
 }
@@ -1688,11 +2311,17 @@ function updateHud(){
     const id=ch.hotbar[+el.dataset.i]; paintCd(el,id);
   }
   for(const el of $$('#tSkills .tbtn')) paintCd(el, el.dataset.sk);
+  renderTouchPots();
+  renderPartyHud();
+  renderQuestLog();
   drawMinimap();
 }
 function paintCd(el,id){
   const cdEl=el.querySelector('.cd'), cdt=el.querySelector('.cdt');
-  if(!id){ cdEl.style.background=''; if(cdt) cdt.textContent=''; el.classList.remove('nomana'); return; }
+  const cnt=el.querySelector('.cnt');
+  if(!id){ cdEl.style.background=''; if(cdt) cdt.textContent=''; if(cnt) cnt.textContent=''; el.classList.remove('nomana'); return; }
+  if(CONS[id]){ const n=consCount(id); cdEl.style.background=''; if(cdt) cdt.textContent=''; if(cnt) cnt.textContent=n; el.classList.toggle('nomana', n===0); return; }
+  if(cnt) cnt.textContent='';
   const p=G.p; let rem=0, max=1;
   if(id!=='attack'){ rem=p.cds[id]||0; max=(p.cdMax&&p.cdMax[id])||ABIL[id].cd(rank(id)||1)||1; }
   cdEl.style.background = rem>0 ? `conic-gradient(rgba(0,0,0,.65) ${rem/max*360}deg, transparent 0)` : '';
@@ -1702,7 +2331,7 @@ function paintCd(el,id){
 }
 function buildHotbar(){
   const ch=G.ch;
-  $('#hotbar').innerHTML = ch.hotbar.map((id,i)=>`<div class="hs ${G.assigning?'assign':''}" data-i="${i}" title="${id?esc(abilName(id)):'Tom plats'}"><span class="k">${i+1}</span><span class="ic">${id?abilIcon(id):''}</span><i class="cd"></i><span class="cdt"></span></div>`).join('');
+  $('#hotbar').innerHTML = ch.hotbar.map((id,i)=>`<div class="hs ${G.assigning?'assign':''}" data-i="${i}" title="${id?esc(abilName(id)):'Tom plats'}"><span class="k">${i+1}</span><span class="ic">${id?abilIcon(id):''}</span><i class="cd"></i><span class="cdt"></span><span class="cnt"></span></div>`).join('');
 }
 $('#hotbar').addEventListener('click', e=>{
   const el=e.target.closest('.hs'); if(!el) return; const i=+el.dataset.i;
@@ -1720,6 +2349,14 @@ function renderTouchSkills(){
   $('#tSkills').innerHTML = list.map((t,i)=>`<button class="tbtn sk sk${i}" data-sk="${t.id}"><span>${t.icon}</span><i class="cd"></i><span class="cdt"></span></button>`).join('');
   for(const el of $$('#tSkills .tbtn')){ const id=el.dataset.sk; holdBtn(el, ()=>{ Touch.skills[id]=true; useAbility(id); }, ()=>{ Touch.skills[id]=false; }); }
 }
+let potsKey='';
+function renderTouchPots(){
+  if(!G.touch || !G.ch) return;
+  const ids=['hpPot','mpPot'].filter(id=>consCount(id)>0), key=ids.map(id=>id+consCount(id)).join(',');
+  if(key===potsKey) return; potsKey=key;
+  $('#tPots').innerHTML=ids.map((id,i)=>`<button class="tbtn pot pot${i}" data-pot="${id}"><img src="${iconURL({base:id})}" alt=""><span class="cnt">${consCount(id)}</span></button>`).join('');
+}
+$('#tPots').addEventListener('pointerdown',e=>{ const b=e.target.closest('[data-pot]'); if(!b) return; e.preventDefault(); usePot(b.dataset.pot); });
 function updateTalDot(){ if(!G.ch) return; $('#talDot').classList.toggle('hidden', !(charAvail()>0 || acctAvail()>0)); }
 const mmc=$('#minimap').getContext('2d');
 function drawMinimap(){
@@ -1730,6 +2367,8 @@ function drawMinimap(){
   for(const p of PLATS){ mmc.strokeStyle=p.solid?'#8be06a':'#cfe9b8'; mmc.beginPath(); mmc.moveTo(p.x1*sx,(p.y-y0)*sy); mmc.lineTo(p.x2*sx,(p.y-y0)*sy); mmc.stroke(); }
   mmc.strokeStyle='#d8b07a'; mmc.lineWidth=Math.max(1,DPR);
   for(const r of ROPES){ mmc.beginPath(); mmc.moveTo(r.x*sx,(r.top-y0)*sy); mmc.lineTo(r.x*sx,(r.bottom-y0)*sy); mmc.stroke(); }
+  mmc.fillStyle='#b48cff'; for(const o of curMap().portals){ mmc.beginPath(); mmc.arc(o.x*sx,(o.y-14-y0)*sy,3*DPR,0,7); mmc.fill(); }
+  mmc.fillStyle='#7fd0ff'; for(const o of Object.values(G.others)){ if(!o.seen||(o.map!==undefined&&o.map!==G.mapId)) continue; mmc.beginPath(); mmc.arc(o.x*sx,(o.y-12-y0)*sy,2.6*DPR,0,7); mmc.fill(); }
   if(G.p){ mmc.fillStyle='#ffe033'; mmc.strokeStyle='#000'; mmc.lineWidth=1; mmc.beginPath(); mmc.arc(G.p.x*sx,(G.p.y-12-y0)*sy,3*DPR,0,7); mmc.fill(); mmc.stroke(); }
 }
 
@@ -1754,15 +2393,18 @@ const isOpen = n => !$('#win-'+n).classList.contains('hidden');
 function openWin(n){
   if(G.mode!=='game') return;
   const w=$('#win-'+n); w.style.zIndex=++G.ui.z; $('#toast').innerHTML='';
-  ({bag:renderBag, tal:renderTal, shop:renderShop, menu:renderMenu})[n]();
+  ({bag:renderBag, tal:renderTal, shop:renderShop, menu:renderMenu, book:renderBook, party:renderParty, quest:renderQuest})[n]();
+  if(n==='party') partyWindowOpened();
   w.classList.remove('hidden');
   if(n==='shop' && isOpen('bag')) renderBag();
 }
-function closeWin(n){ $('#win-'+n).classList.add('hidden'); hideTip(); if(n==='shop' && isOpen('bag')) renderBag(); }
+function closeWin(n){ $('#win-'+n).classList.add('hidden'); hideTip(); if(n==='shop' && isOpen('bag')) renderBag(); if(n==='party') partyWindowClosed(); }
 function toggleWin(n){ if(G.mode!=='game') return; isOpen(n)?closeWin(n):openWin(n); }
 function refreshOpen(){ if(G.mode!=='game') return; if(isOpen('bag')) renderBag(); if(isOpen('tal')) renderTal(); if(isOpen('shop')) renderShop(); }
+function closeScrollMode(){ if(G.ui.scrollMode){ G.ui.scrollMode=null; if(isOpen('bag')) renderBag(); } }
 function escPressed(){
   if(G.assigning){ G.assigning=null; $('#hint').classList.add('hidden'); buildHotbar(); return; }
+  if(G.ui.scrollMode){ closeScrollMode(); return; }
   const open=$$('.win:not(.hidden)').sort((a,b)=>(+b.style.zIndex||0)-(+a.style.zIndex||0));
   if(open.length) closeWin(open[0].dataset.w); else openWin('menu');
 }
@@ -1787,15 +2429,24 @@ function itemStatsHtml(it){
   return h;
 }
 function itemHtml(it, where){
-  const r=RAR[it.rarity], ch=G.ch;
-  let h=`<div class="tt-name" style="color:${r.color}">${esc(it.name)}</div><div class="tt-sub">${r.name} · ${slotLabel(it)}</div>`;
+  const ch=G.ch;
+  if(isCons(it)){
+    const c=CONS[it.base];
+    return `<div class="tt-name">${c.name}</div><div class="tt-sub">${c.kind==='pot'?'Dryck':'Uppgraderingsscroll (Common)'}</div><div>${c.desc}</div>`
+      + (c.kind==='scroll'?`<div class="hintx" style="color:#9fb1cb;font-size:11.5px;margin-top:3px">Förbrukar en uppgraderingsplats även om den misslyckas.</div>`:'')
+      + `<div style="margin-top:3px">Antal: <b>${it.count}</b> / ${STACK_MAX}</div><div class="tt-sell">Köppris: ${c.price} 🪙</div>`;
+  }
+  const r=RAR[it.rarity];
+  let h=`<div class="tt-name" style="color:${r.color}">${esc(itemName(it))}</div><div class="tt-sub">${r.name} · ${slotLabel(it)}</div>`;
   h+=itemStatsHtml(it);
   h+=`<div class="${ch.level<it.req?'bad':''}" style="margin-top:3px">Kräver level ${it.req}</div>`;
-  if(it.slot==='vapen' && it.wtype!==CLASSES[ch.cls].wtype && ch.cls!=='skog') h+=`<div class="warn">Din klass slår i närstrid med detta vapen (${CLASSES[ch.cls].name} behöver ${WTYPE[CLASSES[ch.cls].wtype].toLowerCase()}).</div>`;
+  h+=`<div style="color:#9fb1cb;font-size:11.5px">Uppgraderingsplatser kvar: <b>${SCROLL_SLOTS-(it.scrolls||0)}</b> / ${SCROLL_SLOTS}${it.plus?` · <span class="plus">${it.plus} lyckade</span>`:''}</div>`;
+  if(it.wtype==='pinne') h+=`<div class="warn">Startvapen – bara närstrid.</div>`;
+  else if(it.slot==='vapen' && it.wtype!==CLASSES[ch.cls].wtype && ch.cls!=='skog') h+=`<div class="warn">Din klass slår i närstrid med detta vapen (${CLASSES[ch.cls].name} behöver ${WTYPE[CLASSES[ch.cls].wtype].toLowerCase()}).</div>`;
   h+=`<div class="tt-sell">Säljvärde: ${sellPrice(it)} 🪙</div>`;
   if(where==='inv'){
     let cur = it.slot==='ring' ? (ch.eq.ring1 && ch.eq.ring2 ? ch.eq.ring1 : null) : ch.eq[it.slot];
-    if(cur) h+=`<div class="tt-cmp"><b>Utrustad nu:</b> <span style="color:${RAR[cur.rarity].color}">${esc(cur.name)}</span><br>${cur.slot==='vapen'?`Attack ${cur.atkMin}–${cur.atkMax}`:`Armor ${cur.armor}`+STATS.filter(s=>cur[s]).map(s=>` · +${cur[s]} ${STATN[s]}`).join('')}</div>`;
+    if(cur) h+=`<div class="tt-cmp"><b>Utrustad nu:</b> <span style="color:${RAR[cur.rarity].color}">${esc(itemName(cur))}</span><br>${cur.slot==='vapen'?`Attack ${cur.atkMin}–${cur.atkMax}`:`Armor ${cur.armor}`+STATS.filter(s=>cur[s]).map(s=>` · +${cur[s]} ${STATN[s]}`).join('')}</div>`;
   }
   return h;
 }
@@ -1819,7 +2470,9 @@ function findItem(u){
 /* ---------- Karaktär & väska ---------- */
 function renderBag(){
   const ch=G.ch, s=G.stats, C=CLASSES[ch.cls], sel=G.ui.sel;
-  const slotHtml=(sid)=>{ const it=ch.eq[sid]; return `<div class="slot ${it?'r-'+it.rarity:''} ${it&&sel===it.uid?'sel':''}" ${it?`data-uid="${it.uid}"`:''} data-eq="${sid}">${it?`<img src="${iconURL(it)}" alt="">`:`<span class="lbl">${SLOTN[sid]}</span>`}</div>`; };
+  const sm=G.ui.scrollMode && ch.inv.find(x=>x.uid===G.ui.scrollMode);
+  const smc = it => !sm ? '' : (it.uid===sm.uid ? 'sel' : scrollFits(sm,it) ? 'elig' : 'inelig');
+  const slotHtml=(sid)=>{ const it=ch.eq[sid]; return `<div class="slot ${it?'r-'+it.rarity:''} ${it&&sel===it.uid&&!sm?'sel':''} ${it?smc(it):''}" ${it?`data-uid="${it.uid}"`:''} data-eq="${sid}">${it?`<img src="${iconURL(it)}" alt="">${it.plus?`<span class="cnt plus">+${it.plus}</span>`:''}`:`<span class="lbl">${SLOTN[sid]}</span>`}</div>`; };
   $('#bagDoll').innerHTML=`<div class="dcol">${['hjalm','halsband','axel','mantel','brost','handskar'].map(slotHtml).join('')}</div>
     <div class="dmid"><canvas id="portrait" width="240" height="300"></canvas><div class="pname">${esc(ch.name)}</div><div class="pcls">${C.name} · Lv. ${ch.level}</div></div>
     <div class="dcol">${['balte','byxor','skor','ring1','ring2','vapen'].map(slotHtml).join('')}</div>`;
@@ -1827,46 +2480,75 @@ function renderBag(){
   const m=C.main, row=(k,v,cls='')=>`<span class="${cls}">${k}</span><b class="${cls}">${v}</b>`;
   const modeTxt = s.mode==='bow'?'Pilskott':s.mode==='whisper'?`Viskning (${s.manaCost} mana)`:'Närstrid';
   $('#statList').innerHTML = row('Str'+(m==='str'?' ★':''),s.str,m==='str'?'main':'')+row('Int'+(m==='int'?' ★':''),s.int,m==='int'?'main':'')+row('Agi'+(m==='agi'?' ★':''),s.agi,m==='agi'?'main':'')
-    +row('Attack',`${s.atkMin}–${s.atkMax}`)+row('Armor',s.armor)+row('Max HP',s.maxHp)+row('Max mana',s.maxMp)
+    +row('Attack',`${fmt1(s.atkMin)}–${fmt1(s.atkMax)}`)+row('Armor',s.armor)+row('Max HP',s.maxHp)+row('Max mana',s.maxMp)
     +row('HP-reg',fmt1(s.hpReg)+'/s')+row('Mana-reg',fmt1(s.mpReg)+'/s')+row('Attackhastighet',Math.round(s.aspd*100)+'%')+row('Rörelse',Math.round(s.move*100)+'%')
     +(ch.cls==='hippie'?row('Räckvidd',Math.round(s.range*100)+'%'):'')+row('Basattack',modeTxt)
-    +`<span class="full">★ = klassens huvudstat: varje poäng ger +1 attack.</span>`;
+    +(s.book?row('📖 Monsterbok',`+${s.book} alla stats`):'')
+    +`<span class="full">★ = klassens huvudstat: varje poäng ger +1 attack (Skogshuggare +1,2).</span>`;
   $('#bagCount').textContent=`(${ch.inv.length}/${INV_MAX})`; $('#bagGold').textContent=ch.gold;
   let g='';
-  for(let i=0;i<INV_MAX;i++){ const it=ch.inv[i]; g+= it ? `<div class="slot r-${it.rarity} ${sel===it.uid?'sel':''} ${ch.level<it.req?'cant':''}" data-uid="${it.uid}"><img src="${iconURL(it)}" alt=""></div>` : `<div class="slot blank"></div>`; }
+  for(let i=0;i<INV_MAX;i++){ const it=ch.inv[i];
+    if(!it){ g+=`<div class="slot blank"></div>`; continue; }
+    const cons=isCons(it);
+    g+=`<div class="slot ${cons?'r-cons':'r-'+it.rarity} ${sel===it.uid&&!sm?'sel':''} ${!cons&&ch.level<it.req?'cant':''} ${smc(it)}" data-uid="${it.uid}"><img src="${iconURL(it)}" alt="">${cons?`<span class="cnt">${it.count}</span>`:it.plus?`<span class="cnt plus">+${it.plus}</span>`:''}</div>`; }
   $('#bagGrid').innerHTML=g;
   renderBagDetail();
 }
 function renderBagDetail(){
-  const box=$('#bagDetail'), f=G.ui.sel&&findItem(G.ui.sel);
-  if(!f){ box.innerHTML=`<div class="hintx">${G.touch?'Tryck':'Klicka'} på ett föremål för att se det. ${G.touch?'':'Dubbelklicka för att utrusta / ta av.'} Föremål med röd ton kräver högre level.</div>`; return; }
+  const box=$('#bagDetail');
+  if(G.ui.scrollMode){
+    const sc=G.ch.inv.find(x=>x.uid===G.ui.scrollMode);
+    if(sc){ box.innerHTML=`<b>📜 ${CONS[sc.base].name}</b> (${sc.count} st)<div style="margin:4px 0">${G.touch?'Tryck':'Klicka'} på det föremål du vill uppgradera – i väskan eller bland det du har på dig. Föremål som passar lyser grönt.</div><div class="acts"><button class="btn sm sec" data-act="cancelScroll">Avbryt</button></div>`; return; }
+    G.ui.scrollMode=null;
+  }
+  const f=G.ui.sel&&findItem(G.ui.sel);
+  if(!f){ box.innerHTML=`<div class="hintx">${G.touch?'Tryck':'Klicka'} på ett föremål för att se det. ${G.touch?'':'Dubbelklicka för att utrusta / ta av / använda.'} Föremål med röd ton kräver högre level.</div>`; return; }
   const it=f.it; let acts='';
+  if(isCons(it)){
+    const c=CONS[it.base];
+    if(c.kind==='pot'){ acts+=`<button class="btn sm green" data-act="use">Använd</button>`; if(!G.touch) acts+=`<button class="btn sm" data-act="assign">Sätt på 1–9</button>`; }
+    else acts+=`<button class="btn sm green" data-act="scroll">Använd på föremål…</button>`;
+    acts+=`<button class="btn sm" data-act="drop">⬇ Släpp på marken</button>`;
+    acts+=`<button class="btn sm red" data-act="trash">${G.ui.trash===it.uid?'Säker? Tryck igen':'Släng'}</button>`;
+    box.innerHTML=itemHtml(it,'inv')+`<div class="acts">${acts}</div>`; return;
+  }
   if(f.where==='inv'){
     acts+=`<button class="btn sm green" data-act="equip" ${G.ch.level<it.req?'disabled':''}>Utrusta</button>`;
     if(isOpen('shop')) acts+=`<button class="btn sm gold" data-act="sell">Sälj ${sellPrice(it)} 🪙</button>`;
+    acts+=`<button class="btn sm" data-act="drop">⬇ Släpp på marken</button>`;
     acts+=`<button class="btn sm red" data-act="trash">${G.ui.trash===it.uid?'Säker? Tryck igen':'Släng'}</button>`;
   } else acts+=`<button class="btn sm" data-act="unequip">Ta av</button>`;
   box.innerHTML=itemHtml(it,f.where)+`<div class="acts">${acts}</div>`+(f.where==='inv'&&G.ch.level<it.req?`<div class="hintx" style="margin-top:4px">Du behöver level ${it.req} för att använda detta.</div>`:'');
 }
 $('#win-bag').addEventListener('click',e=>{
   const a=e.target.closest('[data-act]');
+  if(a && a.dataset.act==='cancelScroll'){ closeScrollMode(); return; }
   if(a){ const f=findItem(G.ui.sel); if(!f) return;
     if(a.dataset.act==='equip') equip(f.it.uid);
     else if(a.dataset.act==='unequip') unequip(f.slot);
     else if(a.dataset.act==='sell') sellItem(f.it.uid);
-    else if(a.dataset.act==='trash'){ if(G.ui.trash===f.it.uid){ G.ch.inv=G.ch.inv.filter(x=>x.uid!==f.it.uid); G.ui.sel=null; G.ui.trash=null; log(`Du slängde ${esc(f.it.name)}.`,'#aab'); markDirty(); renderBag(); } else { G.ui.trash=f.it.uid; renderBagDetail(); } }
+    else if(a.dataset.act==='trash'){ if(G.ui.trash===f.it.uid){ G.ch.inv=G.ch.inv.filter(x=>x.uid!==f.it.uid); G.ui.sel=null; G.ui.trash=null; log(`Du slängde ${esc(itemName(f.it))}.`,'#aab'); markDirty(); renderBag(); buildHotbar(); } else { G.ui.trash=f.it.uid; renderBagDetail(); } }
+    else if(a.dataset.act==='use') usePot(f.it.base);
+    else if(a.dataset.act==='drop') dropFromBag(f.it.uid);
+    else if(a.dataset.act==='assign') startAssign(f.it.base);
+    else if(a.dataset.act==='scroll'){ G.ui.scrollMode=f.it.uid; renderBag(); }
     return; }
+
   const el=e.target.closest('[data-uid]'); if(!el) return;
+  if(G.ui.scrollMode){ if(el.dataset.uid===G.ui.scrollMode){ closeScrollMode(); return; } applyScroll(G.ui.scrollMode, el.dataset.uid); return; }
   G.ui.sel=el.dataset.uid; G.ui.trash=null;
   $$('#win-bag .slot.sel').forEach(x=>x.classList.remove('sel')); el.classList.add('sel'); renderBagDetail();
 });
 $('#win-bag').addEventListener('dblclick',e=>{
+  if(G.ui.scrollMode) return;
   const el=e.target.closest('[data-uid]'); if(!el) return; const f=findItem(el.dataset.uid); if(!f) return;
+  if(isCons(f.it)){ if(CONS[f.it.base].kind==='pot') usePot(f.it.base); else { G.ui.scrollMode=f.it.uid; renderBag(); } return; }
   if(f.where==='inv') equip(f.it.uid); else unequip(f.slot);
 });
 function equip(u){
   const ch=G.ch, i=ch.inv.findIndex(x=>x.uid===u); if(i<0) return;
-  const it=ch.inv[i]; if(ch.level<it.req){ throttleMsg('req',`Du behöver level ${it.req} för ${esc(it.name)}.`,'#ff9b9b'); return; }
+  const it=ch.inv[i]; if(isCons(it)) return;
+  if(ch.level<it.req){ throttleMsg('req',`Du behöver level ${it.req} för ${esc(it.name)}.`,'#ff9b9b'); return; }
   let slot=it.slot; if(slot==='ring') slot = !ch.eq.ring1 ? 'ring1' : !ch.eq.ring2 ? 'ring2' : 'ring1';
   const old=ch.eq[slot]; ch.eq[slot]=it; ch.inv.splice(i,1); if(old) ch.inv.splice(i,0,old);
   G.ui.sel=it.uid; recalc(); markDirty(); refreshOpen();
@@ -1876,6 +2558,38 @@ function unequip(slot){
   if(ch.inv.length>=INV_MAX){ throttleMsg('full','Väskan är full!','#ff9b9b'); return; }
   ch.inv.push(ch.eq[slot]); ch.eq[slot]=null; recalc(); markDirty(); refreshOpen();
 }
+/* ---------- Enchanting scrolls ---------- */
+function scrollFits(sc, it){
+  if(!sc || !it || isCons(it)) return false;
+  if((it.scrolls||0) >= SCROLL_SLOTS) return false;
+  return CONS[sc.base].target==='weapon' ? it.slot==='vapen' : it.slot!=='vapen';
+}
+function applyScroll(su, iu){
+  const ch=G.ch, sc=ch.inv.find(x=>x.uid===su), f=findItem(iu); if(!sc || !f) return;
+  const it=f.it, c=CONS[sc.base];
+  if(!scrollFits(sc,it)){
+    throttleMsg('scr', isCons(it) ? 'Välj en utrustning eller ett vapen.' : (it.scrolls||0)>=SCROLL_SLOTS ? 'Föremålet har inga uppgraderingsplatser kvar.' : c.target==='weapon' ? 'Den här scrollen fungerar bara på vapen.' : 'Den här scrollen fungerar bara på utrustning (inte vapen).', '#ff9b9b');
+    return;
+  }
+  sc.count--; if(sc.count<=0) ch.inv.splice(ch.inv.indexOf(sc),1);
+  it.scrolls=(it.scrolls||0)+1;
+  const left=SCROLL_SLOTS-it.scrolls, p=G.p;
+  if(Math.random()<SCROLL_CHANCE){
+    it.plus=(it.plus||0)+1;
+    if(c.stat==='atk'){ it.atkMin+=c.amt; it.atkMax+=c.amt; } else it[c.stat]=(it[c.stat]||0)+c.amt;
+    const what = c.stat==='atk' ? `+${c.amt} attack` : `+${c.amt} ${STATN[c.stat]}`;
+    toast(`✨ <b style="color:#7dff8a">Lyckades!</b> ${esc(itemName(it))} fick ${what}. (${left} platser kvar)`);
+    log(`✨ Scrollen lyckades: ${esc(itemName(it))} fick ${what}. ${left} uppgraderingsplatser kvar.`,'#7dff8a');
+    if(p) for(let i=0;i<20;i++) particle(p.x+rand(-20,20),p.y-rand(0,60),pick(['#7dff8a','#ffe066','#fff']),rand(-80,80),rand(-160,-40),.8,3,60);
+  } else {
+    toast(`💥 <b style="color:#ff8a8a">Misslyckades.</b> Uppgraderingsplatsen förbrukades. (${left} kvar)`);
+    log(`💥 Scrollen misslyckades på ${esc(itemName(it))}. ${left} uppgraderingsplatser kvar.`,'#ff9b9b');
+  }
+  G.ui.scrollMode=null; G.ui.sel=it.uid;
+  if(f.where==='eq') recalc();
+  markDirty(); refreshOpen();
+}
+
 function drawPortrait(cnv, cls, eq, sc){
   const c=cnv.getContext('2d'); c.setTransform(1,0,0,1,0,0); c.clearRect(0,0,cnv.width,cnv.height);
   c.translate(cnv.width/2-4, cnv.height-26); c.scale(sc,sc);
@@ -1885,10 +2599,11 @@ function drawPortrait(cnv, cls, eq, sc){
 
 /* ---------- Talanger ---------- */
 function treeSpent(talents,tk){ return TREES[tk].talents.reduce((s,t)=>s+(talents[t.id]||0),0); }
+const tierReq = tier => 3*(tier-1);   // T2 kräver 3 poäng i trädet, T3 kräver 6
 function canLearn(t){
   const tree=TREES[t.tree], acc=!!tree.account, tl=acc?G.acct.talents:G.ch.talents, av=acc?acctAvail():charAvail();
   if(av<=0 || (tl[t.id]||0)>=t.max) return false;
-  if(t.tier===2 && treeSpent(tl,t.tree)<3) return false;
+  if(treeSpent(tl,t.tree) < tierReq(t.tier)) return false;
   return true;
 }
 function learn(id){
@@ -1913,9 +2628,9 @@ function renderTal(){
   const acc=!!tree.account, tl=acc?G.acct.talents:ch.talents, av=acc?acctAvail():charAvail(), spent=treeSpent(tl,tk);
   h+=`<div class="tinfo"><span>${acc?'Kontopoäng':'Talangpoäng'} kvar: <b>${av}</b></span><span>Spenderat i ${tree.name}: <b>${spent}</b></span></div>`;
   if(acc) h+=`<div class="shopinfo">Du får 1 kontopoäng per 5 levlar i varje klass (din högsta gubbe i varje klass räknas). Trädet delas av alla gubbar på kontot <b>${esc(G.acct.name)}</b>.</div>`;
-  for(const tier of [1,2]){
-    const locked = tier===2 && spent<3;
-    h+=`<div class="tier ${locked?'locked':''}"><div class="tlabel">T${tier}${tier===2?`<small>${locked?`kräver 3 poäng i trädet (${spent}/3)`:'upplåst'}</small>`:''}</div>`;
+  for(const tier of [...new Set(tree.talents.map(x=>x.tier))].sort()){
+    const need=tierReq(tier), locked = spent<need;
+    h+=`<div class="tier ${locked?'locked':''}"><div class="tlabel">T${tier}${tier>1?`<small>${locked?`kräver ${need} poäng i trädet (${spent}/${need})`:'upplåst'}</small>`:''}</div>`;
     for(const t of tree.talents.filter(x=>x.tier===tier)){
       const r=tl[t.id]||0, st = r>=t.max?'max':canLearn(t)?'can':(locked?'lockd':'');
       h+=`<div class="tnode ${st} ${G.ui.talSel===t.id?'sel':''}" data-t="${t.id}">${t.active?'<span class="act">FÖRMÅGA</span>':''}<span class="ic">${t.icon}</span><div class="tn">${t.name}</div><span class="rk">${r}/${t.max}</span></div>`;
@@ -1950,33 +2665,162 @@ $('#talBody').addEventListener('click',e=>{
 
 /* ---------- Butik ---------- */
 function renderShop(){
-  const ch=G.ch;
-  let h=`<div class="shopinfo">Sälj dina föremål här. Pris: 5 guld × krävd level. Bonus: <span style="color:${RAR.uncommon.color}">Uncommon +20%</span>, <span style="color:${RAR.rare.color}">Rare +40%</span>, <span style="color:${RAR.epic.color}">Epic +60%</span>, <span style="color:${RAR.legendary.color}">Legendary +100%</span>. Utrustade föremål visas inte.</div>`;
-  h+=`<div class="rowb" style="margin-bottom:6px"><span>Ditt guld: <b class="goldtxt">${ch.gold} 🪙</b></span><button class="btn sm sec" data-sellall="1" ${ch.inv.some(x=>x.rarity==='common')?'':'disabled'}>Sälj alla Common</button></div>`;
-  if(!ch.inv.length) h+=`<div class="hintx" style="padding:14px 0;color:var(--muted)">Väskan är tom.</div>`;
-  for(const it of ch.inv){
-    const r=RAR[it.rarity];
-    h+=`<div class="srow"><div class="slot r-${it.rarity}" data-uid="${it.uid}"><img src="${iconURL(it)}" alt=""></div><div class="sn"><b style="color:${r.color}">${esc(it.name)}</b><small>${r.name} · ${slotLabel(it)} · Lv ${it.req}</small></div><span class="sp">${sellPrice(it)} 🪙</span><button class="btn sm gold" data-sell="${it.uid}">Sälj</button></div>`;
+  const ch=G.ch, tab=G.ui.shopTab||'buy';
+  let h=`<div class="tabs"><button class="tab ${tab==='buy'?'on':''}" data-stab="buy">🛒 Köp</button><button class="tab ${tab==='sell'?'on':''}" data-stab="sell">💰 Sälj</button></div>`;
+  h+=`<div class="rowb" style="margin-bottom:8px"><span>Ditt guld: <b class="goldtxt">${ch.gold} 🪙</b></span><span class="hintx" style="color:var(--muted);font-size:12px">Väska: ${ch.inv.length}/${INV_MAX}</span></div>`;
+  if(tab==='buy'){
+    h+=`<div class="shopinfo">Drycker och scrolls staplas upp till ${STACK_MAX} per plats i väskan. Scrolls har ${Math.round(SCROLL_CHANCE*100)}% chans att lyckas. Varje föremål har ${SCROLL_SLOTS} uppgraderingsplatser, och en plats förbrukas även om scrollen misslyckas. Använd scrolls från väskan (I).</div>`;
+    for(const [id,c] of Object.entries(CONS)){
+      h+=`<div class="srow"><div class="slot r-cons"><img src="${iconURL({base:id})}" alt=""></div><div class="sn"><b>${c.name}</b><small>${c.desc} · Du har ${consCount(id)}</small></div><span class="sp">${c.price} 🪙</span>
+        <button class="btn sm gold" data-buy="${id}" data-n="1" ${ch.gold<c.price?'disabled':''}>Köp 1</button><button class="btn sm gold" data-buy="${id}" data-n="5" ${ch.gold<c.price*5?'disabled':''}>Köp 5</button></div>`;
+    }
+  } else {
+    const list=ch.inv.filter(x=>!isCons(x));
+    h+=`<div class="shopinfo">Pris: 5 guld × krävd level. Bonus: <span style="color:${RAR.uncommon.color}">Uncommon +20%</span>, <span style="color:${RAR.rare.color}">Rare +40%</span>, <span style="color:${RAR.epic.color}">Epic +60%</span>, <span style="color:${RAR.legendary.color}">Legendary +100%</span>. Utrustade föremål, drycker och scrolls visas inte.</div>`;
+    h+=`<div class="rowb" style="margin-bottom:6px"><span></span><button class="btn sm sec" data-sellall="1" ${list.some(x=>x.rarity==='common')?'':'disabled'}>Sälj alla Common</button></div>`;
+    if(!list.length) h+=`<div class="hintx" style="padding:14px 0;color:var(--muted)">Du har inget att sälja.</div>`;
+    for(const it of list){
+      const r=RAR[it.rarity];
+      h+=`<div class="srow"><div class="slot r-${it.rarity}" data-uid="${it.uid}"><img src="${iconURL(it)}" alt=""></div><div class="sn"><b style="color:${r.color}">${esc(itemName(it))}</b><small>${r.name} · ${slotLabel(it)} · Lv ${it.req}</small></div><span class="sp">${sellPrice(it)} 🪙</span><button class="btn sm gold" data-sell="${it.uid}">Sälj</button></div>`;
+    }
   }
-  h+=`<div class="shopinfo" style="margin-top:10px">🛒 Att köpa varor kommer i en senare uppdatering.</div>`;
   $('#shopBody').innerHTML=h;
 }
 function sellItem(u){
   const ch=G.ch, i=ch.inv.findIndex(x=>x.uid===u); if(i<0) return;
-  const it=ch.inv[i], pr=sellPrice(it); ch.inv.splice(i,1); ch.gold+=pr;
+  const it=ch.inv[i]; if(isCons(it)) return;
+  const pr=sellPrice(it); ch.inv.splice(i,1); ch.gold+=pr;
   if(G.ui.sel===u) G.ui.sel=null;
-  log(`Sålde <b style="color:${RAR[it.rarity].color}">${esc(it.name)}</b> för ${pr} 🪙`,'#ffd25a'); markDirty(); refreshOpen();
+  log(`Sålde <b style="color:${RAR[it.rarity].color}">${esc(itemName(it))}</b> för ${pr} 🪙`,'#ffd25a'); markDirty(); refreshOpen();
+}
+function buy(id, n){
+  const c=CONS[id], ch=G.ch;
+  n=Math.min(n, Math.floor(ch.gold/c.price), stackRoom(id));
+  if(n<=0){ throttleMsg('buy', ch.gold<c.price ? 'Du har inte råd.' : 'Väskan är full!', '#ff9b9b'); return; }
+  const got=addStack(id,n); ch.gold-=got*c.price;
+  log(`Köpte ${got} × ${c.name} för ${got*c.price} 🪙`,'#ffd25a');
+  if(c.kind==='pot' && !ch.hotbar.includes(id)){
+    let slot=id==='hpPot'?7:8; if(ch.hotbar[slot]) { slot=-1; for(let i=8;i>=0;i--) if(!ch.hotbar[i]){ slot=i; break; } }
+    if(slot>=0){ ch.hotbar[slot]=id; if(!G.touch) log(`${c.name} ligger på tangent ${slot+1}.`,'#cfe0ff'); }
+  }
+  buildHotbar(); markDirty(); refreshOpen();
 }
 $('#shopBody').addEventListener('click',e=>{
+  const t=e.target.closest('[data-stab]'); if(t){ G.ui.shopTab=t.dataset.stab; renderShop(); return; }
+  const b=e.target.closest('[data-buy]'); if(b){ buy(b.dataset.buy, +b.dataset.n); return; }
   const s=e.target.closest('[data-sell]'); if(s){ sellItem(s.dataset.sell); return; }
-  if(e.target.closest('[data-sellall]')){ const list=G.ch.inv.filter(x=>x.rarity==='common'); let sum=0; for(const it of list) sum+=sellPrice(it); G.ch.inv=G.ch.inv.filter(x=>x.rarity!=='common'); G.ch.gold+=sum; log(`Sålde ${list.length} Common-föremål för ${sum} 🪙`,'#ffd25a'); markDirty(); refreshOpen(); }
+  if(e.target.closest('[data-sellall]')){ const list=G.ch.inv.filter(x=>!isCons(x) && x.rarity==='common'); let sum=0; for(const it of list) sum+=sellPrice(it); G.ch.inv=G.ch.inv.filter(x=>isCons(x) || x.rarity!=='common'); G.ch.gold+=sum; log(`Sålde ${list.length} Common-föremål för ${sum} 🪙`,'#ffd25a'); markDirty(); refreshOpen(); }
 });
+
+/* ---------- Uppdrag ---------- */
+const QUESTS = {
+  bar:{name:'Bärplockarens besvär', lvl:2, from:'Jägaren Berit',
+    text:'Blåbären och mossabollarna har tagit över Jaktmarken I! Kan du tunna ut dem lite åt mig?',
+    goals:{blabar:10, mossa:5}, exp:20, choose:['yxa2','bage2','stav2'], rarity:'uncommon'},
+};
+const QUEST_ORDER = ['bar'];
+function questState(id){ const q=(G.ch.quests||{})[id]; return q ? q.state : (G.ch.level>=QUESTS[id].lvl ? 'offer' : 'locked'); }
+function questGoalsDone(id){ const q=G.ch.quests[id]; return Object.entries(QUESTS[id].goals).every(([t,n])=>(q.prog[t]||0)>=n); }
+function acceptQuest(id){
+  G.ch.quests[id]={state:'active', prog:{}};
+  log(`📜 Nytt uppdrag: <b>${QUESTS[id].name}</b>`,'#ffe066'); markDirty(true); renderQuest(); questLogKey=null;
+}
+function questKill(type){
+  const ch=G.ch; if(!ch || !ch.quests) return;
+  for(const id of QUEST_ORDER){
+    const q=ch.quests[id], Q=QUESTS[id]; if(!q || q.state!=='active') continue;
+    const need=Q.goals[type]; if(!need || (q.prog[type]||0)>=need) continue;
+    q.prog[type]=(q.prog[type]||0)+1;
+    if(questGoalsDone(id)){ q.state='complete'; toast(`✔ <b>${Q.name}</b> är klart!<br>Hämta belöningen i uppdragsloggen.`); log(`✔ Uppdraget <b>${Q.name}</b> är klart – tryck på uppdragsloggen för att hämta belöningen.`,'#7ee787'); }
+    markDirty(); questLogKey=null; if(isOpen('quest')) renderQuest();
+  }
+}
+function claimQuest(id, baseId){
+  const Q=QUESTS[id], q=G.ch.quests[id]; if(!q || q.state!=='complete' || !Q.choose.includes(baseId)) return;
+  if(G.ch.inv.length>=INV_MAX){ toast('Väskan är full – gör plats först.'); return; }
+  const it=makeItem(baseId, Q.rarity); G.ch.inv.push(it); q.state='claimed';
+  log(`🎁 Belöning för <b>${Q.name}</b>: <b style="color:${RAR[Q.rarity].color}">${esc(it.name)}</b> och ${Q.exp} EXP!`,'#7ee787');
+  toast(`🎁 Du fick <b style="color:${RAR[Q.rarity].color}">${esc(it.name)}</b> och ${Q.exp} EXP!`);
+  gainExp(Q.exp, false, 0, false);
+  closeWin('quest'); questLogKey=null; refreshOpen(); markDirty(true);
+}
+let questLogKey=null;
+function renderQuestLog(){
+  const el=$('#questLog'), ch=G.ch; if(!ch) return;
+  const rows=[];
+  for(const id of QUEST_ORDER){
+    const Q=QUESTS[id], st=questState(id), q=ch.quests[id];
+    if(st==='offer') rows.push(`<div class="ql offer" data-q="${id}">❗ <b>Nytt uppdrag</b>${Q.name}</div>`);
+    else if(st==='active') rows.push(`<div class="ql" data-q="${id}"><b>📜 ${Q.name}</b>${Object.entries(Q.goals).map(([t,n])=>{ const v=Math.min(n,q.prog[t]||0); return `<div class="qgoal ${v>=n?'ok':''}"><span>${MOBS[t].name}</span><span>${v}/${n}</span></div>`; }).join('')}</div>`);
+    else if(st==='complete') rows.push(`<div class="ql done" data-q="${id}"><b>✔ ${Q.name}</b>Klart! Tryck för att hämta belöningen.</div>`);
+  }
+  const key=rows.join('');
+  if(key===questLogKey) return; questLogKey=key;
+  el.classList.toggle('hidden', !rows.length);
+  el.innerHTML=rows.length?`<div class="qh">UPPDRAG</div>`+key:'';
+}
+$('#questLog').addEventListener('click',e=>{ const q=e.target.closest('[data-q]'); G.ui.questId=q?q.dataset.q:QUEST_ORDER[0]; openWin('quest'); });
+function renderQuest(){
+  const id=G.ui.questId||QUEST_ORDER[0], Q=QUESTS[id], st=questState(id), q=G.ch.quests[id];
+  let h=`<div style="font-size:17px;font-weight:900">${Q.name}</div><div style="color:var(--muted);font-size:12px;margin-bottom:6px">Från ${Q.from} · kräver level ${Q.lvl}</div>`;
+  h+=`<div style="margin-bottom:8px">“${Q.text}”</div>`;
+  h+=`<div class="pstat" style="font-weight:600">${Object.entries(Q.goals).map(([t,n])=>{ const v=Math.min(n,(q&&q.prog[t])||0); return `<div class="qgoal ${q&&v>=n?'ok':''}"><span>Döda ${n} ${MOBS[t].name}</span><span>${q?v+'/'+n:''}</span></div>`; }).join('')}
+    <div style="margin-top:6px;color:#ffe08a">Belöning: ${Q.exp} EXP + valfritt level 2-vapen (<span style="color:${RAR[Q.rarity].color}">${RAR[Q.rarity].name}</span>)</div>
+    <div style="color:var(--muted);font-size:11.5px">Dödade monster räknas även när någon i ditt party dödar dem.</div></div>`;
+  if(st==='locked') h+=`<div class="hintx" style="color:var(--muted)">Du behöver level ${Q.lvl}.</div>`;
+  else if(st==='offer') h+=`<div class="row"><button class="btn green" data-qa="accept">Acceptera</button><button class="btn sec" data-qa="later">Inte nu</button></div>`;
+  else if(st==='active') h+=`<div class="row"><button class="btn sec" data-qa="later">Stäng</button></div>`;
+  else if(st==='complete'){
+    h+=`<b>Välj din belöning:</b><div class="qchoices">${Q.choose.map(b=>{ const it=makeItem(b,Q.rarity); return `<div class="qchoice" data-claim="${b}"><img src="${iconURL(it)}" alt=""><b style="color:${RAR[Q.rarity].color}">${it.name}</b><small>${WTYPE[it.wtype]} · Attack ${it.atkMin}–${it.atkMax}</small></div>`; }).join('')}</div>`;
+  } else h+=`<div class="ok" style="color:#7ee787">✔ Uppdraget är avklarat.</div>`;
+  $('#questBody').innerHTML=h;
+}
+$('#questBody').addEventListener('click',e=>{
+  const c=e.target.closest('[data-claim]'); if(c){ claimQuest(G.ui.questId||QUEST_ORDER[0], c.dataset.claim); return; }
+  const a=e.target.closest('[data-qa]'); if(!a) return;
+  if(a.dataset.qa==='accept') acceptQuest(G.ui.questId||QUEST_ORDER[0]); else closeWin('quest');
+});
+
+/* ---------- Monsterbok ---------- */
+const pct = v => v.toLocaleString('sv-SE',{maximumFractionDigits:2});
+function drawMobPortrait(cnv, type, silhouette){
+  const c=cnv.getContext('2d'); c.setTransform(1,0,0,1,0,0); c.clearRect(0,0,cnv.width,cnv.height);
+  c.save(); c.translate(cnv.width/2-8, cnv.height-18); c.scale(2.7,2.7);
+  MOB_DRAW[type](c,{x:0,y:0,dir:1,t:1.2,state:'idle',kbT:0,hurtT:0,rot:0.5,dead:false,dieT:0,d:MOBS[type]});
+  c.restore();
+  if(silhouette){ c.globalCompositeOperation='source-atop'; c.fillStyle='rgba(10,14,24,.92)'; c.fillRect(0,0,cnv.width,cnv.height); c.globalCompositeOperation='source-over'; }
+}
+function renderBook(){
+  const ch=G.ch, pts=bookPoints(ch), bb=bookStatBonus(ch), sk=tv('k_drop');
+  let h=`<div class="bookhead"><div><b style="font-size:15px">Monsterbokspoäng: ${pts}</b><div style="color:var(--muted);font-size:12.5px">Passiv bonus just nu: <b style="color:#7dff8a">+${bb}</b> på Str, Int och Agi</div></div>
+    <div class="tiers">${BOOK_TIERS.map(([n,v])=>`<span class="tierp ${pts>=n?'on':''}">${n} poäng → +${v}</span>`).join('')}</div></div>`;
+  h+=`<div class="shopinfo" style="max-width:none">Nivåer: 10 / 100 / 300 / 1 000 dödade ger +5 / 10 / 15 / 20% EXP från monstret och 1 monsterbokspoäng per nivå. Vid nivå 1 (10 dödade) ser du monstrets stats och drops.<br>✦ <b>Silvermonster:</b> 1% chans vid varje spawn. Dubbelt så stort, 5× HP och skada, 3× EXP och droppar alltid ett föremål (minst Uncommon, 3× chans till Rare/Epic/Legendary).</div>`;
+  h+=`<div class="bookgrid">`;
+  for(const t of MOB_ORDER){
+    const d=MOBS[t], k=ch.kills[t]||0, lv=bookLvl(k), next=BOOK_LVLS[lv], prev=lv?BOOK_LVLS[lv-1]:0, prog=next?(k-prev)/(next-prev):1;
+    h+=`<div class="bcard"><canvas data-mob="${t}" width="240" height="180"></canvas><div class="bn">${k?d.name:'???'}</div><div class="bstars">${'★'.repeat(lv)}${'☆'.repeat(4-lv)}</div>
+      <div class="bk">Dödade: <b>${k}</b>${next?` / ${next}`:' (max)'}</div><div class="bprog"><i style="width:${Math.min(100,prog*100)}%"></i></div>
+      <div class="bk">EXP-bonus: <b>+${lv*5}%</b> · Finns i: ${MAPS[d.map].name}</div>`;
+    if(lv){
+      const per=d.drop*100/d.pool.length;
+      h+=`<div class="binfo"><div>❤️ HP <b>${d.hp}</b> · ⭐ EXP <b>${d.exp}</b> · 🪙 Guld <b>${d.gold}</b></div><div>💥 Skada vid beröring: <b>${d.touch}</b></div>
+        <div style="margin-top:4px"><b>Drops</b> (${pct(d.drop*100)}% chans totalt):</div>
+        ${d.pool.map(id=>`<div class="bdrop"><img src="${iconURL({base:id,rarity:'common'})}" alt=""> ${BASES[id].name} <span>Lv ${BASES[id].req} · ${pct(per)}%</span></div>`).join('')}
+        <div class="bdrop">🪙 ${d.gold} guld <span>100%</span></div>
+        ${sk?`<div style="color:#9fb1cb;font-size:11.5px">Skattjägare ger dig +${sk}% större dropchans.</div>`:''}</div>`;
+    } else h+=`<div class="binfo lockedtxt">🔒 Döda ${10-k} till för att se stats och drops.</div>`;
+    h+=`</div>`;
+  }
+  h+=`</div>`;
+  $('#bookBody').innerHTML=h;
+  $$('#bookBody canvas[data-mob]').forEach(cv=>drawMobPortrait(cv, cv.dataset.mob, !(ch.kills[cv.dataset.mob]>0)));
+}
 
 /* ---------- Meny ---------- */
 function controlsHtml(){
-  return `<b>Dator</b><br><span class="kbd">WASD</span>/<span class="kbd">pilar</span> gå · <span class="kbd">Mellanslag</span> (eller <span class="kbd">W</span>) hoppa · <span class="kbd">W</span>/<span class="kbd">S</span> vid ett rep klättra · <span class="kbd">S</span>+<span class="kbd">Mellanslag</span> hoppa ner genom plattform · <span class="kbd">Ctrl</span> anfall (håll inne) · <span class="kbd">1</span>–<span class="kbd">9</span> förmågor · <span class="kbd">I</span> väska · <span class="kbd">T</span> talanger · <span class="kbd">B</span> butik · <span class="kbd">Esc</span> meny. Håll muspekaren över föremål för att plocka upp dem. Högerklicka en ruta i snabbfältet för att tömma den.<br>
+  return `<b>Dator</b><br><span class="kbd">WASD</span>/<span class="kbd">pilar</span> gå · <span class="kbd">Mellanslag</span> (eller <span class="kbd">W</span>) hoppa · <span class="kbd">W</span>/<span class="kbd">S</span> vid ett rep klättra · <span class="kbd">S</span>+<span class="kbd">Mellanslag</span> hoppa ner genom plattform · <span class="kbd">Ctrl</span> anfall (håll inne) · <span class="kbd">1</span>–<span class="kbd">9</span> förmågor och drycker · <span class="kbd">W</span>/<span class="kbd">↑</span> vid en portal: gå in · <span class="kbd">I</span> väska · <span class="kbd">T</span> talanger · <span class="kbd">B</span> butik · <span class="kbd">M</span> monsterbok · <span class="kbd">P</span> spela tillsammans · <span class="kbd">Q</span> uppdrag · <span class="kbd">Esc</span> meny. Håll muspekaren över föremål för att plocka upp dem. Högerklicka en ruta i snabbfältet för att tömma den.<br>
   <span style="color:#ffb86b">Tips: Ctrl+W stänger fliken i webbläsaren. Spela i fullskärm (knappen nedan) så låser spelet sådana kortkommandon i Chrome/Edge.</span><br><br>
-  <b>Mobil</b><br>Liggande läge. Styrspak till vänster (uppåt vid rep = klättra), hopp- och anfallsknapp till höger, förmågor ovanför. Tryck på föremål för att plocka upp dem – eller gå över dem.`;
+  <b>Mobil</b><br>Liggande läge. Styrspak till vänster (uppåt vid rep = klättra, uppåt vid portal = gå in), hopp- och anfallsknapp till höger, förmågor ovanför och drycker till vänster om dem. Tryck på föremål för att plocka upp dem – eller gå över dem.`;
 }
 function renderMenu(){
   $('#menuBody').innerHTML=`<div class="rowb"><b>${esc(G.ch.name)}</b><span class="pill">Konto: ${esc(G.acct.name)}</span></div>
@@ -2092,7 +2936,7 @@ function showCreate(){
       if(n.length<2){ $('#createMsg').textContent='Namnet måste vara minst 2 tecken.'; return; }
       if(G.acct.chars.some(x=>x.name.toLowerCase()===n.toLowerCase())){ $('#createMsg').textContent='Du har redan en gubbe med det namnet.'; return; }
       const C=CLASSES[cls];
-      const ch={id:uid(), name:n, cls, level:1, exp:0, gold:0, talents:{}, inv:[], eq:{vapen:makeItem(C.starter,'common')}, hotbar:Array(9).fill(null), hp:9999, mp:9999, created:Date.now()};
+      const ch={id:uid(), name:n, cls, level:1, exp:0, gold:0, talents:{}, inv:[], eq:{vapen:makeItem(C.starter,'common')}, hotbar:Array(9).fill(null), hp:9999, mp:9999, kills:{}, map:1, quests:{}, created:Date.now()};
       G.acct.chars.push(ch); markDirty(true); startGame(ch, true);
     }
   };
@@ -2102,7 +2946,8 @@ function showCreate(){
    START / AVSLUTA SPEL
    ===================================================================== */
 function startGame(ch, isNew){
-  G.ch=ch; G.p=makePlayer(); G.mode='game';
+  ch.kills=ch.kills||{}; ch.map=MAPS[ch.map]?ch.map:1; ch.quests=ch.quests||{}; questLogKey=null;
+  G.ch=ch; G.mapId=MAPS[ch.map]?ch.map:1; G.p=makePlayer(); G.mode='game';
   recalc();
   if(!(ch.hp>0)) ch.hp=G.stats.maxHp;
   ch.hp=Math.min(ch.hp,G.stats.maxHp); ch.mp=Math.min(ch.mp,G.stats.maxMp);
@@ -2112,18 +2957,404 @@ function startGame(ch, isNew){
   hideScreen(); $('#hud').classList.remove('hidden'); $('#touchUI').classList.toggle('hidden',!G.touch);
   $('#log').innerHTML=''; resize();
   buildHotbar(); renderTouchSkills(); updateTalDot(); updateHud(); snapCam();
-  log(`Välkommen till <b>Jaktmarken I</b>, ${esc(ch.name)}!`,'#ffe9a8');
+  $('#mapName').textContent=curMap().name;
+  log(`Välkommen till <b>${curMap().name}</b>, ${esc(ch.name)}!`,'#ffe9a8');
   if(isNew || ch.level===1){
     toast(G.touch ? 'Styrspak till vänster · hopp och anfall till höger · tryck på föremål för att plocka upp'
-                  : '<b>WASD/pilar</b> gå · <b>Mellanslag</b> hoppa · <b>W/S</b> klättra i rep · <b>Ctrl</b> anfall · <b>1–9</b> förmågor · <b>I</b> väska · <b>T</b> talanger · <b>B</b> butik', 7000);
+                  : '<b>WASD/pilar</b> gå · <b>Mellanslag</b> hoppa · <b>W/S</b> klättra i rep · <b>Ctrl</b> anfall · <b>1–9</b> förmågor/drycker · <b>I</b> väska · <b>T</b> talanger · <b>B</b> butik · <b>M</b> monsterbok', 7000);
   }
 }
 async function leaveGame(){
+  netLeave(true);
   $$('.win').forEach(w=>w.classList.add('hidden')); $('#deathBox').classList.add('hidden'); $('#hint').classList.add('hidden');
   G.assigning=null; Touch.reset(); for(const k in keys) keys[k]=false;
   await saveNow();
   G.mode='title'; G.p=null; G.ch=null; G.drops=[]; G.projs=[]; G.nums=[]; G.fx=[];
-  initSpawns();
+  G.mapId=1; $('#mapName').textContent=curMap().name; initSpawns();
+}
+
+/* =====================================================================
+   MULTIPLAYER – P2P via WebRTC. Supabase Realtime används BARA för att
+   hitta varandra (lobby) och för själva handskakningen. Allt spel går
+   sedan direkt mellan spelarna, så Supabase-trafiken blir minimal.
+   Värden (party-ledaren) äger monster, drops och EXP-fördelning.
+   ===================================================================== */
+const NET_VER = 1, PARTY_MAX = 4;
+const TESTNET = /[?&]testnet=1/.test(location.search);   // endast för lokala tester
+const rtcConf = () => ({iceServers: TESTNET ? [] : [{urls:['stun:stun.l.google.com:19302','stun:stun1.l.google.com:19302']}]});
+
+const SigSupa = {
+  client:null, lobby:null, lobbyReady:null, inbox:null, onMsg:null, onHosts:null, hosts:{},
+  async sb(){
+    if(this.client) return this.client;
+    if(!Cloud.on) throw new Error('Supabase är inte inställt.');
+    const mod = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
+    this.client = mod.createClient(Cloud.url, Cloud.key, {auth:{persistSession:false, autoRefreshToken:false, detectSessionInUrl:false}});
+    return this.client;
+  },
+  sub(ch){ return new Promise((res,rej)=>{ const to=setTimeout(()=>rej(new Error('Ingen kontakt med Supabase Realtime.')),12000);
+    ch.subscribe((st,err)=>{ if(st==='SUBSCRIBED'){ clearTimeout(to); res(ch); } else if(st==='CHANNEL_ERROR'||st==='TIMED_OUT'){ clearTimeout(to); rej(new Error('Realtime: '+st+(err&&err.message?' – '+err.message:''))); } }); }); },
+  async ensureLobby(){
+    if(!this.lobbyReady) this.lobbyReady=(async()=>{
+      const c=await this.sb(), ch=c.channel('jaktmarken-lobby',{config:{presence:{key:Net.myId}}});
+      ch.on('presence',{event:'sync'},()=>{ const st=ch.presenceState(), hosts={}; for(const k in st){ const e=st[k]&&st[k][0]; if(e&&e.host&&k!==Net.myId) hosts[k]=e; } this.hosts=hosts; this.onHosts&&this.onHosts({...hosts}); });
+      await this.sub(ch); this.lobby=ch; return ch;
+    })();
+    try{ return await this.lobbyReady; }catch(e){ this.lobbyReady=null; throw e; }
+  },
+  async ensureInbox(){
+    if(this.inbox) return;
+    const c=await this.sb(), ch=c.channel('jaktmarken-sig-'+Net.myId);
+    ch.on('broadcast',{event:'sig'},({payload})=>this.onMsg&&this.onMsg(payload));
+    await this.sub(ch); this.inbox=ch;
+  },
+  async send(to,payload){
+    const c=await this.sb(), topic='jaktmarken-sig-'+to;
+    let ch=c.getChannels().find(x=>x.topic==='realtime:'+topic);
+    if(!ch){ ch=c.channel(topic); await this.sub(ch); }
+    const r=await ch.send({type:'broadcast', event:'sig', payload:{...payload, to}});
+    if(ch!==this.inbox) setTimeout(()=>{ if(c.getChannels().includes(ch)) c.removeChannel(ch); },3000);
+    if(r!=='ok') throw new Error('Kunde inte skicka ('+r+')');
+  },
+  async host(info){ await this.ensureInbox(); const l=await this.ensureLobby(); await l.track(info); },
+  async unhost(){ if(this.lobby) await this.lobby.untrack(); },
+  async browse(cb){ this.onHosts=cb; await this.ensureLobby(); cb({...this.hosts}); },
+  stopBrowse(){ this.onHosts=null; },
+  async closeAll(){ const c=this.client; this.lobby=null; this.lobbyReady=null; this.inbox=null; this.hosts={}; if(c) await c.removeAllChannels(); },
+};
+// Lokal testtransport (samma webbläsare, flera flikar) – används bara med ?testnet=1
+const SigTest = {
+  bc:null, hosts:{}, info:null, onMsg:null, onHosts:null,
+  init(){ if(this.bc) return; this.bc=new BroadcastChannel('jaktmarken-testnet');
+    this.bc.onmessage=e=>{ const m=e.data;
+      if(m.k==='host'){ if(m.id!==Net.myId){ this.hosts[m.id]={...m.info, seen:Date.now()}; this.emit(); } }
+      else if(m.k==='unhost'){ delete this.hosts[m.id]; this.emit(); }
+      else if(m.k==='sig' && m.to===Net.myId) this.onMsg&&this.onMsg(m.payload); };
+    setInterval(()=>{ if(this.info) this.bc.postMessage({k:'host',id:Net.myId,info:this.info}); const now=Date.now(); for(const k in this.hosts) if(now-this.hosts[k].seen>3000){ delete this.hosts[k]; this.emit(); } },500); },
+  emit(){ this.onHosts&&this.onHosts({...this.hosts}); },
+  async ensureInbox(){ this.init(); },
+  async send(to,payload){ this.init(); this.bc.postMessage({k:'sig',to,payload:{...payload,to}}); },
+  async host(info){ this.init(); this.info=info; this.bc.postMessage({k:'host',id:Net.myId,info}); },
+  async unhost(){ this.init(); this.info=null; this.bc.postMessage({k:'unhost',id:Net.myId}); },
+  async browse(cb){ this.init(); this.onHosts=cb; cb({...this.hosts}); },
+  stopBrowse(){ this.onHosts=null; },
+  async closeAll(){},
+};
+const Sig = TESTNET ? SigTest : SigSupa;
+
+const Net = {
+  myId: uid()+uid(), role:null, open:false, hostId:null, peers:{}, joining:false,
+  hosts:{}, browsing:false, status:'', waiters:{}, pendingItems:0,
+  sendT:0, monT:0, lookDirty:true, lookT:0,
+};
+Sig.onMsg = msg => onSignal(msg);
+const readyPeers = () => Object.values(Net.peers).filter(p=>p.ready);
+const isHostNet  = () => Net.role==='host' && readyPeers().length>0;
+const isGuestNet = () => Net.role==='guest' && !!Net.hostId && !!(Net.peers[Net.hostId] && Net.peers[Net.hostId].ready);
+const inParty    = () => isHostNet() || isGuestNet();
+function netMemberIds(){ return Net.role==='host' ? [Net.myId, ...readyPeers().map(p=>p.id)] : [Net.myId, ...Object.keys(G.others)]; }
+function netSend(peer,msg){ try{ if(peer && peer.dc && peer.dc.readyState==='open') peer.dc.send(JSON.stringify(msg)); }catch(e){} }
+function netTo(id,msg){ netSend(Net.peers[id],msg); }
+function netToHost(msg){ netSend(Net.peers[Net.hostId],msg); }
+function netToGuests(msg,except){ for(const p of readyPeers()) if(p.id!==except) netSend(p,msg); }
+function netBroadcast(msg){ if(Net.role==='host') netToGuests(msg); else if(Net.role==='guest') netToHost(msg); }
+
+// --- Utseende & position ---
+function myLook(){
+  const ch=G.ch, eq={};
+  for(const k of ['vapen','hjalm','mantel','axel','handskar','skor','byxor','brost','balte','halsband']){ const it=ch.eq[k]; if(it) eq[k]={wtype:it.wtype, req:it.req, rarity:it.rarity}; }
+  return {id:Net.myId, name:ch.name, cls:ch.cls, lvl:ch.level, eq, db:tv('k_drop')};
+}
+function lookOf(id){ const o=G.others[id]; return o?{id, name:o.name, cls:o.cls, lvl:o.lvl, eq:o.eq, db:o.db}:null; }
+function applyLook(L){
+  if(!L || L.id===Net.myId) return;
+  const o = G.others[L.id] || (G.others[L.id]={x:0,y:0,tx:0,ty:0,face:1,pose:'stand',t:0,walkT:0,climbT:0,hp:1,mhp:1,seen:false});
+  Object.assign(o,{id:L.id, name:L.name, cls:L.cls, lvl:L.lvl, eq:L.eq||{}, db:L.db||0});
+}
+function myState(){
+  const p=G.p, ch=G.ch; let pose='stand';
+  if(p.dead) pose='dead'; else if(p.climb) pose='climb'; else if(p.atkAnim>0) pose=p.atkMode; else if(!p.onGround) pose='jump'; else if(Math.abs(p.vx)>1) pose='walk';
+  return {t:'p', id:Net.myId, x:Math.round(p.x), y:Math.round(p.y), f:p.face, po:pose, k:p.atkAnim>0?+(1-p.atkAnim/p.atkDur).toFixed(2):0, w:+p.walkT.toFixed(2), c:+p.climbT.toFixed(2), hp:Math.ceil(ch.hp), mhp:G.stats.maxHp, b:p.buffT>0?1:0, m:G.mapId};
+}
+function applyState(S){
+  const o=G.others[S.id]; if(!o) return;
+  if(!o.seen || o.map!==S.m){ o.x=S.x; o.y=S.y; o.seen=true; }
+  Object.assign(o,{tx:S.x, ty:S.y, face:S.f, pose:S.po, t:S.k, walkT:S.w, climbT:S.c, hp:S.hp, mhp:S.mhp, buff:S.b, map:S.m, last:G.time});
+}
+
+// --- Monster (värden skickar ögonblicksbilder ~10 ggr/s) ---
+function monSnap(){ return {t:'mon', m:G.monsters.filter(m=>!m.dead).map(m=>[m.id, MOB_ORDER.indexOf(m.type), PLATS.indexOf(m.plat), Math.round(m.x), Math.round(m.hp*10)/10, m.dir, m.hurtT>0?2:(m.state==='walk'?1:0), (m.burn?1:0)|(m.spawnT>0?2:0)|(m.rare?4:0)])}; }
+function applyMonSnap(arr){
+  const seen=new Set();
+  for(const [id,ti,pi,x,hp,dir,st,fl] of arr){
+    seen.add(id); let m=G.monById[id];
+    if(!m){ const type=MOB_ORDER[ti], rare=!!(fl&4), d=mobDef(type,rare), plat=PLATS[pi]; if(!d||!plat) continue;
+      if(rare && (fl&2)) log(`✦ En <b style="color:#e8eef6">${d.name}</b> har dykt upp!`,'#cfd8e6');
+      m={id, type, d, sp:null, plat, x, tx:x, y:plat.y, hp, maxHp:d.hp, dir, state:'idle', timer:0, t:rand(0,10), rot:0, kb:0, kbT:0, hurtT:0, showHp:0, dead:false, dieT:0, spawnT:(fl&2)?0.5:0, burn:null, stack:0, stackT:-9, rare};
+      G.monById[id]=m; G.monsters.push(m); }
+    if(m.dead) continue;
+    m.tx=x; m.hp = (m.predT>G.time) ? Math.min(m.hp,hp) : hp;
+    if(m.pend && hp>0 && !(m.predT>G.time)) m.pend=false;
+    if(st===2){ if(!(m.hurtT>0)) m.hurtT=0.25; } else m.state = st===1?'walk':'idle';
+    if(!(m.hurtT>0)) m.dir=dir;
+    m.burning=!!(fl&1);
+  }
+  for(const m of G.monsters) if(!m.dead && !seen.has(m.id)){ m.dead=true; m.dieT=0.6; }
+}
+
+// --- Drops över nätet ---
+function dropMsg(d){ return {id:d.id, kind:d.kind, amount:d.amount, item:d.item, x:Math.round(d.x), y:Math.round(d.y), vx:d.landed?0:Math.round(d.vx), vy:d.landed?0:Math.round(d.vy), plat:d.plat.id, owner:d.owner, left:d.owner?Math.max(0,d.ownerT-G.time):0, landed:d.landed, bb:d.blockBy, bl:d.blockBy?Math.max(0,d.blockT-G.time):0}; }
+function guestOnDrop(dm){
+  if(G.drops.some(x=>x.id===dm.id)) return;
+  G.drops.push({id:dm.id, kind:dm.kind, amount:dm.amount, item:dm.item, x:dm.x, y:dm.y, vx:dm.vx, vy:dm.vy, plat:platById[dm.plat]||platById.g1, landed:dm.landed, born:G.time, life:120, t:rand(0,6), picking:false, pickT:0, owner:dm.owner, ownerT:G.time+(dm.left||0), blockBy:dm.bb||null, blockT:G.time+(dm.bl||0)});
+}
+function guestOnGone(id, by){
+  const i=G.drops.findIndex(x=>x.id===id); if(i<0) return;
+  const d=G.drops[i]; if(by){ d.picking=true; d.pickT=0; d.by=by; d.applied=true; } else G.drops.splice(i,1);
+}
+function hostOnPick(from, id){
+  const d=G.drops.find(x=>x.id===id); if(!d || d.picking || blockedFor(d, from)) return;
+  if(!canPick(d, from)){ netTo(from,{t:'deny', id, owner:d.owner, left:Math.ceil(d.ownerT-G.time)}); return; }
+  d.picking=true; d.pickT=0; d.by=from; d.applied=true;
+  netToGuests({t:'gone', id, by:from});
+  if(d.kind==='gold') splitGold(d.amount); else netTo(from,{t:'item', item:d.item});
+}
+
+// --- Kosmetiska skott & effekter från andra ---
+function netShot(pr){ if(!inParty()) return; netBroadcast({t:'shot', id:Net.myId, ty:pr.type, x:Math.round(pr.x), y:Math.round(pr.y), vx:Math.round(pr.vx), vy:Math.round(pr.vy), sp:pr.speed, h:pr.homing, tid:pr.target?pr.target.id:0, md:Math.round(Math.min(pr.maxDist,2000))}); }
+function spawnCosShot(S){ if(S.id===Net.myId) return; G.projs.push({type:S.ty, cos:true, x:S.x, y:S.y, vx:S.vx, vy:S.vy, speed:S.sp, homing:S.h, target:G.monById[S.tid]||null, dist:0, maxDist:S.md, life:1.6, hit:new Set()}); }
+function netFx(k,x,y){ if(inParty()) netBroadcast({t:'fx', id:Net.myId, k, x:Math.round(x), y:Math.round(y)}); }
+function spawnNetFx(S){ if(S.id===Net.myId) return; if(S.k==='beam') G.fx.push({type:'beam', x:S.x, y:S.y, t:0, dur:1.6}); else if(S.k==='radial') G.fx.push({type:'radial', x:S.x, y:S.y, t:0, dur:.4}); }
+
+// --- Meddelanden ---
+function netOnData(peer, msg){
+  const from=peer.id;
+  if(Net.role==='host'){
+    switch(msg.t){
+      case 'hello': return hostOnHello(peer, msg);
+      case 'p':     if(!peer.ready) return; msg.id=from; applyState(msg); return netToGuests(msg, from);
+      case 'look':  msg.id=from; applyLook(msg); return netToGuests({...msg, t:'look'}, from);
+      case 'hit':   { const m=G.monById[msg.id]; if(m && !m.dead) hitMonster(m, +msg.d||0, {dir:msg.dir, kind:msg.k||undefined, noKb:!!msg.nk, by:from, burn:msg.b||null, noBurn:!msg.b}); return; }
+      case 'pick':  return hostOnPick(from, msg.id);
+      case 'dropItem':{ const pl=platById[msg.plat]||platById.g1; spawnDrop({x:msg.x, y:pl.y, d:{h:40}, plat:pl}, {kind:'item', item:msg.item, block:from}, msg.f||1); return; }
+      case 'redrop':{ const pl=platById[msg.plat]||platById.g1; spawnDrop({x:msg.x, y:pl.y, d:{h:20}, plat:pl}, {kind:'item', item:msg.item, owner:from}); return; }
+      case 'shot':  msg.id=from; spawnCosShot(msg); return netToGuests(msg, from);
+      case 'fx':    msg.id=from; spawnNetFx(msg); return netToGuests(msg, from);
+      case 'bye':   return netRemovePeer(from,'left');
+    }
+  } else if(Net.role==='guest'){
+    switch(msg.t){
+      case 'welcome': return guestOnWelcome(msg);
+      case 'p':     return applyState(msg);
+      case 'look':  return applyLook(msg);
+      case 'left':  { const n=nameOf(msg.id); delete G.others[msg.id]; log(`👥 ${esc(n)} lämnade partyt.`,'#9fe0ff'); return refreshParty(); }
+      case 'mon':   return applyMonSnap(msg.m);
+      case 'dmg':   { if(msg.by===Net.myId) return; const m=G.monById[msg.id]; if(m && !m.dead){ addNum(m.x, m.y-m.d.h-6, msg.v, msg.k||'dmg', m); m.showHp=4; sparks(m.x, m.y-m.d.h/2, msg.k==='burn'?'#ff9a3a':'#fff3b0', msg.k==='burn'?2:4); } return; }
+      case 'kill':  { const m=G.monById[msg.id]; if(m && !m.dead){ m.dead=true; m.dieT=0.6; } return; }
+      case 'drop':  return guestOnDrop(msg.d);
+      case 'gone':  return guestOnGone(msg.id, msg.by);
+      case 'exp':   return gainKillExp(msg.ty, msg.s, true, !!msg.kill, msg.x||1);
+      case 'gold':  return addGold(msg.a, true);
+      case 'item':  Net.pendingItems=Math.max(0,Net.pendingItems-1); return receiveItem(msg.item);
+      case 'deny':  Net.pendingItems=Math.max(0,Net.pendingItems-1); return throttleMsg('deny',`Föremålet tillhör ${esc(ownerName(msg.owner))} i ${msg.left} s till.`,'#ff9b9b');
+      case 'map':   return guestEnterMap(msg.to, msg.x, msg.y, true);
+      case 'shot':  return spawnCosShot(msg);
+      case 'fx':    return spawnNetFx(msg);
+      case 'bye':   return netRemovePeer(from,'host-left');
+    }
+  }
+}
+function hostOnHello(peer, msg){
+  if(msg.v!==NET_VER || !msg.look){ netSend(peer,{t:'bye'}); return netRemovePeer(peer.id,'version',true); }
+  if(readyPeers().length>=PARTY_MAX-1){ netSend(peer,{t:'bye'}); return netRemovePeer(peer.id,'full',true); }
+  peer.ready=true; peer.name=msg.look.name;
+  applyLook({...msg.look, id:peer.id});
+  const pl=(G.p.onGround&&G.p.plat)?G.p.plat:null, st=curMap().start;
+  const looks=[myLook(), ...readyPeers().filter(p=>p.id!==peer.id).map(p=>lookOf(p.id)).filter(Boolean)];
+  netSend(peer,{t:'welcome', host:Net.myId, map:G.mapId, x:Math.round(pl?G.p.x:st.x), y:pl?pl.y:st.y, looks, drops:G.drops.filter(d=>!d.picking).map(dropMsg)});
+  netSend(peer, monSnap());
+  netToGuests({...msg.look, t:'look', id:peer.id}, peer.id);
+  log(`👥 <b>${esc(peer.name)}</b> gick med i partyt!`,'#9fe0ff'); toast(`👥 ${esc(peer.name)} gick med i partyt`);
+  hostUpdatePresence(); refreshParty();
+}
+function guestOnWelcome(msg){
+  for(const L of msg.looks||[]) applyLook(L);
+  guestEnterMap(msg.map, msg.x, msg.y, false);
+  for(const dm of msg.drops||[]) guestOnDrop(dm);
+  const hn=nameOf(msg.host);
+  toast(`👥 Du är med i <b>${esc(hn)}</b>s party!`); log(`👥 Du gick med i ${esc(hn)}s party. +5% EXP i party.`,'#9fe0ff');
+  refreshParty();
+}
+function guestEnterMap(to, x, y, announce){
+  if(!MAPS[to] || !G.p) return;
+  G.mapId=to; G.ch.map=to;
+  const keep={cds:G.p.cds, cdMax:G.p.cdMax, buffT:G.p.buffT, dead:G.p.dead};
+  G.p=makePlayer(x,y); Object.assign(G.p,keep); G.p.portalCd=0.8;
+  G.monsters=[]; G.monById={}; G.spawns=[]; G.drops=[]; G.projs=[]; G.nums=[];
+  $('#mapName').textContent=curMap().name; snapCam();
+  if(announce){ toast(`🌀 <b>${curMap().name}</b> – partyt följer ledaren`); log(`Partyt gick till <b>${curMap().name}</b>.`,'#ffe9a8'); }
+  markDirty(true);
+}
+
+// --- Uppkoppling (WebRTC) ---
+function iceDone(pc){ return new Promise(res=>{ if(pc.iceGatheringState==='complete') return res(); const t=setTimeout(res,2500); pc.addEventListener('icegatheringstatechange',()=>{ if(pc.iceGatheringState==='complete'){ clearTimeout(t); res(); } }); }); }
+function dcOpen(dc,ms){ return new Promise((res,rej)=>{ if(dc.readyState==='open') return res(); const t=setTimeout(()=>rej(new Error('Ingen direktkontakt (P2P) kunde skapas – prova ett annat nätverk.')),ms); dc.addEventListener('open',()=>{ clearTimeout(t); res(); }); }); }
+function sigWait(from,ms){ return new Promise((res,rej)=>{ const t=setTimeout(()=>{ delete Net.waiters[from]; rej(new Error('Inget svar från värden.')); },ms); Net.waiters[from]={resolve:m=>{ clearTimeout(t); res(m); }}; }); }
+function netAddPeer(id, pc){
+  const peer={id, pc, dc:null, ready:false}; Net.peers[id]=peer;
+  pc.onconnectionstatechange=()=>{ if(['failed','closed'].includes(pc.connectionState)) netRemovePeer(id,'lost'); };
+  return peer;
+}
+function netBindDc(peer, dc){
+  peer.dc=dc;
+  dc.onopen=()=>{ if(Net.role==='guest'){ peer.ready=true; netSend(peer,{t:'hello', v:NET_VER, look:myLook()}); } };
+  dc.onmessage=e=>{ let m; try{ m=JSON.parse(e.data); }catch(_){ return; } try{ netOnData(peer,m); }catch(err){ console.error(err); } };
+  dc.onclose=()=>netRemovePeer(peer.id,'closed');
+}
+async function onSignal(msg){
+  if(!msg || msg.from===Net.myId || (msg.to && msg.to!==Net.myId)) return;
+  if(msg.t==='answer' || msg.t==='reject'){ const w=Net.waiters[msg.from]; if(w){ delete Net.waiters[msg.from]; w.resolve(msg); } return; }
+  if(msg.t!=='offer' || Net.role!=='host') return;
+  const total=1+Object.keys(Net.peers).length;
+  const why = msg.v!==NET_VER ? 'Ni har olika versioner av spelet – ladda om sidan (Ctrl+F5).' : !Net.open||G.mode!=='game' ? 'Partyt är stängt för nya spelare.' : total>=PARTY_MAX ? 'Partyt är fullt.' : '';
+  if(why){ Sig.send(msg.from,{t:'reject', from:Net.myId, reason:why}).catch(()=>{}); return; }
+  try{
+    const pc=new RTCPeerConnection(rtcConf()), peer=netAddPeer(msg.from, pc); peer.name=msg.name;
+    pc.ondatachannel=e=>netBindDc(peer, e.channel);
+    await pc.setRemoteDescription({type:'offer', sdp:msg.sdp});
+    await pc.setLocalDescription(await pc.createAnswer()); await iceDone(pc);
+    await Sig.send(msg.from,{t:'answer', from:Net.myId, sdp:pc.localDescription.sdp});
+    setTimeout(()=>{ const p=Net.peers[msg.from]; if(p && !p.ready) netRemovePeer(msg.from,'timeout',true); },25000);
+  }catch(e){ console.warn(e); netRemovePeer(msg.from,'fail',true); }
+}
+function hostInfo(){ return {host:1, v:NET_VER, name:G.ch.name, cls:G.ch.cls, lvl:G.ch.level, map:curMap().name, n:1+readyPeers().length}; }
+function hostUpdatePresence(){
+  if(Net.role!=='host' || !G.ch) return;
+  if(Net.open && 1+readyPeers().length<PARTY_MAX) Sig.host(hostInfo()).catch(e=>console.warn(e));
+  else Sig.unhost().catch(()=>{});
+}
+async function netHost(){
+  if(Net.role) return;
+  if(!Cloud.on && !TESTNET){ toast('Multiplayer kräver Supabase-inställningarna.'); return; }
+  Net.role='host'; Net.open=true; Net.peers={}; G.others={}; Net.status='Öppnar…'; refreshParty();
+  try{ await Sig.host(hostInfo()); Net.status=''; log('🌐 Din karta är nu öppen – andra kan gå med via 👥.','#9fe0ff'); }
+  catch(e){ Net.role=null; Net.open=false; Net.status=''; toast('⚠️ Kunde inte öppna: '+esc(e.message||String(e)),5000); }
+  refreshParty();
+}
+async function netJoin(hostId){
+  if(Net.role) return;
+  Net.role='guest'; Net.joining=true; Net.hostId=hostId; G.others={}; refreshParty();
+  try{
+    await Sig.ensureInbox();
+    const pc=new RTCPeerConnection(rtcConf()), dc=pc.createDataChannel('jm',{ordered:true});
+    const peer=netAddPeer(hostId, pc); netBindDc(peer, dc);
+    await pc.setLocalDescription(await pc.createOffer()); await iceDone(pc);
+    const wait=sigWait(hostId,15000);
+    await Sig.send(hostId,{t:'offer', from:Net.myId, sdp:pc.localDescription.sdp, v:NET_VER, name:G.ch.name});
+    const ans=await wait;
+    if(ans.t==='reject') throw new Error(ans.reason||'Värden tackade nej.');
+    await pc.setRemoteDescription({type:'answer', sdp:ans.sdp});
+    await dcOpen(dc,15000);
+    Net.joining=false; Sig.stopBrowse(); Sig.closeAll().catch(()=>{});   // gästen behöver inte Supabase längre
+  }catch(e){
+    Net.joining=false;
+    if(Net.peers[hostId]) netRemovePeer(hostId,'fail',true);
+    Net.role=null; Net.hostId=null;
+    toast('⚠️ Kunde inte ansluta: '+esc(e.message||String(e)),6000);
+  }
+  refreshParty();
+}
+function netRemovePeer(id, why, silent){
+  const p=Net.peers[id]; if(!p) return;
+  delete Net.peers[id];
+  try{ p.dc&&p.dc.close(); }catch(_){} try{ p.pc.close(); }catch(_){}
+  const name=(G.others[id]&&G.others[id].name)||p.name||'En spelare';
+  delete G.others[id];
+  if(Net.role==='host'){
+    if(p.ready && !silent){ log(`👥 ${esc(name)} lämnade partyt.`,'#9fe0ff'); netToGuests({t:'left', id}); }
+    hostUpdatePresence();
+  } else if(Net.role==='guest' && id===Net.hostId){
+    const was=p.ready;
+    Net.role=null; Net.hostId=null; G.others={};
+    for(const k of Object.keys(Net.peers)) netRemovePeer(k,'x',true);
+    if(was && !silent && G.mode==='game'){ toast('👥 Partyt upplöstes – du spelar vidare själv.'); log('👥 Partyt upplöstes.','#9fe0ff'); initSpawns(); G.drops=[]; G.projs=[]; }
+  }
+  refreshParty();
+}
+function netLeave(quiet){
+  if(!Net.role) return;
+  const wasGuest = Net.role==='guest';
+  if(Net.role==='host') netToGuests({t:'bye'}); else netToHost({t:'bye'});
+  for(const id of Object.keys(Net.peers)) netRemovePeer(id,'leave',true);
+  Net.role=null; Net.open=false; Net.hostId=null; Net.joining=false; G.others={};
+  Sig.unhost().catch(()=>{}); Sig.stopBrowse(); Sig.closeAll().catch(()=>{});
+  if(wasGuest && !quiet && G.mode==='game'){ initSpawns(); G.drops=[]; G.projs=[]; }
+  if(!quiet) log('👥 Du lämnade partyt.','#9fe0ff');
+  refreshParty();
+}
+function netTick(dt){
+  if(!Net.role || G.mode!=='game' || !G.p) return;
+  for(const o of Object.values(G.others)){ const k=Math.min(1,dt*12); o.x+=(o.tx-o.x)*k; o.y+=(o.ty-o.y)*k; }
+  if(!inParty()) return;
+  Net.sendT-=dt; if(Net.sendT<=0){ Net.sendT=1/15; netBroadcast(myState()); }
+  if(Net.lookDirty){ Net.lookT-=dt; if(Net.lookT<=0){ Net.lookDirty=false; Net.lookT=0.5; netBroadcast({...myLook(), t:'look'}); } }
+  if(Net.role==='host'){ Net.monT-=dt; if(Net.monT<=0){ Net.monT=0.1; netToGuests(monSnap()); } }
+}
+
+// --- Party-fönster & HUD ---
+function partyWindowOpened(){ if(!Net.role) startBrowse(); }
+function partyWindowClosed(){ if(!Net.role){ Sig.stopBrowse(); Net.browsing=false; setTimeout(()=>{ if(!Net.role && !isOpen('party')) Sig.closeAll().catch(()=>{}); },1500); } }
+function startBrowse(){
+  if(!Cloud.on && !TESTNET) return;
+  Net.status='Letar efter öppna spel…'; Net.browsing=false;
+  Sig.browse(h=>{ Net.hosts=h; Net.browsing=true; Net.status=''; if(isOpen('party')) renderParty(); })
+     .catch(e=>{ Net.status='Kunde inte nå lobbyn: '+(e.message||e); if(isOpen('party')) renderParty(); });
+}
+function refreshParty(){ if(isOpen('party')) renderParty(); }
+function memberListHtml(){
+  const rows=[{name:G.ch.name+' (du)', cls:G.ch.cls, lvl:G.ch.level, lead:Net.role==='host'}];
+  for(const o of Object.values(G.others)) rows.push({name:o.name, cls:o.cls, lvl:o.lvl, lead:o.id===Net.hostId});
+  return `<div class="plist">${rows.map(r=>`<div class="prow">${r.lead?'👑 ':''}<b>${esc(r.name||'?')}</b> <small>Lv ${r.lvl||'?'} ${CLASSES[r.cls]?CLASSES[r.cls].name:''}</small></div>`).join('')}</div>`;
+}
+function renderParty(){
+  if(!G.ch) return;
+  let h=`<div class="shopinfo" style="max-width:none">Spela tillsammans med upp till ${PARTY_MAX} personer. I party får alla <b>+5% EXP</b>. Den som dödar ett monster får <b>75%</b> av dess EXP och övriga i partyt <b>30%</b> var. Guld som plockas upp delas lika. Föremål som droppas tillhör den som dödade monstret i 1 minut. Partyt följer ledaren genom portaler.</div>`;
+  if(!Cloud.on && !TESTNET){ h+=`<div class="warn" style="font-size:13px">Multiplayer behöver Supabase-inställningarna för att ni ska hitta varandra. Själva spelandet går sedan direkt mellan er (P2P).</div>`; $('#partyBody').innerHTML=h; return; }
+  if(Net.role==='host'){
+    const n=1+readyPeers().length;
+    h+=`<div class="pstat">👑 Du är party-ledare · ${n}/${PARTY_MAX} spelare · ${!Net.open?'Stängd för nya spelare':n>=PARTY_MAX?'Partyt är fullt':'Öppen – andra kan gå med'}</div>`+memberListHtml();
+    h+=`<div class="row" style="margin-top:8px">${Net.open?`<button class="btn sm sec" data-pa="close">Stäng för nya spelare</button>`:`<button class="btn sm" data-pa="open">Öppna för nya spelare</button>`}<button class="btn sm red" data-pa="end">Avsluta party</button></div>`;
+  } else if(Net.role==='guest'){
+    if(Net.joining) h+=`<div class="pstat">⏳ Ansluter till ${esc((Net.hosts[Net.hostId]||{}).name||'värden')}…</div>`;
+    else h+=`<div class="pstat">👥 Du är med i ${esc(nameOf(Net.hostId))}s party</div>`+memberListHtml()+`<div class="row" style="margin-top:8px"><button class="btn sm red" data-pa="leave">Lämna party</button></div>`;
+  } else {
+    h+=`<button class="btn green" data-pa="host">🌐 Öppna min karta för andra</button>`;
+    h+=`<div style="margin-top:12px;font-weight:800">Öppna spel just nu</div>`;
+    if(Net.status) h+=`<div style="color:var(--muted);font-size:12.5px;margin:4px 0">${esc(Net.status)}</div>`;
+    const list=Object.entries(Net.hosts).filter(([,x])=>x.v===NET_VER);
+    if(!list.length && Net.browsing) h+=`<div style="color:var(--muted);font-size:12.5px;padding:6px 0">Inga öppna spel just nu – listan uppdateras av sig själv.</div>`;
+    for(const [id,x] of list) h+=`<div class="srow"><div class="sn"><b>${esc(x.name)}</b><small>Lv ${x.lvl} ${esc(CLASSES[x.cls]?CLASSES[x.cls].name:'')} · ${esc(x.map)} · ${x.n}/${PARTY_MAX} spelare</small></div><button class="btn sm green" data-join="${esc(id)}" ${x.n>=PARTY_MAX?'disabled':''}>Gå med</button></div>`;
+  }
+  $('#partyBody').innerHTML=h;
+}
+$('#partyBody').addEventListener('click',e=>{
+  const j=e.target.closest('[data-join]'); if(j){ netJoin(j.dataset.join); return; }
+  const a=e.target.closest('[data-pa]'); if(!a) return;
+  const k=a.dataset.pa;
+  if(k==='host') netHost();
+  else if(k==='close'){ Net.open=false; Sig.unhost().catch(()=>{}); refreshParty(); }
+  else if(k==='open'){ Net.open=true; hostUpdatePresence(); refreshParty(); }
+  else if(k==='end' || k==='leave'){ netLeave(); if(isOpen('party')) startBrowse(); }
+});
+let partyHudKey='';
+function renderPartyHud(){
+  const el=$('#partyHud');
+  if(!inParty()){ if(partyHudKey){ el.classList.add('hidden'); el.innerHTML=''; partyHudKey=''; } return; }
+  const rows=Object.values(G.others).map(o=>({n:o.name, l:o.lvl, k:clamp((o.hp||0)/(o.mhp||1),0,1)}));
+  const key=JSON.stringify(rows.map(r=>[r.n,r.l,Math.round(r.k*50)]));
+  if(key===partyHudKey) return; partyHudKey=key;
+  el.classList.remove('hidden');
+  el.innerHTML=rows.map(r=>`<div class="pm"><b>${esc(r.n||'?')}</b> <small>Lv ${r.l||'?'}</small><div class="ph"><i style="width:${r.k*100}%"></i></div></div>`).join('');
 }
 
 /* =====================================================================
@@ -2132,7 +3363,7 @@ async function leaveGame(){
 function update(dt){
   G.time+=dt;
   if(G.mode==='game' && G.p){ updatePlayer(dt); checkContact(); }
-  updateMonsters(dt); spawnTick(dt); updateProjs(dt); updateDrops(dt); updateFx(dt); updateCamera(dt);
+  updateMonsters(dt); spawnTick(dt); updateProjs(dt); updateDrops(dt); updateFx(dt); netTick(dt); updateCamera(dt);
   if(G.mode==='game'){ hudT-=dt; if(hudT<=0){ hudT=0.1; updateHud(); } }
 }
 let last=performance.now();
@@ -2149,7 +3380,7 @@ resize(); initSpawns(); snapCam(); showLogin();
 requestAnimationFrame(frame);
 
 // Exponera för felsökning i konsolen
-window.JM = {G, makeItem, BASES, startGame};
+window.JM = {G, Net, MOBS, RARE_DEFS, rollRarityTest:rollRarity, gainKillExpTest:(...a)=>gainKillExp(...a), makeItem, spawnMonsterTest:(sp,inst)=>spawnMonster(sp,inst), BASES, startGame, drawIconTest:drawIcon, drawCharTest:drawChar, spawnTest:sp=>spawnMonster(sp,true), whisperTarget:()=>whisperTarget(), rangedTarget:(r,d,u)=>rangedTarget(r,d,u), recalc:()=>recalc()};
 </script>
 </body>
 </html>
