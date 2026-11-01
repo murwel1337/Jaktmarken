@@ -130,7 +130,7 @@ label{display:block;font-size:12px;color:var(--muted);margin:10px 0 4px}
 .detail .acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
 .detail .hintx{color:var(--muted);font-size:12px}
 @media (max-width:820px){.bagpane{width:calc(6 * 46px + 5 * 5px)}.baggrid{grid-template-columns:repeat(6,46px)}}
-#tip{position:fixed;z-index:60;pointer-events:none;background:rgba(10,14,22,.97);border:1px solid #5a6f94;border-radius:8px;padding:8px 10px;font-size:12.5px;max-width:250px;box-shadow:0 6px 20px rgba(0,0,0,.5)}
+#tip{position:fixed;z-index:2147483000;pointer-events:none;background:rgba(10,14,22,.97);border:1px solid #5a6f94;border-radius:8px;padding:8px 10px;font-size:12.5px;max-width:250px;box-shadow:0 6px 20px rgba(0,0,0,.5)}
 .tt-name{font-weight:800;font-size:14px}
 .tt-sub{color:var(--muted);font-size:11.5px;margin-bottom:4px}
 .tt-stat{color:#7ee787}
@@ -180,6 +180,8 @@ label{display:block;font-size:12px;color:var(--muted);margin:10px 0 4px}
 .kbd{display:inline-block;background:#26324a;border:1px solid #4a5f85;border-radius:4px;padding:0 5px;font-size:12px;font-weight:700}
 
 /* Förbrukningsvaror, scrolls, monsterbok */
+#dragGhost{position:fixed;width:46px;height:46px;margin:-23px 0 0 -23px;pointer-events:none;z-index:2147483500;filter:drop-shadow(0 4px 8px rgba(0,0,0,.6))}
+.slot.scr{touch-action:none}
 .r-cons{border-color:#6c7c98}
 .cnt{position:absolute;right:3px;bottom:1px;font-size:11px;font-weight:900;color:#fff;text-shadow:0 1px 2px #000,0 0 2px #000;pointer-events:none;z-index:3}
 .hs .hi{width:30px;height:30px;display:block}
@@ -245,12 +247,12 @@ body.touch .pm{min-width:0;padding:2px 6px}
 body.touch #buffs{top:auto;bottom:14px;left:50%;transform:translateX(-50%)}
 
 /* ---------- Toast, hint, död ---------- */
-#toast{position:fixed;left:50%;top:70px;transform:translateX(-50%);z-index:70;display:flex;flex-direction:column;gap:6px;align-items:center;pointer-events:none}
+#toast{position:fixed;left:50%;top:70px;transform:translateX(-50%);z-index:2147482000;display:flex;flex-direction:column;gap:6px;align-items:center;pointer-events:none}
 .tst{background:rgba(12,18,30,.94);border:1px solid #5a6f94;border-radius:10px;padding:8px 14px;font-size:13.5px;max-width:92vw;text-align:center;box-shadow:0 6px 20px rgba(0,0,0,.4);transition:opacity .6s}
-#hint{position:fixed;left:50%;bottom:110px;transform:translateX(-50%);z-index:70;background:rgba(40,30,0,.94);border:1px solid #ffd23f;color:#ffe9a8;border-radius:10px;padding:8px 14px;font-weight:700;pointer-events:none}
-#deathBox{position:fixed;inset:0;z-index:55;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.35)}
+#hint{position:fixed;left:50%;bottom:110px;transform:translateX(-50%);z-index:2147482000;background:rgba(40,30,0,.94);border:1px solid #ffd23f;color:#ffe9a8;border-radius:10px;padding:8px 14px;font-weight:700;pointer-events:none}
+#deathBox{position:fixed;inset:0;z-index:2147481000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.35)}
 #deathBox .card{text-align:center}
-#rotate{position:fixed;inset:0;z-index:100;background:#0d1420;display:none;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:20px}
+#rotate{position:fixed;inset:0;z-index:2147483600;background:#0d1420;display:none;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:20px}
 body.touch.portrait #rotate{display:flex}
 
 /* ---------- Touch ---------- */
@@ -408,19 +410,21 @@ function line(c,x1,y1,x2,y2){ c.beginPath(); c.moveTo(x1,y1); c.lineTo(x2,y2); c
    DATA: RARITIES, FÖREMÅL, KLASSER, TALANGER, MONSTER
    ===================================================================== */
 const RARITIES = [
-  {id:'common',    name:'Common',    color:'#b9bec7', chance:63, flat:0, pct:0,  sell:0},
-  {id:'uncommon',  name:'Uncommon',  color:'#4fdc5b', chance:20, flat:1, pct:10, sell:20},
-  {id:'rare',      name:'Rare',      color:'#4c95ff', chance:10, flat:2, pct:15, sell:40},
-  {id:'epic',      name:'Epic',      color:'#b86bff', chance:5,  flat:3, pct:20, sell:60},
-  {id:'legendary', name:'Legendary', color:'#ff9d2b', chance:2,  flat:4, pct:25, sell:100},
+  {id:'common',    name:'Common',    color:'#b9bec7', chance:77.5, flat:0, pct:0,  sell:0},
+  {id:'uncommon',  name:'Uncommon',  color:'#4fdc5b', chance:15,   flat:1, pct:10, sell:20},
+  {id:'rare',      name:'Rare',      color:'#4c95ff', chance:5,    flat:2, pct:15, sell:40},
+  {id:'epic',      name:'Epic',      color:'#b86bff', chance:2,    flat:3, pct:20, sell:60},
+  {id:'legendary', name:'Legendary', color:'#ff9d2b', chance:0.5,  flat:4, pct:25, sell:100},
 ];
 const RAR = Object.fromEntries(RARITIES.map(r=>[r.id,r]));
-function rollRarity(boost){
-  let r=Math.random()*100;
+function rollRarity(boost, maxRar){
+  let r=Math.random()*100, id='common';
   if(boost){   // silvermonster: aldrig Common, 3x chans till Rare/Epic/Legendary, resten Uncommon
-    if(r<6) return 'legendary'; r-=6; if(r<15) return 'epic'; r-=15; if(r<30) return 'rare'; return 'uncommon';
-  }
-  for(const x of RARITIES){ if(r<x.chance) return x.id; r-=x.chance; } return 'common';
+    const L=RAR.legendary.chance*3, E=RAR.epic.chance*3, Ra=RAR.rare.chance*3;
+    id = r<L ? 'legendary' : r<L+E ? 'epic' : r<L+E+Ra ? 'rare' : 'uncommon';
+  } else { for(const x of RARITIES){ if(r<x.chance){ id=x.id; break; } r-=x.chance; } }
+  if(maxRar){ const o=RARITIES.map(x=>x.id); if(o.indexOf(id)>o.indexOf(maxRar)) id=maxRar; }   // vissa monster droppar bara upp till en viss rarity
+  return id;
 }
 
 const STATS = ['str','int','agi'];
@@ -448,7 +452,14 @@ for(const [id,wtype,name,req,atk] of [
   ['yxa2','yxa','Vedyxa',2,[2,3]],     ['yxa5','yxa','Skogsyxa',5,[4,6]],
   ['bage2','bage','Kvistbåge',2,[1,2]],['bage5','bage','Almbåge',5,[2,4]],
   ['stav2','stav','Pinnstav',2,[1,2]], ['stav5','stav','Viskstav',5,[2,4]],
+  ['yxa8','yxa','Björnyxa',8,[7,10]], ['bage8','bage','Björnbåge',8,[4,7]], ['stav8','stav','Björnstav',8,[4,7]],
 ]) BASES[id] = {id, slot:'vapen', wtype, name, req, atk};
+// Level 8-utrustning (från vargar) – varginspirerat utseende
+BASES.hjalm8 = {id:'hjalm8', slot:'hjalm', name:'Varghuva',       req:8, armor:5, smin:2, smax:3};
+BASES.byxor8 = {id:'byxor8', slot:'byxor', name:'Vargpälsbyxor',  req:8, armor:5, smin:2, smax:3};
+BASES.brost8 = {id:'brost8', slot:'brost', name:'Vargpälsväst',   req:8, armor:5, smin:2, smax:3};
+// Uppdragsbelöning på Jaktmarken II: fasta stats
+BASES.ringJakt = {id:'ringJakt', slot:'ring', name:'Jägarringen', req:4, armor:1, fixed:{str:2,int:2,agi:2}};
 
 /* Förbrukningsvaror (köps i butiken, staplas upp till 20 per plats i väskan) */
 const STACK_MAX = 20, SCROLL_SLOTS = 6, SCROLL_CHANCE = 0.6;
@@ -461,6 +472,7 @@ const CONS = {
   scrAtk:{kind:'scroll', name:'Scroll: Vapenskada +2', price:20, target:'weapon', stat:'atk', amt:2, desc:'Vapen: 60% chans till +2 attack.'},
 };
 const isCons = it => !!(it && CONS[it.base]);
+const SCROLL_IDS = ['scrStr','scrInt','scrAgi','scrAtk'];
 const itemName = it => isCons(it) ? CONS[it.base].name : it.name + (it.plus ? ` (+${it.plus})` : '');
 
 function makeItem(baseId, rarity='common'){
@@ -471,6 +483,8 @@ function makeItem(baseId, rarity='common'){
     it.wtype = b.wtype;
     it.atkMin = up(b.atk[0]+r.flat);
     it.atkMax = up(b.atk[1]+r.flat);
+  } else if(b.fixed){
+    it.armor = b.armor; for(const s of STATS) it[s] = b.fixed[s]||0;
   } else {
     it.armor = b.armor;
     for(const s of STATS){ const v = randInt(b.smin,b.smax); it[s] = v>0 ? up(v) : 0; }
@@ -534,12 +548,15 @@ const abilName = id => id==='attack' ? 'Basattack' : CONS[id] ? CONS[id].name : 
 const abilIcon = id => id==='attack' ? '⚔️' : CONS[id] ? `<img class="hi" src="${iconURL({base:id})}" alt="">` : TAL[id].icon;
 
 const MOBS = {
-  blabar:   {name:'Blåbär',    hp:10, exp:1, gold:1, touch:1, speed:52, w:34, h:34, drop:0.03, pool:['yxa2','bage2','stav2'],         map:1},
-  mossa:    {name:'Mossaboll', hp:25, exp:2, gold:2, touch:2, speed:68, w:44, h:44, drop:0.03, pool:['brost2','byxor2','hjalm2'],     map:1},
-  kissekatt:{name:'Kissekatt', hp:45, exp:3, gold:3, touch:3, speed:78, w:42, h:36, drop:0.02, pool:['handskar5','mantel5','skor5'], map:2},
-  vildhund: {name:'Vildhund',  hp:45, exp:3, gold:3, touch:3, speed:88, w:50, h:42, drop:0.02, pool:['yxa5','bage5','stav5'],         map:2},
+  // touch = skada vid beröring (10x tidigare värden). scrolls = droppar en slumpmässig common-scroll i stället för utrustning.
+  blabar:   {name:'Blåbär',    hp:10, exp:1, gold:1, touch:10, speed:52,  w:34, h:34, drop:0.03, pool:SCROLL_IDS, scrolls:true,                 map:1},
+  mossa:    {name:'Mossaboll', hp:25, exp:2, gold:2, touch:20, speed:68,  w:44, h:44, drop:0.03, pool:SCROLL_IDS, scrolls:true,                 map:1},
+  kissekatt:{name:'Kissekatt', hp:45, exp:3, gold:3, touch:30, speed:78,  w:42, h:36, drop:0.02, pool:['handskar5','mantel5','skor5'], maxRar:'uncommon', map:2},
+  vildhund: {name:'Vildhund',  hp:45, exp:3, gold:3, touch:30, speed:88,  w:50, h:42, drop:0.02, pool:['yxa5','bage5','stav5'],         maxRar:'uncommon', map:2},
+  varg:     {name:'Varg',      hp:90, exp:5, gold:5, touch:40, speed:100, w:54, h:46, drop:0.02, pool:['hjalm8','byxor8','brost8'],     maxRar:'uncommon', map:3},
+  bjorn:    {name:'Björn',     hp:90, exp:5, gold:5, touch:50, speed:55,  w:66, h:60, drop:0.02, pool:['yxa8','bage8','stav8'],         maxRar:'uncommon', map:3},
 };
-const MOB_ORDER = ['blabar','mossa','kissekatt','vildhund'];
+const MOB_ORDER = ['blabar','mossa','kissekatt','vildhund','varg','bjorn'];
 /* Silvermonster: 1% chans vid varje spawn. Dubbelt så stort, 5x HP och skada, 3x EXP, droppar alltid ett föremål. */
 const RARE_CHANCE = 0.01;
 const RARE_DEFS = {};
@@ -556,7 +573,8 @@ const INV_MAX = 32;
 const BASE_ATK_T = 0.75;          // sekunder per attack vid 100% attackhastighet
 const MELEE_RANGE = 88, BOW_RANGE = 360, WHISPER_RANGE = 270;
 const PHY = {g:1900, jump:620, walk:210, climb:135, maxFall:950};
-const expReq = l => Math.round(20*Math.pow(1.3, l-1));   // +30% per level
+const expReq = l => Math.round(15*Math.pow(1.5, l-1));   // 15 EXP till level 2, sedan +50% per level
+const TALENT_LVL = 10;   // klassernas talangträd låses upp i level 10 (kontoträdet som förut: 1 poäng per 5 levlar)
 
 /* =====================================================================
    VÄRLD: Jaktmarken I (inspirerad av Henesys Hunting Ground I)
@@ -608,9 +626,24 @@ const MAPS = {
       ['kissekatt','p4a',[920,1380]], ['vildhund','p4a',[1180]],
       ['vildhund','p4b',[2450]], ['kissekatt','p4b',[2700]],
     ],
-    portals:[{x:70, y:900, to:1, toX:2950, toY:480}],
+    portals:[{x:70, y:900, to:1, toX:2950, toY:480}, {x:2950, y:480, to:3, toX:70, toY:900}],
     theme:{sky:['#5b8fe0','#f5c9a0','#ffe9cf'], mount:'#b7b6d6', hill:'#a8cf82', hillTree:'#90bb6e', trees:'#78ae5c', sun:'rgba(255,225,170,'}},
 };
+MAPS[3] = {name:'Jaktmarken III', start:{x:150,y:900}, sign:{x:200,y:900},
+  // 30 spawnpoints: 15 Vargar, 15 Björnar
+  spawns:[
+    ['bjorn','pit',[1300,1440,1580,1720]], ['varg','pit',[1370,1510,1650,1790]],
+    ['bjorn','g1',[420,1060]], ['varg','g1',[760]],
+    ['varg','g2',[2050,2700]], ['bjorn','g2',[2350,3050]],
+    ['varg','p2a',[300]], ['bjorn','p2a',[600]],
+    ['bjorn','p2b',[2200]], ['varg','p2b',[2550]],
+    ['varg','p3a',[520,980]], ['bjorn','p3a',[820]],
+    ['bjorn','p3b',[1820,2260]], ['varg','p3b',[2000]],
+    ['varg','p4a',[920,1380]], ['bjorn','p4a',[1180]],
+    ['bjorn','p4b',[2450]], ['varg','p4b',[2700]],
+  ],
+  portals:[{x:70, y:900, to:2, toX:2950, toY:480}],
+  theme:{sky:['#34507e','#b98a7a','#f0c49a'], mount:'#7d8bab', hill:'#6f9a6a', hillTree:'#5d8658', trees:'#4c7a4a', sun:'rgba(255,205,160,'}};
 const curMap = () => MAPS[G.mapId] || MAPS[1];
 const RESPAWN_EVERY = 10, RESPAWN_MIN_DEAD = 3, RESPAWN_CHANCE = 0.75;
 
@@ -703,6 +736,9 @@ function fixAccount(a){
     c.inv=(c.inv||[]).filter(Boolean).map(it=>OLD_STARTERS.includes(it.base)?makeItem('pinne1'):it).filter(known);
     for(const k in c.eq){ if(c.eq[k] && OLD_STARTERS.includes(c.eq[k].base)) c.eq[k]=makeItem('pinne1'); if(c.eq[k] && !known(c.eq[k])) c.eq[k]=null; }
     c.hotbar=c.hotbar.map(x=>(x && (x==='attack'||TAL[x]||CONS[x]))?x:null);
+    const spent=Object.values(c.talents).reduce((a,b)=>a+b,0);
+    if(spent > Math.max(0,c.level-(TALENT_LVL-1))){ for(const k of Object.keys(c.talents)){ if(TAL[k]&&TAL[k].active) c.hotbar=c.hotbar.map(x=>x===k?null:x); } c.talents={}; }
+    if(c.quests && c.quests.bar && !c.quests.bar1){ c.quests.bar1=c.quests.bar; delete c.quests.bar; }
   }
   return a;
 }
@@ -747,7 +783,7 @@ document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState=
 function rank(id){ const t=TAL[id]; if(!t) return 0; return (t.tree==='konto' ? (G.acct&&G.acct.talents[id]) : (G.ch&&G.ch.talents[id])) || 0; }
 function tv(id){ const r=rank(id); return r ? TAL[id].v[r-1] : 0; }
 function charSpent(ch){ return Object.values(ch.talents).reduce((a,b)=>a+b,0); }
-function charAvail(){ return (G.ch.level-1) - charSpent(G.ch); }
+function charAvail(){ return Math.max(0, G.ch.level-(TALENT_LVL-1)) - charSpent(G.ch); }
 function acctPoints(a){ const best={}; for(const c of a.chars) best[c.cls]=Math.max(best[c.cls]||0, c.level); return Object.values(best).reduce((s,l)=>s+Math.floor(l/5),0); }
 function acctAvail(){ return acctPoints(G.acct) - Object.values(G.acct.talents).reduce((a,b)=>a+b,0); }
 
@@ -871,11 +907,13 @@ holdBtn($('#tJump'), ()=>{ Touch.jump=true; Touch.jumpEdge=true; }, ()=>Touch.ju
 // Mus: håll pekaren över föremål för att plocka upp
 cv.addEventListener('pointermove', e=>{ if(e.pointerType==='mouse'){ G.mouse.x=e.clientX; G.mouse.y=e.clientY; G.mouse.in=true; } });
 cv.addEventListener('pointerleave', ()=>{ G.mouse.in=false; });
+cv.addEventListener('pointermove', e=>{ if(G.mode!=='game'||e.pointerType!=='mouse') return; const w=screenToWorld(e.clientX,e.clientY); cv.style.cursor = npcAt(w.x,w.y) ? 'pointer' : ''; });
 cv.addEventListener('pointerdown', e=>{ if(G.mode==='game') tapPick(e.clientX, e.clientY, e.pointerType==='mouse'?26:44); });
 function screenToWorld(x,y){ return {x:G.cam.x + x/G.zoom, y:G.cam.y + y/G.zoom}; }
 function tapPick(sx,sy,r=44){
   if(G.mode!=='game' || !G.p || G.p.dead) return;
   const w = screenToWorld(sx,sy); let best=null, bd=r/G.zoom+6;
+  const npc=npcAt(w.x,w.y); if(npc){ talkTo(npc); return; }
   for(const o of curMap().portals){ if(Math.abs(w.x-o.x)<45 && w.y>o.y-110 && w.y<o.y+10){ if(portalNear(G.p)) { G.portalTap=true; return; } else throttleMsg('portal','Gå fram till portalen först.','#cfe0ff'); } }
   for(const d of G.drops){ if(d.picking) continue; const dd=Math.hypot(d.x-w.x, d.y-14-w.y); if(dd<bd){ bd=dd; best=d; } }
   if(best) tryPick(best);
@@ -945,7 +983,9 @@ function updatePlayer(dt){
   G.portalTap=false;
 
   // Hopp (mellanslag, eller W/upp när inget rep finns) – nedåt + hopp = släpp genom plattform
-  const wantJump = I.jump || I.jumpEdge || (I.upEdge && !rope && !portal);
+  const npcN = !rope && !portal ? npcNear() : null;
+  if(I.upEdge && npcN){ talkTo(npcN); }
+  const wantJump = I.jump || I.jumpEdge || (I.upEdge && !rope && !portal && !npcN);
   if(wantJump && p.onGround && p.knockT<=0){
     if(I.down && p.plat && !p.plat.solid){ p.drop=p.plat; p.dropT=0.3; p.onGround=false; p.vy=60; }
     else if(!I.down){ p.vy=-PHY.jump; p.onGround=false; }
@@ -1149,7 +1189,7 @@ function changeMap(to, x, y){
   const keep={cds:G.p.cds, cdMax:G.p.cdMax, buffT:G.p.buffT};
   G.p=makePlayer(x,y); Object.assign(G.p,keep); G.p.portalCd=0.8;
   initSpawns(); G.drops=[]; G.projs=[]; G.nums=[]; G.fx=[];
-  $('#mapName').textContent=curMap().name; snapCam();
+  $('#mapName').textContent=curMap().name; snapCam(); if(isOpen('quest')) renderQuest();
   for(let i=0;i<24;i++) particle(G.p.x+rand(-20,20),G.p.y-rand(0,70),pick(['#8fd0ff','#c9a2ff','#fff']),rand(-60,60),rand(-120,20),.7,3,0);
   toast(`🌀 <b>${curMap().name}</b>`); log(`Du gick till <b>${curMap().name}</b>.`,'#ffe9a8');
   if(isHostNet()){ netToGuests({t:'map', to, x:Math.round(G.p.x), y:G.p.y}); Net.monT=0; }
@@ -1194,7 +1234,10 @@ function killMonster(m){
   }
   spawnDrop(m, {kind:'gold', amount:d.gold});
   const db = killer===Net.myId ? tv('k_drop') : ((G.others[killer]&&G.others[killer].db)||0);
-  if(m.rare || Math.random() < d.drop*(1+db/100)) spawnDrop(m, {kind:'item', item:makeItem(pick(d.pool), rollRarity(m.rare)), owner:killer});
+  if(m.rare || Math.random() < d.drop*(1+db/100)){
+    const item = d.scrolls ? {uid:uid(), base:pick(d.pool), count:1} : makeItem(pick(d.pool), rollRarity(m.rare, d.maxRar));
+    spawnDrop(m, {kind:'item', item, owner:killer});
+  }
 }
 function gainKillExp(type, share, party, isKill, mult=1){
   const ch=G.ch, d=MOBS[type]; ch.kills=ch.kills||{};
@@ -1239,10 +1282,11 @@ function onLevelUp(){
   const ch=G.ch; recalc(); ch.hp=G.stats.maxHp; ch.mp=G.stats.maxMp;
   const p=G.p; G.fx.push({type:'beam', x:p.x, y:p.y, t:0, dur:1.6}); netFx('beam', p.x, p.y); hostUpdatePresence();
   for(let i=0;i<30;i++) particle(p.x+rand(-20,20), p.y-rand(0,60), pick(['#ffe066','#fff','#ffb341']), rand(-60,60), rand(-260,-80), 1.1, 3, 120);
-  log(`⭐ Level ${ch.level}! +1 Str, Int och Agi samt +1 talangpoäng.`, '#ffe066');
+  log(`⭐ Level ${ch.level}! +1 Str, Int och Agi${ch.level>=TALENT_LVL?' samt +1 talangpoäng':''}.`, '#ffe066');
+  if(ch.level===TALENT_LVL) log('✨ Talangträden är nu upplåsta! Öppna dem med T.','#ffe066');
   if(ch.level%5===0) log('🌍 Du fick ett kontopoäng till det gemensamma kontoträdet!', '#9fe0ff');
   toast(`<b style="font-size:20px;color:#ffe066">LEVEL UP!</b><br>Du är nu level ${ch.level}`);
-  if(QUEST_ORDER.some(id=>QUESTS[id].lvl===ch.level && !(ch.quests||{})[id])){ log('❗ Nytt uppdrag tillgängligt – se uppdragsloggen uppe till höger.','#ffe066'); }
+  if(QUEST_ORDER.some(id=>(QUESTS[id].lvl||1)===ch.level && questState(id)==='offer')){ log('❗ Nytt uppdrag tillgängligt – se uppdragsloggen uppe till höger.','#ffe066'); }
   updateTalDot(); refreshOpen(); markDirty(true);
 }
 
@@ -1666,7 +1710,26 @@ function leg(c,x,y,a,pants,shoe,flare){
 function drawWeapon(c,it,draw,glow){
   const rc=RAR[it.rarity].color, lv=it.req;
   c.lineCap='round';
-  if(it.wtype==='yxa' && lv>=5){
+  if(it.wtype==='yxa' && lv>=8){
+    c.fillStyle='#3d2817'; rr(c,-2,-44,4,56,2); c.fill(); c.fillStyle='#7a4e2d'; circ(c,0,11,3.5);
+    c.fillStyle='#5c636d'; c.beginPath(); c.moveTo(1,-46); c.quadraticCurveTo(17,-55,21,-40); c.lineTo(17,-37); c.lineTo(21,-33); c.lineTo(16,-30); c.lineTo(19,-25); c.quadraticCurveTo(10,-26,1,-30); c.closePath(); c.fill();
+    c.fillStyle='#ece4d0'; for(const y of [-40,-33,-25]){ c.beginPath(); c.moveTo(21,y); c.lineTo(16,y-2); c.lineTo(17,y+2); c.closePath(); c.fill(); }
+    c.strokeStyle=rc; c.lineWidth=1.6; c.beginPath(); c.moveTo(6,-49); c.quadraticCurveTo(17,-52,20,-41); c.stroke();
+  } else if(it.wtype==='bage' && lv>=8){
+    const pull=draw*10;
+    c.strokeStyle='#3d2817'; c.lineWidth=3.8; c.beginPath(); c.moveTo(-6,-28); c.quadraticCurveTo(2,-27,0,-21); c.quadraticCurveTo(15,0,0,21); c.quadraticCurveTo(2,27,-6,28); c.stroke();
+    c.fillStyle='#ece4d0'; for(const sg of [-1,1]){ c.beginPath(); c.moveTo(-6,sg*28); c.quadraticCurveTo(-11,sg*29,-12,sg*24); c.lineTo(-7,sg*26); c.closePath(); c.fill(); }
+    c.fillStyle='#7a4e2d'; ell(c,6,0,3,5);
+    c.strokeStyle='rgba(255,255,255,.9)'; c.lineWidth=1; c.beginPath(); c.moveTo(-6,-28); c.lineTo(-4-pull,0); c.lineTo(-6,28); c.stroke();
+    if(draw>0){ c.strokeStyle='#6b4a2a'; c.lineWidth=2; line(c,-4-pull,0,16,0); c.fillStyle='#ccd'; c.beginPath(); c.moveTo(19,0); c.lineTo(14,-3); c.lineTo(14,3); c.fill(); }
+  } else if(it.wtype==='stav' && lv>=8){
+    c.fillStyle='#3d2817'; rr(c,-2,-42,4,56,2); c.fill();
+    c.fillStyle='#7a4e2d'; circ(c,0,-45,6);
+    if(glow>0){ c.fillStyle=hexA('#ffb347',.35*glow); circ(c,0,-53,15); }
+    const g=c.createRadialGradient(-1,-55,1,0,-53,5); g.addColorStop(0,'#fff3c0'); g.addColorStop(1,'#e07a10'); c.fillStyle=g; circ(c,0,-53,4.8);
+    c.fillStyle='#ece4d0'; for(const x of [-5,0,5]){ c.beginPath(); c.moveTo(x-1.5,-49); c.lineTo(x,-56); c.lineTo(x+1.5,-49); c.closePath(); c.fill(); }
+    c.strokeStyle=rc; c.lineWidth=1.4; c.beginPath(); c.arc(0,-53,9,0,Math.PI*2); c.stroke();
+  } else if(it.wtype==='yxa' && lv>=5){
     c.fillStyle='#6b4423'; rr(c,-2,-40,4,52,2); c.fill();
     c.fillStyle='#c9a26b'; for(let y=0;y<10;y+=3) c.fillRect(-2.2,y,4.4,1.4);
     c.fillStyle='#e1e6ec';
@@ -1741,7 +1804,7 @@ function drawChar(c,o){
   // ben
   if(o.cls==='viskare'){ c.fillStyle=shoeC; ell(c,-2+sw*4,-1,5,3); ell(c,5-sw*4,-1,5,3); }
   else {
-    const pc = eq.byxor ? (eq.byxor.req>=5?'#5a4a3a':'#8a6a4a') : L.pants;
+    const pc = eq.byxor ? (eq.byxor.req>=8?'#7d838d':eq.byxor.req>=5?'#5a4a3a':'#8a6a4a') : L.pants;
     leg(c,-3,-19,jump?-0.6:sw*0.6,pc,shoeC,o.cls==='hippie'); leg(c,3,-19,jump?0.5:-sw*0.6,pc,shoeC,o.cls==='hippie');
   }
   // kropp
@@ -1761,7 +1824,10 @@ function drawChar(c,o){
     const g=c.createRadialGradient(1,-30+by,1,0,-29+by,12); g.addColorStop(0,'#ff5fa2'); g.addColorStop(.35,'#ffd23f'); g.addColorStop(.7,'#3ec1d3'); g.addColorStop(1,'#7b5cff');
     c.fillStyle=g; rr(c,-7.5,-39+by,15,21,4); c.fill();
   }
-  if(eq.brost && o.cls!=='viskare'){ c.fillStyle=eq.brost.req>=5?'rgba(90,60,35,.85)':'rgba(230,220,195,.75)'; rr(c,-6,-37+by,12,15,3); c.fill(); }
+  if(eq.brost && o.cls!=='viskare'){
+    if(eq.brost.req>=8){ c.fillStyle='rgba(138,144,153,.95)'; rr(c,-7.5,-39+by,15,19,4); c.fill(); c.fillStyle='#d9dde2'; ell(c,2,-30+by,3.5,6); c.fillStyle='#6a707a'; for(let x=-7;x<7;x+=3.5){ c.beginPath(); c.moveTo(x,-39+by); c.lineTo(x+1.75,-35+by); c.lineTo(x+3.5,-39+by); c.fill(); } }
+    else { c.fillStyle=eq.brost.req>=5?'rgba(90,60,35,.85)':'rgba(230,220,195,.75)'; rr(c,-6,-37+by,12,15,3); c.fill(); }
+  }
   if(eq.balte){ c.fillStyle=eq.balte.req>=5?'#3a2614':'#a07a4a'; c.fillRect(-8,-21+by,16,3); c.fillStyle='#e0c050'; c.fillRect(2,-21.5+by,3,4); }
   // huvud
   drawHead(c,o.cls,L,by,eq);
@@ -1805,7 +1871,15 @@ function drawHead(c,cls,L,by,eq){
     c.fillStyle=L.shirt2; c.beginPath(); c.arc(hx-2,hy,15.5,Math.PI*0.55,Math.PI*1.3); c.lineTo(hx-2,hy); c.closePath(); c.fill();
   }
   if(eq.hjalm){ const it=eq.hjalm;
-    if(it.req>=5){ c.fillStyle='#6f8a4a'; ell(c,hx,hy-19,3,6,0.2); c.fillStyle='#7d6a55'; c.beginPath(); c.arc(hx,hy-3,15.8,Math.PI,2*Math.PI); c.fill(); c.fillStyle='#c3cad3'; c.fillRect(hx-16.5,hy-5,33,3.5); c.fillRect(hx+5,hy-4,3,9); c.fillStyle=RAR[it.rarity].color; c.fillRect(hx-16.5,hy-6,33,1.2); }
+    if(it.req>=8){
+      c.fillStyle='#6a707a'; c.beginPath(); c.moveTo(hx-11,hy-10); c.lineTo(hx-9,hy-27); c.lineTo(hx-2,hy-15); c.fill(); c.beginPath(); c.moveTo(hx+1,hy-15); c.lineTo(hx+7,hy-28); c.lineTo(hx+12,hy-11); c.fill();
+      c.fillStyle='#8a9099'; c.beginPath(); c.arc(hx,hy-3,16,Math.PI,2*Math.PI); c.fill();
+      c.fillStyle='#d9dde2'; ell(c,hx+11,hy-9,6.5,4); c.fillStyle='#1a1a1a'; circ(c,hx+16.5,hy-10,1.8);
+      c.fillStyle='#ffd23f'; ell(c,hx+6,hy-14,2,1.5);
+      c.fillStyle='#6a707a'; for(let x=-16;x<16;x+=4){ c.beginPath(); c.moveTo(hx+x,hy-4); c.lineTo(hx+x+2,hy+(x%8?-1:1)); c.lineTo(hx+x+4,hy-4); c.fill(); }
+      c.fillStyle=RAR[it.rarity].color; c.fillRect(hx-16,hy-5,32,1.2);
+    }
+    else if(it.req>=5){ c.fillStyle='#6f8a4a'; ell(c,hx,hy-19,3,6,0.2); c.fillStyle='#7d6a55'; c.beginPath(); c.arc(hx,hy-3,15.8,Math.PI,2*Math.PI); c.fill(); c.fillStyle='#c3cad3'; c.fillRect(hx-16.5,hy-5,33,3.5); c.fillRect(hx+5,hy-4,3,9); c.fillStyle=RAR[it.rarity].color; c.fillRect(hx-16.5,hy-6,33,1.2); }
     else { c.fillStyle='#c0563a'; c.beginPath(); c.arc(hx,hy-3,15.4,Math.PI,2*Math.PI); c.fill(); c.fillStyle='#9a3f28'; c.fillRect(hx-15.5,hy-6,31,4); c.fillStyle='#f3e6c8'; circ(c,hx-2,hy-19,3.6); c.fillStyle=RAR[it.rarity].color; c.fillRect(hx-15.5,hy-2.5,31,1); }
   }
 }
@@ -1911,7 +1985,55 @@ function drawHund(c,m){
   c.fillStyle='#fff'; c.beginPath(); c.moveTo(hx+8,hy+6.4); c.lineTo(hx+9.5,hy+9); c.lineTo(hx+10.5,hy+6.1); c.fill(); c.beginPath(); c.moveTo(hx+11.5,hy+5.9); c.lineTo(hx+12.7,hy+8.3); c.lineTo(hx+13.6,hy+5.7); c.fill();
   c.restore();
 }
-const MOB_DRAW = {blabar:drawBlabar, mossa:drawMossa, kissekatt:drawKatt, vildhund:drawHund};
+function drawVarg(c,m){
+  const moving=m.state==='walk'&&m.kbT<=0&&m.hurtT<=0, ph=m.t*13;
+  const up=m.dead?(0.6-m.dieT)*40:0, bob=moving?Math.abs(Math.cos(ph))*2:Math.sin(m.t*3)*0.6;
+  const fur='#8a9099', dark='#565c66', light='#e3e6ea', hurt=m.hurtT>0||m.dead;
+  c.fillStyle='rgba(0,0,0,.2)'; ell(c,m.x,m.y,24,5);
+  c.save(); c.translate(m.x,m.y-up); c.scale(m.dir,1); c.lineCap='round';
+  const wag=Math.sin(m.t*8)*0.15;
+  c.fillStyle=dark; ell(c,-27,-31-bob,13,5,-0.45+wag); c.fillStyle=light; ell(c,-37,-35-bob,4,3,-0.45+wag);
+  const legV=(lx,o,far)=>{ const a=moving?Math.sin(ph+o)*0.6:0; c.save(); c.translate(lx,-18-bob); c.rotate(-a); c.fillStyle=far?dark:fur; rr(c,-3,0,6,18,3); c.fill(); c.fillStyle=far?'#3a3f47':dark; ell(c,1.2,18,4,2.2); c.restore(); };
+  legV(-13,0,true); legV(12,Math.PI,true);
+  c.fillStyle=fur; ell(c,0,-27-bob,23,12);
+  c.fillStyle=dark; ell(c,-4,-34-bob,17,5);
+  c.fillStyle=light; ell(c,5,-19-bob,14,4);
+  c.fillStyle=light; ell(c,15,-29-bob,9,10);
+  legV(-9,Math.PI,false); legV(16,0,false);
+  const hx=24, hy=-38-bob;
+  c.fillStyle=dark; c.beginPath(); c.moveTo(hx-7,hy-5); c.lineTo(hx-7,hy-22); c.lineTo(hx+1,hy-8); c.fill();
+  c.fillStyle=fur; c.beginPath(); c.moveTo(hx-1,hy-8); c.lineTo(hx+3,hy-23); c.lineTo(hx+8,hy-7); c.fill();
+  c.fillStyle=fur; circ(c,hx,hy,10.5);
+  c.fillStyle=fur; ell(c,hx+11,hy+3,10,4.8); c.fillStyle=light; ell(c,hx+10,hy+5.5,8,2.6);
+  c.fillStyle='#141414'; circ(c,hx+20,hy+1.5,2.4);
+  if(hurt){ c.strokeStyle='#141414'; c.lineWidth=1.8; line(c,hx+1,hy-2,hx+7,hy-1); }
+  else { c.fillStyle='#ffd23f'; ell(c,hx+4,hy-2.5,2.9,2.1); c.fillStyle='#111'; circ(c,hx+4.6,hy-2.5,1.2); c.fillStyle='#fff'; c.beginPath(); c.moveTo(hx+11,hy+7.4); c.lineTo(hx+12.5,hy+10); c.lineTo(hx+13.6,hy+7.2); c.fill(); }
+  c.strokeStyle='#2a2e34'; c.lineWidth=2; line(c,hx-1,hy-7,hx+8,hy-4.5);
+  c.restore();
+}
+function drawBjorn(c,m){
+  const moving=m.state==='walk'&&m.kbT<=0&&m.hurtT<=0, ph=m.t*7;
+  const up=m.dead?(0.6-m.dieT)*40:0, bob=moving?Math.abs(Math.cos(ph))*2.5:Math.sin(m.t*2)*0.8;
+  const fur='#7a4e2d', dark='#53331c', light='#c9a27a', hurt=m.hurtT>0||m.dead;
+  c.fillStyle='rgba(0,0,0,.22)'; ell(c,m.x,m.y,32,6);
+  c.save(); c.translate(m.x,m.y-up); c.scale(m.dir,1); c.lineCap='round';
+  const legB=(lx,o,far)=>{ const a=moving?Math.sin(ph+o)*0.4:0; c.save(); c.translate(lx,-17-bob); c.rotate(-a); c.fillStyle=far?dark:fur; rr(c,-6,0,12,17,5); c.fill(); if(!far){ c.strokeStyle='#ece4d0'; c.lineWidth=1.5; for(const x of [-3,0,3]) line(c,x+2,16,x+4,19); } c.restore(); };
+  legB(-17,0,true); legB(13,Math.PI,true);
+  c.fillStyle=fur; ell(c,0,-31-bob,30,19);
+  c.fillStyle=fur; ell(c,-8,-43-bob,16,9);
+  c.fillStyle='#8a5c38'; ell(c,5,-20-bob,18,7);
+  legB(-12,Math.PI,false); legB(18,0,false);
+  const hx=28, hy=-40-bob;
+  c.fillStyle=fur; circ(c,hx-8,hy-12,5.5); circ(c,hx+5,hy-13,5.5); c.fillStyle=dark; circ(c,hx-8,hy-12,2.6); circ(c,hx+5,hy-13,2.6);
+  c.fillStyle=fur; circ(c,hx,hy,14);
+  c.fillStyle=light; ell(c,hx+11,hy+4,8.5,6.5);
+  c.fillStyle='#141414'; ell(c,hx+17.5,hy+1,3.2,2.4);
+  c.strokeStyle='#3a2414'; c.lineWidth=1.4; c.beginPath(); c.moveTo(hx+12,hy+7); c.quadraticCurveTo(hx+15,hy+9,hx+18,hy+7); c.stroke();
+  if(hurt){ c.strokeStyle='#141414'; c.lineWidth=1.8; line(c,hx+2,hy-3,hx+7,hy-2); }
+  else { c.fillStyle='#141414'; circ(c,hx+5,hy-3,2.1); c.fillStyle='#fff'; circ(c,hx+5.6,hy-3.7,.7); }
+  c.restore();
+}
+const MOB_DRAW = {blabar:drawBlabar, mossa:drawMossa, kissekatt:drawKatt, vildhund:drawHund, varg:drawVarg, bjorn:drawBjorn};
 const RARE_CV = document.createElement('canvas'), RARE_CX = RARE_CV.getContext('2d');
 function drawRareMonster(m){
   const k=G.zoom*DPR, BW=220, BH=170, w=Math.ceil(BW*k), h=Math.ceil(BH*k);
@@ -2054,7 +2176,7 @@ function render(){
   const cx=Math.round(G.cam.x*s)/s, cy=Math.round(G.cam.y*s)/s;
   ctx.setTransform(s,0,0,s,-cx*s,-cy*s);
   G.view={x1:cx,y1:cy,x2:cx+VW/Z,y2:cy+VH/Z};
-  drawDecoBack(); drawSign(); drawTerrain(); drawRopes(); drawPortals(); drawDecoFront();
+  drawDecoBack(); drawSign(); drawTerrain(); drawRopes(); drawPortals(); drawDecoFront(); drawNpcs();
   for(const d of G.drops) drawDrop(d);
   for(const m of G.monsters) if(m.x>G.view.x1-60 && m.x<G.view.x2+60) drawMonster(m);
   if(G.mode==='game') drawOthers();
@@ -2100,6 +2222,16 @@ function drawIcon(c,baseId,rarity,S){
   S_();
   switch(b.slot==='vapen'?b.wtype:b.slot){
     case 'hjalm':
+      if(b.req>=8){ // Varghuva: vargens huvud som luva
+        c.fillStyle='#6a707a'; P([[13,30],[15,5],[29,18]]); P([[51,30],[49,5],[35,18]]);
+        c.fillStyle='#c4a6a6'; c.beginPath(); c.moveTo(17,25); c.lineTo(18,12); c.lineTo(25,19); c.closePath(); c.fill(); c.beginPath(); c.moveTo(47,25); c.lineTo(46,12); c.lineTo(39,19); c.closePath(); c.fill();
+        c.fillStyle='#8a9099'; c.beginPath(); c.moveTo(9,46); c.quadraticCurveTo(9,14,32,14); c.quadraticCurveTo(55,14,55,46); c.closePath(); c.fill(); S_(); c.stroke();
+        c.fillStyle='#d9dde2'; ell(c,32,38,10,7); S_(); c.beginPath(); c.ellipse(32,38,10,7,0,0,7); c.stroke();
+        c.fillStyle='#1a1a1a'; ell(c,32,33.5,3.4,2.4);
+        c.fillStyle='#ffd23f'; ell(c,23,27,3.2,2.3); ell(c,41,27,3.2,2.3); c.fillStyle='#111'; circ(c,23.5,27,1.2); circ(c,41.5,27,1.2);
+        c.fillStyle='#6a707a'; c.beginPath(); c.moveTo(9,44); for(let x=9;x<=55;x+=5.75) c.lineTo(x+2.9,x%11.5<5?52:47); c.lineTo(55,44); c.closePath(); c.fill();
+        break;
+      }
       if(!hi){ // Lappad mössa: stickad mössa med tofs och lapp
         c.fillStyle='#c0563a'; c.beginPath(); c.moveTo(13,42); c.quadraticCurveTo(12,16,32,15); c.quadraticCurveTo(52,16,51,42); c.closePath(); c.fill(); S_(); c.stroke();
         c.fillStyle='#9a3f28'; rr(c,11,38,42,10,4); c.fill(); S_(); c.stroke();
@@ -2155,6 +2287,14 @@ function drawIcon(c,baseId,rarity,S){
       }
       break;
     case 'brost':
+      if(b.req>=8){ // Vargpälsväst: grå päls, ljust bröst, pälskrage, klomärken
+        c.fillStyle='#8a9099'; P([[18,12],[26,16],[38,16],[46,12],[54,22],[48,30],[47,54],[17,54],[16,30],[10,22]]);
+        c.fillStyle='#d9dde2'; ell(c,32,36,9,13);
+        c.fillStyle='#6a707a'; for(let i=0;i<7;i++){ const x=19+i*4.3; c.beginPath(); c.moveTo(x,13); c.lineTo(x+2.2,21); c.lineTo(x+4.3,13); c.closePath(); c.fill(); }
+        c.strokeStyle='#3a3f47'; c.lineWidth=2; for(const d of [0,4,8]) line(c,18+d,30,24+d,42);
+        c.fillStyle='#6a707a'; c.beginPath(); c.moveTo(17,52); for(let x=17;x<=47;x+=5) c.lineTo(x+2.5,(x%10<5)?58:53); c.lineTo(47,52); c.closePath(); c.fill();
+        break;
+      }
       if(!hi){ // Linnetunika: ljus med snörning
         c.fillStyle='#ece2c8'; P([[20,12],[26,15],[38,15],[44,12],[54,22],[47,29],[46,55],[18,55],[17,29],[10,22]]);
         c.fillStyle='#d6c7a2'; c.beginPath(); c.moveTo(26,15); c.lineTo(32,30); c.lineTo(38,15); c.closePath(); c.fill();
@@ -2194,6 +2334,13 @@ function drawIcon(c,baseId,rarity,S){
       }
       break;
     case 'byxor':
+      if(b.req>=8){ // Vargpälsbyxor: grå päls med tofsar
+        c.fillStyle='#7d838d'; P([[17,8],[47,8],[50,52],[37,52],[32,24],[27,52],[14,52]]);
+        c.strokeStyle='#5c626b'; c.lineWidth=1.4; for(const [x,y] of [[21,18],[25,28],[20,38],[42,18],[38,30],[44,40],[30,14]]) line(c,x,y,x+3,y+4);
+        c.fillStyle='#d9dde2'; for(const x0 of [14,37]){ c.beginPath(); c.moveTo(x0,50); for(let i=0;i<=4;i++) c.lineTo(x0+i*3.25+1.6, i%2?58:52); c.lineTo(x0+13,50); c.closePath(); c.fill(); }
+        c.fillStyle='#3a3f47'; c.fillRect(16,8,32,5);
+        break;
+      }
       if(!hi){ // Lappade byxor: korta, lappar
         c.fillStyle='#9a6e45'; P([[17,10],[47,10],[49,44],[36,44],[32,24],[28,44],[15,44]]);
         c.fillStyle='#5f8fbf'; c.fillRect(19,28,8,8); c.fillStyle='#c25a4a'; c.fillRect(38,20,7,7);
@@ -2218,6 +2365,13 @@ function drawIcon(c,baseId,rarity,S){
       }
       break;
     case 'ring':
+      if(b.id==='ringJakt'){ // Jägarringen: guld med gröna löv
+        c.strokeStyle='rgba(0,0,0,.5)'; c.lineWidth=9; c.beginPath(); c.arc(32,39,13,0,7); c.stroke();
+        c.strokeStyle='#e8c34a'; c.lineWidth=5.5; c.beginPath(); c.arc(32,39,13,0,7); c.stroke();
+        c.fillStyle='#4fdc5b'; ell(c,25,22,8,4,-0.6); ell(c,39,22,8,4,0.6); S_(); c.beginPath(); c.ellipse(25,22,8,4,-0.6,0,7); c.stroke(); c.beginPath(); c.ellipse(39,22,8,4,0.6,0,7); c.stroke();
+        c.fillStyle='#ffe066'; circ(c,32,24,4.5);
+        break;
+      }
       if(!hi){ // Kopparring: slät koppar, ingraverad
         c.strokeStyle='rgba(0,0,0,.5)'; c.lineWidth=9; c.beginPath(); c.arc(32,36,14,0,7); c.stroke();
         c.strokeStyle='#c27b3e'; c.lineWidth=5.5; c.beginPath(); c.arc(32,36,14,0,7); c.stroke();
@@ -2232,6 +2386,15 @@ function drawIcon(c,baseId,rarity,S){
       }
       break;
     case 'yxa':
+      if(b.req>=8){ // Björnyxa: mörkt järnblad med klor, pälstofs
+        c.strokeStyle='#1e140c'; c.lineWidth=7; line(c,14,58,42,12); c.strokeStyle='#3d2817'; c.lineWidth=4.5; line(c,14,58,42,12);
+        c.fillStyle='#7a4e2d'; circ(c,15,56,5);
+        c.save(); c.translate(40,16); c.rotate(.56); c.fillStyle='#5c636d';
+        c.beginPath(); c.moveTo(0,-7); c.quadraticCurveTo(18,-18,24,-2); c.lineTo(20,2); c.lineTo(24,6); c.lineTo(19,10); c.lineTo(22,15); c.quadraticCurveTo(12,14,0,8); c.closePath(); c.fill(); S_(); c.stroke();
+        c.fillStyle='#ece4d0'; for(const [x,y] of [[24,-2],[24,6],[22,15]]){ c.beginPath(); c.moveTo(x,y); c.lineTo(x-5,y-2); c.lineTo(x-4,y+2); c.closePath(); c.fill(); }
+        c.strokeStyle=rc; c.lineWidth=2; c.beginPath(); c.moveTo(6,-11); c.quadraticCurveTo(18,-16,23,-3); c.stroke(); c.restore();
+        break;
+      }
       if(!hi){ // Vedyxa: kort skaft, litet enkelblad
         c.strokeStyle='#3a2410'; c.lineWidth=7; line(c,20,54,40,22); c.strokeStyle='#a87a48'; c.lineWidth=4.5; line(c,20,54,40,22);
         c.save(); c.translate(39,24); c.rotate(.57); c.fillStyle='#b4bbc3';
@@ -2247,6 +2410,15 @@ function drawIcon(c,baseId,rarity,S){
       }
       break;
     case 'bage':
+      if(b.req>=8){ // Björnbåge: mörk recurve med klospetsar och pälsgrepp
+        c.strokeStyle='#1e140c'; c.lineWidth=7.5; c.beginPath(); c.moveTo(16,6); c.quadraticCurveTo(28,10,25,17); c.quadraticCurveTo(54,32,25,47); c.quadraticCurveTo(28,54,16,58); c.stroke();
+        c.strokeStyle='#3d2817'; c.lineWidth=5; c.beginPath(); c.moveTo(16,6); c.quadraticCurveTo(28,10,25,17); c.quadraticCurveTo(54,32,25,47); c.quadraticCurveTo(28,54,16,58); c.stroke();
+        c.strokeStyle='#eee'; c.lineWidth=1.2; line(c,16,7,16,57);
+        c.fillStyle='#7a4e2d'; ell(c,38,32,4.5,7);
+        c.fillStyle='#ece4d0'; for(const [x,y,s] of [[16,6,-1],[16,58,1]]){ c.beginPath(); c.moveTo(x,y); c.quadraticCurveTo(x-7,y-s*1,x-9,y+s*6); c.lineTo(x-3,y+s*2); c.closePath(); c.fill(); }
+        c.strokeStyle=rc; c.lineWidth=1.8; line(c,34,27,34,37);
+        break;
+      }
       if(!hi){ // Kvistbåge: enkel kvist med löv
         c.strokeStyle='#3a2410'; c.lineWidth=6.5; c.beginPath(); c.moveTo(20,8); c.quadraticCurveTo(54,32,20,56); c.stroke();
         c.strokeStyle='#a87a48'; c.lineWidth=4; c.beginPath(); c.moveTo(20,8); c.quadraticCurveTo(54,32,20,56); c.stroke();
@@ -2261,6 +2433,14 @@ function drawIcon(c,baseId,rarity,S){
       }
       break;
     case 'stav':
+      if(b.req>=8){ // Björnstav: mörk stav, björntass med klor som håller en bärnstenskula
+        c.strokeStyle='#1e140c'; c.lineWidth=7; line(c,16,58,38,22); c.strokeStyle='#3d2817'; c.lineWidth=4.5; line(c,16,58,38,22);
+        c.fillStyle='#7a4e2d'; circ(c,40,19,8); S_(); c.beginPath(); c.arc(40,19,8,0,7); c.stroke();
+        const g=c.createRadialGradient(43,10,1,45,12,7); g.addColorStop(0,'#fff3c0'); g.addColorStop(1,'#e07a10'); c.fillStyle=g; circ(c,45,11,6.5);
+        c.fillStyle='#ece4d0'; for(const [x,y] of [[34,9],[38,4],[44,3]]){ c.beginPath(); c.moveTo(x,y+6); c.lineTo(x+1,y); c.lineTo(x+3,y+6); c.closePath(); c.fill(); }
+        c.strokeStyle=rc; c.lineWidth=1.8; c.beginPath(); c.arc(45,11,9.5,0,7); c.stroke();
+        break;
+      }
       if(!hi){ // Pinnstav: knotig kvist, grön kristall med snöre
         c.strokeStyle='#3a2410'; c.lineWidth=7; c.beginPath(); c.moveTo(18,58); c.quadraticCurveTo(26,40,30,34); c.quadraticCurveTo(34,26,40,18); c.stroke();
         c.strokeStyle='#8a5a2b'; c.lineWidth=4.5; c.beginPath(); c.moveTo(18,58); c.quadraticCurveTo(26,40,30,34); c.quadraticCurveTo(34,26,40,18); c.stroke();
@@ -2433,7 +2613,7 @@ function itemHtml(it, where){
   if(isCons(it)){
     const c=CONS[it.base];
     return `<div class="tt-name">${c.name}</div><div class="tt-sub">${c.kind==='pot'?'Dryck':'Uppgraderingsscroll (Common)'}</div><div>${c.desc}</div>`
-      + (c.kind==='scroll'?`<div class="hintx" style="color:#9fb1cb;font-size:11.5px;margin-top:3px">Förbrukar en uppgraderingsplats även om den misslyckas.</div>`:'')
+      + (c.kind==='scroll'?`<div class="hintx" style="color:#9fb1cb;font-size:11.5px;margin-top:3px">Förbrukar en uppgraderingsplats även om den misslyckas. Dra scrollen till ett föremål för att använda den.</div>`:'')
       + `<div style="margin-top:3px">Antal: <b>${it.count}</b> / ${STACK_MAX}</div><div class="tt-sell">Köppris: ${c.price} 🪙</div>`;
   }
   const r=RAR[it.rarity];
@@ -2455,6 +2635,7 @@ function showTip(html,x,y){ tip.innerHTML=html; tip.classList.remove('hidden'); 
 function hideTip(){ tip.classList.add('hidden'); }
 document.addEventListener('pointermove',e=>{
   if(e.pointerType!=='mouse' || G.mode!=='game'){ return; }
+  if(scrDrag && scrDrag.on){ hideTip(); return; }
   const el=e.target.closest && e.target.closest('[data-uid]');
   if(el){ const f=findItem(el.dataset.uid); if(f){ showTip(itemHtml(f.it,f.where),e.clientX,e.clientY); return; } }
   const tn=e.target.closest && e.target.closest('.tnode');
@@ -2490,7 +2671,7 @@ function renderBag(){
   for(let i=0;i<INV_MAX;i++){ const it=ch.inv[i];
     if(!it){ g+=`<div class="slot blank"></div>`; continue; }
     const cons=isCons(it);
-    g+=`<div class="slot ${cons?'r-cons':'r-'+it.rarity} ${sel===it.uid&&!sm?'sel':''} ${!cons&&ch.level<it.req?'cant':''} ${smc(it)}" data-uid="${it.uid}"><img src="${iconURL(it)}" alt="">${cons?`<span class="cnt">${it.count}</span>`:it.plus?`<span class="cnt plus">+${it.plus}</span>`:''}</div>`; }
+    g+=`<div class="slot ${cons?'r-cons':'r-'+it.rarity} ${cons&&CONS[it.base].kind==='scroll'?'scr':''} ${sel===it.uid&&!sm?'sel':''} ${!cons&&ch.level<it.req?'cant':''} ${smc(it)}" data-uid="${it.uid}"><img src="${iconURL(it)}" alt="">${cons?`<span class="cnt">${it.count}</span>`:it.plus?`<span class="cnt plus">+${it.plus}</span>`:''}</div>`; }
   $('#bagGrid').innerHTML=g;
   renderBagDetail();
 }
@@ -2498,7 +2679,7 @@ function renderBagDetail(){
   const box=$('#bagDetail');
   if(G.ui.scrollMode){
     const sc=G.ch.inv.find(x=>x.uid===G.ui.scrollMode);
-    if(sc){ box.innerHTML=`<b>📜 ${CONS[sc.base].name}</b> (${sc.count} st)<div style="margin:4px 0">${G.touch?'Tryck':'Klicka'} på det föremål du vill uppgradera – i väskan eller bland det du har på dig. Föremål som passar lyser grönt.</div><div class="acts"><button class="btn sm sec" data-act="cancelScroll">Avbryt</button></div>`; return; }
+    if(sc){ box.innerHTML=`<b>📜 ${CONS[sc.base].name}</b> (${sc.count} st)<div style="margin:4px 0">${G.touch?'Tryck':'Klicka'} på det föremål du vill uppgradera – i väskan eller bland det du har på dig. Föremål som passar lyser grönt. (Du kan också dra scrollen direkt till föremålet.)</div><div class="acts"><button class="btn sm sec" data-act="cancelScroll">Avbryt</button></div>`; return; }
     G.ui.scrollMode=null;
   }
   const f=G.ui.sel&&findItem(G.ui.sel);
@@ -2520,7 +2701,35 @@ function renderBagDetail(){
   } else acts+=`<button class="btn sm" data-act="unequip">Ta av</button>`;
   box.innerHTML=itemHtml(it,f.where)+`<div class="acts">${acts}</div>`+(f.where==='inv'&&G.ch.level<it.req?`<div class="hintx" style="margin-top:4px">Du behöver level ${it.req} för att använda detta.</div>`:'');
 }
+/* Dra en scroll och släpp den på ett föremål (utrustat eller i väskan) */
+let scrDrag=null, eatClick=false;
+$('#win-bag').addEventListener('pointerdown',e=>{
+  const el=e.target.closest('#bagGrid [data-uid]'); if(!el || !G.ch) return;
+  const it=G.ch.inv.find(x=>x.uid===el.dataset.uid);
+  if(!it || !isCons(it) || CONS[it.base].kind!=='scroll') return;
+  scrDrag={uid:it.uid, id:e.pointerId, x0:e.clientX, y0:e.clientY, on:false, src:it};
+});
+window.addEventListener('pointermove',e=>{
+  const d=scrDrag; if(!d || e.pointerId!==d.id) return;
+  if(!d.on){
+    if(Math.hypot(e.clientX-d.x0, e.clientY-d.y0)<7) return;
+    d.on=true; hideTip();
+    const g=document.createElement('img'); g.id='dragGhost'; g.src=iconURL(d.src); document.body.appendChild(g); d.g=g;
+    $$('#win-bag [data-uid]').forEach(x=>{ if(x.dataset.uid===d.uid) return; const f=findItem(x.dataset.uid); if(f) x.classList.add(scrollFits(d.src,f.it)?'elig':'inelig'); });
+  }
+  d.g.style.left=e.clientX+'px'; d.g.style.top=e.clientY+'px';
+});
+function endScrDrag(e){
+  const d=scrDrag; if(!d || e.pointerId!==d.id) return; scrDrag=null; if(!d.on) return;
+  d.g.remove(); eatClick=true; setTimeout(()=>{ eatClick=false; },60);
+  $$('#win-bag .elig, #win-bag .inelig').forEach(x=>x.classList.remove('elig','inelig'));
+  if(e.type!=='pointerup') return;
+  const t=document.elementFromPoint(e.clientX,e.clientY), tgt=t && t.closest('#win-bag [data-uid]');
+  if(tgt && tgt.dataset.uid!==d.uid) applyScroll(d.uid, tgt.dataset.uid);
+}
+window.addEventListener('pointerup',endScrDrag); window.addEventListener('pointercancel',endScrDrag);
 $('#win-bag').addEventListener('click',e=>{
+  if(eatClick){ eatClick=false; return; }
   const a=e.target.closest('[data-act]');
   if(a && a.dataset.act==='cancelScroll'){ closeScrollMode(); return; }
   if(a){ const f=findItem(G.ui.sel); if(!f) return;
@@ -2586,6 +2795,7 @@ function applyScroll(su, iu){
     log(`💥 Scrollen misslyckades på ${esc(itemName(it))}. ${left} uppgraderingsplatser kvar.`,'#ff9b9b');
   }
   G.ui.scrollMode=null; G.ui.sel=it.uid;
+  questEvent('scroll');
   if(f.where==='eq') recalc();
   markDirty(); refreshOpen();
 }
@@ -2627,6 +2837,7 @@ function renderTal(){
   if(tree.locked){ $('#talBody').innerHTML=h+`<div class="lockedtree">🔒 ${tree.name} för ${C.name} kommer i en senare uppdatering.</div>`; return; }
   const acc=!!tree.account, tl=acc?G.acct.talents:ch.talents, av=acc?acctAvail():charAvail(), spent=treeSpent(tl,tk);
   h+=`<div class="tinfo"><span>${acc?'Kontopoäng':'Talangpoäng'} kvar: <b>${av}</b></span><span>Spenderat i ${tree.name}: <b>${spent}</b></span></div>`;
+  if(!acc && ch.level<TALENT_LVL) h+=`<div class="pstat" style="color:#ffe08a">🔒 Talangträden låses upp i level ${TALENT_LVL}. Från level ${TALENT_LVL} får du 1 talangpoäng per level. (Kontoträdet fungerar redan – 1 poäng per 5 levlar.)</div>`;
   if(acc) h+=`<div class="shopinfo">Du får 1 kontopoäng per 5 levlar i varje klass (din högsta gubbe i varje klass räknas). Trädet delas av alla gubbar på kontot <b>${esc(G.acct.name)}</b>.</div>`;
   for(const tier of [...new Set(tree.talents.map(x=>x.tier))].sort()){
     const need=tierReq(tier), locked = spent<need;
@@ -2712,74 +2923,179 @@ $('#shopBody').addEventListener('click',e=>{
   if(e.target.closest('[data-sellall]')){ const list=G.ch.inv.filter(x=>!isCons(x) && x.rarity==='common'); let sum=0; for(const it of list) sum+=sellPrice(it); G.ch.inv=G.ch.inv.filter(x=>isCons(x) || x.rarity!=='common'); G.ch.gold+=sum; log(`Sålde ${list.length} Common-föremål för ${sum} 🪙`,'#ffd25a'); markDirty(); refreshOpen(); }
 });
 
-/* ---------- Uppdrag ---------- */
-const QUESTS = {
-  bar:{name:'Bärplockarens besvär', lvl:2, from:'Jägaren Berit',
-    text:'Blåbären och mossabollarna har tagit över Jaktmarken I! Kan du tunna ut dem lite åt mig?',
-    goals:{blabar:10, mossa:5}, exp:20, choose:['yxa2','bage2','stav2'], rarity:'uncommon'},
+/* ---------- NPC:er & uppdrag ---------- */
+const NPCS = {
+  berit: {name:'Jägaren Berit',   map:1, x:300, y:900},
+  holger:{name:'Vaktaren Holger', map:2, x:340, y:900},
 };
-const QUEST_ORDER = ['bar'];
-function questState(id){ const q=(G.ch.quests||{})[id]; return q ? q.state : (G.ch.level>=QUESTS[id].lvl ? 'offer' : 'locked'); }
-function questGoalsDone(id){ const q=G.ch.quests[id]; return Object.entries(QUESTS[id].goals).every(([t,n])=>(q.prog[t]||0)>=n); }
-function acceptQuest(id){
-  G.ch.quests[id]={state:'active', prog:{}};
-  log(`📜 Nytt uppdrag: <b>${QUESTS[id].name}</b>`,'#ffe066'); markDirty(true); renderQuest(); questLogKey=null;
+// goals: monstertyp -> antal, eller 'scroll' -> antal använda scrolls. choose = välj ett av; give = får alla.
+const QUESTS = {
+  bar1:{npc:'berit', name:'Bärplockarens besvär', lvl:1,
+    text:'Hej där, nykomling! Blåbären studsar omkring överallt här i jaktmarken. Visa vad du går för – döda 5 av dem, så får du välja ett riktigt vapen av mig.',
+    goals:{blabar:5}, exp:5, choose:['yxa2','bage2','stav2'], rarity:'common'},
+  bar2:{npc:'berit', name:'Kall om öronen', prev:'bar1',
+    text:'Bra jobbat! Nu har mossabollarna också börjat rulla runt. Rensa upp lite till, så får du en mössa av mig.',
+    goals:{blabar:10, mossa:5}, exp:5, give:[['hjalm2','common']]},
+  bar3:{npc:'berit', name:'Hål på knäna', prev:'bar2',
+    text:'Du har slitit hål på byxorna, ser jag. Hjälp mig igen så får du ett par nya.',
+    goals:{blabar:15, mossa:8}, exp:8, give:[['byxor2','common']]},
+  bar4:{npc:'berit', name:'En varm tunika', prev:'bar3',
+    text:'En sista sak innan du ger dig vidare: jaktmarken måste hållas i schack. Gör det här, så får du min gamla linnetunika.',
+    goals:{blabar:20, mossa:12}, exp:12, give:[['brost2','common']]},
+  jakt1:{npc:'holger', name:'Kattjakten', lvl:4,
+    text:'Kissekatterna här är sötare än de är snälla. Jaga bort 15 av dem åt mig!',
+    goals:{kissekatt:15}, exp:15},
+  jakt2:{npc:'holger', name:'Vilda hundar', prev:'jakt1',
+    text:'Vildhundarna skrämmer alla resenärer. Ta hand om 15 av dem.',
+    goals:{vildhund:15}, exp:20},
+  jakt3:{npc:'holger', name:'Redo för vildmarken', prev:'jakt2',
+    text:'Längre in väntar vargar och björnar – du behöver bättre utrustning. Döda 10 kissekatter och 10 vildhundar, och förstärk dina saker med scrolls två gånger. Då får du min jägarring.',
+    goals:{kissekatt:10, vildhund:10, scroll:2}, exp:25, give:[['ringJakt','uncommon']]},
+};
+const QUEST_ORDER = ['bar1','bar2','bar3','bar4','jakt1','jakt2','jakt3'];
+const goalName = (t,n) => t==='scroll' ? `Använd scrolls ${n} gånger` : `Döda ${n} ${MOBS[t].name}`;
+const goalShort = t => t==='scroll' ? 'Scrolls' : MOBS[t].name;
+function questState(id, ch=G.ch){
+  const q=(ch.quests||{})[id], Q=QUESTS[id];
+  if(q) return q.state;
+  if(Q.prev && questState(Q.prev, ch)!=='claimed') return 'locked';
+  if(ch.level<(Q.lvl||1)) return 'locked';
+  return 'offer';
 }
-function questKill(type){
+function questGoalsDone(id, ch=G.ch){ const q=ch.quests[id]; return Object.entries(QUESTS[id].goals).every(([t,n])=>(q.prog[t]||0)>=n); }
+function npcQuest(npcId){ return QUEST_ORDER.find(id=>QUESTS[id].npc===npcId && questState(id)!=='claimed') || null; }
+function npcMark(npcId){ const id=npcQuest(npcId); if(!id) return ''; const st=questState(id); return st==='offer'?'!':st==='complete'?'?':''; }
+function talkTo(npcId){ G.ui.questNpc=npcId; G.ui.questId=npcQuest(npcId); openWin('quest'); }
+function npcNear(){ const p=G.p; if(!p) return null; for(const [id,n] of Object.entries(NPCS)) if(n.map===G.mapId && Math.abs(p.x-n.x)<42 && Math.abs(p.y-n.y)<6) return id; return null; }
+const npcHere = id => NPCS[QUESTS[id].npc].map===G.mapId;
+function acceptQuest(id){
+  if(questState(id)!=='offer') return;
+  if(!npcHere(id)){ renderQuest(); return; }
+  G.ch.quests[id]={state:'active', prog:{}};
+  log(`📜 Nytt uppdrag: <b>${QUESTS[id].name}</b>`,'#ffe066'); markDirty(true); questLogKey=null; renderQuest();
+}
+function questEvent(type){
   const ch=G.ch; if(!ch || !ch.quests) return;
   for(const id of QUEST_ORDER){
     const q=ch.quests[id], Q=QUESTS[id]; if(!q || q.state!=='active') continue;
     const need=Q.goals[type]; if(!need || (q.prog[type]||0)>=need) continue;
     q.prog[type]=(q.prog[type]||0)+1;
-    if(questGoalsDone(id)){ q.state='complete'; toast(`✔ <b>${Q.name}</b> är klart!<br>Hämta belöningen i uppdragsloggen.`); log(`✔ Uppdraget <b>${Q.name}</b> är klart – tryck på uppdragsloggen för att hämta belöningen.`,'#7ee787'); }
+    if(questGoalsDone(id)){ q.state='complete'; toast(`✔ <b>${Q.name}</b> är klart!<br>Lämna in hos ${NPCS[Q.npc].name}.`); log(`✔ Uppdraget <b>${Q.name}</b> är klart – lämna in det hos ${NPCS[Q.npc].name}.`,'#7ee787'); }
     markDirty(); questLogKey=null; if(isOpen('quest')) renderQuest();
   }
 }
-function claimQuest(id, baseId){
-  const Q=QUESTS[id], q=G.ch.quests[id]; if(!q || q.state!=='complete' || !Q.choose.includes(baseId)) return;
-  if(G.ch.inv.length>=INV_MAX){ toast('Väskan är full – gör plats först.'); return; }
-  const it=makeItem(baseId, Q.rarity); G.ch.inv.push(it); q.state='claimed';
-  log(`🎁 Belöning för <b>${Q.name}</b>: <b style="color:${RAR[Q.rarity].color}">${esc(it.name)}</b> och ${Q.exp} EXP!`,'#7ee787');
-  toast(`🎁 Du fick <b style="color:${RAR[Q.rarity].color}">${esc(it.name)}</b> och ${Q.exp} EXP!`);
+const questKill = questEvent;
+function claimQuest(id, chosen){
+  const Q=QUESTS[id], q=G.ch.quests[id]; if(!q || q.state!=='complete') return;
+  if(!npcHere(id)){ renderQuest(); return; }
+  if(Q.choose && !Q.choose.includes(chosen)) return;
+  const need=(Q.choose?1:0)+(Q.give?Q.give.length:0);
+  if(G.ch.inv.length+need>INV_MAX){ toast('Väskan är full – gör plats först.'); return; }
+  const got=[];
+  if(Q.choose){ const it=makeItem(chosen, Q.rarity); G.ch.inv.push(it); got.push(it); }
+  for(const [b,r] of Q.give||[]){ const it=makeItem(b, r); G.ch.inv.push(it); got.push(it); }
+  q.state='claimed';
+  const txt=got.map(it=>`<b style="color:${RAR[it.rarity].color}">${esc(it.name)}</b>`).join(', ');
+  log(`🎁 Belöning för <b>${Q.name}</b>: ${txt}${got.length?' och ':''}${Q.exp} EXP!`,'#7ee787');
+  toast(`🎁 ${txt||''}${got.length?' + ':''}${Q.exp} EXP`);
   gainExp(Q.exp, false, 0, false);
-  closeWin('quest'); questLogKey=null; refreshOpen(); markDirty(true);
+  G.ui.questId=npcQuest(Q.npc); questLogKey=null; refreshOpen(); renderQuest(); markDirty(true);
 }
 let questLogKey=null;
 function renderQuestLog(){
   const el=$('#questLog'), ch=G.ch; if(!ch) return;
-  const rows=[];
+  const rows=[], offered=new Set();
   for(const id of QUEST_ORDER){
-    const Q=QUESTS[id], st=questState(id), q=ch.quests[id];
-    if(st==='offer') rows.push(`<div class="ql offer" data-q="${id}">❗ <b>Nytt uppdrag</b>${Q.name}</div>`);
-    else if(st==='active') rows.push(`<div class="ql" data-q="${id}"><b>📜 ${Q.name}</b>${Object.entries(Q.goals).map(([t,n])=>{ const v=Math.min(n,q.prog[t]||0); return `<div class="qgoal ${v>=n?'ok':''}"><span>${MOBS[t].name}</span><span>${v}/${n}</span></div>`; }).join('')}</div>`);
-    else if(st==='complete') rows.push(`<div class="ql done" data-q="${id}"><b>✔ ${Q.name}</b>Klart! Tryck för att hämta belöningen.</div>`);
+    const Q=QUESTS[id], st=questState(id), q=ch.quests[id], npc=NPCS[Q.npc];
+    if(st==='offer' && !offered.has(Q.npc)){ offered.add(Q.npc); rows.push(`<div class="ql offer" data-q="${id}"><b>❗ Nytt uppdrag</b>${npc.name} · ${MAPS[npc.map].name}</div>`); }
+    else if(st==='active') rows.push(`<div class="ql" data-q="${id}"><b>📜 ${Q.name}</b>${Object.entries(Q.goals).map(([t,n])=>{ const v=Math.min(n,q.prog[t]||0); return `<div class="qgoal ${v>=n?'ok':''}"><span>${goalShort(t)}</span><span>${v}/${n}</span></div>`; }).join('')}</div>`);
+    else if(st==='complete') rows.push(`<div class="ql done" data-q="${id}"><b>✔ ${Q.name}</b>Lämna in hos ${npc.name}</div>`);
   }
   const key=rows.join('');
   if(key===questLogKey) return; questLogKey=key;
   el.classList.toggle('hidden', !rows.length);
   el.innerHTML=rows.length?`<div class="qh">UPPDRAG</div>`+key:'';
 }
-$('#questLog').addEventListener('click',e=>{ const q=e.target.closest('[data-q]'); G.ui.questId=q?q.dataset.q:QUEST_ORDER[0]; openWin('quest'); });
+$('#questLog').addEventListener('click',e=>{ const q=e.target.closest('[data-q]'); if(!q) return; G.ui.questId=q.dataset.q; G.ui.questNpc=QUESTS[q.dataset.q].npc; openWin('quest'); });
 function renderQuest(){
-  const id=G.ui.questId||QUEST_ORDER[0], Q=QUESTS[id], st=questState(id), q=G.ch.quests[id];
-  let h=`<div style="font-size:17px;font-weight:900">${Q.name}</div><div style="color:var(--muted);font-size:12px;margin-bottom:6px">Från ${Q.from} · kräver level ${Q.lvl}</div>`;
+  if(!G.ui.questNpc && !G.ui.questId){ const f=QUEST_ORDER.find(i=>['active','complete'].includes(questState(i))) || QUEST_ORDER.find(i=>questState(i)==='offer'); if(f){ G.ui.questId=f; G.ui.questNpc=QUESTS[f].npc; } }
+  if(!G.ui.questNpc && !G.ui.questId){ $('#questBody').innerHTML=`<div>Du har inga uppdrag just nu.</div><div class="row" style="margin-top:10px"><button class="btn sec" data-qa="later">Stäng</button></div>`; return; }
+  const npcId=G.ui.questNpc || (G.ui.questId && QUESTS[G.ui.questId].npc), npc=NPCS[npcId];
+  const id=G.ui.questId;
+  let h=npc?`<div style="font-weight:900;color:#ffe9a8;margin-bottom:6px">💬 ${npc.name}</div>`:'';
+  if(!id){ $('#questBody').innerHTML=h+`<div>“Tack för all hjälp! Jag har inga fler uppdrag åt dig just nu.”</div><div class="row" style="margin-top:10px"><button class="btn sec" data-qa="later">Stäng</button></div>`; return; }
+  const Q=QUESTS[id], st=questState(id), q=G.ch.quests[id], here=npc && npc.map===G.mapId;
+  h+=`<div style="font-size:17px;font-weight:900">${Q.name}</div><div style="color:var(--muted);font-size:12px;margin-bottom:6px">${MAPS[npc.map].name}${Q.lvl>1?` · kräver level ${Q.lvl}`:''}</div>`;
   h+=`<div style="margin-bottom:8px">“${Q.text}”</div>`;
-  h+=`<div class="pstat" style="font-weight:600">${Object.entries(Q.goals).map(([t,n])=>{ const v=Math.min(n,(q&&q.prog[t])||0); return `<div class="qgoal ${q&&v>=n?'ok':''}"><span>Döda ${n} ${MOBS[t].name}</span><span>${q?v+'/'+n:''}</span></div>`; }).join('')}
-    <div style="margin-top:6px;color:#ffe08a">Belöning: ${Q.exp} EXP + valfritt level 2-vapen (<span style="color:${RAR[Q.rarity].color}">${RAR[Q.rarity].name}</span>)</div>
+  const rewards=[...(Q.choose?[`valfritt vapen (${Q.choose.map(b=>BASES[b].name).join(' / ')}, <span style="color:${RAR[Q.rarity].color}">${RAR[Q.rarity].name}</span>)`]:[]), ...(Q.give||[]).map(([b,r])=>`<span style="color:${RAR[r].color}">${BASES[b].name}</span>${BASES[b].fixed?' (+2 Str, Int och Agi)':''}`), `${Q.exp} EXP`];
+  h+=`<div class="pstat" style="font-weight:600">${Object.entries(Q.goals).map(([t,n])=>{ const v=Math.min(n,(q&&q.prog[t])||0); return `<div class="qgoal ${q&&v>=n?'ok':''}"><span>${goalName(t,n)}</span><span>${q?v+'/'+n:''}</span></div>`; }).join('')}
+    <div style="margin-top:6px;color:#ffe08a">Belöning: ${rewards.join(' + ')}</div>
     <div style="color:var(--muted);font-size:11.5px">Dödade monster räknas även när någon i ditt party dödar dem.</div></div>`;
-  if(st==='locked') h+=`<div class="hintx" style="color:var(--muted)">Du behöver level ${Q.lvl}.</div>`;
-  else if(st==='offer') h+=`<div class="row"><button class="btn green" data-qa="accept">Acceptera</button><button class="btn sec" data-qa="later">Inte nu</button></div>`;
+  const away = `<div style="color:#ffb86b;font-size:12.5px">Prata med ${npc.name} på ${MAPS[npc.map].name} för att ${st==='complete'?'lämna in':'ta'} uppdraget.</div>`;
+  if(st==='locked') h+=`<div style="color:var(--muted)">${Q.lvl&&G.ch.level<Q.lvl?`Du behöver level ${Q.lvl}.`:'Gör de tidigare uppdragen först.'}</div>`;
+  else if(st==='offer') h+= here ? `<div class="row"><button class="btn green" data-qa="accept">Acceptera</button><button class="btn sec" data-qa="later">Inte nu</button></div>` : away;
   else if(st==='active') h+=`<div class="row"><button class="btn sec" data-qa="later">Stäng</button></div>`;
   else if(st==='complete'){
-    h+=`<b>Välj din belöning:</b><div class="qchoices">${Q.choose.map(b=>{ const it=makeItem(b,Q.rarity); return `<div class="qchoice" data-claim="${b}"><img src="${iconURL(it)}" alt=""><b style="color:${RAR[Q.rarity].color}">${it.name}</b><small>${WTYPE[it.wtype]} · Attack ${it.atkMin}–${it.atkMax}</small></div>`; }).join('')}</div>`;
-  } else h+=`<div class="ok" style="color:#7ee787">✔ Uppdraget är avklarat.</div>`;
+    if(!here) h+=away;
+    else if(Q.choose) h+=`<b>Välj din belöning:</b><div class="qchoices">${Q.choose.map(b=>{ const it=makeItem(b,Q.rarity); return `<div class="qchoice" style="border-color:${RAR[Q.rarity].color}" data-claim="${b}"><img src="${iconURL(it)}" alt=""><b style="color:${RAR[Q.rarity].color}">${it.name}</b><small>${WTYPE[it.wtype]} · Attack ${it.atkMin}–${it.atkMax}</small></div>`; }).join('')}</div>`;
+    else h+=`<div class="row"><button class="btn gold" data-claim="">🎁 Hämta belöning</button></div>`;
+  } else h+=`<div style="color:#7ee787">✔ Uppdraget är avklarat.</div>`;
   $('#questBody').innerHTML=h;
 }
 $('#questBody').addEventListener('click',e=>{
-  const c=e.target.closest('[data-claim]'); if(c){ claimQuest(G.ui.questId||QUEST_ORDER[0], c.dataset.claim); return; }
+  const c=e.target.closest('[data-claim]'); if(c){ claimQuest(G.ui.questId, c.dataset.claim); return; }
   const a=e.target.closest('[data-qa]'); if(!a) return;
-  if(a.dataset.qa==='accept') acceptQuest(G.ui.questId||QUEST_ORDER[0]); else closeWin('quest');
+  if(a.dataset.qa==='accept') acceptQuest(G.ui.questId); else closeWin('quest');
 });
+/* Rita NPC:er */
+function drawNpc(c, id, n, face){
+  const t=G.time;
+  c.save(); c.translate(n.x,n.y); c.fillStyle='rgba(0,0,0,.2)'; ell(c,0,0,15,4); c.scale(face,1);
+  const skin='#ffd9b8', by=Math.sin(t*2)*0.6;
+  if(id==='berit'){
+    c.fillStyle='#2f5a2a'; c.beginPath(); c.moveTo(-7,-40+by); c.lineTo(6,-40+by); c.lineTo(4,-6); c.quadraticCurveTo(-8,-2,-16,-8); c.closePath(); c.fill();   // mantel
+    c.save(); c.translate(-9,-32+by); c.rotate(-0.35); c.fillStyle='#7a4e2d'; rr(c,-3,-12,7,24,2); c.fill(); c.fillStyle='#d9d2c0'; for(const x of [-1,1.5,4]){ c.beginPath(); c.moveTo(x-1,-12); c.lineTo(x,-17); c.lineTo(x+1,-12); c.fill(); } c.restore();   // koger
+    leg(c,-3,-19,0,'#6b4a2a','#3a2614',false); leg(c,3,-19,0,'#6b4a2a','#3a2614',false);
+    c.fillStyle='#4f7d3a'; rr(c,-7.5,-39+by,15,21,4); c.fill(); c.fillStyle='#5a3720'; c.fillRect(-7.5,-22+by,15,3);
+    c.fillStyle='#a0522d'; for(let i=0;i<4;i++) circ(c,-11,-46+by+i*6,3.4-i*0.4);   // fläta
+    c.fillStyle=skin; circ(c,1,-51+by,13.5);
+    c.fillStyle='#1d1d2b'; ell(c,5,-51+by,2,3.2); ell(c,11,-51+by,2,3.2); c.fillStyle='#fff'; circ(c,5.6,-52.2+by,.9); circ(c,11.6,-52.2+by,.9);
+    c.strokeStyle='#8a4a3a'; c.lineWidth=1.3; c.beginPath(); c.arc(8,-46+by,2.2,.15*Math.PI,.85*Math.PI); c.stroke();
+    c.fillStyle='#a0522d'; c.beginPath(); c.arc(1,-53+by,14.5,Math.PI*1.05,Math.PI*1.9); c.lineTo(-4,-58+by); c.closePath(); c.fill();
+    c.fillStyle='#3f6b33'; c.beginPath(); c.moveTo(-15,-56+by); c.quadraticCurveTo(0,-74+by,16,-58+by); c.lineTo(17,-55+by); c.lineTo(-16,-53+by); c.closePath(); c.fill();   // jägarhatt
+    c.strokeStyle='#d9483b'; c.lineWidth=2.4; c.beginPath(); c.moveTo(-6,-63+by); c.quadraticCurveTo(-16,-74+by,-22,-70+by); c.stroke();   // fjäder
+    limb(c,4,-35+by,2.6,11,'#4f7d3a',skin);
+  } else {
+    leg(c,-3,-19,0,'#3a4a6a','#2a2a2a',false); leg(c,3,-19,0,'#3a4a6a','#2a2a2a',false);
+    c.strokeStyle='#6b4423'; c.lineWidth=3; line(c,11,4,11,-78); c.fillStyle='#c3cad3'; c.beginPath(); c.moveTo(11,-90); c.lineTo(15,-78); c.lineTo(7,-78); c.closePath(); c.fill();   // spjut
+    c.fillStyle='#9aa3ad'; rr(c,-8,-39+by,16,21,4); c.fill();
+    c.fillStyle='#3d5a99'; rr(c,-6,-39+by,12,22,3); c.fill(); c.fillStyle='#ffd23f'; circ(c,0,-30+by,2.6);
+    c.fillStyle=skin; circ(c,1,-51+by,13.5);
+    c.fillStyle='#1d1d2b'; ell(c,5,-51+by,2,3.2); ell(c,11,-51+by,2,3.2);
+    c.fillStyle='#6b3d1f'; c.beginPath(); c.moveTo(2,-45+by); c.quadraticCurveTo(8,-41+by,14,-45+by); c.quadraticCurveTo(8,-43+by,2,-45+by); c.fill();   // mustasch
+    c.fillStyle='#c3cad3'; c.beginPath(); c.arc(1,-54+by,15.2,Math.PI,2*Math.PI); c.fill(); c.fillStyle='#8d949e'; c.fillRect(-14,-56+by,30,3.5); c.fillRect(6,-55+by,3,9);   // hjälm
+    limb(c,6,-35+by,1.9,11,'#9aa3ad',skin);
+  }
+  c.restore();
+  c.font='bold 11px system-ui'; c.textAlign='center';
+  const tw=c.measureText(n.name).width+12; c.fillStyle='rgba(90,60,0,.82)'; rr(c,n.x-tw/2,n.y+5,tw,16,4); c.fill();
+  c.fillStyle='#ffe9a8'; c.fillText(n.name,n.x,n.y+17);
+  const mk=npcMark(id);
+  if(mk){ const yy=n.y-(id==='holger'?104:92)+Math.sin(t*4)*3; c.fillStyle='#ffd23f'; circ(c,n.x,yy,10); c.strokeStyle='#7a5200'; c.lineWidth=2; c.beginPath(); c.arc(n.x,yy,10,0,7); c.stroke(); c.fillStyle='#5a3a00'; c.font='900 15px system-ui'; c.fillText(mk,n.x,yy+5.5); }
+}
+function drawNpcs(){
+  for(const [id,n] of Object.entries(NPCS)){
+    if(n.map!==G.mapId || n.x<G.view.x1-80 || n.x>G.view.x2+80) continue;
+    const face = G.p ? (G.p.x<n.x?-1:1) : 1;
+    drawNpc(ctx, id, n, face);
+  }
+  if(G.mode==='game' && G.p && !G.p.dead){
+    const id=npcNear(); if(id){ const txt=G.touch?`Tryck på ${NPCS[id].name.split(' ')[1]} för att prata`:'⬆ W/↑ för att prata';
+      ctx.font='bold 12px system-ui'; ctx.textAlign='center'; const tw=ctx.measureText(txt).width+16;
+      ctx.fillStyle='rgba(40,30,0,.85)'; rr(ctx,G.p.x-tw/2,G.p.y+26,tw,20,6); ctx.fill(); ctx.fillStyle='#ffe9a8'; ctx.fillText(txt,G.p.x,G.p.y+40); }
+  }
+}
+function npcAt(wx,wy){ for(const [id,n] of Object.entries(NPCS)) if(n.map===G.mapId && Math.abs(wx-n.x)<22 && wy>n.y-80 && wy<n.y+8) return id; return null; }
 
 /* ---------- Monsterbok ---------- */
 const pct = v => v.toLocaleString('sv-SE',{maximumFractionDigits:2});
@@ -2804,8 +3120,8 @@ function renderBook(){
     if(lv){
       const per=d.drop*100/d.pool.length;
       h+=`<div class="binfo"><div>❤️ HP <b>${d.hp}</b> · ⭐ EXP <b>${d.exp}</b> · 🪙 Guld <b>${d.gold}</b></div><div>💥 Skada vid beröring: <b>${d.touch}</b></div>
-        <div style="margin-top:4px"><b>Drops</b> (${pct(d.drop*100)}% chans totalt):</div>
-        ${d.pool.map(id=>`<div class="bdrop"><img src="${iconURL({base:id,rarity:'common'})}" alt=""> ${BASES[id].name} <span>Lv ${BASES[id].req} · ${pct(per)}%</span></div>`).join('')}
+        <div style="margin-top:4px"><b>Drops</b> (${pct(d.drop*100)}% chans totalt${d.maxRar?`, upp till <span style="color:${RAR[d.maxRar].color}">${RAR[d.maxRar].name}</span>`:''}):</div>
+        ${d.pool.map(id=>`<div class="bdrop"><img src="${iconURL(CONS[id]?{base:id}:{base:id,rarity:'common'})}" alt=""> ${CONS[id]?CONS[id].name:BASES[id].name} <span>${CONS[id]?'':'Lv '+BASES[id].req+' · '}${pct(per)}%</span></div>`).join('')}
         <div class="bdrop">🪙 ${d.gold} guld <span>100%</span></div>
         ${sk?`<div style="color:#9fb1cb;font-size:11.5px">Skattjägare ger dig +${sk}% större dropchans.</div>`:''}</div>`;
     } else h+=`<div class="binfo lockedtxt">🔒 Döda ${10-k} till för att se stats och drops.</div>`;
@@ -2818,7 +3134,7 @@ function renderBook(){
 
 /* ---------- Meny ---------- */
 function controlsHtml(){
-  return `<b>Dator</b><br><span class="kbd">WASD</span>/<span class="kbd">pilar</span> gå · <span class="kbd">Mellanslag</span> (eller <span class="kbd">W</span>) hoppa · <span class="kbd">W</span>/<span class="kbd">S</span> vid ett rep klättra · <span class="kbd">S</span>+<span class="kbd">Mellanslag</span> hoppa ner genom plattform · <span class="kbd">Ctrl</span> anfall (håll inne) · <span class="kbd">1</span>–<span class="kbd">9</span> förmågor och drycker · <span class="kbd">W</span>/<span class="kbd">↑</span> vid en portal: gå in · <span class="kbd">I</span> väska · <span class="kbd">T</span> talanger · <span class="kbd">B</span> butik · <span class="kbd">M</span> monsterbok · <span class="kbd">P</span> spela tillsammans · <span class="kbd">Q</span> uppdrag · <span class="kbd">Esc</span> meny. Håll muspekaren över föremål för att plocka upp dem. Högerklicka en ruta i snabbfältet för att tömma den.<br>
+  return `<b>Dator</b><br><span class="kbd">WASD</span>/<span class="kbd">pilar</span> gå · <span class="kbd">Mellanslag</span> (eller <span class="kbd">W</span>) hoppa · <span class="kbd">W</span>/<span class="kbd">S</span> vid ett rep klättra · <span class="kbd">S</span>+<span class="kbd">Mellanslag</span> hoppa ner genom plattform · <span class="kbd">Ctrl</span> anfall (håll inne) · <span class="kbd">1</span>–<span class="kbd">9</span> förmågor och drycker · <span class="kbd">W</span>/<span class="kbd">↑</span> vid en portal: gå in · <span class="kbd">I</span> väska · <span class="kbd">T</span> talanger · <span class="kbd">B</span> butik · <span class="kbd">M</span> monsterbok · <span class="kbd">P</span> spela tillsammans · <span class="kbd">Q</span> uppdrag · <span class="kbd">Esc</span> meny. Prata med NPC:er genom att klicka på dem eller stå vid dem och trycka <span class="kbd">W</span>. Dra en scroll till ett föremål för att använda den. Håll muspekaren över föremål för att plocka upp dem. Högerklicka en ruta i snabbfältet för att tömma den.<br>
   <span style="color:#ffb86b">Tips: Ctrl+W stänger fliken i webbläsaren. Spela i fullskärm (knappen nedan) så låser spelet sådana kortkommandon i Chrome/Edge.</span><br><br>
   <b>Mobil</b><br>Liggande läge. Styrspak till vänster (uppåt vid rep = klättra, uppåt vid portal = gå in), hopp- och anfallsknapp till höger, förmågor ovanför och drycker till vänster om dem. Tryck på föremål för att plocka upp dem – eller gå över dem.`;
 }
@@ -2946,7 +3262,9 @@ function showCreate(){
    START / AVSLUTA SPEL
    ===================================================================== */
 function startGame(ch, isNew){
-  ch.kills=ch.kills||{}; ch.map=MAPS[ch.map]?ch.map:1; ch.quests=ch.quests||{}; questLogKey=null;
+  ch.kills=ch.kills||{}; ch.map=MAPS[ch.map]?ch.map:1; ch.quests=ch.quests||{}; questLogKey=null; G.ui.questId=null; G.ui.questNpc=null;
+  while(ch.exp>=expReq(ch.level)){ ch.exp-=expReq(ch.level); ch.level++; }   // ny EXP-kurva
+  for(const id in ch.quests){ const q=ch.quests[id]; if(QUESTS[id] && q.state==='active' && questGoalsDone(id, ch)) q.state='complete'; }
   G.ch=ch; G.mapId=MAPS[ch.map]?ch.map:1; G.p=makePlayer(); G.mode='game';
   recalc();
   if(!(ch.hp>0)) ch.hp=G.stats.maxHp;
@@ -3191,7 +3509,7 @@ function guestEnterMap(to, x, y, announce){
   const keep={cds:G.p.cds, cdMax:G.p.cdMax, buffT:G.p.buffT, dead:G.p.dead};
   G.p=makePlayer(x,y); Object.assign(G.p,keep); G.p.portalCd=0.8;
   G.monsters=[]; G.monById={}; G.spawns=[]; G.drops=[]; G.projs=[]; G.nums=[];
-  $('#mapName').textContent=curMap().name; snapCam();
+  $('#mapName').textContent=curMap().name; snapCam(); if(isOpen('quest')) renderQuest();
   if(announce){ toast(`🌀 <b>${curMap().name}</b> – partyt följer ledaren`); log(`Partyt gick till <b>${curMap().name}</b>.`,'#ffe9a8'); }
   markDirty(true);
 }
@@ -3380,7 +3698,7 @@ resize(); initSpawns(); snapCam(); showLogin();
 requestAnimationFrame(frame);
 
 // Exponera för felsökning i konsolen
-window.JM = {G, Net, MOBS, RARE_DEFS, rollRarityTest:rollRarity, gainKillExpTest:(...a)=>gainKillExp(...a), makeItem, spawnMonsterTest:(sp,inst)=>spawnMonster(sp,inst), BASES, startGame, drawIconTest:drawIcon, drawCharTest:drawChar, spawnTest:sp=>spawnMonster(sp,true), whisperTarget:()=>whisperTarget(), rangedTarget:(r,d,u)=>rangedTarget(r,d,u), recalc:()=>recalc()};
+window.JM = {G, Net, MOBS, QUESTS, talkTo:id=>talkTo(id), changeMapTest:(a,b,c)=>changeMap(a,b,c), RARE_DEFS, rollRarityTest:rollRarity, gainKillExpTest:(...a)=>gainKillExp(...a), makeItem, spawnMonsterTest:(sp,inst)=>spawnMonster(sp,inst), BASES, startGame, drawIconTest:drawIcon, drawCharTest:drawChar, spawnTest:sp=>spawnMonster(sp,true), whisperTarget:()=>whisperTarget(), rangedTarget:(r,d,u)=>rangedTarget(r,d,u), recalc:()=>recalc()};
 </script>
 </body>
 </html>
