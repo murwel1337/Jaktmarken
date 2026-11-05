@@ -1,7 +1,7 @@
 // Jaktmarken – service worker.
 // Hämtar alltid från nätet först, så att nya versioner av spelet syns direkt.
 // Sparar en kopia som används om man saknar internet när appen startas.
-const CACHE = 'jaktmarken-v1';
+const CACHE = 'jaktmarken-v2';
 const CORE = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './icon-180.png'];
 
 self.addEventListener('install', e => {
@@ -19,7 +19,7 @@ self.addEventListener('fetch', e => {
   if (url.origin !== self.location.origin) return;   // Supabase m.m. går direkt till nätet
   const nav = req.mode === 'navigate';
   e.respondWith(
-    fetch(req, nav ? { cache: 'no-cache' } : undefined)
+    fetch(req, { cache: 'no-cache' })
       .then(res => {
         if (res && res.ok) { const copy = res.clone(); caches.open(CACHE).then(c => c.put(nav ? './index.html' : req, copy)); }
         return res;
