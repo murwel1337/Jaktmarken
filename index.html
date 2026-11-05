@@ -6,6 +6,11 @@
 <meta name="theme-color" content="#1d140e">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Jaktmarken">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-180.png">
 <title>Jaktmarken</title>
 <style>
 :root{
@@ -5998,6 +6003,7 @@ function renderMenu(){
     <button class="btn sec" data-m="gfx">🎨 Grafik: ${gfxLabel()}</button>
     <button class="btn sec" data-m="switch">👥 Byt gubbe</button>
     <button class="btn sec" data-m="logout">🚪 Logga ut</button>
+    <button class="btn sec ${canInstall()?'':'hidden'}" data-m="install" data-install="1">📲 Installera som app</button>
     <details ${G.ch.level<=2?'open':''}><summary>Kontroller</summary>${controlsHtml()}</details>`;
 }
 $('#menuBody').addEventListener('click',async e=>{
@@ -6009,8 +6015,22 @@ $('#menuBody').addEventListener('click',async e=>{
   else if(m==='gfx'){ setGfx(PERF.mode==='auto'?'high':PERF.mode==='high'?'low':'auto'); renderMenu(); toast(`🎨 Grafik: <b>${gfxLabel()}</b>`); }
   else if(m==='switch'){ await leaveGame(); showSelect(); }
   else if(m==='logout'){ await leaveGame(); G.acct=null; showLogin(); }
+  else if(m==='install') doInstall();
 });
-const isStandalone = () => (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone===true;
+const isStandalone = () => (window.matchMedia && matchMedia('(display-mode: standalone), (display-mode: fullscreen)').matches && !document.fullscreenElement && !document.webkitFullscreenElement) || navigator.standalone===true;
+// ---- Installera som app (PWA) ----
+let installEvt=null;
+const isIOSDev = () => /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
+const canInstall = () => !isStandalone() && (!!installEvt || isIOSDev());
+function updateInstallBtns(){ for(const b of $$('[data-install]')) b.classList.toggle('hidden',!canInstall()); }
+window.addEventListener('beforeinstallprompt',e=>{ e.preventDefault(); installEvt=e; updateInstallBtns(); });
+window.addEventListener('appinstalled',()=>{ installEvt=null; updateInstallBtns(); toast('📲 <b>Jaktmarken är installerat!</b> Starta spelet från ikonen på hemskärmen eller i appmenyn.',6000); });
+async function doInstall(){
+  if(installEvt){ const e=installEvt; installEvt=null; try{ await e.prompt(); await e.userChoice; }catch(_){} updateInstallBtns(); return; }
+  if(isIOSDev()) toast('📲 <b>Installera på iPhone/iPad:</b><br>1. Tryck på <b>Dela</b> (rutan med pil uppåt) i Safari.<br>2. Välj <b>Lägg till på hemskärmen</b>.<br>3. Tryck på <b>Lägg till</b>.<br>Starta sedan spelet från ikonen – då visas det i helskärm.',10000);
+}
+if('serviceWorker' in navigator && (location.protocol==='https:' || /^(localhost|127\.0\.0\.1)$/.test(location.hostname)))
+  window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 const fsSupported = () => !!(document.documentElement.requestFullscreen || document.documentElement.webkitRequestFullscreen);
 function iosFsHelp(){ toast('📱 <b>iPhone:</b> Safari kan inte dölja adressfältet.<br>Tryck på <b>Dela</b> (rutan med pil uppåt) längst ner → <b>Lägg till på hemskärmen</b> → <b>Lägg till</b>.<br>Starta sedan spelet från ikonen på hemskärmen – då visas det i helskärm.'); }
 function updateFsBtn(){ const on=!!(document.fullscreenElement||document.webkitFullscreenElement)||isStandalone(); document.body.classList.toggle('isfs',on); const b=$('#fsBtn'); if(b){ b.textContent=on?'🗗':'⛶'; b.style.display=isStandalone()?'none':''; } }
@@ -6053,7 +6073,9 @@ function showLogin(){
       <div class="row" style="margin-top:8px"><button class="btn sm" id="btnSupaSave">Spara</button><button class="btn sm sec" id="btnSupaClear">Rensa</button></div>
     </div>
     <div class="msg" id="loginMsg"></div>
+    <button class="btn sec wide ${canInstall()?'':'hidden'}" id="btnInstall" data-install="1" style="margin-top:10px">📲 Installera som app</button>
   </div>`);
+  $('#btnInstall').onclick=doInstall;
   const sm=()=>{ $('#saveMode').innerHTML = Cloud.on ? `☁️ <b>Molnsparning är på.</b> Din gubbe sparas i Supabase under ditt namn – ange samma namn nästa gång (även på en annan enhet).` : `💾 <b>Lokalt läge.</b> Allt sparas i den här webbläsaren. Fyll i Supabase-inställningarna för att spara i molnet och kunna spela från flera enheter.`; };
   sm();
   $('#btnSupa').onclick=()=>$('#supaBox').classList.toggle('hidden');
