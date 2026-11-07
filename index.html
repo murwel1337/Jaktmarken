@@ -64,6 +64,18 @@ label{display:block;font-size:12px;color:var(--muted);margin:10px 0 4px}
 .clcard canvas{width:90px;height:100px}
 .clcard b{display:block;font-size:16px}
 .clcard p{font-size:12px;color:#c4d0e3;margin:6px 0 0;line-height:1.35}
+.ccard .edit{position:absolute;left:6px;top:6px;background:#2a2418;border:1px solid #7a6030;border-radius:6px;font-size:12px;padding:2px 6px}
+.appEd{display:flex;gap:12px;align-items:center;background:rgba(0,0,0,.22);border:1px solid #5a4630;border-radius:12px;padding:8px 10px;margin:4px 0 10px}
+.appEd canvas{width:140px;height:152px;flex:none}
+.appOpts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px 10px;flex:1}
+.aopt{display:flex;align-items:center;gap:4px;font-size:12px}
+.aopt span{color:var(--muted);width:78px;flex:none}
+.aopt b{flex:1;text-align:center;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.aopt button{width:24px;height:24px;padding:0;border-radius:6px;background:#3a2c1c;border:1px solid #7a6030;color:#ffe6b0;font-size:11px;flex:none}
+.appBtns{display:flex;gap:6px;grid-column:1/-1;justify-content:flex-end}
+.appBtns button{font-size:12px;padding:4px 10px;border-radius:7px;background:#3a2c1c;border:1px solid #7a6030;color:#ffe6b0}
+@media (max-width:620px){.appOpts{grid-template-columns:1fr 1fr}.appEd canvas{width:80px;height:88px}}
+@media (max-height:460px){.appEd canvas{width:90px;height:98px}.aopt button{width:22px;height:22px}.appOpts{gap:3px 8px}}
 @media (max-width:620px){.classes{grid-template-columns:1fr}.clcard{display:flex;gap:10px;align-items:center;text-align:left}.clcard canvas{width:60px;height:70px;flex:none}}
 
 /* ---------- HUD ---------- */
@@ -313,6 +325,7 @@ body.touch.isfs #fsBtn{opacity:.55}
 #bagGrid.dropzone{outline:2px dashed #7dff8a;outline-offset:3px;border-radius:6px}
 #win-bag .slot{touch-action:none}
 .slot.hl{animation:itemPulse .7s ease-in-out infinite alternate;border-color:#ffe066!important}
+.srow.hl{animation:itemPulse .7s ease-in-out infinite alternate;border-radius:10px;outline:2px solid #ffe066}
 .slot.hlslot{box-shadow:0 0 0 2px rgba(255,224,102,.75) inset}
 @keyframes itemPulse{from{box-shadow:0 0 3px 1px rgba(255,224,102,.5)}to{box-shadow:0 0 14px 5px rgba(255,224,102,.95)}}
 #topBtns button.hl{animation:itemPulse .7s ease-in-out infinite alternate;border-color:#ffe066}
@@ -394,6 +407,8 @@ body.touch.portrait #rotate{display:flex}
 .tbtn.down{background:rgba(255,255,255,.32)}
 .tbtn span{position:relative;z-index:1}
 #tAtk{right:22px;bottom:28px;width:86px;height:86px;font-size:38px}
+#tAtk.cooling span{opacity:.55}
+#tAtk.rdy{box-shadow:0 0 0 3px #ffe066,0 0 16px #ffd23f}
 #tJump{right:124px;bottom:18px;width:64px;height:64px;font-size:28px}
 .sk{width:58px;height:58px}
 .sk0{right:36px;bottom:128px}.sk1{right:108px;bottom:98px}.sk2{right:182px;bottom:96px}.sk3{right:202px;bottom:20px}
@@ -504,7 +519,7 @@ body.touch .dk{display:none}
   <div id="joyZone"></div>
   <div id="joyBase"><div id="joyKnob"></div></div>
   <button id="tJump" class="tbtn"><span>⤒</span></button>
-  <button id="tAtk" class="tbtn"><span>⚔️</span></button>
+  <button id="tAtk" class="tbtn"><span>⚔️</span><i class="cd"></i></button>
   <div id="tSkills"></div>
   <div id="tPots"></div>
 </div>
@@ -713,17 +728,29 @@ const isCons = it => !!(it && CONS[it.base]);
 const SCROLL_IDS = ['scrStr','scrInt','scrAgi','scrAtk'];
 // Material (staplas som drycker, kan säljas i butiken och används till hantverk)
 Object.assign(CONS, {
-  bar:      {kind:'mat', name:'Bär',       sell:5,  desc:'Saftiga bär från blåbären. Används av Scrollers.'},
-  mossa:    {kind:'mat', name:'Mossa',     sell:5,  desc:'Mjuk mossa från mossabollarna. Används av Scrollers.'},
-  kattsvans:{kind:'mat', name:'Kattsvans', sell:7,  desc:'En lurvig svans från kissekatterna. Används av Scrollers.'},
-  hundtass: {kind:'mat', name:'Hundtass',  sell:7,  desc:'En sliten tass från vildhundarna. Används av Scrollers.'},
-  vargpals: {kind:'mat', name:'Vargpäls',  sell:10, desc:'Grå päls från vargar. Används av Leatherworkers och till finare scrolls.'},
-  bjornpals:{kind:'mat', name:'Björnpäls', sell:10, desc:'Tjock päls från björnar. Används av Leatherworkers och till finare scrolls.'},
+  bar:      {kind:'mat', name:'Bär',       sell:5,  desc:'Saftiga bär från blåbären. Används av Potionärer till HP-drycker.'},
+  mossa:    {kind:'mat', name:'Mossa',     sell:5,  desc:'Mjuk mossa från mossabollarna. Används av Potionärer till mana-drycker.'},
+  kattsvans:{kind:'mat', name:'Kattsvans', sell:7,  desc:'En lurvig svans från kissekatterna. Används av Potionärer.'},
+  hundtass: {kind:'mat', name:'Hundtass',  sell:7,  desc:'En sliten tass från vildhundarna. Används av Potionärer och Leatherworkers.'},
+  vargpals: {kind:'mat', name:'Vargpäls',  sell:10, desc:'Grå päls från vargar. Används av Leatherworkers och Potionärer.'},
+  bjornpals:{kind:'mat', name:'Björnpäls', sell:10, desc:'Tjock päls från björnar. Används av Leatherworkers och Potionärer.'},
+  mpPot2:   {kind:'pot', name:'Stor mana-dryck', mp:150, big:true, sell:6, desc:'Återställer 150 mana. Bryggs av Potionärer.'},
+  hpPot3:   {kind:'pot', name:'Jätte-HP-dryck', hp:500, big:true, sell:12, desc:'Återställer 500 HP. Bryggs av Potionärer.'},
+  mpPot3:   {kind:'pot', name:'Jätte-mana-dryck', mp:400, big:true, sell:12, desc:'Återställer 400 mana. Bryggs av Potionärer.'},
+  elxExp:   {kind:'pot', buff:'exp',  v:20, name:'Jägarelixir',        sell:15, desc:'+20 % EXP från monster i 30 minuter.'},
+  elxExp2:  {kind:'pot', buff:'exp',  v:40, name:'Stort jägarelixir',  sell:40, desc:'+40 % EXP från monster i 30 minuter.'},
+  elxStat:  {kind:'pot', buff:'stat', v:3,  name:'Krafttinktur',       sell:15, desc:'+3 Str, Int och Agi i 30 minuter.'},
+  elxStat2: {kind:'pot', buff:'stat', v:8,  name:'Stor krafttinktur',  sell:40, desc:'+8 Str, Int och Agi i 30 minuter.'},
+  elxDef:   {kind:'pot', buff:'def',  v:10, name:'Barkelixir',         sell:15, desc:'Du tar 10 % mindre skada i 30 minuter.'},
+  elxDef2:  {kind:'pot', buff:'def',  v:20, name:'Stenhudselixir',     sell:40, desc:'Du tar 20 % mindre skada i 30 minuter.'},
   hpPot2:   {kind:'pot', name:'Stor HP-dryck', hp:200, big:true, desc:'Återställer 200 HP. Droppas av vargar och starkare monster, och ges av senare uppdrag.'},
   drakfjall:{kind:'mat', name:'Drakfjäll',  sell:15, desc:'Glänsande blå fjäll från drakar. Används av Leatherworkers.'},
-  fosfor:   {kind:'mat', name:'Vit fosfor', sell:15, desc:'Glödande vit fosfor från drakarnas eldsvalg. Används av Scrollers till de finaste scrollsen.'},
-  smasten:  {kind:'mat', name:'Småsten',    sell:8,  desc:'Släta småstenar från stenkulorna. Används av både Scrollers och Leatherworkers.'},
+  fosfor:   {kind:'mat', name:'Vit fosfor', sell:15, desc:'Glödande vit fosfor från drakarnas eldsvalg. Används av Potionärer till de finaste elixiren.'},
+  smasten:  {kind:'mat', name:'Småsten',    sell:8,  desc:'Släta småstenar från stenkulorna. Används av Potionärer och Leatherworkers.'},
   draktar:  {kind:'mat', name:'Draktår',    sell:25, desc:'En stelnad tår från en drake. Drakvakten Dagny på Drakslätten vill ha dem.'},
+  sjal1:    {kind:'mat', soul:1, up:'sjal2', name:'Liten själ',  sell:4,  desc:'En liten fladdrande själ från svaga monster (level 1–5). Används av Scrollers. 3 små själar kan slås ihop till en mellansjäl.'},
+  sjal2:    {kind:'mat', soul:2, up:'sjal3', name:'Mellansjäl',  sell:12, desc:'En själ från monster på level 6–15. Används av Scrollers. 3 mellansjälar kan slås ihop till en stor själ.'},
+  sjal3:    {kind:'mat', soul:3, name:'Stor själ',   sell:36, desc:'En mäktig själ från monster på level 16 och uppåt. Används av Potionärer till de finaste elixiren.'},
   stenbit:  {kind:'mat', name:'Mystisk stenbit', sell:10, desc:'En stenbit med en inristad skalle. Kanske vet någon i Lövbyn vad den är? Startar ett uppdrag.'},
   scrStr4:{kind:'scroll', rarity:'epic', name:'Scroll: Str +4',        target:'gear',   stat:'str', amt:4, desc:'Utrustning (ej vapen): 60% chans till +4 Str.'},
   scrInt4:{kind:'scroll', rarity:'epic', name:'Scroll: Int +4',        target:'gear',   stat:'int', amt:4, desc:'Utrustning (ej vapen): 60% chans till +4 Int.'},
@@ -741,7 +768,9 @@ Object.assign(CONS, {
 });
 const itemName = it => isCons(it) ? CONS[it.base].name : it.name + (it.plus ? ` (+${it.plus})` : '');
 
-function makeItem(baseId, rarity='common'){
+/* split=true (vanliga monsterdrops): en huvudstat med högre intervall, en bistat med lägre intervall, den tredje blir 0.
+   Gäller inte uppdragsbelöningar, recept eller specifika rare drops (fixed/roll/loot). */
+function makeItem(baseId, rarity='common', split=false){
   const b = BASES[baseId], r = RAR[rarity];
   const it = {uid:uid(), base:b.id, name:b.name, slot:b.slot, req:b.req, rarity};
   const up = v => Math.ceil(v*(100+r.pct)/100);   // procentbonus, avrundat uppåt
@@ -759,7 +788,12 @@ function makeItem(baseId, rarity='common'){
     it.armor = b.armor; for(const s of STATS) it[s] = b.fixed[s]||0; if(b.atk) it.atk = b.atk;
   } else {
     it.armor = b.armor;
-    for(const s of STATS){ const v = randInt(b.smin,b.smax); it[s] = v>0 ? up(v) : 0; }
+    if(split){
+      const hi=Math.max(1,b.smax), [m,sub]=[...STATS].sort(()=>Math.random()-.5);
+      for(const s of STATS) it[s]=0;
+      it[m] = up(randInt(Math.ceil(hi*1.25), hi*2));
+      const v = randInt(Math.ceil(b.smin/2), hi); it[sub] = v>0 ? up(v) : 0;
+    } else for(const s of STATS){ const v = randInt(b.smin,b.smax); it[s] = v>0 ? up(v) : 0; }
   }
   return it;
 }
@@ -990,7 +1024,8 @@ const HUNT_PLATS = [
   {id:'p3b', x1:1700, x2:2420, y:620, floor:3},
   {id:'p4a', x1:800,  x2:1520, y:480, floor:4},
   {id:'p4b', x1:2280, x2:3000, y:480, floor:4},
-  {id:'safe',x1:1400, x2:1900, y:780, floor:2, safe:true},   // säker platå i mitten – inga monster, här står NPC:erna. Klättra upp från marken (rep vid x 1880)
+  {id:'safe',x1:1400, x2:1900, y:780, floor:2, safe:true},
+  {id:'over',x1:1480, x2:1780, y:555, floor:3, safe:true},   // över lägret: förbinder p4a (vänster) med p3b (höger)   // säker platå i mitten – inga monster, här står NPC:erna. Klättra upp från marken (rep vid x 1880)
 ];
 // Byn: platt mark, inga monster
 const TOWN_PLATS = [
@@ -1272,6 +1307,7 @@ function fixAccount(a){
     if(spent > Math.max(0,c.level-(TALENT_LVL-1))){ for(const k of Object.keys(c.talents)){ if(TAL[k]&&TAL[k].active) c.hotbar=c.hotbar.map(x=>x===k?null:x); } c.talents={}; }
     if(c.quests && c.quests.bar && !c.quests.bar1){ c.quests.bar1=c.quests.bar; delete c.quests.bar; }
     if((c.qv||0)<2){ if(c.quests.jakt3 && c.quests.jakt3.state==='claimed') c.quests.jakt4={state:'claimed',prog:{}}; c.qv=2; }
+    if(c.qv<3){ for(const [a,b] of [['skr0','skr1'],['vildlw','vild4'],['saga0','saga1'],['gunnar0','gunnar1']]) if(c.quests[b] && !c.quests[a]) c.quests[a]={state:'claimed',prog:{}}; c.qv=3; }
     for(const it of [...c.inv,...Object.values(c.eq)]) if(it && BASES[it.base] && !isCons(it) && !BASES[it.base].fixed) it.name=BASES[it.base].name;
   }
   return a;
@@ -1326,13 +1362,19 @@ function acctAvail(){ return acctPoints(G.acct) - Object.values(G.acct.talents).
    ger 0,01 procentenheter mindre än det förra (5 → 4,9 %, 50 → 37,75 %, 100 → 50,5 %, sedan inget mer). */
 const dimStat = n => { const k=clamp(Math.floor(n),0,101); return k - 0.005*k*(k-1); };
 const CRIT_MULT = 1.5;
+/* Agi → kritisk chans och undvikande (som i WoW): 1 % per Agi på level 1, och värdet per Agi sjunker med 5 %
+   per level, räknat på det föregående (procent på procent): 1 % · 0,95^(level−1). Level 20 ≈ 0,377 % per Agi. Tak 75 %. */
+const AGI_PCT = lvl => Math.pow(0.95, Math.max(0,lvl-1));
+const AGI_CAP = 75;
+const agiPct = (agi,lvl) => Math.min(AGI_CAP, Math.max(0,agi)*AGI_PCT(lvl));
 function calcStats(ch){
   const C = CLASSES[ch.cls], L = ch.level-1;
   const bb = bookStatBonus(ch), ka = tv('k_stats');
-  const s = {str:5+L+bb+ka, int:5+L+bb+ka, agi:5+L+bb+ka, armor:0, book:bb};
+  const ex = (ch===G.ch) ? elixV('stat') : 0;
+  const s = {str:5+L+bb+ka+ex, int:5+L+bb+ka+ex, agi:5+L+bb+ka+ex, armor:0, book:bb};
   s.eqAtk=0; s.eqMove=0;
   for(const k in ch.eq){ const it=ch.eq[k]; if(!it) continue; s.armor+=it.armor||0; for(const st of STATS) s[st]+=it[st]||0; if(it.slot!=='vapen') s.eqAtk+=it.atk||0; s.eqMove+=it.move||0; }
-  s.crit = dimStat(s.agi); s.dodge = dimStat(s.agi); s.cdr = dimStat(s.int);
+  s.crit = agiPct(s.agi,ch.level); s.dodge = agiPct(s.agi,ch.level); s.cdr = dimStat(s.int);
   s.maxHp = 50 + s.str*10;
   s.maxMp = C.noMana ? 0 : 20 + s.int*10;
   s.hpReg = s.str*0.1;
@@ -1514,7 +1556,7 @@ function updatePlayer(dt){
   ch.mp = Math.min(s.maxMp, ch.mp + s.mpReg*dt);
   p.atkCd=Math.max(0,p.atkCd-dt); p.atkAnim=Math.max(0,p.atkAnim-dt); p.inv=Math.max(0,p.inv-dt);
   p.knockT=Math.max(0,p.knockT-dt); p.ropeCd=Math.max(0,p.ropeCd-dt); p.dropT=Math.max(0,p.dropT-dt); if(p.dropT<=0) p.drop=null;
-  p.potCd=Math.max(0,p.potCd-dt); p.portalCd=Math.max(0,p.portalCd-dt);
+  p.potCd=Math.max(0,p.potCd-dt); p.portalCd=Math.max(0,p.portalCd-dt); tickElix(dt);
   for(const k in p.cds) p.cds[k]=Math.max(0,p.cds[k]-dt);
   if(p.buffT>0){ p.buffT-=dt; if(Math.random()<dt*14) fxPetal(p); if(p.buffT<=0){ p.buffT=0; recalc(); log('🌸 Flower power tog slut.','#ffb3de'); } }
   if(p.regenT>0){ p.regenT-=dt; if(Math.random()<dt*12) particle(p.x+rand(-14,14), p.y-rand(5,60), pick(['#7dff8a','#c8ffb0','#3fdc6a']), rand(-10,10), rand(-70,-30), .7, 2.5, -20); if(p.regenT<=0){ p.regenT=0; recalc(); } }
@@ -1620,7 +1662,7 @@ function hurtPlayer(dmg, dir, o={}){
     G.fx.push({type:'text',x:p.x,y:p.y-p.h-16,text:'Undvek!',color:'#bfe8ff',t:0,dur:.8,size:14}); SFX.dodge();
     if(!o.noKb) p.inv=Math.max(p.inv,0.6); return false;
   }
-  const real = dmg*100/(100+s.armor);   // armor minskar skadan
+  const real = dmg*100/(100+s.armor)*(1-elixV('def')/100);   // armor (och Barkelixir) minskar skadan
   G.ch.hp -= real; SFX.hurt();
   addNum(p.x, p.y-p.h-6, real, 'hurt');
   if(!o.noKb){ p.inv=1.2; if(!p.climb){ p.vx=dir*230; p.vy=-260; p.onGround=false; p.knockT=0.35; } }
@@ -1685,7 +1727,7 @@ function whisperTarget(){
   return best;
 }
 function startAtkAnim(mode){
-  const p=G.p; p.atkCd=atkInterval(); p.atkDur=Math.min(0.36, p.atkCd*0.95); p.atkAnim=p.atkDur; p.atkMode=mode; p.atkVar=((p.atkVar||0)+1)%2;
+  const p=G.p; p.atkCd=atkInterval(); p.atkCdMax=p.atkCd; p.atkDur=Math.min(0.36, p.atkCd*0.95); p.atkAnim=p.atkDur; p.atkMode=mode; p.atkVar=((p.atkVar||0)+1)%2;
 }
 // Förmågor spelar sin animation men rör inte basattackens nedkylning
 function startSkillAnim(mode){
@@ -1841,10 +1883,30 @@ function takeOne(base){
   const ch=G.ch; for(let i=ch.inv.length-1;i>=0;i--){ const it=ch.inv[i]; if(it.base===base){ it.count--; if(it.count<=0) ch.inv.splice(i,1); return true; } }
   return false;
 }
+const ELIX = {exp:{ic:'🍀', txt:v=>`+${v}% EXP från monster`}, stat:{ic:'💪', txt:v=>`+${v} Str, Int och Agi`}, def:{ic:'🛡️', txt:v=>`${v}% mindre skada`}};
+const ELIX_T = 1800;   // 30 minuter speltid
+const elixV = k => { const e=G.ch&&G.ch.elix&&G.ch.elix[k]; return e&&e.t>0 ? e.v : 0; };
+function tickElix(dt){
+  const E=G.ch&&G.ch.elix; if(!E) return;
+  for(const k in E){ E[k].t-=dt; if(E[k].t<=0){ delete E[k]; if(k==='stat') recalc(); log(`${ELIX[k].ic} Elixiret tog slut.`,'#cfe0ff'); markDirty(); } }
+}
+function useElixir(base){
+  const p=G.p, c=CONS[base], ch=G.ch; ch.elix=ch.elix||{};
+  const cur=ch.elix[c.buff];
+  if(cur && cur.v>c.v){ throttleMsg('elx','Du har redan ett starkare elixir av samma sort.','#ff9b9b'); return false; }
+  takeOne(base); p.potCd=0.5; SFX.pot();
+  ch.elix[c.buff]={v:c.v, t:ELIX_T};
+  if(c.buff==='stat') recalc();
+  G.fx.push({type:'text',x:p.x,y:p.y-p.h-20,text:`${ELIX[c.buff].ic} ${ELIX[c.buff].txt(c.v)}`,color:'#ffe066',t:0,dur:1.4,size:13});
+  log(`${ELIX[c.buff].ic} <b>${c.name}</b>: ${ELIX[c.buff].txt(c.v)} i 30 minuter.`,'#ffe066');
+  for(let i=0;i<14;i++) particle(p.x+rand(-14,14),p.y-rand(10,60),pick(['#ffe066','#fff','#9fe08a']),rand(-30,30),rand(-110,-30),.8,3,0);
+  markDirty(true); refreshOpen(); return true;
+}
 function usePot(base){
   const p=G.p, c=CONS[base], s=G.stats, ch=G.ch;
   if(!p || p.dead || c.kind!=='pot' || p.potCd>0) return false;
-  if(!consCount(base)){ throttleMsg('no'+base,`Du har inga ${c.name.toLowerCase()}r. Köp i butiken (B).`,'#ff9b9b'); return false; }
+  if(!consCount(base)){ throttleMsg('no'+base,`Du har inga ${c.name.toLowerCase()}r.`,'#ff9b9b'); return false; }
+  if(c.buff) return useElixir(base);
   if(c.hp && ch.hp>=s.maxHp-0.01){ throttleMsg('hpfull','HP är redan fullt.','#cfe0ff'); return false; }
   if(c.mp && s.maxMp<=0){ throttleMsg('nomp','Skogshuggaren har ingen mana – han använder HP till sina förmågor.','#cfe0ff'); return false; }
   if(c.mp && ch.mp>=s.maxMp-0.01){ throttleMsg('mpfull','Manan är redan full.','#cfe0ff'); return false; }
@@ -1915,7 +1977,7 @@ function killMonster(m){
   spawnDrop(m, {kind:'gold', amount:d.gold});
   const db = killer===Net.myId ? tv('k_drop') : ((G.others[killer]&&G.others[killer].db)||0);
   if(d.pool.length && (m.rare || Math.random() < d.drop*(1+db/100))){
-    spawnDrop(m, {kind:'item', item:makeItem(pick(d.pool), rollRarity(m.rare, d.maxRar)), owner:killer});
+    spawnDrop(m, {kind:'item', item:makeItem(pick(d.pool), rollRarity(m.rare, d.maxRar), true), owner:killer});
   }
   if(d.mat && (m.rare || Math.random() < d.matP*(1+db/100))) spawnDrop(m, {kind:'item', item:{uid:uid(), base:d.mat, count:m.rare?5:1}, owner:killer});
   if(d.extra) for(const [mat,pp] of d.extra) if(Math.random() < pp*(1+db/100)) spawnDrop(m, {kind:'item', item:{uid:uid(), base:mat, count:1}, owner:killer});
@@ -1924,10 +1986,13 @@ function killMonster(m){
     const cls = killer===Net.myId ? G.ch.cls : ((G.others[killer]&&G.others[killer].cls)||'skog');
     spawnDrop(m, {kind:'item', item:makeItem(STONE_WPN[cls], rollRarity(m.rare,'rare')), owner:killer});
   }
-  if(d.apeLoot){ const r=Math.random(); spawnDrop(m, {kind:'item', item:makeItem(pick(STONE_GEAR), r<.03?'epic':r<.13?'rare':'uncommon'), owner:killer}); }
+  if(d.apeLoot){ const r=Math.random(); spawnDrop(m, {kind:'item', item:makeItem(pick(STONE_GEAR), r<.03?'epic':r<.13?'rare':'uncommon', true), owner:killer}); }
   // HP-drycker från alla monster. Från vargarnas level och uppåt även stora HP-drycker (200 HP).
   if(Math.random() < (d.lvl>=7?.03:.05)) spawnDrop(m, {kind:'item', item:{uid:uid(), base:'hpPot', count:1}, owner:killer});
   if(d.lvl>=7 && Math.random() < .03) spawnDrop(m, {kind:'item', item:{uid:uid(), base:'hpPot2', count:1}, owner:killer});
+  // själar till Scrollers: level 1–5 liten (20 %), 6–15 mellan (10 %), 16+ stor (5 %)
+  { const [sj,sp] = d.lvl<=5 ? ['sjal1',.2] : d.lvl<=15 ? ['sjal2',.1] : ['sjal3',.05];
+    if(m.rare || Math.random() < sp*(1+db/100)) spawnDrop(m, {kind:'item', item:{uid:uid(), base:sj, count:1}, owner:killer}); }
   if(d.ring && Math.random() < d.ringP*(1+db/100)){ spawnDrop(m, {kind:'item', item:makeItem(d.ring,'epic'), owner:killer}); if(killer===Net.myId) log('💍 Något glittrar bland bären… en <b style="color:#c77dff">Blåbärsring</b>!','#e0b0ff'); }
 }
 function gainKillExp(type, share, party, isKill, mult=1){
@@ -1945,7 +2010,7 @@ function gainKillExp(type, share, party, isKill, mult=1){
   }
   const lv=bookLvl(ch.kills[type]||0);
   questKill(type);
-  const base=d.exp*mult*(1+lv*0.05)*(1+tv('k_exp')/100)*share;
+  const base=d.exp*mult*(1+lv*0.05)*(1+tv('k_exp')/100)*(1+elixV('exp')/100)*share;
   const bonus=party?base*0.05:0;
   gainExp(base+bonus, party, bonus, party && !isKill);
   if(isOpen('book')) renderBook();
@@ -2122,9 +2187,14 @@ function updateMonsters(dt){
     else if(m.hurtT>0){ m.hurtT-=dt; }
     else if(tgt){
       // jaga den som anföll – längs den egna plattformen, stannar vid kanten
-      const dx=tgt.x-m.x; m.timer=rand(.6,1.6);
-      if(Math.abs(dx)<10) m.state='idle';
-      else { m.dir=Math.sign(dx); const nx=m.x+m.dir*m.d.speed*AGGRO_SPEED*dt; if(nx<m.plat.x1+mg || nx>m.plat.x2-mg) m.state='idle'; else { m.state='walk'; m.x=nx; } }
+      // Står aldrig still: under spelaren pendlar den fram och tillbaka, vid kanten vänder den en kort stund och går sedan tillbaka mot spelaren
+      const dx=tgt.x-m.x; m.timer=rand(.6,1.6); m.state='walk';
+      if(!m.osc) m.osc=rand(18,40);
+      if(m.turnT>0) m.turnT-=dt;
+      else if(Math.abs(dx)>m.osc){ if(Math.sign(dx)!==m.dir) m.osc=rand(18,40); m.dir=Math.sign(dx)||m.dir; }
+      let nx=m.x+m.dir*m.d.speed*AGGRO_SPEED*dt;
+      if(nx<m.plat.x1+mg || nx>m.plat.x2-mg){ m.dir=-m.dir; m.turnT=rand(.35,.8); nx=m.x+m.dir*m.d.speed*AGGRO_SPEED*dt; }
+      m.x=nx;
     }
     else {
       m.timer-=dt;
@@ -3439,6 +3509,155 @@ const NPC_LOOK = {
           top:['#2e4a7a','#1a2a4a'], pants:['#3a3040','#201a28'], shoe:['#3a2a20','#1e140c'], sleeve:'long', eq:{brost:{req:8,rarity:'common'}, vapen:{wtype:'spjut',req:15,rarity:'common'}}},
 };
 const shadeC=(h,t)=>t>0?mixHex(h,'#ffffff',t):mixHex(h,'#000000',-t);
+
+/* ---------- Utseende för spelargubbar (väljs när man skapar gubben, kan ändras i gubbvalet) ----------
+   ch.app = {skin, hc, hs, eye, ec, mouth, beard, hat, glas} – index i listorna nedan. Saknas app används klassens standard. */
+const APP_OPT = {
+  skin: {name:'Hudton', list:[['Ljus',['#f6cfa6','#d4966c']],['Blek',['#f8dcc4','#d6a284']],['Solbränd',['#e8b88a','#b87c50']],['Brun',['#c98d5e','#8e5a34']],['Mörk',['#8d5a3a','#5a3420']]]},
+  hc:   {name:'Hårfärg', list:[['Brun',['#7a4524','#45230f']],['Blond',['#f2cb6a','#b0812a']],['Svart',['#3a2e2e','#120a0a']],['Röd',['#cf5a2a','#7a2a10']],['Vit',['#e6e6ec','#9a9aa8']],['Mörklila',['#3a2a55','#1c1230']],['Blå',['#3f80cc','#1a3a7a']],['Rosa',['#f28cba','#b04a7a']],['Grön',['#5fa84d','#2a5a22']]]},
+  hs:   {name:'Frisyr', list:[['Kort'],['Lugg'],['Långt'],['Hästsvans'],['Spretigt'],['Fläta'],['Flintis']]},
+  eye:  {name:'Ögon', list:[['Runda'],['Stora'],['Glada'],['Bestämda']]},
+  ec:   {name:'Ögonfärg', list:[['Grön','#3d6b3a'],['Brun','#5a3a1a'],['Blå','#2f6a9a'],['Lila','#8a5ae8'],['Grå','#5a6a7a'],['Bärnsten','#c08a2a']]},
+  mouth:{name:'Mun', list:[['Leende'],['Flin'],['Neutral'],['Förvånad']]},
+  beard:{name:'Ansiktshår', list:[['Inget'],['Skäggstubb'],['Mustasch'],['Helskägg'],['Pipskägg']]},
+  hat:  {name:'Huvudbonad', list:[['Ingen'],['Klassens']]},
+  glas: {name:'Glasögon', list:[['Nej'],['Ja']]},
+};
+const APP_KEYS = Object.keys(APP_OPT);
+const HS_ID = ['kort','lugg','lang','hast','spretig','flata','flint'];
+const HAT_NAME = {skog:'Toppluva', hippie:'Pannband', viskare:'Huva'};
+const DEF_APP = {
+  skog:   {skin:0, hc:0, hs:0, eye:0, ec:0, mouth:2, beard:3, hat:1, glas:0},
+  hippie: {skin:0, hc:1, hs:2, eye:0, ec:1, mouth:0, beard:0, hat:1, glas:1},
+  viskare:{skin:1, hc:5, hs:0, eye:0, ec:3, mouth:0, beard:0, hat:1, glas:0},
+};
+function appOf(cls, app){ const d=DEF_APP[cls]||DEF_APP.skog, a={}; for(const k of APP_KEYS){ const v=app&&app[k]; a[k]=Number.isInteger(v)&&v>=0&&v<APP_OPT[k].list.length ? v : d[k]; } return a; }
+const LOOK_CACHE = new Map();
+function lookFor(cls, app){
+  const A=appOf(cls,app), key=cls+'|'+APP_KEYS.map(k=>A[k]).join(',');
+  let L=LOOK_CACHE.get(key); if(L) return L;
+  const B=LOOK[cls]||LOOK.skog;
+  L={...B, skin:APP_OPT.skin.list[A.skin][1], hair:APP_OPT.hc.list[A.hc][1], eye:APP_OPT.ec.list[A.ec][1], app:A, hs:HS_ID[A.hs], hat:!!A.hat};
+  LOOK_CACHE.set(key,L); return L;
+}
+// --- hår bakom huvudet (spelare) ---
+function hairBackPl(c,L,hx,hy){
+  const H=L.hair, hs=L.hs;
+  const grad=(x1,y1,x2,y2)=>{ const g=c.createLinearGradient(x1,y1,x2,y2); g.addColorStop(0,shadeC(H[0],.12)); g.addColorStop(1,H[1]); return g; };
+  const strands=(pts)=>{ c.strokeStyle='rgba(255,255,255,.28)'; c.lineWidth=.8; for(const [a,b,d,e,f,g] of pts){ c.beginPath(); c.moveTo(hx+a,hy+b); c.quadraticCurveTo(hx+d,hy+e,hx+f,hy+g); c.stroke(); } };
+  if(hs==='lang'){
+    c.fillStyle=grad(hx-14,hy-14,hx-4,hy+28); c.beginPath(); c.moveTo(hx+6,hy-13); c.quadraticCurveTo(hx-21,hy-14,hx-18,hy+8); c.quadraticCurveTo(hx-19,hy+22,hx-11,hy+28); c.quadraticCurveTo(hx-7,hy+22,hx-4,hy+25); c.quadraticCurveTo(hx-1,hy+18,hx+4,hy+19); c.quadraticCurveTo(hx+9,hy+14,hx+9,hy+6); c.closePath(); c.fill();
+    c.strokeStyle='rgba(0,0,0,.18)'; c.lineWidth=.9; for(const dx of [-12,-8]){ c.beginPath(); c.moveTo(hx+dx+3,hy-4); c.quadraticCurveTo(hx+dx-2,hy+10,hx+dx+1,hy+24); c.stroke(); }
+    strands([[-13,-6,-17,8,-14,20],[-9,-8,-12,6,-9,18],[-5,-9,-7,4,-4,14]]);
+  } else if(hs==='lugg'){
+    c.fillStyle=grad(hx-14,hy-14,hx,hy+14); c.beginPath(); c.moveTo(hx+4,hy-13); c.quadraticCurveTo(hx-19,hy-14,hx-16,hy+6); c.quadraticCurveTo(hx-15,hy+13,hx-8,hy+13); c.quadraticCurveTo(hx-2,hy+12,hx+2,hy+9); c.closePath(); c.fill();
+    strands([[-12,-6,-15,3,-12,10]]);
+  } else if(hs==='hast'){
+    const sw=Math.sin(G.time*2.6)*1.6;
+    c.fillStyle=grad(hx-14,hy-10,hx-20,hy+18); c.beginPath(); c.moveTo(hx-11,hy-9); c.quadraticCurveTo(hx-24+sw,hy-6,hx-22+sw,hy+6); c.quadraticCurveTo(hx-21+sw,hy+16,hx-15+sw*1.5,hy+21); c.quadraticCurveTo(hx-17+sw,hy+10,hx-13,hy+1); c.closePath(); c.fill();
+    strands([[-14,-6,-21+sw,2,-17+sw,16]]);
+    c.fillStyle='#d8382e'; ell(c,hx-12.5,hy-5,2.6,3.2,.4); c.fillStyle='rgba(255,255,255,.35)'; ell(c,hx-13.2,hy-6,1,1.2);
+  } else if(hs==='flata'){
+    for(let i=0;i<6;i++){ const x=hx-12.5-i*.7+Math.sin(G.time*2+i*.6)*.4*i/3, y=hy+3+i*4.2; c.fillStyle=i%2?H[1]:shadeC(H[0],.05); ell(c,x,y,3.7-i*.28,3,i%2?.5:-.5); c.fillStyle='rgba(255,255,255,.22)'; ell(c,x-.8,y-1,1.3,.8,i%2?.5:-.5); }
+    c.fillStyle='#4a8ad8'; rr(c,hx-18.3,hy+26,4.4,2.4,1); c.fill(); c.fillStyle=H[0]; c.beginPath(); c.moveTo(hx-18,hy+28); c.lineTo(hx-16,hy+33); c.lineTo(hx-14,hy+28); c.fill();
+  }
+}
+// --- hår ovanpå huvudet (spelare) ---
+function hairFrontPl(c,L,hx,hy,covered){
+  const H=L.hair, hs=L.hs; if(hs==='flint'){ c.fillStyle='rgba(255,255,255,.35)'; ell(c,hx-2,hy-9,5,2.4,-.3); return; }
+  const fr = {
+    kort:[[13.6,-5],[11.4,-8.4],[9.2,-5.6],[6.2,-9.2],[3.4,-6],[-.6,-8.6],[-3,-3.6]],
+    lugg:[[14.2,-1.6],[12.6,-3.6],[10,-2.2],[7.4,-4.2],[4.6,-2.4],[1.6,-4.4],[-2.6,-.6]],
+    lang:[[13.8,-5.4],[10,-6.6],[6,-5.6],[2.4,-2.6],[-1,1.4],[-3,-1.2]],
+    hast:[[13.8,-6],[9,-9],[3,-9.4],[-2.4,-6]],
+    spretig:[[13.8,-4.6],[11.8,-7.6],[9.8,-4.4],[7,-8.6],[4.6,-5],[1.4,-8.2],[-2.6,-3]],
+    flata:[[13.8,-5.6],[8,-8.6],[2,-7.4],[-2.4,-4.2]],
+  }[hs] || [[13.6,-5],[6,-8],[-3,-3.6]];
+  const low = hs==='lugg' ? 11 : hs==='lang' ? 9 : 5.5;
+  const g=c.createLinearGradient(hx-6,hy-17,hx+8,hy+2); g.addColorStop(0,shadeC(H[0],.18)); g.addColorStop(.55,H[0]); g.addColorStop(1,H[1]);
+  c.fillStyle=g; c.beginPath(); c.moveTo(hx-13.4,hy+low-2); c.arc(hx,hy-1.4,14.7,Math.PI*.96,Math.PI*1.985);
+  for(const [x,y] of fr) c.lineTo(hx+x,hy+y);
+  c.lineTo(hx-5.2,hy-3.4); c.quadraticCurveTo(hx-9.5,hy-2,hx-8.6,hy+low); c.closePath(); c.fill();
+  c.strokeStyle=shadeC(H[1],-.25); c.lineWidth=.6; c.stroke();
+  // strån och glans
+  c.strokeStyle='rgba(0,0,0,.2)'; c.lineWidth=.8; for(const a of [-.6,.2,1,1.8]){ c.beginPath(); c.moveTo(hx+Math.cos(Math.PI*1.5+a*.4)*4,hy-13); c.quadraticCurveTo(hx+a*5,hy-9,hx+a*6+2,hy-5); c.stroke(); }
+  c.strokeStyle='rgba(255,255,255,.4)'; c.lineWidth=1.3; c.beginPath(); c.arc(hx-1,hy-2,11.4,Math.PI*1.18,Math.PI*1.42); c.stroke();
+  c.strokeStyle='rgba(255,255,255,.22)'; c.lineWidth=.8; c.beginPath(); c.arc(hx-1,hy-2,9,Math.PI*1.5,Math.PI*1.7); c.stroke();
+  if(hs==='spretig' && !covered){ c.fillStyle=g; for(let i=0;i<6;i++){ const a=Math.PI*(1.12+i*.15), bx=hx+Math.cos(a)*13, by2=hy-1.4+Math.sin(a)*13, tx=hx+Math.cos(a-.12)*21, ty=hy-1.4+Math.sin(a-.12)*21; c.beginPath(); c.moveTo(bx+Math.cos(a+1.57)*3.6,by2+Math.sin(a+1.57)*3.6); c.lineTo(tx,ty); c.lineTo(bx-Math.cos(a+1.57)*3.6,by2-Math.sin(a+1.57)*3.6); c.closePath(); c.fill(); c.strokeStyle='rgba(255,255,255,.3)'; c.lineWidth=.7; line(c,bx,by2,(bx+tx)/2,(by2+ty)/2); } }
+  if(hs==='lang'){ c.fillStyle=g; c.beginPath(); c.moveTo(hx-4,hy-3); c.quadraticCurveTo(hx-8,hy+6,hx-6,hy+14); c.quadraticCurveTo(hx-3,hy+8,hx-1,hy+1); c.closePath(); c.fill(); }
+}
+function eyeBig(c,x,y,iris,sx){
+  c.fillStyle='#fffaf2'; ell(c,x,y,2.9*sx,4);
+  const g=c.createLinearGradient(0,y-3,0,y+3.5); g.addColorStop(0,shadeC(iris,-.35)); g.addColorStop(1,shadeC(iris,.3)); c.fillStyle=g; ell(c,x+.5*sx,y+.5,2.25*sx,3.2);
+  c.fillStyle='#120a06'; ell(c,x+.6*sx,y+.7,1.2*sx,1.8);
+  c.fillStyle='#fff'; circ(c,x-.4,y-1.2,1.05); circ(c,x+1.2*sx,y+1.7,.5);
+  c.strokeStyle='#1e0e04'; c.lineWidth=1.5; c.beginPath(); c.ellipse(x,y,3*sx,4.1,0,Math.PI*1.08,Math.PI*1.92); c.stroke();
+  c.lineWidth=.9; line(c,x+2.4*sx,y-2.6,x+3.6*sx,y-3.6); line(c,x+2.9*sx,y-1.6,x+4*sx,y-2.2);
+}
+function drawHeadPl(c,L,by,eq,o){
+  const hx=1, hy=-52+by, A=L.app, cov=!!eq.hjalm, hat=L.hat&&!cov, sk=L.skin, H=L.hair;
+  hairBackPl(c,L,hx,hy);
+  if(hat && L.style==='viskare') hairBack(c,L,hx,hy,false);   // huvans baksida
+  c.fillStyle='rgba(0,0,0,.18)'; ell(c,hx-1,hy+12.5,7.5,2.6);   // skugga på halsen
+  const g=c.createRadialGradient(hx+4,hy-5,2,hx+1,hy,14.5); g.addColorStop(0,shadeC(sk[0],.25)); g.addColorStop(.6,sk[0]); g.addColorStop(1,sk[1]);
+  c.fillStyle=g; circ(c,hx,hy,13.5);
+  c.fillStyle='rgba(0,0,0,.08)'; c.beginPath(); c.arc(hx,hy,13.5,Math.PI*.55,Math.PI*1.1); c.lineTo(hx-4,hy+2); c.closePath(); c.fill();
+  c.fillStyle=sk[1]; ell(c,hx-6.5,hy+1.5,3,4.2); c.fillStyle=sk[0]; ell(c,hx-6.1,hy+1.1,1.9,3); c.fillStyle='rgba(120,60,40,.35)'; ell(c,hx-6,hy+1.5,.9,1.6);
+  const hurt=o.hurt, ey=A.eye, brow=shadeC(H[1],-.1);
+  if(A.glas){
+    c.strokeStyle='#5a3a10'; c.lineWidth=1.1; line(c,hx-6,hy-1,hx+1.5,hy-.5);
+    for(const x of [4.3,11]){ const gg=c.createRadialGradient(hx+x-1,hy-1,.5,hx+x,hy,4.3); gg.addColorStop(0,'#ffcf6a'); gg.addColorStop(1,'#e0661a'); c.fillStyle=gg; circ(c,hx+x,hy,3.9); c.beginPath(); c.arc(hx+x,hy,3.9,0,7); c.stroke(); c.fillStyle='rgba(255,255,255,.75)'; ell(c,hx+x-1.2,hy-1.4,1.3,.8,-.5); }
+    line(c,hx+8.2,hy-.3,hx+7.1,hy-.3);
+  } else if(hurt){ c.strokeStyle='#2a1608'; c.lineWidth=1.4; line(c,hx+2.5,hy-1.5,hx+6.5,hy+1); line(c,hx+2.5,hy+1.5,hx+6.5,hy-1); line(c,hx+9,hy-1.5,hx+12.5,hy+1); line(c,hx+9,hy+1.5,hx+12.5,hy-1); }
+  else if(ey===2){ c.strokeStyle='#2a1608'; c.lineWidth=1.5; c.lineCap='round'; for(const [x,sx] of [[4.6,1],[10.8,.82]]){ c.beginPath(); c.ellipse(hx+x,hy+1.6,2.4*sx,2.4,0,Math.PI*1.12,Math.PI*1.88); c.stroke(); } }
+  else if(ey===1){ eyeBig(c,hx+4.4,hy+.4,L.eye,1); eyeBig(c,hx+10.8,hy+.4,L.eye,.8); }
+  else { eyeP(c,hx+4.6,hy+.6,L.eye,1); eyeP(c,hx+10.8,hy+.6,L.eye,.82);
+    if(ey===3){ c.fillStyle=sk[0]; for(const [x,sx] of [[4.6,1],[10.8,.82]]){ c.beginPath(); c.moveTo(hx+x-3*sx,hy-3.4); c.lineTo(hx+x+3*sx,hy-3.4); c.lineTo(hx+x+3*sx,hy-.6+(x<8?.8:-.2)); c.lineTo(hx+x-3*sx,hy-.6+(x<8?-.2:.8)); c.closePath(); c.fill(); c.strokeStyle='#2a1608'; c.lineWidth=1.2; line(c,hx+x-2.8*sx,hy-.6+(x<8?-.2:.8),hx+x+2.8*sx,hy-.6+(x<8?.8:-.2)); } } }
+  if(!A.glas){ c.strokeStyle=brow; c.lineWidth=1.4; c.lineCap='round';
+    if(ey===3){ line(c,hx+2.4,hy-5.4,hx+6.8,hy-3.6); line(c,hx+9.2,hy-3.6,hx+12.8,hy-5); }
+    else { line(c,hx+2.6,hy-4.6,hx+6.6,hy-5.4); line(c,hx+9.4,hy-5.4,hx+12.8,hy-4.6); } }
+  // näsa
+  c.fillStyle=shadeC(sk[1],.1); ell(c,hx+13.2,hy+2.6,1.4,1.8); c.fillStyle='rgba(255,255,255,.35)'; circ(c,hx+13.4,hy+1.9,.5);
+  // mun
+  const mx=hx+8, my=hy+6;
+  if(hurt){ c.strokeStyle='#8a4434'; c.lineWidth=1.2; c.beginPath(); c.arc(mx,my+2.5,1.8,1.15*Math.PI,1.85*Math.PI); c.stroke(); }
+  else if(A.mouth===0){ c.strokeStyle='#8a4434'; c.lineWidth=1.2; c.beginPath(); c.arc(mx,my,2.1,.18*Math.PI,.82*Math.PI); c.stroke(); }
+  else if(A.mouth===1){ c.fillStyle='#7a2a22'; c.beginPath(); c.moveTo(mx-3,my+.4); c.quadraticCurveTo(mx,my+5,mx+3.2,my+.2); c.closePath(); c.fill(); c.fillStyle='#fff'; c.beginPath(); c.moveTo(mx-2.6,my+.6); c.lineTo(mx+2.8,my+.4); c.lineTo(mx+2.2,my+1.6); c.lineTo(mx-2,my+1.7); c.closePath(); c.fill(); c.fillStyle='#e86a6a'; ell(c,mx+.2,my+3,1.4,.7); }
+  else if(A.mouth===2){ c.strokeStyle='#8a4434'; c.lineWidth=1.1; line(c,mx-1.8,my+1.4,mx+1.8,my+1.2); }
+  else { c.fillStyle='#6a2a22'; ell(c,mx+.2,my+1.8,1.3,1.7); }
+  c.fillStyle='rgba(255,110,110,.32)'; ell(c,hx+3,hy+4.5,2.6,1.5); ell(c,hx+13,hy+4.2,1.6,1.3);
+  // ansiktshår
+  const bd=A.beard;
+  if(bd===1){ c.fillStyle=H[1]; c.globalAlpha=.32; c.beginPath(); c.moveTo(hx-4,hy+4); c.quadraticCurveTo(hx-2,hy+14,hx+7,hy+13.2); c.quadraticCurveTo(hx+13.5,hy+11,hx+13.6,hy+5.4); c.quadraticCurveTo(hx+8,hy+9,hx+2,hy+7); c.closePath(); c.fill(); c.globalAlpha=1; }
+  if(bd===3){ const bg=c.createLinearGradient(hx,hy,hx+6,hy+18); bg.addColorStop(0,H[0]); bg.addColorStop(1,H[1]);
+    c.fillStyle=bg; c.beginPath(); c.moveTo(hx-6,hy+1); c.quadraticCurveTo(hx-4,hy+19,hx+8,hy+16.5); c.quadraticCurveTo(hx+15.5,hy+13,hx+13.8,hy+5); c.quadraticCurveTo(hx+9,hy+9.5,hx+3,hy+6.5); c.closePath(); c.fill();
+    c.strokeStyle='rgba(255,220,180,.25)'; c.lineWidth=.8; for(const x of [-1,3,7,10]){ c.beginPath(); c.moveTo(hx+x,hy+8); c.quadraticCurveTo(hx+x+.5,hy+12,hx+x-1,hy+15); c.stroke(); }
+    c.strokeStyle='rgba(0,0,0,.2)'; for(const x of [1,5,9]){ c.beginPath(); c.moveTo(hx+x,hy+9); c.quadraticCurveTo(hx+x-.5,hy+13,hx+x+.5,hy+16); c.stroke(); }
+    if(!hurt && A.mouth!==2){ c.strokeStyle='#7a3a2a'; c.lineWidth=1.1; c.beginPath(); c.arc(hx+8,hy+7.6,1.7,.2*Math.PI,.8*Math.PI); c.stroke(); } }
+  if(bd===4){ c.fillStyle=H[0]; c.beginPath(); c.moveTo(hx+5.6,hy+9.4); c.quadraticCurveTo(hx+8,hy+18,hx+10,hy+9.2); c.closePath(); c.fill(); c.strokeStyle=H[1]; c.lineWidth=.6; c.stroke(); }
+  if(bd>=2){ c.fillStyle=H[1]; c.beginPath(); c.moveTo(hx+4,hy+5.6); c.quadraticCurveTo(hx+8,hy+3.2,hx+13,hy+5.6); c.quadraticCurveTo(hx+12.6,hy+7.4,hx+11,hy+6.6); c.quadraticCurveTo(hx+8,hy+5.6,hx+5.2,hy+6.8); c.quadraticCurveTo(hx+3.6,hy+7.2,hx+4,hy+5.6); c.fill(); c.fillStyle='rgba(255,255,255,.2)'; ell(c,hx+8,hy+4.6,2.6,.6); }
+  hairFrontPl(c,L,hx,hy,cov||hat);
+  if(hat){
+    if(L.style==='skog'){
+      const bg=c.createLinearGradient(hx,hy-18,hx,hy-3); bg.addColorStop(0,'#f08a3e'); bg.addColorStop(1,'#c4561e');
+      c.fillStyle=bg; c.beginPath(); c.arc(hx,hy-3,14.8,Math.PI,2*Math.PI); c.fill();
+      c.strokeStyle='rgba(120,40,10,.35)'; c.lineWidth=.9; for(let i=-4;i<=4;i++){ c.beginPath(); c.moveTo(hx+i*3,hy-4); c.quadraticCurveTo(hx+i*2.3,hy-12,hx+i*1.2,hy-17); c.stroke(); }
+      c.fillStyle='#a8461a'; rr(c,hx-15.3,hy-7,30.6,5.4,2.5); c.fill(); c.strokeStyle='rgba(255,200,150,.35)'; c.lineWidth=.8; for(let x=-13;x<=13;x+=2.5) line(c,hx+x,hy-6.4,hx+x,hy-2.2);
+      c.fillStyle='#f5ead2'; for(const [dx,dy,r] of [[0,0,3.4],[-2,-1.5,2.4],[2,-1.8,2.2],[0,-2.6,2]]) circ(c,hx-5+dx,hy-19+dy,r);
+    } else if(L.style==='hippie'){
+      c.fillStyle='#d8382e'; c.beginPath(); c.arc(hx,hy-2,15.2,Math.PI*1.04,Math.PI*1.96); c.arc(hx,hy-2,12.2,Math.PI*1.96,Math.PI*1.04,true); c.fill();
+      c.strokeStyle='rgba(255,230,120,.7)'; c.lineWidth=.7; c.setLineDash([1.4,1.4]); c.beginPath(); c.arc(hx,hy-2,13.7,Math.PI*1.06,Math.PI*1.94); c.stroke(); c.setLineDash([]);
+      c.fillStyle='#fff'; for(let i=0;i<5;i++){ const a=i*1.2566; circ(c,hx-11+Math.cos(a)*2.7,hy-9+Math.sin(a)*2.7,1.95); } c.fillStyle='#ffd23f'; circ(c,hx-11,hy-9,1.5);
+    } else {
+      const hg=c.createLinearGradient(hx-8,hy-18,hx+14,hy+8); hg.addColorStop(0,L.top[0]); hg.addColorStop(1,L.top[1]);
+      c.strokeStyle=hg; c.lineWidth=5; c.beginPath(); c.arc(hx,hy,15,Math.PI*1.06,Math.PI*1.94); c.stroke();
+      c.lineWidth=4.5; c.beginPath(); c.arc(hx,hy,15,Math.PI*1.94,Math.PI*2.32); c.stroke();
+      c.strokeStyle='#e8c25a'; c.lineWidth=1; c.beginPath(); c.arc(hx,hy,12.8,Math.PI*1.08,Math.PI*2.25); c.stroke();
+      const sh=c.createLinearGradient(hx,hy-14,hx,hy-2); sh.addColorStop(0,'rgba(20,8,40,.4)'); sh.addColorStop(1,'rgba(20,8,40,0)'); c.fillStyle=sh; c.beginPath(); c.arc(hx,hy,12.6,Math.PI,2*Math.PI); c.fill();
+    }
+  }
+  if(cov) drawHelm(c,eq.hjalm,hx,hy);
+}
 // rundad, skuggad lem (mörk kant + ljusare mitt + glansstrimma)
 function tube(c,x1,y1,x2,y2,w,col,dark,hi){
   c.lineCap='round';
@@ -3692,6 +3911,7 @@ function drawHelm(c,it,hx,hy,face){
   }
 }
 function drawHeadP(c,L,by,eq,o){
+  if(L.app) return drawHeadPl(c,L,by,eq,o);
   const hx=1, hy=-52+by, cov=!!eq.hjalm;
   hairBack(c,L,hx,hy,cov);
   const g=c.createRadialGradient(hx+4,hy-5,2,hx+1,hy,14.5); g.addColorStop(0,shadeC(L.skin[0],.25)); g.addColorStop(.6,L.skin[0]); g.addColorStop(1,L.skin[1]);
@@ -3777,7 +3997,7 @@ function goldGlint(c,x,y,s){ c.save(); c.globalCompositeOperation='lighter'; c.f
 const WPN_LEN = it => !it?0 : it.wtype==='yxa'?(it.req>=8?52:it.req>=5?46:38) : it.wtype==='stav'?(it.req>=5?52:44) : it.wtype==='pinne'?32 : 0;
 /* ---------- Själva figuren ---------- */
 function drawChar(c,o){
-  const L=o.look || LOOK[o.cls] || LOOK.skog, eq=o.eq||L.eq||{}, w=eq.vapen;
+  const L=o.look || lookFor(o.cls||'skog', o.app), eq=o.eq||L.eq||{}, w=eq.vapen;
   c.save(); c.scale(o.face||1,1);
   if(o.pose==='climb'){ drawBack(c,o,L,eq); c.restore(); return; }
   const P=poseOf(o), walk=o.pose==='walk', jump=o.pose==='jump';
@@ -3879,10 +4099,16 @@ function drawBack(c,o,L,eq){
   tube(c,-6,-36,-7-ph*2,-48+ph*4,6,sl[0],sl[1]); tube(c,6,-36,7+ph*2,-48-ph*4,6,sl[0],sl[1]);
   c.fillStyle=L.skin[0]; circ(c,-7-ph*2,-49+ph*4,3); circ(c,7+ph*2,-49-ph*4,3);
   const hx=0, hy=-52;
-  c.fillStyle=L.hair[0]; circ(c,hx,hy,13.8);
+  c.fillStyle=L.app && L.hs==='flint' ? L.skin[0] : L.hair[0]; circ(c,hx,hy,13.8);
+  if(L.app && !eq.hjalm){ const H=L.hair;   // håret bakifrån
+    if(L.hs==='lang'||L.hs==='lugg'){ c.fillStyle=H[0]; rr(c,hx-13.6,hy-2,27.2,L.hs==='lugg'?16:30,9); c.fill(); c.strokeStyle='rgba(0,0,0,.2)'; c.lineWidth=.9; for(const x of [-6,0,6]) line(c,hx+x,hy+2,hx+x*1.1,hy+(L.hs==='lugg'?13:26)); }
+    if(L.hs==='hast'){ c.fillStyle=H[0]; ell(c,hx,hy+16,4.4,9); c.fillStyle='#d8382e'; circ(c,hx,hy+7,2.6); }
+    if(L.hs==='flata'){ for(let i=0;i<6;i++){ c.fillStyle=i%2?H[1]:H[0]; ell(c,hx,hy+12+i*4,3.6-i*.3,2.9); } }
+    if(L.hs!=='flint'){ c.strokeStyle='rgba(255,255,255,.3)'; c.lineWidth=1.2; c.beginPath(); c.arc(hx,hy,10,Math.PI*1.2,Math.PI*1.5); c.stroke(); } }
   if(eq.hjalm){ drawHelm(c,eq.hjalm,hx,hy); return; }
+  if(L.app && !L.hat) return;
   if(L.style==='skog'){ const g=c.createLinearGradient(0,hy-18,0,hy); g.addColorStop(0,'#f08a3e'); g.addColorStop(1,'#c4561e'); c.fillStyle=g; c.beginPath(); c.arc(hx,hy-2,14.8,Math.PI,2*Math.PI); c.fill(); c.fillStyle='#a8461a'; rr(c,hx-15,hy-6,30,5,2.5); c.fill(); c.fillStyle='#f5ead2'; circ(c,hx,hy-18,3.4); }
-  else if(L.style==='hippie'){ c.fillStyle=L.hair[1]; rr(c,hx-13,hy-4,26,28,9); c.fill(); c.fillStyle=L.hair[0]; rr(c,hx-11,hy-6,22,26,8); c.fill(); c.fillStyle='#d8382e'; c.fillRect(hx-14,hy-9,28,3.4); }
+  else if(L.style==='hippie'){ if(L.app){ c.fillStyle='#d8382e'; c.fillRect(hx-14,hy-9,28,3.4); return; } c.fillStyle=L.hair[1]; rr(c,hx-13,hy-4,26,28,9); c.fill(); c.fillStyle=L.hair[0]; rr(c,hx-11,hy-6,22,26,8); c.fill(); c.fillStyle='#d8382e'; c.fillRect(hx-14,hy-9,28,3.4); }
   else if(L.style==='viskare'){ c.fillStyle=L.top[0]; circ(c,hx,hy,17); c.beginPath(); c.moveTo(hx-6,hy-14); c.lineTo(hx,hy-26); c.lineTo(hx+6,hy-14); c.fill(); }
 }
 
@@ -4272,7 +4498,7 @@ function drawOthers(){
     if(o.x<G.view.x1-80 || o.x>G.view.x2+80) continue;
     if(o.pose!=='jump' && o.pose!=='climb'){ ctx.fillStyle=art().shadowCol; ell(ctx,o.x,o.y,16,4.5); }
     if(o.pose==='dead') ctx.globalAlpha=0.35;
-    const co={cls:o.cls, face:o.face, pose:o.pose==='dead'?'stand':o.pose, t:o.t, walkT:o.walkT, climbT:o.climbT, eq:o.eq||{}, av:o.av||0};
+    const co={cls:o.cls, app:o.app, face:o.face, pose:o.pose==='dead'?'stand':o.pose, t:o.t, walkT:o.walkT, climbT:o.climbT, eq:o.eq||{}, av:o.av||0};
     spriteFx(o.x,o.y,172,170,20,c=>drawChar(c,co),{h:78,hw:18});
     ctx.globalAlpha=1;
     if(o.buff && Math.random()<0.2) fxPetal(o);
@@ -4294,7 +4520,7 @@ function drawPlayer(){
   if(p.onGround){ ctx.fillStyle=art().shadowCol; ell(ctx,p.x,p.y,16,4.5); }
   if(p.dead) ctx.globalAlpha=0.35;
   else if(p.inv>0 && Math.floor(p.inv*14)%2===0) ctx.globalAlpha=0.45;
-  const co={cls:ch.cls, face:p.face, pose, t, walkT:p.walkT, climbT:p.climbT, eq:ch.eq, av:p.atkVar||0, hurt:p.knockT>0};
+  const co={cls:ch.cls, app:ch.app, face:p.face, pose, t, walkT:p.walkT, climbT:p.climbT, eq:ch.eq, av:p.atkVar||0, hurt:p.knockT>0};
   spriteFx(p.x,p.y,172,170,20,c=>drawChar(c,co),{h:78,hw:18});
   ctx.globalAlpha=1;
   if(p.wisp && !p.dead) drawWispOrb(p.wisp.x,p.wisp.y);
@@ -4459,13 +4685,23 @@ function render(){
 function drawConsIcon(c,id,S){
   const k=S/64, d=CONS[id]; c.save(); c.scale(k,k); c.lineJoin='round'; c.lineCap='round';
   const ol='rgba(0,0,0,.55)';
-  if(d.kind==='pot' && d.big){   // stor HP-dryck: rundare flaska, mörkare röd, guldband
+  if(d.kind==='pot' && d.buff){   // elixir: hög flaska med färg per sort
+    const col={exp:['#9be86a','#2e7a1a'], stat:['#ffb04a','#a8420a'], def:['#7ad8c8','#1a6a5e']}[d.buff], big=d.v>=(d.buff==='stat'?8:d.buff==='exp'?40:20);
+    c.fillStyle='rgba(220,235,255,.35)'; c.beginPath(); c.moveTo(24,22); c.lineTo(40,22); c.lineTo(48,56); c.quadraticCurveTo(32,62,16,56); c.closePath(); c.fill(); c.strokeStyle=ol; c.lineWidth=2.5; c.stroke();
+    const g=c.createLinearGradient(0,30,0,60); g.addColorStop(0,col[0]); g.addColorStop(1,col[1]); c.fillStyle=g; c.beginPath(); c.moveTo(22,33); c.lineTo(42,33); c.lineTo(46,54); c.quadraticCurveTo(32,59,18,54); c.closePath(); c.fill();
+    c.fillStyle='rgba(255,255,255,.55)'; ell(c,24,42,2.2,6,0.2); c.fillStyle='rgba(255,255,255,.7)'; circ(c,36,40,1.6); circ(c,30,48,1.2);
+    c.fillStyle='rgba(220,235,255,.5)'; rr(c,26,10,12,13,2); c.fill(); c.stroke(); c.fillStyle='#8a5a2b'; rr(c,25,4,14,8,2); c.fill(); c.stroke();
+    if(big){ c.fillStyle='#e8c34a'; rr(c,22,24,20,4,1.5); c.fill(); }
+    c.font='15px system-ui'; c.textAlign='center'; c.fillText({exp:'🍀',stat:'💪',def:'🛡'}[d.buff],32,53);
+  } else if(d.kind==='pot' && d.big){   // stor dryck: rundare flaska, mörkare färg, guldband
+    const hp=!!d.hp, val=d.hp||d.mp, huge=val>=400;
     c.fillStyle='rgba(220,235,255,.35)'; circ(c,32,40,20); c.strokeStyle=ol; c.lineWidth=2.5; c.beginPath(); c.arc(32,40,20,0,7); c.stroke();
     c.fillStyle='rgba(220,235,255,.45)'; rr(c,25,9,14,15,3); c.fill(); c.stroke();
-    const g=c.createLinearGradient(0,26,0,60); g.addColorStop(0,'#ff4a6a'); g.addColorStop(1,'#8a0a24'); c.fillStyle=g; c.beginPath(); c.arc(32,40,17.5,-0.25,Math.PI+0.25); c.closePath(); c.fill();
-    c.fillStyle='#ff9ab0'; ell(c,24,34,4,7,0.4);
-    c.fillStyle='#e8c34a'; rr(c,24,20,16,4,1.5); c.fill(); c.fillStyle='#8a5a2b'; rr(c,25,4,14,8,2); c.fill(); c.stroke();
-    c.fillStyle='#fff'; c.font='bold 12px system-ui'; c.textAlign='center'; c.fillText('200',32,49);
+    const g=c.createLinearGradient(0,26,0,60); g.addColorStop(0,hp?'#ff4a6a':'#4a9aff'); g.addColorStop(1,hp?'#8a0a24':'#0a2a8a'); c.fillStyle=g; c.beginPath(); c.arc(32,40,17.5,-0.25,Math.PI+0.25); c.closePath(); c.fill();
+    c.fillStyle=hp?'#ff9ab0':'#a8d0ff'; ell(c,24,34,4,7,0.4);
+    c.fillStyle=huge?'#c77dff':'#e8c34a'; rr(c,24,20,16,4,1.5); c.fill(); c.fillStyle='#8a5a2b'; rr(c,25,4,14,8,2); c.fill(); c.stroke();
+    if(huge){ c.fillStyle='#ffe066'; for(const [x,y] of [[16,22],[50,26],[46,58]]){ c.beginPath(); c.moveTo(x,y-4); c.lineTo(x+1.2,y-1.2); c.lineTo(x+4,y); c.lineTo(x+1.2,y+1.2); c.lineTo(x,y+4); c.lineTo(x-1.2,y+1.2); c.lineTo(x-4,y); c.lineTo(x-1.2,y-1.2); c.fill(); } }
+    c.fillStyle='#fff'; c.font='bold 12px system-ui'; c.textAlign='center'; c.fillText(String(val),32,49);
   } else if(d.kind==='pot'){
     const col=d.hp?'#e53935':'#2f7df0', light=d.hp?'#ff8a80':'#8fc2ff';
     c.fillStyle='rgba(220,235,255,.35)'; circ(c,32,41,17); c.strokeStyle=ol; c.lineWidth=2.5; c.beginPath(); c.arc(32,41,17,0,7); c.stroke();
@@ -4474,6 +4710,14 @@ function drawConsIcon(c,id,S){
     c.fillStyle=light; ell(c,26,36,3.5,6,0.4);
     c.fillStyle='#8a5a2b'; rr(c,25,8,14,8,2); c.fill(); c.stroke();
     c.fillStyle='#fff'; c.font='bold 13px system-ui'; c.textAlign='center'; c.fillText(d.hp?'HP':'MP',32,49);
+  } else if(d.kind==='mat' && d.soul){   // själ: glödande irrbloss med svans
+    const col=[null,['#e8fbff','#7fd8ff','#2a6aa8'],['#f6e8ff','#c08aff','#5a2a9a'],['#fff6d8','#ffcf4a','#a8641a']][d.soul], r=10+d.soul*3;
+    const gl=c.createRadialGradient(32,34,1,32,34,r+12); gl.addColorStop(0,col[1]+'aa'); gl.addColorStop(1,col[1]+'00'); c.fillStyle=gl; circ(c,32,34,r+12);
+    c.fillStyle=col[2]; c.globalAlpha=.75; c.beginPath(); c.moveTo(32-r*.8,36); c.quadraticCurveTo(26,54,18,60); c.quadraticCurveTo(34,56,32+r*.8,38); c.closePath(); c.fill(); c.globalAlpha=1;
+    const g=c.createRadialGradient(28,29,1,32,34,r); g.addColorStop(0,col[0]); g.addColorStop(.55,col[1]); g.addColorStop(1,col[2]); c.fillStyle=g; circ(c,32,34,r); c.strokeStyle=ol; c.lineWidth=2; c.beginPath(); c.arc(32,34,r,0,7); c.stroke();
+    c.fillStyle='#1a1030'; ell(c,28,34,1.6,2.4); ell(c,36,34,1.6,2.4); c.fillStyle='#fff'; circ(c,28.5,33,.7); circ(c,36.5,33,.7);
+    c.fillStyle='rgba(255,255,255,.8)'; ell(c,27,27,3,1.8,-.5);
+    if(d.soul>=2){ c.fillStyle=col[0]; for(let i=0;i<d.soul+1;i++){ const a=i*2.1+.6; circ(c,32+Math.cos(a)*(r+7),34+Math.sin(a)*(r+7),1.6); } }
   } else if(d.kind==='mat'){
     if(id==='bar'){ c.strokeStyle='#3e6a2a'; c.lineWidth=2; c.beginPath(); c.moveTo(32,14); c.quadraticCurveTo(30,22,22,28); c.moveTo(32,14); c.quadraticCurveTo(36,24,44,30); c.stroke();
       leafP(c,40,15,6,-.4,'#5aa83a');
@@ -4934,6 +5178,9 @@ function updateHud(){
     const id=ch.hotbar[+el.dataset.i]; paintCd(el,id);
   }
   for(const el of $$('#tSkills .tbtn')) paintCd(el, el.dataset.sk);
+  if(G.touch && G.p){ const b=$('#tAtk'), rem=G.p.atkCd, k=rem/(G.p.atkCdMax||1);   // basattackens nedkylning: mörk sektor som krymper, guldring när den är redo
+    b.querySelector('.cd').style.background = rem>0 ? `conic-gradient(rgba(0,0,0,.62) ${k*360}deg, transparent 0)` : '';
+    if(rem>0) b.classList.add('cooling'); else if(b.classList.contains('cooling')){ b.classList.remove('cooling'); b.classList.add('rdy'); clearTimeout(b._rt); b._rt=setTimeout(()=>b.classList.remove('rdy'),160); } }
   renderTouchPots();
   renderPartyHud();
   renderQuestLog();
@@ -4945,6 +5192,7 @@ function buffList(p){
   if(p.buffT>0) L.push({id:'flower', ic:'🌸', name:'Flower power: +100% attackhastighet', t:p.buffT, max:p.buffMax||4});
   if(p.regenT>0) L.push({id:'kada', ic:'🌳', name:'Kådläkning: +300% HP-regenerering', t:p.regenT, max:p.regenMax||5});
   if(p.wisp) L.push({id:'wisp', ic:'✨', name:'Irrbloss', t:p.wisp.t, max:p.wisp.max||p.wisp.t});
+  if(G.ch && G.ch.elix) for(const k in G.ch.elix){ const e=G.ch.elix[k]; L.push({id:'elx_'+k, ic:ELIX[k].ic, name:'Elixir: '+ELIX[k].txt(e.v), t:e.t, max:ELIX_T}); }
   const rg=rageAspd(); if(rg>=0.01) L.push({id:'rage', ic:'😤', name:'Bärsärk: attackhastighet av saknat HP', txt:`+${Math.round(rg*100)}%`});
   return L;
 }
@@ -4953,7 +5201,7 @@ function renderBuffs(p){
   if(key!==hudBuffs){ hudBuffs=key; box.innerHTML=L.map(b=>`<div class="buff ${b.max?'':'perm'}" data-b="${b.id}" title="${esc(b.name)}"><span class="bi">${b.ic}</span><i class="bsw"></i>${b.max?'<span class="bbar"><span></span></span>':''}<b class="bt"></b></div>`).join(''); }
   for(const b of L){
     const el=box.querySelector(`[data-b="${b.id}"]`); if(!el) continue;
-    el.querySelector('.bt').textContent = b.txt || (b.t<9.95 ? b.t.toFixed(1).replace('.',',') : Math.ceil(b.t))+' s';
+    el.querySelector('.bt').textContent = b.txt || (b.t>=60 ? Math.ceil(b.t/60)+'m' : (b.t<9.95 ? b.t.toFixed(1).replace('.',',') : Math.ceil(b.t))+' s');
     if(b.max){ const k=clamp(b.t/b.max,0,1); el.querySelector('.bsw').style.background=`conic-gradient(rgba(0,0,0,.6) ${(1-k)*360}deg, transparent 0)`; el.querySelector('.bbar span').style.width=(k*100)+'%'; el.classList.toggle('ending', b.t<1.5); }
   }
 }
@@ -4993,7 +5241,8 @@ function renderTouchSkills(){
 let potsKey='';
 function renderTouchPots(){
   if(!G.touch || !G.ch) return;
-  const ids=['hpPot','hpPot2','mpPot'].filter(id=>consCount(id)>0 && !(id==='mpPot' && G.stats && G.stats.maxMp<=0)), key=ids.map(id=>id+consCount(id)).join(',');
+  const hp=['hpPot','hpPot2','hpPot3'].filter(id=>consCount(id)>0).slice(-2), mp=(G.stats&&G.stats.maxMp<=0)?[]:['mpPot3','mpPot2','mpPot'].filter(id=>consCount(id)>0).slice(0,1);
+  const ids=[...hp,...mp], key=ids.map(id=>id+consCount(id)).join(',');
   if(key===potsKey) return; potsKey=key;
   $('#tPots').innerHTML=ids.map((id,i)=>`<button class="tbtn pot pot${i}" data-pot="${id}"><img src="${iconURL({base:id})}" alt=""><span class="cnt">${consCount(id)}</span></button>`).join('');
 }
@@ -5037,11 +5286,17 @@ function openWin(n){
   ({bag:renderBag, tal:renderTal, abil:renderAbil, settings:renderSettings, shop:renderShop, menu:renderMenu, book:renderBook, party:renderParty, quest:renderQuest, craft:renderCraft, qlog:renderQlog, wmap:renderWmap})[n]();
   if(n==='party') partyWindowOpened();
   if(n==='bag' && G.ui.hiBag){ G.ui.hiBag=false; updateBagHi(); }
+  if(n==='craft' && G.ui.hiCraft){ G.ui.hiCraft=false; updateBagHi(); }
   w.classList.remove('hidden');
   if(n==='shop' && isOpen('bag')) renderBag();
+  updateBagHi();
 }
-function closeWin(n){ $('#win-'+n).classList.add('hidden'); hideTip(); if(n==='settings' && G.ui.bindSlot!=null){ G.ui.bindSlot=null; } if(n==='shop' && isOpen('bag')) renderBag(); if(n==='party') partyWindowClosed(); }
-function updateBagHi(){ const b=$('[data-open="bag"]'); if(b) b.classList.toggle('hl', !!G.ui.hiBag); }
+function closeWin(n){ $('#win-'+n).classList.add('hidden'); setTimeout(updateBagHi,0); hideTip(); if(n==='settings' && G.ui.bindSlot!=null){ G.ui.bindSlot=null; } if(n==='shop' && isOpen('bag')) renderBag(); if(n==='party') partyWindowClosed(); }
+/* Guidning för Berits vapenscroll-uppdrag: först butiken och scrollen, sedan väskan, scrollen och vapnet */
+function tutStep(){ const q=G.ch&&G.ch.quests&&G.ch.quests.bar5; if(!q||q.state!=='active') return null;
+  if((q.prog.buy_scrAtk||0)<2) return 'shop'; if((q.prog.scroll_wpn||0)<2) return 'bag'; return null; }
+function updateBagHi(){ const st=tutStep(), b=$('[data-open="bag"]'); if(b) b.classList.toggle('hl', !!G.ui.hiBag || (st==='bag' && !isOpen('bag')));
+  const sh=$('[data-open="shop"]'); if(sh) sh.classList.toggle('hl', st==='shop' && !isOpen('shop')); const c=$('[data-open="craft"]'); if(c) c.classList.toggle('hl', !!G.ui.hiCraft); }
 function toggleWin(n){ if(G.mode!=='game') return; isOpen(n)?closeWin(n):openWin(n); }
 function refreshOpen(){ if(G.mode!=='game') return; if(isOpen('bag')) renderBag(); if(isOpen('tal')) renderTal(); if(isOpen('abil')) renderAbil(); if(isOpen('settings')) renderSettings(); if(isOpen('shop')) renderShop(); if(isOpen('craft')) renderCraft(); }
 function closeScrollMode(){ if(G.ui.scrollMode){ G.ui.scrollMode=null; if(isOpen('bag')) renderBag(); } }
@@ -5079,7 +5334,7 @@ function itemHtml(it, where){
     const c=CONS[it.base];
     const cr=RAR[c.rarity||'common'];
     if(c.kind==='mat') return `<div class="tt-name">${c.name}</div><div class="tt-sub">Material</div><div>${c.desc}</div><div style="margin-top:3px">Antal: <b>${it.count}</b> / ${STACK_MAX}</div><div class="tt-sell">Säljvärde: ${c.sell} 🪙 styck</div>`;
-    return `<div class="tt-name" style="color:${c.kind==='scroll'?cr.color:''}">${c.name}</div><div class="tt-sub">${c.kind==='pot'?'Dryck':`Uppgraderingsscroll (${cr.name})`}</div><div>${c.desc}</div>`
+    return `<div class="tt-name" style="color:${c.kind==='scroll'?cr.color:''}">${c.name}</div><div class="tt-sub">${c.kind==='pot'?(c.buff?'Elixir (30 minuter)':'Dryck'):`Uppgraderingsscroll (${cr.name})`}</div><div>${c.desc}</div>`
       + (c.kind==='scroll'?`<div class="hintx" style="color:#9fb1cb;font-size:11.5px;margin-top:3px">Förbrukar en uppgraderingsplats även om den misslyckas. Dra scrollen till ett föremål för att använda den.</div>`:'')
       + `<div style="margin-top:3px">Antal: <b>${it.count}</b> / ${STACK_MAX}</div>${c.price?`<div class="tt-sell">Köppris: ${c.price} 🪙</div>`:`<div class="tt-sell" style="color:#9fe0b0">Tillverkad av en Scroller</div>`}`;
   }
@@ -5121,7 +5376,7 @@ function renderBag(){
   const sm=G.ui.scrollMode && ch.inv.find(x=>x.uid===G.ui.scrollMode);
   const smc = it => !sm ? '' : (it.uid===sm.uid ? 'sel' : scrollFits(sm,it) ? 'elig' : 'inelig');
   const hiSlots=new Set(); if(G.ui.hiItems) for(const u of G.ui.hiItems){ const x=ch.inv.find(q=>q.uid===u); if(x) for(const [sid] of EQ_SLOTS) if(slotFits(x,sid)) hiSlots.add(sid); }
-  const slotHtml=(sid)=>{ const it=ch.eq[sid]; return `<div class="slot ${it?'r-'+it.rarity:''} ${it&&sel===it.uid&&!sm?'sel':''} ${it?smc(it):''} ${hiSlots.has(sid)?'hlslot':''}" ${it?`data-uid="${it.uid}"`:''} data-eq="${sid}">${it?`<img src="${iconURL(it)}" alt="">${it.plus?`<span class="cnt plus">+${it.plus}</span>`:''}`:`<span class="lbl">${SLOTN[sid]}</span>`}</div>`; };
+  const slotHtml=(sid)=>{ const it=ch.eq[sid]; return `<div class="slot ${it?'r-'+it.rarity:''} ${it&&sel===it.uid&&!sm?'sel':''} ${it?smc(it):''} ${hiSlots.has(sid)?'hlslot':''} ${sid==='vapen'&&tutStep()==='bag'?'hl':''}" ${it?`data-uid="${it.uid}"`:''} data-eq="${sid}">${it?`<img src="${iconURL(it)}" alt="">${it.plus?`<span class="cnt plus">+${it.plus}</span>`:''}`:`<span class="lbl">${SLOTN[sid]}</span>`}</div>`; };
   $('#bagDoll').innerHTML=`<div class="dcol">${['hjalm','halsband','axel','mantel','brost','handskar'].map(slotHtml).join('')}</div>
     <div class="dmid"><canvas id="portrait" width="240" height="300"></canvas><div class="pname">${esc(ch.name)}</div><div class="pcls">${C.name} · Lv. ${ch.level}</div></div>
     <div class="dcol">${['balte','byxor','skor','ring1','ring2','vapen'].map(slotHtml).join('')}</div>`;
@@ -5133,13 +5388,13 @@ function renderBag(){
     +row('HP-reg',fmt1(s.hpReg)+'/s')+(s.maxMp>0?row('Mana-reg',fmt1(s.mpReg)+'/s'):'')+row('Attackhastighet',Math.round((s.aspd+rageAspd())*100)+'%')+row('Kritisk chans',fmtSv(Math.round(s.crit*10)/10)+'%','agi')+row('Undvikande',fmtSv(Math.round(s.dodge*10)/10)+'%','agi')+row('Kortare nedkylning',fmtSv(Math.round(s.cdr*10)/10)+'%','int')+row('Rörelse',Math.round(s.move*100)+'%')
     +(ch.cls==='hippie'?row('Räckvidd',Math.round(s.range*100)+'%'):'')+row('Basattack',modeTxt)
     +(s.book?row('📖 Monsterbok',`+${s.book} alla stats`):'')
-    +`<span class="full">★ = klassens huvudstat: varje poäng ger +0,2 skada per anfall. Str: +10 max-HP och +0,1 HP-reg. Agi: kritisk chans (×1,5 skada) och undvikande. Int: kortare nedkylning${CLASSES[ch.cls].noMana?'':' och mer mana'}. Agi- och Int-bonusen avtar lite för varje poäng.</span>`;
+    +`<span class="full">★ = klassens huvudstat: varje poäng ger +0,2 skada per anfall. Str: +10 max-HP och +0,1 HP-reg. Agi: kritisk chans (×1,5 skada) och undvikande. Int: kortare nedkylning${CLASSES[ch.cls].noMana?'':' och mer mana'}. Agi ger mindre per poäng ju högre level du har, och Int-bonusen avtar lite för varje poäng.</span>`;
   $('#bagCount').textContent=`(${ch.inv.length}/${INV_MAX})`; $('#bagGold').textContent=ch.gold;
   let g='';
   for(let i=0;i<INV_MAX;i++){ const it=ch.inv[i];
     if(!it){ g+=`<div class="slot blank" data-bi="${i}"></div>`; continue; }
     const cons=isCons(it);
-    g+=`<div class="slot ${cons?(CONS[it.base].rarity?'r-'+CONS[it.base].rarity:'r-cons'):'r-'+it.rarity} ${cons&&CONS[it.base].kind==='scroll'?'scr':''} ${sel===it.uid&&!sm?'sel':''} ${!cons&&ch.level<it.req?'cant':''} ${smc(it)} ${G.ui.hiItems&&G.ui.hiItems.has(it.uid)?'hl':''}" data-uid="${it.uid}" data-bi="${i}"><img src="${iconURL(it)}" alt="">${cons?`<span class="cnt">${it.count}</span>`:it.plus?`<span class="cnt plus">+${it.plus}</span>`:''}</div>`; }
+    g+=`<div class="slot ${cons?(CONS[it.base].rarity?'r-'+CONS[it.base].rarity:'r-cons'):'r-'+it.rarity} ${cons&&CONS[it.base].kind==='scroll'?'scr':''} ${sel===it.uid&&!sm?'sel':''} ${!cons&&ch.level<it.req?'cant':''} ${smc(it)} ${(G.ui.hiItems&&G.ui.hiItems.has(it.uid))||(it.base==='scrAtk'&&tutStep()==='bag')?'hl':''}" data-uid="${it.uid}" data-bi="${i}"><img src="${iconURL(it)}" alt="">${cons?`<span class="cnt">${it.count}</span>`:it.plus?`<span class="cnt plus">+${it.plus}</span>`:''}</div>`; }
   $('#bagGrid').innerHTML=g;
   renderBagDetail();
 }
@@ -5156,7 +5411,7 @@ function renderBagDetail(){
   if(isCons(it)){
     const c=CONS[it.base];
     if(c.kind==='pot'){ acts+=`<button class="btn sm green" data-act="use">Använd</button>`; if(!G.touch) acts+=`<button class="btn sm" data-act="assign">Sätt på 1–9</button>`; }
-    else if(c.kind==='mat'){ acts+=`<button class="btn sm" data-act="craftwin">⚒️ Hantverk</button>`; if(isOpen('shop')) acts+=`<button class="btn sm gold" data-act="sellmat">Sälj 1 (${c.sell} 🪙)</button><button class="btn sm gold" data-act="sellmatall">Sälj alla (${c.sell*consCount(it.base)} 🪙)</button>`; }
+    else if(c.kind==='mat'){ if(c.up){ const n=consCount(it.base); acts+=`<button class="btn sm green" data-act="merge" ${n<3?'disabled':''}>🔮 3 → 1 ${CONS[c.up].name}</button>`; if(n>=6) acts+=`<button class="btn sm green" data-act="mergeall">🔮 Slå ihop alla (${Math.floor(n/3)} st)</button>`; } acts+=`<button class="btn sm" data-act="craftwin">⚒️ Hantverk</button>`; if(isOpen('shop')) acts+=`<button class="btn sm gold" data-act="sellmat">Sälj 1 (${c.sell} 🪙)</button><button class="btn sm gold" data-act="sellmatall">Sälj alla (${c.sell*consCount(it.base)} 🪙)</button>`; }
     else acts+=`<button class="btn sm green" data-act="scroll">Använd på föremål…</button>`;
     acts+=`<button class="btn sm" data-act="drop">⬇ Släpp på marken</button>`;
     acts+=`<button class="btn sm red" data-act="trash">${G.ui.trash===it.uid?'Säker? Tryck igen':'Släng'}</button>`;
@@ -5225,6 +5480,8 @@ $('#win-bag').addEventListener('click',e=>{
     else if(a.dataset.act==='sellmat') sellMat(f.it.uid,false);
     else if(a.dataset.act==='sellmatall') sellMat(f.it.uid,true);
     else if(a.dataset.act==='craftwin') openWin('craft');
+    else if(a.dataset.act==='merge') mergeSouls(f.it.base,false);
+    else if(a.dataset.act==='mergeall') mergeSouls(f.it.base,true);
     else if(a.dataset.act==='trash'){ if(G.ui.trash===f.it.uid){ G.ch.inv=G.ch.inv.filter(x=>x.uid!==f.it.uid); G.ui.sel=null; G.ui.trash=null; log(`Du slängde ${esc(itemName(f.it))}.`,'#aab'); markDirty(); renderBag(); buildHotbar(); } else { G.ui.trash=f.it.uid; renderBagDetail(); } }
     else if(a.dataset.act==='use') usePot(f.it.base);
     else if(a.dataset.act==='drop') dropFromBag(f.it.uid);
@@ -5273,7 +5530,8 @@ function applyScroll(su, iu){
   sc.count--; if(sc.count<=0) ch.inv.splice(ch.inv.indexOf(sc),1);
   it.scrolls=(it.scrolls||0)+1;
   const left=SCROLL_SLOTS-it.scrolls, p=G.p;
-  if(Math.random()<SCROLL_CHANCE){
+  const sure = c.target==='weapon' && tutStep()==='bag';   // Berits uppdrag: de två första vapenscrollsen lyckas alltid
+  if(sure || Math.random()<SCROLL_CHANCE){
     it.plus=(it.plus||0)+1;
     if(c.stat==='atk'){ it.atkMin+=c.amt; it.atkMax+=c.amt; } else it[c.stat]=(it[c.stat]||0)+c.amt;
     const what = c.stat==='atk' ? `+${c.amt} attack` : `+${c.amt} ${STATN[c.stat]}`;
@@ -5285,16 +5543,18 @@ function applyScroll(su, iu){
     log(`💥 Scrollen misslyckades på ${esc(itemName(it))}. ${left} uppgraderingsplatser kvar.`,'#ff9b9b');
   }
   G.ui.scrollMode=null; G.ui.sel=it.uid;
-  questEvent('scroll');
+  questEvent('scroll'); if(c.target==='weapon') questEvent('scroll_wpn');
   if(f.where==='eq') recalc();
   markDirty(); refreshOpen();
 }
 
-function drawPortrait(cnv, cls, eq, sc){
+function drawPortrait(cnv, cls, eq, sc, app){
+  // skalan anpassas så att hela gubben (även hjälm, huva och spretigt hår) får plats i ramen
   const c=cnv.getContext('2d'); c.setTransform(1,0,0,1,0,0); c.clearRect(0,0,cnv.width,cnv.height);
-  c.translate(cnv.width/2-4, cnv.height-26); c.scale(sc,sc);
+  sc=Math.min(sc, (cnv.height-18)/92);
+  c.translate(cnv.width/2-4, cnv.height-12); c.scale(sc,sc);
   c.fillStyle='rgba(0,0,0,.25)'; ell(c,0,0,16,4);
-  drawChar(c,{cls, face:1, pose:'stand', t:0, walkT:0, eq});
+  drawChar(c,{cls, app, face:1, pose:'stand', t:0, walkT:0, eq});
 }
 
 /* ---------- Talanger ---------- */
@@ -5404,7 +5664,7 @@ function renderShop(){
     h+=`<div class="shopinfo">Drycker och scrolls staplas upp till ${STACK_MAX} per plats i väskan. Scrolls har ${Math.round(SCROLL_CHANCE*100)}% chans att lyckas. Varje föremål har ${SCROLL_SLOTS} uppgraderingsplatser, och en plats förbrukas även om scrollen misslyckas. Använd scrolls från väskan (I).</div>`;
     for(const [id,c] of Object.entries(CONS)){
       if(!c.price) continue;
-      h+=`<div class="srow"><div class="slot r-cons"><img src="${iconURL({base:id})}" alt=""></div><div class="sn"><b>${c.name}</b><small>${c.desc} · Du har ${consCount(id)}</small></div><span class="sp">${c.price} 🪙</span>
+      h+=`<div class="srow ${tutStep()==='shop'&&id==='scrAtk'?'hl':''}"><div class="slot r-cons"><img src="${iconURL({base:id})}" alt=""></div><div class="sn"><b>${c.name}</b><small>${c.desc} · Du har ${consCount(id)}</small></div><span class="sp">${c.price} 🪙</span>
         <button class="btn sm gold" data-buy="${id}" data-n="1" ${ch.gold<c.price?'disabled':''}>Köp 1</button><button class="btn sm gold" data-buy="${id}" data-n="5" ${ch.gold<c.price*5?'disabled':''}>Köp 5</button></div>`;
     }
   } else {
@@ -5436,6 +5696,7 @@ function buy(id, n){
   n=Math.min(n, Math.floor(ch.gold/c.price), stackRoom(id));
   if(n<=0){ throttleMsg('buy', ch.gold<c.price ? 'Du har inte råd.' : 'Väskan är full!', '#ff9b9b'); return; }
   const got=addStack(id,n); ch.gold-=got*c.price;
+  for(let i=0;i<got;i++) questEvent('buy_'+id);
   log(`Köpte ${got} × ${c.name} för ${got*c.price} 🪙`,'#ffd25a');
   if(c.kind==='pot' && !ch.hotbar.includes(id)){
     let slot=id==='hpPot'?7:8; if(ch.hotbar[slot]) { slot=-1; for(let i=8;i>=0;i--) if(!ch.hotbar[i]){ slot=i; break; } }
@@ -5456,32 +5717,43 @@ $('#shopBody').addEventListener('click',e=>{
    orange = höjer alltid, gul = hög chans, grön = låg chans, grå = ingen höjning.
    Nya recept låses upp automatiskt när skillen räcker. Varje skillhöjning ger lite EXP. */
 const PROFS = {
-  scroll:{name:'Scroller', icon:'📜', max:150, desc:'Tillverkar uppgraderingsscrolls av material som monster droppar. Börjar med Common-scrolls; Uncommon och Rare låses upp när skillen stiger.'},
+  scroll:{name:'Scroller', icon:'📜', max:150, desc:'Tillverkar uppgraderingsscrolls av själar som monster droppar (små själar från level 1–5, mellansjälar från 6–15, stora från 16+). 3 själar kan slås ihop till en större i väskan.'},
+  alch:{name:'Potionär', icon:'⚗️', max:150, desc:'Brygger HP- och mana-drycker av bär, mossa och andra material – större drycker när skillen stiger – och elixir som ger en bonus i 30 minuter.'},
   leather:{name:'Leatherworker', icon:'🧵', max:150, desc:'Syr handskar, mössor och skor av päls från vargar och björnar. Färdiga föremål får slumpad rarity precis som föremål som droppas.'},
 };
 const RECIPES = [
-  // Scroller – Common
-  {id:'s_str1', prof:'scroll', out:'scrStr',  n:1, mats:{bar:1},              sk:[1,20,35,50]},
-  {id:'s_int1', prof:'scroll', out:'scrInt',  n:1, mats:{mossa:1},            sk:[1,20,35,50]},
-  {id:'s_agi1', prof:'scroll', out:'scrAgi',  n:1, mats:{bar:1,mossa:1},      sk:[1,20,35,50]},
-  {id:'s_atk1', prof:'scroll', out:'scrAtk',  n:1, mats:{bar:2,mossa:2},      sk:[20,35,50,65]},
-  // Scroller – Uncommon (material från Jaktmarken II)
-  {id:'s_str2', prof:'scroll', out:'scrStr2', n:1, mats:{bar:3,kattsvans:1},  sk:[45,60,75,90]},
-  {id:'s_int2', prof:'scroll', out:'scrInt2', n:1, mats:{mossa:3,kattsvans:1},sk:[45,60,75,90]},
-  {id:'s_agi2', prof:'scroll', out:'scrAgi2', n:1, mats:{bar:2,mossa:2,hundtass:1}, sk:[50,65,80,95]},
-  {id:'s_atk2', prof:'scroll', out:'scrAtk2', n:1, mats:{bar:3,mossa:3,hundtass:2}, sk:[60,75,90,105]},
-  // Scroller – Rare (päls från Jaktmarken III och IV)
-  {id:'s_str3', prof:'scroll', out:'scrStr3', n:1, mats:{bar:5,kattsvans:2,vargpals:1},  sk:[95,110,125,140]},
-  {id:'s_int3', prof:'scroll', out:'scrInt3', n:1, mats:{mossa:5,kattsvans:2,vargpals:1},sk:[95,110,125,140]},
-  {id:'s_agi3', prof:'scroll', out:'scrAgi3', n:1, mats:{bar:4,mossa:4,hundtass:2,vargpals:1}, sk:[100,115,130,145]},
-  {id:'s_atk3', prof:'scroll', out:'scrAtk3', n:1, mats:{bar:5,mossa:5,hundtass:2,bjornpals:2}, sk:[105,120,135,150]},
-  // Scroller – Epic (vit fosfor från drakar, småsten från stenkulor)
-  {id:'s_str4', prof:'scroll', out:'scrStr4', n:1, mats:{fosfor:1,smasten:2,kattsvans:2},  sk:[110,125,140,150]},
-  {id:'s_int4', prof:'scroll', out:'scrInt4', n:1, mats:{fosfor:1,smasten:2,mossa:6},      sk:[110,125,140,150]},
-  {id:'s_agi4', prof:'scroll', out:'scrAgi4', n:1, mats:{fosfor:1,smasten:2,hundtass:2},   sk:[115,130,145,150]},
-  {id:'s_atk4', prof:'scroll', out:'scrAtk4', n:1, mats:{fosfor:2,smasten:3,bjornpals:1},  sk:[120,135,145,150]},
+  // Scroller – kräver själar (små från level 1–5, mellan från 6–15, stora från 16+)
+  {id:'s_str1', prof:'scroll', out:'scrStr',  n:1, mats:{sjal1:2}, sk:[1,20,35,50]},
+  {id:'s_int1', prof:'scroll', out:'scrInt',  n:1, mats:{sjal1:2}, sk:[1,20,35,50]},
+  {id:'s_agi1', prof:'scroll', out:'scrAgi',  n:1, mats:{sjal1:2}, sk:[1,20,35,50]},
+  {id:'s_atk1', prof:'scroll', out:'scrAtk',  n:1, mats:{sjal1:4}, sk:[20,35,50,65]},
+  {id:'s_str2', prof:'scroll', out:'scrStr2', n:1, mats:{sjal2:2}, sk:[45,60,75,90]},
+  {id:'s_int2', prof:'scroll', out:'scrInt2', n:1, mats:{sjal2:2}, sk:[45,60,75,90]},
+  {id:'s_agi2', prof:'scroll', out:'scrAgi2', n:1, mats:{sjal2:2}, sk:[50,65,80,95]},
+  {id:'s_atk2', prof:'scroll', out:'scrAtk2', n:1, mats:{sjal2:3}, sk:[60,75,90,105]},
+  {id:'s_str3', prof:'scroll', out:'scrStr3', n:1, mats:{sjal2:5}, sk:[95,110,125,140]},
+  {id:'s_int3', prof:'scroll', out:'scrInt3', n:1, mats:{sjal2:5}, sk:[95,110,125,140]},
+  {id:'s_agi3', prof:'scroll', out:'scrAgi3', n:1, mats:{sjal2:5}, sk:[100,115,130,145]},
+  {id:'s_atk3', prof:'scroll', out:'scrAtk3', n:1, mats:{sjal2:7}, sk:[105,120,135,150]},
+  {id:'s_str4', prof:'scroll', out:'scrStr4', n:1, mats:{sjal3:3}, sk:[110,125,140,150]},
+  {id:'s_int4', prof:'scroll', out:'scrInt4', n:1, mats:{sjal3:3}, sk:[110,125,140,150]},
+  {id:'s_agi4', prof:'scroll', out:'scrAgi4', n:1, mats:{sjal3:3}, sk:[115,130,145,150]},
+  {id:'s_atk4', prof:'scroll', out:'scrAtk4', n:1, mats:{sjal3:5}, sk:[120,135,145,150]},
   // Leatherworker
   // Leatherworker – ett nytt recept var 5:e skillpoäng (1, 5, 10 … 40)
+  // Potionär – drycker i olika storlekar och elixir (30 min)
+  {id:'a_hp1',   prof:'alch', out:'hpPot',    n:2, mats:{bar:2},                          sk:[1,15,30,45]},
+  {id:'a_mp1',   prof:'alch', out:'mpPot',    n:2, mats:{mossa:2},                        sk:[1,15,30,45]},
+  {id:'a_exp1',  prof:'alch', out:'elxExp',   n:1, mats:{kattsvans:2,bar:2},              sk:[10,30,50,70]},
+  {id:'a_hp2',   prof:'alch', out:'hpPot2',   n:1, mats:{bar:3,kattsvans:1},              sk:[20,40,60,80]},
+  {id:'a_def1',  prof:'alch', out:'elxDef',   n:1, mats:{hundtass:2,mossa:3},             sk:[25,45,65,85]},
+  {id:'a_mp2',   prof:'alch', out:'mpPot2',   n:1, mats:{mossa:3,hundtass:1},             sk:[30,50,70,90]},
+  {id:'a_stat1', prof:'alch', out:'elxStat',  n:1, mats:{vargpals:1,bar:2,mossa:2},       sk:[40,60,80,100]},
+  {id:'a_hp3',   prof:'alch', out:'hpPot3',   n:1, mats:{bar:4,bjornpals:1},              sk:[60,80,100,120]},
+  {id:'a_mp3',   prof:'alch', out:'mpPot3',   n:1, mats:{mossa:4,bjornpals:1},            sk:[65,85,105,125]},
+  {id:'a_exp2',  prof:'alch', out:'elxExp2',  n:1, mats:{drakfjall:1,kattsvans:3,bar:3},  sk:[90,110,130,150]},
+  {id:'a_def2',  prof:'alch', out:'elxDef2',  n:1, mats:{smasten:3,bjornpals:1},          sk:[100,120,135,150]},
+  {id:'a_stat2', prof:'alch', out:'elxStat2', n:1, mats:{fosfor:1,smasten:2,vargpals:2},  sk:[110,125,140,150]},
   {id:'l_hand1', prof:'leather', out:'lwHand1', mats:{vargpals:2},              sk:[1,20,40,60]},
   {id:'l_hat1',  prof:'leather', out:'lwHat1',  mats:{vargpals:3},              sk:[5,25,45,65]},
   {id:'l_boot1', prof:'leather', out:'lwBoot1', mats:{vargpals:2,hundtass:2},   sk:[10,30,50,70]},
@@ -5514,7 +5786,7 @@ function craft(rid, times){
     if(!gear && stackRoom(r.out)<(r.n||1) && !Object.keys(r.mats).some(m=>consCount(m)===r.mats[m])){ toast('Väskan är full.'); break; }
     for(const [m,n] of Object.entries(r.mats)) takeN(m,n);
     if(gear){ const it=makeItem(r.out, rollRarity()); ch.inv.push(it); got.push(it); questEvent('craft_'+BASES[r.out].slot); }
-    else { addStack(r.out, r.n||1); questEvent('craft_scroll'); }
+    else { addStack(r.out, r.n||1); questEvent(CONS[r.out].kind==='scroll'?'craft_scroll':'craft_pot'); }
     made++;
     if(pr.skill<P.max && Math.random()<skillChance(r,pr.skill)){
       pr.skill++; ups++;
@@ -5550,7 +5822,7 @@ function renderCraft(){
   const big=iconURL(gear?{base:r.out,rarity:'common'}:{base:r.out});
   h+=`<div class="rowb" style="justify-content:flex-start"><img class="cbig" src="${big}" alt=""><div><div style="font-weight:900;font-size:15px;color:${SKILL_COL[col]}">${outName(r)}</div>`;
   if(gear){ const B=BASES[r.out]; h+=`<div class="chint">${slotLabel({slot:B.slot})} · Kräver level ${B.req} · Armor ${B.armor} · ${B.smin}–${B.smax} i varje stat (före rarity)</div><div class="chint">Får slumpad rarity: Common till <span style="color:${RAR.legendary.color}">Legendary</span></div>`; }
-  else { const c=CONS[r.out]; h+=`<div class="chint" style="color:${RAR[c.rarity||'common'].color}">${RAR[c.rarity||'common'].name}-scroll</div><div class="chint">${c.desc}</div>`; }
+  else { const c=CONS[r.out]; h+=`<div class="chint" style="color:${RAR[c.rarity||'common'].color}">${c.kind==='pot'?(c.buff?'Elixir · 30 minuter':'Dryck')+(r.n>1?` · ${r.n} st per tillverkning`:''):RAR[c.rarity||'common'].name+'-scroll'}</div><div class="chint">${c.desc}</div>`; }
   h+=`</div></div><div style="margin:8px 0 4px;font-weight:800">Material</div>`;
   for(const [m,n] of Object.entries(r.mats)){ const have=consCount(m); h+=`<div class="cmat ${have<n?'miss':''}"><img src="${iconURL({base:m})}" alt=""><span>${CONS[m].name}</span><b>${have} / ${n}</b></div>`; }
   if(col==='locked') h+=`<div class="chint" style="margin-top:6px;color:#ffb86b">🔒 Låses upp vid ${P.name}-skill ${r.sk[0]}.</div>`;
@@ -5566,6 +5838,16 @@ $('#craftBody').addEventListener('click',e=>{
   const r=e.target.closest('[data-rec]'); if(r){ G.ui.craftSel=r.dataset.rec; renderCraft(); return; }
   const c=e.target.closest('[data-craft]'); if(c && !c.disabled){ craft(G.ui.craftSel, +c.dataset.craft); }
 });
+function mergeSouls(base, all){
+  const c=CONS[base], ch=G.ch; if(!c || !c.up) return;
+  let n=Math.floor(consCount(base)/3); if(!all) n=Math.min(n,1);
+  if(n<=0){ throttleMsg('merge','Du behöver 3 själar.','#ff9b9b'); return; }
+  takeN(base,n*3); const got=addStack(c.up,n); if(got<n){ addStack(base,(n-got)*3); n=got; if(!n){ throttleMsg('merge','Väskan är full!','#ff9b9b'); refreshOpen(); return; } }
+  SFX.pot();
+  log(`🔮 Du slog ihop ${n*3} × ${c.name} till ${n} × <b>${CONS[c.up].name}</b>.`,'#c9a0ff');
+  const p=G.p; if(p) for(let i=0;i<14;i++) particle(p.x+rand(-16,16),p.y-rand(10,60),pick(['#c9a0ff','#8fe8ff','#fff']),rand(-50,50),rand(-120,-30),.7,3,0);
+  questItemsSync(); markDirty(); refreshOpen();
+}
 function sellMat(uid, all){
   const ch=G.ch, it=ch.inv.find(x=>x.uid===uid); if(!it || !isCons(it) || !CONS[it.base].sell) return;
   const c=CONS[it.base], n=all?consCount(it.base):1, pr=n*c.sell;
@@ -5696,7 +5978,10 @@ const QUESTS = {
     goals:{blabar:15, mossa:8}, exp:8, give:[['byxor2','common']], cons:[['hpPot',3]]},
   bar4:{npc:'berit', name:'En varm tunika', prev:'bar3',
     text:'En sista sak innan du ger dig vidare: jaktmarken måste hållas i schack. Gör det här, så får du min gamla linnetunika.',
-    goals:{blabar:20, mossa:12}, exp:12, give:[['brost2','common']], cons:[['hpPot',4]]},
+    goals:{blabar:20, mossa:12}, exp:12, gold:200, give:[['brost2','common']], cons:[['hpPot',4]]},
+  bar5:{npc:'berit', name:'Ett vassare vapen', prev:'bar4',
+    text:'Guldet jag gav dig räcker till två vapenscrolls. Öppna butiken (B) och köp 2 "Scroll: Vapenskada +2". Öppna sedan väskan (I) och dra scrollen till ditt vapen. Oroa dig inte – just de här två lyckas garanterat!',
+    goals:{buy_scrAtk:2, scroll_wpn:2}, exp:15, cons:[['hpPot',3]]},
   jakt1:{npc:'holger', name:'Kattjakten', lvl:4,
     text:'Kissekatterna här är sötare än de är snälla. Jaga bort 15 av dem åt mig!',
     goals:{kissekatt:15}, exp:15, cons:[['hpPot',4]]},
@@ -5718,12 +6003,18 @@ const QUESTS = {
   vild3:{npc:'ylva', name:'Alfahannen', prev:'vild2',
     text:'Nu är du redo för riktig jakt. Fäll 30 vargar, så smider jag ett vapen åt dig av deras klor.',
     goals:{varg:30}, exp:45, classWpn:8, classRar:'uncommon', cons:[['hpPot2',3]]},
-  vild4:{npc:'ylva', name:'Pälsarbete', prev:'vild3',
+  vildlw:{npc:'ylva', name:'Pälsjakt', prev:'vild3',
+    text:'Vill du lära dig sy din egen utrustning? Då behöver du päls. Samla 2 vargpälsar från vargarna här – det räcker till ett par handskar.',
+    goals:{have_vargpals:2}, exp:20, cons:[['hpPot2',2]]},
+  vild4:{npc:'ylva', name:'Pälsarbete', prev:'vildlw',
     text:'Vargarna ger fin päls. Lär dig Leatherworking (H) och sy ett par handskar av vargpäls – visa att du klarar dig själv i vildmarken, så får du mitt vargtandshalsband.',
     goals:{craft_handskar:1}, exp:40, give:[['halsVarg','rare']], cons:[['hpPot2',3]]},
   // Skrivaren Sigvard (Jaktmarken I) – introduktion till Scroller
-  skr1:{npc:'sigvard', name:'Skrivarens första lektion', lvl:2,
-    text:'Psst – vet du att man kan skriva egna scrolls? Blåbären tappar ibland bär och mossabollarna mossa. Med ett enda bär (eller en mossa) kan du skriva en scroll: öppna Hantverk (H), välj Scroller och tryck Tillverka. Skriv en scroll åt mig, så ska du få se.',
+  skr0:{npc:'sigvard', name:'Bläck och pergament', lvl:2,
+    text:'Vill du lära dig skriva scrolls? Då behöver du själar. Monster här tappar ibland en liten själ när de dör. Samla 2 små själar, så visar jag hur man gör.',
+    goals:{have_sjal1:2}, exp:8, cons:[['hpPot',2]]},
+  skr1:{npc:'sigvard', name:'Skrivarens första lektion', prev:'skr0',
+    text:'Psst – vet du att man kan skriva egna scrolls? Med 2 små själar kan du skriva en scroll: öppna Hantverk (H), välj Scroller och tryck Tillverka. Skriv en scroll åt mig, så ska du få se.',
     goals:{craft_scroll:1}, exp:10, gold:20, cons:[['hpPot',3]]},
   skr2:{npc:'sigvard', name:'Förstärk din utrustning', prev:'skr1',
     text:'Fint skrivet! En scroll förstärker ett föremål – dra den till föremålet i väskan (eller tryck Använd på föremål). Ibland misslyckas den, men den tar alltid en av föremålets uppgraderingsplatser. Använd en scroll så får du lite mer bläck av mig.',
@@ -5742,17 +6033,23 @@ const QUESTS = {
     text:'Nu är du en riktig björnjägare. Fäll 35 björnar, så smider jag ett vapen åt dig av deras klor och tänder.',
     goals:{bjorn:35}, exp:110, classWpn:12, classRar:'rare', cons:[['hpPot2',4]]},
   // Lövbyn – Skrivarmästare Saga (Scroller)
-  saga1:{npc:'saga', name:'Skrivarens gesäll', lvl:10,
+  saga0:{npc:'saga', name:'Gesällens material', lvl:10,
+    text:'Välkommen till Lövbyn! Jag lär upp byns Scrollers. Först behöver du själar – samla 10 små själar från svagare monster (level 1–5), så har du nog till provet.',
+    goals:{have_sjal1:10}, exp:30, cons:[['hpPot2',2]]},
+  saga1:{npc:'saga', name:'Skrivarens gesäll', prev:'saga0',
     text:'Välkommen till Lövbyn! Jag lär upp byns Scrollers. Visa att du kan hantverket – skriv 5 scrolls (Hantverk, H).',
     goals:{craft_scroll:5}, exp:60, gold:100, cons:[['hpPot2',3]]},
   saga2:{npc:'saga', name:'Fint pergament', prev:'saga1',
-    text:'Bättre scrolls kräver material från vildare djur – kattsvansar, hundtassar och päls. Skriv 10 scrolls till, så får du ett par av mina egna.',
+    text:'Bättre scrolls kräver större själar – mellansjälar från monster på level 6–15. Skriv 10 scrolls till, så får du ett par av mina egna.',
     goals:{craft_scroll:10}, exp:80, cons:[['scrStr2',1],['scrInt2',1],['scrAgi2',1],['hpPot2',3]]},
   saga3:{npc:'saga', name:'Mästarprovet', prev:'saga2',
     text:'Sista provet: skriv 20 scrolls. Klarar du det är du en mästare – och då får du min finaste vapenscroll.',
     goals:{craft_scroll:20}, exp:120, gold:200, cons:[['scrAtk3',1],['hpPot2',3]]},
   // Lövbyn – Garvaren Gunnar (Leatherworker)
-  gunnar1:{npc:'gunnar', name:'Garvarens lärling', lvl:10,
+  gunnar0:{npc:'gunnar', name:'Råvaror till garveriet', lvl:10,
+    text:'Du vill lära dig Leatherworking? Utan päls blir det inga stygn. Samla 3 vargpälsar – det räcker till en mössa.',
+    goals:{have_vargpals:3}, exp:30, cons:[['hpPot2',2]]},
+  gunnar1:{npc:'gunnar', name:'Garvarens lärling', prev:'gunnar0',
     text:'Du luktar varg och björn – perfekt! Jag lär ut Leatherworking. Sy en mössa av päls (Hantverk, H → Leatherworker).',
     goals:{craft_hjalm:1}, exp:60, gold:100, cons:[['hpPot2',3]]},
   gunnar2:{npc:'gunnar', name:'Stadiga steg', prev:'gunnar1',
@@ -5785,13 +6082,13 @@ const QUESTS = {
 };
 function questGive(Q){ return [...(Q.classWpn?[[CLASSES[G.ch.cls].wtype+Q.classWpn,Q.classRar||'common']]:[]), ...(Q.give||[])]; }
 const fixedTxt = f => { const v=Object.values(f); return v.every(x=>x===v[0]) ? `+${v[0]} Str, Int och Agi` : Object.entries(f).filter(e=>e[1]).map(([k,v])=>`+${v} ${STATN[k]}`).join(', '); };
-const QUEST_ORDER = ['bar1','bar2','bar3','bar4','skr1','skr2','skr3','jakt1','jakt2','jakt3','jakt4','vild1','vild2','vild3','vild4','bo1','bo2','bo3','saga1','saga2','saga3','gunnar1','gunnar2','gunnar3','sten1','drak1','drak2','drak3','band1','band2'];
+const QUEST_ORDER = ['bar1','bar2','bar3','bar4','bar5','skr0','skr1','skr2','skr3','jakt1','jakt2','jakt3','jakt4','vild1','vild2','vild3','vildlw','vild4','bo1','bo2','bo3','saga0','saga1','saga2','saga3','gunnar0','gunnar1','gunnar2','gunnar3','sten1','drak1','drak2','drak3','band1','band2'];
 const QUEST_CHAINS = [ {npc:'berit', name:'Bärplockarens besvär'}, {npc:'sigvard', name:'Skrivarkonsten'}, {npc:'holger', name:'Vaktarens jakt'}, {npc:'ylva', name:'Vargarnas spår'}, {npc:'bo', name:'Björnjakten'}, {npc:'saga', name:'Skrivarmästarens prov'}, {npc:'gunnar', name:'Garvarens lära'}, {npc:'dagny', name:'Drakvaktens prov'}, {npc:'kerstin', name:'Bandittornet'} ];
 const chainQuests = npc => QUEST_ORDER.filter(id=>QUESTS[id].npc===npc);
 const npcsOn = mapId => Object.keys(NPCS).filter(k=>NPCS[k].map===mapId);
 const CRAFT_GOAL = {craft_handskar:['par handskar','Sy handskar','par handskar'], craft_hjalm:['mössor','Sy mössa','mössa'], craft_skor:['par skor','Sy skor','par skor'], craft_scroll:['scrolls','Skriv scrolls','scroll']};
-const goalName = (t,n) => t.startsWith('item_') ? `Lämna in ${n} ${CONS[t.slice(5)].name}` : t==='scroll' ? `Använd scrolls ${n} gånger` : CRAFT_GOAL[t] ? `Tillverka ${n} ${n===1?CRAFT_GOAL[t][2]:CRAFT_GOAL[t][0]} (hantverk, H)` : `Döda ${n} ${MOBS[t].name}`;
-const goalShort = t => t.startsWith('item_') ? CONS[t.slice(5)].name : t==='scroll' ? 'Scrolls' : CRAFT_GOAL[t] ? CRAFT_GOAL[t][1] : MOBS[t].name;
+const goalName = (t,n) => t.startsWith('buy_') ? `Köp ${n} ${CONS[t.slice(4)].name} i butiken (B)` : t==='scroll_wpn' ? `Använd vapenscrolls på ditt vapen ${n} gånger` : t.startsWith('have_') ? `Samla ${n} ${CONS[t.slice(5)].name}` : t.startsWith('item_') ? `Lämna in ${n} ${CONS[t.slice(5)].name}` : t==='scroll' ? `Använd scrolls ${n} gånger` : CRAFT_GOAL[t] ? `Tillverka ${n} ${n===1?CRAFT_GOAL[t][2]:CRAFT_GOAL[t][0]} (hantverk, H)` : `Döda ${n} ${MOBS[t].name}`;
+const goalShort = t => t.startsWith('buy_') ? 'Köp '+CONS[t.slice(4)].name : t==='scroll_wpn' ? 'Scrolla vapnet' : (t.startsWith('item_')||t.startsWith('have_')) ? CONS[t.slice(5)].name : t==='scroll' ? 'Scrolls' : CRAFT_GOAL[t] ? CRAFT_GOAL[t][1] : MOBS[t].name;
 function questState(id, ch=G.ch){
   const q=(ch.quests||{})[id], Q=QUESTS[id];
   if(q) return q.state;
@@ -5800,14 +6097,14 @@ function questState(id, ch=G.ch){
   if(Q.needItem && consCount(Q.needItem)<1) return 'locked';   // uppdraget startas av ett föremål
   return 'offer';
 }
-const goalVal = (q,t) => t.startsWith('item_') ? (G.ch===undefined||!G.ch ? 0 : consCount(t.slice(5))) : (q.prog[t]||0);
+const goalVal = (q,t) => (t.startsWith('item_')||t.startsWith('have_')) ? (G.ch===undefined||!G.ch ? 0 : consCount(t.slice(5))) : (q.prog[t]||0);
 function questGoalsDone(id, ch=G.ch){ const q=ch.quests[id]; return Object.entries(QUESTS[id].goals).every(([t,n])=>goalVal(q,t)>=n); }
 // Uppdrag där man lämnar in föremål: framsteget följer det man har i väskan
 function questItemsSync(){
   const ch=G.ch; if(!ch || !ch.quests) return;
   for(const id of QUEST_ORDER){
     const Q=QUESTS[id], q=ch.quests[id]; if(!q || (q.state!=='active' && q.state!=='complete')) continue;
-    const items=Object.keys(Q.goals).filter(t=>t.startsWith('item_')); if(!items.length) continue;
+    const items=Object.keys(Q.goals).filter(t=>t.startsWith('item_')||t.startsWith('have_')); if(!items.length) continue;
     let changed=false;
     for(const t of items){ const v=Math.min(Q.goals[t],consCount(t.slice(5))); if(q.prog[t]!==v){ q.prog[t]=v; changed=true; } }
     const done=questGoalsDone(id);
@@ -5829,6 +6126,8 @@ function acceptQuest(id){
   if(questState(id)!=='offer') return;
   if(!npcHere(id)){ renderQuest(); return; }
   G.ch.quests[id]={state:'active', prog:{}}; SFX.accept();
+  if(Object.keys(QUESTS[id].goals).some(t=>t.startsWith('craft_'))){ G.ui.hiCraft=true; updateBagHi(); }   // highlighta Hantverk-knappen
+  questItemsSync(); updateBagHi();
   log(`📜 Nytt uppdrag: <b>${QUESTS[id].name}</b>`,'#ffe066'); markDirty(true); questLogKey=null; renderQuest();
 }
 function questEvent(type){
@@ -5841,6 +6140,7 @@ function questEvent(type){
     if(questGoalsDone(id)){ q.state='complete'; toast(`✔ <b>${Q.name}</b> är klart!<br>Lämna in hos ${NPCS[Q.npc].name}.`); log(`✔ Uppdraget <b>${Q.name}</b> är klart – lämna in det hos ${NPCS[Q.npc].name}.`,'#7ee787'); }
     markDirty(); questLogKey=null; if(isOpen('quest')) renderQuest();
   }
+  updateBagHi();
 }
 const questKill = questEvent;
 function questPop(id, type){
@@ -6053,7 +6353,7 @@ async function toggleFS(){
 /* =====================================================================
    SKÄRMAR: inloggning, gubbval, skapa gubbe
    ===================================================================== */
-function showScreen(html){ const s=$('#screen'); s.innerHTML=html; s.classList.remove('hidden'); }
+function showScreen(html){ $('#hint').classList.add('hidden'); $('#toast').innerHTML=''; const s=$('#screen'); s.innerHTML=html; s.classList.remove('hidden'); }
 function hideScreen(){ $('#screen').classList.add('hidden'); }
 function showLogin(){
   G.mode='title';
@@ -6108,16 +6408,50 @@ function showSelect(){
   showScreen(`<div class="card">
     <div class="rowb"><h2>Hej, ${esc(a.name)}!</h2><span class="pill">🌍 Kontopoäng: ${acctPoints(a)}</span></div>
     <div style="color:var(--muted);font-size:13px">${a.chars.length?'Välj en gubbe att spela med.':'Du har inga gubbar än – skapa din första!'}</div>
-    <div class="chars">${a.chars.map((c,i)=>`<div class="ccard" data-ci="${i}"><button class="del" data-del="${i}" title="Ta bort">🗑</button><canvas width="200" height="220"></canvas><div class="cn">${esc(c.name)}</div><div class="cl">${CLASSES[c.cls].name} · Lv. ${c.level}</div></div>`).join('')}</div>
+    <div class="chars">${a.chars.map((c,i)=>`<div class="ccard" data-ci="${i}"><button class="del" data-del="${i}" title="Ta bort">🗑</button><button class="edit" data-edit="${i}" title="Ändra utseende">✏️</button><canvas width="200" height="220"></canvas><div class="cn">${esc(c.name)}</div><div class="cl">${CLASSES[c.cls].name} · Lv. ${c.level}</div></div>`).join('')}</div>
     <div class="row"><button class="btn gold" id="btnNew">+ Ny gubbe</button><button class="btn sec" id="btnOut">Byt konto</button></div>
   </div>`);
-  $$('.ccard').forEach(el=>{ const c=a.chars[+el.dataset.ci]; drawPortrait(el.querySelector('canvas'),c.cls,c.eq,2.6); });
+  $$('.ccard').forEach(el=>{ const c=a.chars[+el.dataset.ci]; drawPortrait(el.querySelector('canvas'),c.cls,c.eq,2.6,c.app); });
   $('#screen').onclick=e=>{
     const d=e.target.closest('[data-del]');
     if(d){ e.stopPropagation(); const c=a.chars[+d.dataset.del]; if(confirm(`Ta bort ${c.name} (${CLASSES[c.cls].name}, level ${c.level}) för alltid?`)){ a.chars.splice(+d.dataset.del,1); markDirty(true); showSelect(); } return; }
+    const ed=e.target.closest('[data-edit]'); if(ed){ e.stopPropagation(); showAppearance(a.chars[+ed.dataset.edit]); return; }
     const cc=e.target.closest('[data-ci]'); if(cc){ startGame(a.chars[+cc.dataset.ci]); return; }
     if(e.target.id==='btnNew') showCreate();
     if(e.target.id==='btnOut'){ G.acct=null; showLogin(); }
+  };
+}
+/* ---------- Utseende-editor (skapa gubbe och ✏️ i gubbvalet) ---------- */
+function appEditorHTML(){ return `<div class="appEd"><canvas id="appPrev" width="240" height="260"></canvas><div class="appOpts" id="appOpts"></div></div>`; }
+function appEditorBind(getCls, getApp, eq){
+  const draw=()=>{
+    const cls=getCls(), A=appOf(cls,getApp());
+    $('#appOpts').innerHTML=APP_KEYS.map(k=>{ const v=A[k], nm=k==='hat'&&v ? HAT_NAME[cls] : APP_OPT[k].list[v][0];
+      return `<div class="aopt"><span>${APP_OPT[k].name}</span><button data-ap="${k}" data-d="-1">◀</button><b>${nm}</b><button data-ap="${k}" data-d="1">▶</button></div>`; }).join('')
+      +`<div class="appBtns"><button data-apr="rnd">🎲 Slumpa</button><button data-apr="def">↺ Standard</button></div>`;
+    const C=CLASSES[cls]; drawPortrait($('#appPrev'),cls,eq?eq():{vapen:{wtype:C.wtype,rarity:'common',req:1}},2.6,A);
+  };
+  $('.appEd').onclick=e=>{
+    e.stopPropagation();
+    const app=getApp(), b=e.target.closest('[data-ap]'), cls=getCls(), A=appOf(cls,app);
+    if(b){ const k=b.dataset.ap, n=APP_OPT[k].list.length; Object.assign(app,A); app[k]=(A[k]+(+b.dataset.d)+n)%n; draw(); return; }
+    const r=e.target.closest('[data-apr]');
+    if(r && r.dataset.apr==='def'){ for(const k of APP_KEYS) delete app[k]; draw(); }
+    if(r && r.dataset.apr==='rnd'){ for(const k of APP_KEYS) app[k]=randInt(0,APP_OPT[k].list.length-1); app.hat=Math.random()<.6?1:0; app.glas=Math.random()<.2?1:0; if(Math.random()<.5) app.beard=0; draw(); }
+  };
+  draw(); return draw;
+}
+function showAppearance(ch){
+  const app={...appOf(ch.cls,ch.app)};
+  showScreen(`<div class="card">
+    <h2>Utseende – ${esc(ch.name)}</h2>
+    ${appEditorHTML()}
+    <div class="row"><button class="btn sec" id="btnBack">Avbryt</button><button class="btn gold" id="btnSaveApp">Spara</button></div>
+  </div>`);
+  appEditorBind(()=>ch.cls, ()=>app, ()=>ch.eq);
+  $('#screen').onclick=e=>{
+    if(e.target.id==='btnBack') showSelect();
+    if(e.target.id==='btnSaveApp'){ ch.app=appOf(ch.cls,app); markDirty(true); showSelect(); }
   };
 }
 function showCreate(){
@@ -6127,19 +6461,24 @@ function showCreate(){
     <label for="inChar">Namn på gubben</label>
     <input id="inChar" class="inp" maxlength="14" placeholder="2–14 tecken" autocomplete="off" value="${G.acct.chars.length?'':esc(G.acct.name.slice(0,14))}">
     <div class="classes">${Object.values(CLASSES).map(C=>`<div class="clcard ${C.id===cls?'on':''}" data-cls="${C.id}"><canvas width="180" height="200"></canvas><div><b>${C.name}</b><p>${C.desc}</p></div></div>`).join('')}</div>
+    <label>Utseende</label>
+    ${appEditorHTML()}
     <div class="row"><button class="btn sec" id="btnBack">Tillbaka</button><button class="btn gold" id="btnCreate">Skapa &amp; spela</button></div>
     <div class="msg" id="createMsg"></div>
   </div>`);
+  const apps={skog:{},hippie:{},viskare:{}};   // eget utseende per klass medan man bläddrar
+  let app=apps[cls];
+  const redrawApp=appEditorBind(()=>cls, ()=>app);
   $$('.clcard').forEach(el=>{ const C=CLASSES[el.dataset.cls]; drawPortrait(el.querySelector('canvas'),C.id,{vapen:{wtype:C.wtype,rarity:'common',req:1}},2.4); });
   $('#screen').onclick=e=>{
-    const c=e.target.closest('[data-cls]'); if(c){ cls=c.dataset.cls; $$('.clcard').forEach(x=>x.classList.toggle('on',x.dataset.cls===cls)); return; }
+    const c=e.target.closest('[data-cls]'); if(c){ cls=c.dataset.cls; app=apps[cls]; redrawApp(); $$('.clcard').forEach(x=>x.classList.toggle('on',x.dataset.cls===cls)); return; }
     if(e.target.id==='btnBack') showSelect();
     if(e.target.id==='btnCreate'){
       const n=$('#inChar').value.trim();
       if(n.length<2){ $('#createMsg').textContent='Namnet måste vara minst 2 tecken.'; return; }
       if(G.acct.chars.some(x=>x.name.toLowerCase()===n.toLowerCase())){ $('#createMsg').textContent='Du har redan en gubbe med det namnet.'; return; }
       const C=CLASSES[cls];
-      const ch={id:uid(), name:n, cls, level:1, exp:0, gold:0, talents:{}, inv:[], eq:{vapen:makeItem(C.starter,'common')}, hotbar:Array(9).fill(null), hp:9999, mp:9999, kills:{}, map:1, quests:{}, qv:2, prof:{scroll:{skill:1},leather:{skill:1}}, created:Date.now()};
+      const ch={id:uid(), name:n, cls, level:1, exp:0, gold:0, talents:{}, inv:[], eq:{vapen:makeItem(C.starter,'common')}, app:appOf(cls,app), hotbar:Array(9).fill(null), hp:9999, mp:9999, kills:{}, map:1, quests:{}, qv:3, prof:{scroll:{skill:1},leather:{skill:1}}, created:Date.now()};
       G.acct.chars.push(ch); markDirty(true); startGame(ch, true);
     }
   };
@@ -6162,7 +6501,7 @@ function startGame(ch, isNew){
   ch.hp=Math.min(ch.hp,G.stats.maxHp); ch.mp=Math.min(ch.mp,G.stats.maxMp);
   if(isNew){ ch.hp=G.stats.maxHp; ch.mp=G.stats.maxMp; }
   initSpawns(); G.drops=[]; G.projs=[]; G.mprojs=[]; G.fx=[]; G.nums=[]; G.apeT=0;
-  G.ui.sel=null; G.ui.talSel=null; G.ui.talTab=null; G.assigning=null; G.ui.hiItems=null; G.ui.hiBag=false; G.ui.newSp=null; G.ui.bindSlot=null; updateBagHi();
+  G.ui.sel=null; G.ui.talSel=null; G.ui.talTab=null; G.assigning=null; G.ui.hiItems=null; G.ui.hiBag=false; G.ui.hiCraft=false; G.ui.newSp=null; G.ui.bindSlot=null; updateBagHi();
   hideScreen(); $('#hud').classList.remove('hidden'); $('#touchUI').classList.toggle('hidden',!G.touch);
   $('#log').innerHTML=''; resize();
   buildHotbar(); renderTouchSkills(); updateTalDot(); updateHud(); snapCam();
@@ -6274,13 +6613,13 @@ function netBroadcast(msg){ if(Net.role==='host') netToGuests(msg); else if(Net.
 function myLook(){
   const ch=G.ch, eq={};
   for(const k of ['vapen','hjalm','mantel','axel','handskar','skor','byxor','brost','balte','halsband']){ const it=ch.eq[k]; if(it) eq[k]={wtype:it.wtype, req:it.req, rarity:it.rarity}; }
-  return {id:Net.myId, name:ch.name, cls:ch.cls, lvl:ch.level, eq, db:tv('k_drop')};
+  return {id:Net.myId, name:ch.name, cls:ch.cls, app:ch.app||null, lvl:ch.level, eq, db:tv('k_drop')};
 }
 function lookOf(id){ const o=G.others[id]; return o?{id, name:o.name, cls:o.cls, lvl:o.lvl, eq:o.eq, db:o.db}:null; }
 function applyLook(L){
   if(!L || L.id===Net.myId) return;
   const o = G.others[L.id] || (G.others[L.id]={x:0,y:0,tx:0,ty:0,face:1,pose:'stand',t:0,walkT:0,climbT:0,hp:1,mhp:1,seen:false});
-  Object.assign(o,{id:L.id, name:L.name, cls:L.cls, lvl:L.lvl, eq:L.eq||{}, db:L.db||0});
+  Object.assign(o,{id:L.id, name:L.name, cls:L.cls, app:L.app||null, lvl:L.lvl, eq:L.eq||{}, db:L.db||0});
 }
 function myState(){
   const p=G.p, ch=G.ch; let pose='stand';
