@@ -271,8 +271,13 @@ body.touch #win-bag .detail .btn.sm{padding:4px 8px;font-size:12px}
 .wm{position:relative;width:min(640px,88vw);aspect-ratio:1100/560;border-radius:10px;overflow:hidden;border:1px solid #8a6a3e}
 .wm canvas{position:absolute;inset:0;width:100%;height:100%}
 .wmn{position:absolute;transform:translate(-50%,-50%);background:none;border:none;padding:0;display:flex;flex-direction:column;align-items:center;cursor:pointer}
-.wmimg{width:54px;height:40px;border-radius:50%;border:3px solid #6a4a22;box-shadow:0 3px 8px rgba(0,0,0,.45)}
-.wmn.sel .wmimg{border-color:#ffd77a;box-shadow:0 0 0 3px rgba(255,215,122,.5),0 3px 8px rgba(0,0,0,.45)}
+.wmimg{width:18px;height:18px;border-radius:50%;border:3px solid #fff6c8;background:radial-gradient(circle at 35% 35%,#ffe27a,#e09a1a);box-shadow:0 0 0 2px #5a3a10,0 3px 6px rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;font-size:12px}
+.wmimg.town{width:26px;height:26px;background:radial-gradient(circle at 35% 35%,#fff,#ffd27a)}
+.wmpop{position:absolute;transform:translate(-50%,calc(-100% - 22px));background:rgba(255,248,225,.97);border:2px solid #8a5a22;border-radius:10px;padding:4px 8px;text-align:center;pointer-events:none;box-shadow:0 4px 12px rgba(0,0,0,.45);z-index:3;min-width:110px}
+.wmpop.below{transform:translate(-50%,40px)}
+.wmpop b{display:block;color:#3a2410;font:bold 13px Georgia,serif}.wmpop small{color:#7a5a30;font-size:11px}
+.wmpm{display:flex;gap:4px;justify-content:center;margin-top:2px}.wmpm span{display:flex;flex-direction:column;align-items:center}.wmpm canvas{position:static!important;width:46px!important;height:35px!important;inset:auto}.wmpm i{font-style:normal;font-size:10px;color:#3a2410;white-space:nowrap}
+.wmn.sel .wmimg{border-color:#fff;transform:scale(1.35);box-shadow:0 0 0 3px #ff5a3a,0 0 14px #ffe27a}
 .wmname{font:bold 12px Georgia,"Palatino Linotype",serif;color:#3a2410;background:rgba(255,240,205,.85);border-radius:5px;padding:0 5px;margin-top:2px;white-space:nowrap}
 .wmlv{font-size:10.5px;color:#4a3018;font-weight:800}
 .wmq{position:absolute;top:-12px;right:-8px;width:22px;height:22px;border-radius:50%;background:#ffd23f;color:#5a3a00;font-weight:900;display:flex;align-items:center;justify-content:center;border:2px solid #7a5200;font-size:13px}
@@ -284,6 +289,20 @@ body.touch #win-bag .detail .btn.sm{padding:4px 8px;font-size:12px}
 .wmmob{display:flex;flex-direction:column;align-items:center;background:rgba(255,255,255,.04);border-radius:8px;padding:4px 8px;min-width:110px;font-size:12px}
 .wmmob canvas{width:84px;height:64px}
 .wmmob small{color:var(--muted);font-size:11px}
+.bkit{cursor:pointer;border-radius:5px}
+#dbx{position:fixed;inset:0;z-index:60;background:rgba(5,4,2,.72);display:flex;align-items:center;justify-content:center}
+.dbcard{width:min(980px,96vw);height:min(92vh,760px);display:flex;flex-direction:column;background:linear-gradient(#2a2016,#1a130c);border:2px solid #8a6a3e;border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,.6)}
+.dbhead{display:flex;gap:10px;align-items:center;padding:8px 12px;border-bottom:1px solid #4a3a28;flex-wrap:wrap}
+.dbhead>b{font:bold 18px Georgia,serif;color:#ffe6a0}.dbhead .tabs{margin:0}.dbhead .inp{flex:1;min-width:120px;margin:0;padding:6px 10px}
+.dbhead .x{background:#5a2a20;border:1px solid #8a4a3a;color:#fff;border-radius:8px;width:34px;height:34px}
+.dbbody{flex:1;overflow:auto;padding:6px 14px 14px;font-size:13px}
+.dbbody h3{margin:14px 0 4px;color:#ffd77a;font:bold 15px Georgia,serif}.dbbody h3 small{color:var(--muted);font:12px system-ui}
+.dbrow{background:rgba(255,255,255,.04);border:1px solid #3a2e20;border-radius:8px;padding:6px 10px;margin:5px 0}
+.dbrow>b{color:#fff2cc}.dbrow small{color:var(--muted)}
+.dbg{color:#d6c8ae;margin-top:2px}.dbr{color:#bfe0a8;margin-top:2px}
+.dbmon{display:flex;gap:10px;align-items:flex-start}.dbmon canvas{width:110px;height:84px;flex:none}
+.dbmobs{display:flex;gap:10px;flex-wrap:wrap}.dbmobs span{display:flex;flex-direction:column;align-items:center;font-size:12px}.dbmobs canvas{width:84px;height:64px}
+@media (max-height:460px){ .dbcard{height:96vh} .dbmon canvas{width:80px;height:61px} }.bkit:hover{background:rgba(255,215,120,.12)}
 @media (max-height:520px){ #wmapBody{display:flex;gap:10px;align-items:flex-start} .wm{width:min(520px,56vw)} .wminfo{margin-top:0;width:min(320px,34vw);max-height:calc(94vh - 70px);overflow:auto} .wmmob{min-width:0;flex:1 1 90px} }
 /* Hantverk */
 .cskill{background:#160f09;border:1px solid #4a3a28;border-radius:8px;padding:8px 10px;margin-bottom:8px}
@@ -717,8 +736,8 @@ const gearLook = it => it && BASES[it.base] ? BASES[it.base].look : null;
 /* Förbrukningsvaror (köps i butiken, staplas upp till 20 per plats i väskan) */
 const STACK_MAX = 20, SCROLL_SLOTS = 6, SCROLL_CHANCE = 0.6;
 const CONS = {
-  hpPot: {kind:'pot',    name:'HP-dryck',    price:10, hp:50, desc:'Återställer 50 HP.'},
-  mpPot: {kind:'pot',    name:'Mana-dryck',  price:10, mp:50, desc:'Återställer 50 mana.'},
+  hpPot: {kind:'pot',    name:'HP-dryck',    price:10, sell:2, hp:50, desc:'Återställer 50 HP.'},
+  mpPot: {kind:'pot',    name:'Mana-dryck',  price:10, sell:2, mp:50, desc:'Återställer 50 mana.'},
   scrStr:{kind:'scroll', name:'Scroll: Str +1',        price:100, target:'gear',   stat:'str', amt:1, desc:'Utrustning (ej vapen): 60% chans till +1 Str.'},
   scrInt:{kind:'scroll', name:'Scroll: Int +1',        price:100, target:'gear',   stat:'int', amt:1, desc:'Utrustning (ej vapen): 60% chans till +1 Int.'},
   scrAgi:{kind:'scroll', name:'Scroll: Agi +1',        price:100, target:'gear',   stat:'agi', amt:1, desc:'Utrustning (ej vapen): 60% chans till +1 Agi.'},
@@ -743,15 +762,15 @@ Object.assign(CONS, {
   elxStat2: {kind:'pot', buff:'stat', v:8,  name:'Stor krafttinktur',  sell:40, desc:'+8 Str, Int och Agi i 30 minuter.'},
   elxDef:   {kind:'pot', buff:'def',  v:10, name:'Barkelixir',         sell:15, desc:'Du tar 10 % mindre skada i 30 minuter.'},
   elxDef2:  {kind:'pot', buff:'def',  v:20, name:'Stenhudselixir',     sell:40, desc:'Du tar 20 % mindre skada i 30 minuter.'},
-  hpPot2:   {kind:'pot', name:'Stor HP-dryck', hp:200, big:true, desc:'Återställer 200 HP. Droppas av vargar och starkare monster, och ges av senare uppdrag.'},
+  hpPot2:   {kind:'pot', name:'Stor HP-dryck', hp:200, big:true, sell:8, desc:'Återställer 200 HP. Droppas av vargar och starkare monster, och ges av senare uppdrag.'},
   drakfjall:{kind:'mat', name:'Drakfjäll',  sell:15, desc:'Glänsande blå fjäll från drakar. Används av Leatherworkers.'},
   fosfor:   {kind:'mat', name:'Vit fosfor', sell:15, desc:'Glödande vit fosfor från drakarnas eldsvalg. Används av Potionärer till de finaste elixiren.'},
   smasten:  {kind:'mat', name:'Småsten',    sell:8,  desc:'Släta småstenar från stenkulorna. Används av Potionärer och Leatherworkers.'},
-  draktar:  {kind:'mat', name:'Draktår',    sell:25, desc:'En stelnad tår från en drake. Drakvakten Dagny på Drakslätten vill ha dem.'},
+  draktar:  {kind:'mat', qitem:true, name:'Draktår',    sell:25, desc:'En stelnad tår från en drake. Drakvakten Dagny på Drakslätten vill ha dem.'},
   sjal1:    {kind:'mat', soul:1, up:'sjal2', name:'Liten själ',  sell:4,  desc:'En liten fladdrande själ från svaga monster (level 1–5). Används av Scrollers. 3 små själar kan slås ihop till en mellansjäl.'},
   sjal2:    {kind:'mat', soul:2, up:'sjal3', name:'Mellansjäl',  sell:12, desc:'En själ från monster på level 6–15. Används av Scrollers. 3 mellansjälar kan slås ihop till en stor själ.'},
   sjal3:    {kind:'mat', soul:3, name:'Stor själ',   sell:36, desc:'En mäktig själ från monster på level 16 och uppåt. Används av Potionärer till de finaste elixiren.'},
-  stenbit:  {kind:'mat', name:'Mystisk stenbit', sell:10, desc:'En stenbit med en inristad skalle. Kanske vet någon i Lövbyn vad den är? Startar ett uppdrag.'},
+  stenbit:  {kind:'mat', qitem:true, name:'Mystisk stenbit', sell:10, desc:'En stenbit med en inristad skalle. Kanske vet någon i Lövbyn vad den är? Startar ett uppdrag.'},
   scrStr4:{kind:'scroll', rarity:'epic', name:'Scroll: Str +4',        target:'gear',   stat:'str', amt:4, desc:'Utrustning (ej vapen): 60% chans till +4 Str.'},
   scrInt4:{kind:'scroll', rarity:'epic', name:'Scroll: Int +4',        target:'gear',   stat:'int', amt:4, desc:'Utrustning (ej vapen): 60% chans till +4 Int.'},
   scrAgi4:{kind:'scroll', rarity:'epic', name:'Scroll: Agi +4',        target:'gear',   stat:'agi', amt:4, desc:'Utrustning (ej vapen): 60% chans till +4 Agi.'},
@@ -814,7 +833,7 @@ const BOMB_R = 85;
 const SPELLS = {
   bombpil:  {cls:'hippie',  lvl:4, icon:'💣', name:'Bombpil',          cd:8,  mp:8,  atk:true, d:()=>`Skjuter en pil som exploderar och gör 100% skada på alla fiender i närheten (radie ${Math.round(BOMB_R*(1+tv('h_radie')/100))}).`},
   flower:   {cls:'hippie',  lvl:8, icon:'🌸', name:'Flower power',     cd:20, mp:15, d:()=>`+100% attackhastighet i 4 sekunder.`},
-  eko:      {cls:'viskare', lvl:4, icon:'🔊', name:'Ekande viskning',  cd:10, mp:10, atk:true, d:()=>`En viskning som gör 100% skada och studsar vidare till 3 fiender till. Tappar 20% skada per träff (100% → 80% → 60% → 40%).`},
+  eko:      {cls:'viskare', lvl:4, icon:'🔊', name:'Ekande viskning',  cd:10, mp:10, atk:true, d:()=>{ const h=3+tv('v_ekohopp'), f=20-tv('v_ekoklar'); return `En viskning som gör 100% skada och studsar vidare till ${h} fiender till. Tappar ${f}% skada per träff (${Array.from({length:h+1},(_,i)=>Math.max(0,100-i*f)+'%').join(' → ')}).`; }},
   rotter:   {cls:'viskare', lvl:8, icon:'🌿', name:'Snärjande rötter', cd:20, mp:20, atk:true, d:()=>`Upp till 5 fiender framför dig fastnar i rötter i 6 sekunder och tar 30% skada per sekund.${rank('v_rothel')?' Du helas lika mycket som rötterna skadar.':''}`},
   kraftslag:{cls:'skog',    lvl:4, icon:'💥', name:'Kraftslag',        cd:6,  hp:5,  atk:true, d:()=>`Slår yxan kraftigt i marken framför dig – 120% skada på alla fiender i området.`},
   stockrull:{cls:'skog',    lvl:8, icon:'🪵', name:'Stockrullning',    cd:12, hp:8,  atk:true, d:()=>`Rullar iväg en stock framför dig. Den rullar tills den träffar en vägg (och trillar ner från kanter) och gör 60% skada på varje fiende den passerar.`},
@@ -835,7 +854,8 @@ const TREES = {
     {id:'h_studs', tier:2, max:3, icon:'🏹', name:'Studsande pilar', v:[10,20,30], d:v=>`Dina attacker (pilar) har ${v}% chans att studsa vidare till en fiende till – en gång, med full skada.`},
   ]},
   schh:{name:'Schh', talents:[
-    {id:'v_mana',     tier:1, max:3, icon:'💧', name:'Inre lugn', v:[1,2,3], d:v=>`+${v} mana-regenerering per sekund.`},
+    {id:'v_ekoklar',  tier:1, max:3, icon:'🔔', name:'Klart eko', v:[5,10,15], d:v=>`Ekande viskning tappar ${v} procentenheter mindre skada per hopp (${20-v}% i stället för 20%).`},
+    {id:'v_ekohopp',  tier:1, max:3, icon:'🔁', name:'Långt eko', v:[1,2,3], d:v=>`Ekande viskning kan hoppa till ${v} fiende${v>1?'r':''} till.`},
     {id:'v_rothel',   tier:1, max:1, icon:'🌱', name:'Livsrötter', v:[1], d:()=>`Snärjande rötter (level 8-förmågan) helar dig lika mycket som rötterna skadar fienderna.`},
     {id:'v_irrbloss', tier:2, max:3, icon:'✨', name:'Irrbloss', active:true, v:[20,30,40], d:v=>`Förmåga: frammanar ett irrbloss som följer dig och skjuter på fiender (1 skott/s) för 50% av din basskada, i ${v} sekunder. Nedkylning 40 s, kostar 15 mana.`},
   ]},
@@ -913,7 +933,9 @@ Object.assign(MOBS, {
 });
 MOBS.banditboss = (()=>{ const b=mobDefine({lvl:19, name:'Banditbossen', speed:88, w:38, h:66, drop:0, pool:[], map:7, boss:true, loot:[['brostBandit',.10,'rare']]}); b.hp*=2; b.exp=Math.round(b.exp*1.5); b.gold*=2; return b; })();
 MOBS.stenappa   = (()=>{ const b=mobDefine({lvl:18, name:'Stenappa', speed:62, w:96, h:100, drop:0, pool:[], map:8, boss:true, apeLoot:true}); b.hp*=8; b.touch=Math.round(b.touch*1.5); b.exp*=8; b.gold*=6; return b; })();
-MOBS.banditboss.book = [2,15,50,150];   // en boss högst upp i tornet
+MOBS.banditboss.book = [2,15,50,150];
+MOBS.banditboss.axe = true;    // kastar en yxa var 2:a sekund i strid (40 % av beröringsskadan)
+MOBS.stenappa.rocks = true;    // kallar ned stora stenar från himlen (yt-skada efter 1,6 s)   // en boss högst upp i tornet
 MOBS.stenappa.book   = [1,5,15,40];     // dyker bara upp ibland
 const MOB_ORDER = ['blabar','mossa','kissekatt','vildhund','varg','bjorn','drake','sten','bandit','banditboss','stenappa'];
 /* Silvermonster: 1% chans vid varje spawn. Dubbelt så stort, 5x HP och skada, 3x EXP, droppar alltid ett föremål. */
@@ -1301,7 +1323,7 @@ function fixAccount(a){
   const OLD_STARTERS=['yxa1','bage1','stav1'];
   const known = it => it && (BASES[it.base] || CONS[it.base]);
   for(const c of a.chars){
-    c.talents=c.talents||{}; c.eq=c.eq||{}; c.hotbar=c.hotbar||Array(9).fill(null); while(c.hotbar.length<9) c.hotbar.push(null);
+    c.talents=c.talents||{}; delete c.talents.v_mana;   // Inre lugn är borttagen – poängen frigörs c.eq=c.eq||{}; c.hotbar=c.hotbar||Array(9).fill(null); while(c.hotbar.length<9) c.hotbar.push(null);
     c.gold=c.gold||0; c.exp=c.exp||0; c.level=c.level||1; c.kills=c.kills||{}; c.map=MAPS[c.map]?c.map:1; c.quests=c.quests||{}; c.prof=c.prof||{}; for(const k in PROFS) c.prof[k]=c.prof[k]||{skill:1};
     c.inv=(c.inv||[]).filter(Boolean).map(it=>OLD_STARTERS.includes(it.base)?makeItem('pinne1'):it).filter(known);
     for(const k in c.eq){ if(c.eq[k] && OLD_STARTERS.includes(c.eq[k].base)) c.eq[k]=makeItem('pinne1'); if(c.eq[k] && !known(c.eq[k])) c.eq[k]=null; }
@@ -1383,7 +1405,7 @@ function calcStats(ch){
   s.maxMp = C.noMana ? 0 : 20 + s.int*10;
   s.hpReg = s.str*0.1;
   if(G.p && G.ch===ch && G.p.regenT>0) s.hpReg *= 1 + tv('s_kada')/100;   // Kådläkning: +300%
-  s.mpReg = C.noMana ? 0 : s.int*0.1 + tv('v_mana');
+  s.mpReg = C.noMana ? 0 : s.int*0.1;
   s.aspd = 1 + C.aspd + tv('k_aspd')/100 + (G.p && G.ch===ch && G.p.buffT>0 ? 1 : 0);   // Flower power: +100% (Agi ger inte längre attackhastighet)
   s.move = 1 + tv('k_move')/100 + s.eqMove/100;
   s.range = 1 + tv('h_range')/100;
@@ -1813,7 +1835,7 @@ const ABIL_USE = {
   eko(){
     const p=G.p; startSkillAnim('cast');
     const t=whisperTarget(), dmg=rollAtk();
-    const pr={type:'echo', x:p.x+p.face*22, y:p.y-44, vx:p.face*360, vy:-20, speed:560, homing:0.9, target:t, seek:170, face:p.face, ox:p.x, oy:p.y-34, dmg, base:dmg, mult:1, chain:3, dist:0, maxDist:WHISPER_RANGE+80, life:1.8, hit:new Set()};
+    const pr={type:'echo', x:p.x+p.face*22, y:p.y-44, vx:p.face*360, vy:-20, speed:560, homing:0.9, target:t, seek:170, face:p.face, ox:p.x, oy:p.y-34, dmg, base:dmg, mult:1, chain:3+tv('v_ekohopp'), dist:0, maxDist:WHISPER_RANGE+80, life:1.8, hit:new Set()};
     G.projs.push(pr); netShot(pr);
   },
   rotter(){
@@ -2127,21 +2149,66 @@ function dragonFire(m, tgt){
   const f={x, y, vx:(tx-x)/d*sp, vy:(ty-y)/d*sp, d:Math.round(m.d.touch*0.5), life:3.5};
   G.mprojs.push(f); if(isHostNet()) netToGuests({t:'mfire', x:Math.round(x), y:Math.round(y), vx:Math.round(f.vx), vy:Math.round(f.vy), d:f.d});
 }
-// Monsterprojektiler (drakens eldboll): alla simulerar dem, var och en räknar träffar på sin egen gubbe
+function sendMProj(f){ if(isHostNet()) netToGuests({t:'mfire', x:Math.round(f.x), y:Math.round(f.y), vx:Math.round(f.vx||0), vy:Math.round(f.vy||0), d:f.d, k:f.k, g:f.g, gy:f.gy, dl:f.delay, r:f.r, life:f.life}); }
+function throwAxe(m, tgt){   // banditbossens yxa: flyger i en båge mot spelaren och snurrar
+  const x=m.x+m.dir*20, y=m.y-50, tx=tgt.x, ty=tgt.y-30, g=700, T=clamp(Math.hypot(tx-x,ty-y)/330,.45,1.2);
+  const f={k:'axe', x, y, vx:(tx-x)/T, vy:(ty-y)/T-.5*g*T, g, d:Math.max(1,Math.round(m.d.touch*0.4)), life:T+1.2};
+  G.mprojs.push(f); sendMProj(f); SFX.swing && SFX.swing();
+}
+function rockRain(m, tgt){   // Stenappan: tre stora stenar faller där spelaren står (och bredvid) efter 1,6 s
+  const d=Math.max(1,Math.round(m.d.touch*0.6));
+  for(const [i,ox] of [[0,0],[1,rand(110,190)],[2,-rand(110,190)]].map(([i,o])=>[i,o])){
+    const f={k:'rock', x:clamp(tgt.x+ox+rand(-15,15),40,WORLD.w-40), y:tgt.y, gy:tgt.y, delay:1.6+i*.25, r:62, d, life:4};
+    G.mprojs.push(f); sendMProj(f);
+  }
+}
+// Monsterprojektiler (drakens eldboll, yxor, stenar): alla simulerar dem, var och en räknar träffar på sin egen gubbe
 function updateMProjs(dt){
   const p=G.p;
   for(let i=G.mprojs.length-1;i>=0;i--){
-    const f=G.mprojs[i]; f.life-=dt; f.x+=f.vx*dt; f.y+=f.vy*dt; f.t=(f.t||0)+dt;
-    if(Math.random()<.8) particle(f.x-f.vx*.02,f.y,pick(['#ff7a1a','#ffd23f','#ff4a1a']),rand(-20,20),rand(-30,10),.35,3,-40);
+    const f=G.mprojs[i]; f.t=(f.t||0)+dt;
+    if(f.k==='rock'){
+      if(f.t>=f.delay){
+        if(G.mode==='game' && p && !p.dead && p.inv<=0 && Math.abs(p.x-f.x)<f.r && Math.abs(p.y-f.gy)<70) hurtPlayer(f.d, Math.sign(p.x-f.x)||1);
+        for(let k=0;k<26;k++) particle(f.x+rand(-30,30),f.gy-rand(0,20),pick(['#9a9488','#6a645a','#c8c0b0','#4a443c']),rand(-220,220),rand(-260,-40),.7,rand(3,6),700);
+        if(p && Math.abs(p.x-f.x)<500){ G.shakeT=0.3; G.shakeMag=5; } SFX.boom && SFX.boom();
+        G.mprojs.splice(i,1);
+      }
+      continue;
+    }
+    f.life-=dt; if(f.g) f.vy+=f.g*dt; f.x+=f.vx*dt; f.y+=f.vy*dt;
+    if(f.k==='axe'){ if(Math.random()<.3) particle(f.x,f.y,'rgba(200,200,210,.6)',0,0,.2,2,0); }
+    else if(Math.random()<.8) particle(f.x-f.vx*.02,f.y,pick(['#ff7a1a','#ffd23f','#ff4a1a']),rand(-20,20),rand(-30,10),.35,3,-40);
     let hit=false;
     if(G.mode==='game' && p && !p.dead && p.inv<=0 && Math.abs(f.x-p.x)<p.w/2+9 && f.y>p.y-p.h && f.y<p.y+4){ hurtPlayer(f.d, Math.sign(f.vx)||1); hit=true; }
     if(hit || f.life<=0 || f.y>WORLD.h || f.x<0 || f.x>WORLD.w){
-      if(hit) for(let k=0;k<14;k++) particle(f.x,f.y,pick(['#ff7a1a','#ffd23f','#fff1b0']),rand(-140,140),rand(-140,60),.4,3.5,200);
+      if(hit) for(let k=0;k<14;k++) particle(f.x,f.y,f.k==='axe'?pick(['#d8d8e0','#8a8a96','#ff6b6b']):pick(['#ff7a1a','#ffd23f','#fff1b0']),rand(-140,140),rand(-140,60),.4,3.5,200);
       G.mprojs.splice(i,1);
     }
   }
 }
 function drawMProj(f){
+  if(f.k==='axe'){
+    ctx.save(); ctx.translate(f.x,f.y); ctx.rotate((f.t||0)*16*Math.sign(f.vx||1));
+    ctx.strokeStyle='#5a3a1e'; ctx.lineWidth=4; ctx.lineCap='round'; line(ctx,-12,0,12,0);
+    ctx.fillStyle='#c8c8d2'; ctx.beginPath(); ctx.moveTo(6,-2); ctx.quadraticCurveTo(18,-14,20,-4); ctx.quadraticCurveTo(22,4,20,10); ctx.quadraticCurveTo(16,4,6,4); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle='#4a4a56'; ctx.lineWidth=1.5; ctx.stroke(); ctx.strokeStyle='#fff'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(19,-3); ctx.quadraticCurveTo(21,3,19,8); ctx.stroke();
+    ctx.restore(); return;
+  }
+  if(f.k==='rock'){
+    const k=clamp(f.t/f.delay,0,1), fall=.45, ft=clamp((f.t-(f.delay-fall))/fall,0,1);
+    ctx.fillStyle=`rgba(90,10,0,${.25+k*.35})`; ell(ctx,f.x,f.gy,f.r*(.4+k*.6),f.r*.22*(.4+k*.6));
+    ctx.strokeStyle=`rgba(255,70,30,${.7+Math.sin((f.t||0)*14)*.3})`; ctx.lineWidth=3.5; ctx.beginPath(); ctx.ellipse(f.x,f.gy,f.r,f.r*.22,0,0,7); ctx.stroke();
+    if(ft>0){ const y=f.gy-620*(1-ft*ft)-34;
+      ctx.save(); ctx.translate(f.x,y); ctx.rotate(f.t*3);
+      const g=ctx.createRadialGradient(-8,-10,4,0,0,34); g.addColorStop(0,'#c8c0b0'); g.addColorStop(.6,'#8a8476'); g.addColorStop(1,'#4a443c'); ctx.fillStyle=g;
+      ctx.beginPath(); for(let i=0;i<9;i++){ const a=i/9*6.283, r=30+(i%3)*4; ctx.lineTo(Math.cos(a)*r,Math.sin(a)*r); } ctx.closePath(); ctx.fill();
+      ctx.strokeStyle='#2e2a24'; ctx.lineWidth=2; ctx.stroke(); ctx.strokeStyle='rgba(0,0,0,.3)'; line(ctx,-10,-4,6,8); line(ctx,4,-14,12,0);
+      ctx.restore();
+      ctx.fillStyle='rgba(200,190,170,.35)'; for(let i=1;i<4;i++) circ(ctx,f.x+rand(-10,10),y-i*22,8-i*2);
+    }
+    return;
+  }
   ctx.globalCompositeOperation='lighter';
   ctx.globalAlpha=.7; ctx.drawImage(glowFor('#ff8a2a'),f.x-26,f.y-26,52,52); ctx.globalAlpha=1;
   const g=ctx.createRadialGradient(f.x,f.y,1,f.x,f.y,11); g.addColorStop(0,'#fff6c0'); g.addColorStop(.4,'#ffb02a'); g.addColorStop(1,'rgba(255,60,0,0)');
@@ -2185,6 +2252,11 @@ function updateMonsters(dt){
       if(m.chargeT>0){ m.chargeT-=dt; if(tgt) m.dir=Math.sign(tgt.x-m.x)||m.dir; if(m.chargeT<=0){ m.chargeT=0; dragonFire(m,tgt); } }
       else if(tgt && m.fireCd<=0 && !(m.rootT>0) && Math.abs(tgt.x-m.x)>50 && Math.abs(tgt.x-m.x)<560 && Math.abs(tgt.y-m.y)<220){ m.chargeT=1; m.fireCd=5; m.dir=Math.sign(tgt.x-m.x)||m.dir; }
     }
+    if(m.d.axe){ m.axeCd=Math.max(0,(m.axeCd||0)-dt);
+      if(tgt && m.axeCd<=0 && !(m.rootT>0) && Math.abs(tgt.x-m.x)<560 && Math.abs(tgt.y-m.y)<320){ m.axeCd=2; m.dir=Math.sign(tgt.x-m.x)||m.dir; m.throwT=.3; throwAxe(m,tgt); } }
+    if(m.throwT>0) m.throwT-=dt;
+    if(m.d.rocks){ m.rockCd=(m.rockCd===undefined?2:m.rockCd)-dt;
+      if(tgt && m.rockCd<=0 && Math.abs(tgt.x-m.x)<800){ m.rockCd=rand(5,7); m.throwT=.6; rockRain(m,tgt); } }
     if(m.rootT>0){ m.kbT=0; if(m.hurtT>0) m.hurtT-=dt; m.state='idle'; }
     else if(m.chargeT>0 || m.hardT>0){ m.kbT=0; if(m.hurtT>0) m.hurtT-=dt; m.state='idle'; }
     else if(m.kbT>0){ m.kbT-=dt; m.x+=m.kb*dt; }
@@ -2278,7 +2350,7 @@ function projHit(pr, m){
 // Ekande viskning: studsar vidare, tappar 20 procentenheter skada per träff (100 → 80 → 60 → 40 %)
 function echoBounce(from, pr){
   const t=nearestMonster(from.x, from.y-from.d.h/2, 320, pr.hit); if(!t) return;
-  const mult=Math.round((pr.mult-0.2)*100)/100;
+  const mult=Math.round((pr.mult-(20-tv('v_ekoklar'))/100)*100)/100;
   const np={type:'echo', x:from.x, y:from.y-from.d.h/2, vx:0, vy:0, speed:620, homing:1, target:t, dmg:Math.max(1,Math.round(pr.base*mult)), base:pr.base, mult, chain:pr.chain-1, dist:0, maxDist:99999, life:1.2, hit:pr.hit};
   G.projs.push(np); netShot(np);
 }
@@ -5384,7 +5456,7 @@ function itemHtml(it, where){
   return h;
 }
 const tip=$('#tip');
-function showTip(html,x,y){ tip.innerHTML=html; tip.classList.remove('hidden'); const r=tip.getBoundingClientRect(); tip.style.left=clamp(x+16,4,VW-r.width-4)+'px'; tip.style.top=clamp(y+12,4,VH-r.height-4)+'px'; }
+function showTip(html,x,y){ tip.dataset.bk=1; tip.innerHTML=html; tip.classList.remove('hidden'); const r=tip.getBoundingClientRect(); tip.style.left=clamp(x+16,4,VW-r.width-4)+'px'; tip.style.top=clamp(y+12,4,VH-r.height-4)+'px'; }
 function hideTip(){ tip.classList.add('hidden'); }
 document.addEventListener('pointermove',e=>{
   if(e.pointerType!=='mouse' || G.mode!=='game'){ return; }
@@ -5441,7 +5513,7 @@ function renderBagDetail(){
   const it=f.it; let acts='';
   if(isCons(it)){
     const c=CONS[it.base];
-    if(c.kind==='pot'){ acts+=`<button class="btn sm green" data-act="use">Använd</button>`; if(!G.touch) acts+=`<button class="btn sm" data-act="assign">Sätt på 1–9</button>`; }
+    if(c.kind==='pot'){ acts+=`<button class="btn sm green" data-act="use">Använd</button>`; if(!G.touch) acts+=`<button class="btn sm" data-act="assign">Sätt på 1–9</button>`; if(c.sell && isOpen('shop')) acts+=`<button class="btn sm gold" data-act="sellmat">💰 Sälj 1 (${c.sell} 🪙)</button>`; }
     else if(c.kind==='mat'){ if(c.up){ const n=consCount(it.base); acts+=`<button class="btn sm green" data-act="merge" ${n<3?'disabled':''}>🔮 3 → 1 ${CONS[c.up].name}</button>`; if(n>=6) acts+=`<button class="btn sm green" data-act="mergeall">🔮 Slå ihop alla (${Math.floor(n/3)} st)</button>`; } acts+=`<button class="btn sm" data-act="craftwin">⚒️ Hantverk</button>`; if(isOpen('shop')) acts+=`<button class="btn sm gold" data-act="sellmat">Sälj 1 (${c.sell} 🪙)</button><button class="btn sm gold" data-act="sellmatall">Sälj alla (${c.sell*consCount(it.base)} 🪙)</button>`; }
     else acts+=`<button class="btn sm green" data-act="scroll">Använd på föremål…</button>`;
     acts+=`<button class="btn sm" data-act="drop">⬇ Släpp på marken</button>`;
@@ -5700,8 +5772,8 @@ function renderShop(){
     }
   } else {
     const list=ch.inv.filter(x=>!isCons(x));
-    const mats=Object.entries(CONS).filter(([id,c])=>c.kind==='mat' && consCount(id)>0);
-    if(mats.length){ h+=`<div style="font-weight:800;margin:4px 0">Material</div>`;
+    const mats=Object.entries(CONS).filter(([id,c])=>(c.kind==='mat'||c.kind==='pot') && c.sell && consCount(id)>0).sort((a,b)=>(a[1].kind==='pot')-(b[1].kind==='pot'));
+    if(mats.length){ h+=`<div style="font-weight:800;margin:4px 0">Material och drycker</div><div class="chint">Drycker säljs för 20 % av vad de kostar.</div>`;
       for(const [id,c] of mats){ const n=consCount(id), it=ch.inv.find(x=>x.base===id);
         h+=`<div class="srow"><div class="slot r-cons"><img src="${iconURL({base:id})}" alt=""></div><div class="sn"><b>${c.name}</b><small>Du har ${n} · ${c.sell} 🪙 styck</small></div><span class="sp">${n*c.sell} 🪙</span><button class="btn sm gold" data-sellmat="${it.uid}" data-all="0">Sälj 1</button><button class="btn sm gold" data-sellmat="${it.uid}" data-all="1">Sälj alla</button></div>`; }
       h+=`<div style="font-weight:800;margin:10px 0 4px">Utrustning</div>`; }
@@ -5929,45 +6001,85 @@ function mapQuestMark(id){
   return mk;
 }
 function paintWorld(cv){
-  const c=cv.getContext('2d'), W=cv.width, H=cv.height;
-  let g=c.createLinearGradient(0,0,W,H); g.addColorStop(0,'#e9d9b0'); g.addColorStop(1,'#cdb27e'); c.fillStyle=g; c.fillRect(0,0,W,H);
-  const R=seeded(4711);
-  for(let i=0;i<260;i++){ c.fillStyle=`rgba(${120+R()*60|0},${90+R()*40|0},${50+R()*30|0},${.03+R()*.05})`; circ(c,R()*W,R()*H,10+R()*60); }
-  // havet och kusten
-  c.fillStyle='rgba(90,140,170,.45)'; c.beginPath(); c.moveTo(0,H); c.lineTo(0,H*.82); for(let x=0;x<=W;x+=20) c.lineTo(x,H*.86+Math.sin(x*.02)*10+Math.sin(x*.07)*4); c.lineTo(W,H); c.closePath(); c.fill();
-  // landskap per bana
-  for(const [id,M] of Object.entries(MAPS)){ const A=ART[id]||ART[1], x=M.wm.x*W, y=M.wm.y*H;
-    if(M.terrain==='tower'){ c.save(); c.translate(x,y); c.scale(1,.62); softBlob(c,0,0,W*.07,A.grass[0],.6); c.restore();
-      c.fillStyle='rgba(40,30,15,.3)'; ell(c,x+3,y+8,22,5); c.fillStyle='#6a6470'; c.fillRect(x-14,y-46,28,52); c.fillStyle='#4a4450'; for(let i=0;i<4;i++) c.fillRect(x-16+i*9,y-54,6,8);
-      c.fillStyle='#ffc070'; c.fillRect(x-4,y-34,8,10); c.fillRect(x-4,y-14,8,10); c.fillStyle='#a8242a'; c.beginPath(); c.moveTo(x,y-54); c.lineTo(x,y-70); c.lineTo(x+12,y-64); c.lineTo(x,y-60); c.fill(); continue; }
-    if(M.town){ c.save(); c.translate(x,y); c.scale(1,.62); softBlob(c,0,0,W*.09,A.grass[0],.7); softBlob(c,0,0,W*.06,A.grass[1],.6); c.restore();
-      for(const [hx,hy,col] of [[-34,-8,'#9a2f22'],[0,-18,'#5d7488'],[30,-6,'#c8963a'],[-12,12,'#9a2f22'],[24,16,'#9a2f22']]){ const X=x+hx, Y=y+hy;
-        c.fillStyle='rgba(40,30,15,.3)'; ell(c,X+2,Y+7,11,3); c.fillStyle=col; c.fillRect(X-9,Y-6,18,12); c.fillStyle='#3a2c28'; c.beginPath(); c.moveTo(X-12,Y-5); c.lineTo(X,Y-15); c.lineTo(X+12,Y-5); c.fill(); c.fillStyle='#ffd27a'; c.fillRect(X-2,Y-2,4,4); }
+  // Världskarta i MapleStory-stil: en ö i havet med en region per bana, gula stigar mellan portalerna
+  const c=cv.getContext('2d'), W=cv.width, H=cv.height, R=seeded(4711);
+  const P=Object.entries(MAPS).map(([id,M])=>({id:+id, M, x:M.wm.x*W, y:M.wm.y*H, A:ART[id]||ART[1]}));
+  const links=[]; for(const a of P) for(const o of a.M.portals) if(+o.to>a.id){ const b=P.find(q=>q.id===+o.to); if(b) links.push([a,b]); }
+  // hav
+  let g=c.createLinearGradient(0,0,0,H); g.addColorStop(0,'#3a8fc8'); g.addColorStop(1,'#1b5784'); c.fillStyle=g; c.fillRect(0,0,W,H);
+  c.strokeStyle='rgba(255,255,255,.35)'; c.lineWidth=2; c.lineCap='round';
+  for(let i=0;i<90;i++){ const x=R()*W, y=R()*H, w=8+R()*14; c.beginPath(); c.arc(x,y,w,Math.PI*1.15,Math.PI*1.85); c.stroke(); }
+  // öns form = cirklar runt banorna och längs stigarna
+  const blobs=[]; for(const a of P) blobs.push([a.x,a.y,a.M.town?95:120]);
+  for(const [a,b] of links) for(let t=.25;t<1;t+=.25) blobs.push([a.x+(b.x-a.x)*t, a.y+(b.y-a.y)*t, 85]);
+  const fillBlobs=(extra,col)=>{ c.fillStyle=col; c.beginPath(); for(const [x,y,r] of blobs){ c.moveTo(x+r+extra,y); c.ellipse(x,y,r+extra,(r+extra)*.72,0,0,7); } c.fill(); };
+  c.save(); c.beginPath(); c.rect(0,0,W,H); c.clip();
+  fillBlobs(46,'rgba(120,200,230,.45)'); fillBlobs(30,'rgba(150,215,235,.55)');
+  fillBlobs(16,'#ecd9a0'); fillBlobs(10,'#d8c088');
+  const lg=c.createLinearGradient(0,0,0,H); lg.addColorStop(0,'#86c562'); lg.addColorStop(1,'#5a9a40'); fillBlobs(0,lg);
+  // regionernas färger
+  for(const a of P){ const A=a.A, r=a.M.town?100:130;
+    const cols = a.M.terrain==='wide' ? ['#c89a5a','#a8743a'] : a.M.terrain==='tower' ? ['#8a8890','#5e5a66'] : a.M.terrain==='stone' ? ['#e6d49a','#9ccf6a'] : a.M.town ? ['#e0a24a','#c8742a'] : [A.grass[0],A.grass[1]];
+    const rg=c.createRadialGradient(a.x,a.y,10,a.x,a.y,r); rg.addColorStop(0,cols[0]); rg.addColorStop(.6,cols[1]+'cc'); rg.addColorStop(1,cols[1]+'00');
+    c.fillStyle=rg; c.beginPath(); c.ellipse(a.x,a.y,r,r*.72,0,0,7); c.fill(); }
+  // detaljer per region
+  const tree=(tx,ty,A,pine)=>{ c.fillStyle='rgba(30,40,10,.28)'; ell(c,tx+2,ty+4,6,2);
+    if(pine){ c.fillStyle=A.canopy[0]; c.beginPath(); c.moveTo(tx,ty-15); c.lineTo(tx+7,ty+3); c.lineTo(tx-7,ty+3); c.fill(); c.fillStyle=A.canopy[2]; c.beginPath(); c.moveTo(tx,ty-15); c.lineTo(tx+2,ty-4); c.lineTo(tx-4,ty+1); c.fill(); }
+    else { c.fillStyle=A.trunk[1]; c.fillRect(tx-1,ty-2,2,5); c.fillStyle=A.canopy[0]; circ(c,tx,ty-5,6.5); c.fillStyle=A.canopy[1]; circ(c,tx-1.5,ty-6.5,4.8); c.fillStyle=A.canopy[2]; circ(c,tx-2,ty-8,2.4); } };
+  for(const a of P){ const A=a.A, M=a.M;
+    if(M.terrain==='wide'){   // drakslätten: röda berg och vulkan
+      for(const [mx,my,mh] of [[-80,-30,55],[-30,-46,72],[30,-40,60],[85,-22,46]]){ const X=a.x+mx, Y=a.y+my;
+        c.fillStyle='#7a5038'; c.beginPath(); c.moveTo(X-36,Y+18); c.lineTo(X,Y+18-mh); c.lineTo(X+36,Y+18); c.fill();
+        c.fillStyle='#5a3626'; c.beginPath(); c.moveTo(X,Y+18-mh); c.lineTo(X+36,Y+18); c.lineTo(X+6,Y+18); c.fill();
+        c.fillStyle='#f0e6dc'; c.beginPath(); c.moveTo(X,Y+18-mh); c.lineTo(X+8,Y+18-mh*.75); c.lineTo(X,Y+18-mh*.8); c.lineTo(X-8,Y+18-mh*.75); c.fill(); }
+      c.fillStyle='rgba(255,120,40,.6)'; circ(c,a.x-30,a.y-60,6); c.fillStyle='rgba(120,110,100,.5)'; for(let i=0;i<4;i++) circ(c,a.x-30+i*5,a.y-70-i*9,5+i*2);
       continue; }
-    c.save(); c.translate(x,y); c.scale(1,.62); softBlob(c,0,0,W*.17,A.grass[0],.75); softBlob(c,0,0,W*.12,A.grass[1],.7); softBlob(c,0,-10,W*.07,A.grass[2],.45); c.restore();
-    const trees=[]; for(let i=0;i<30;i++){ const a=R()*6.28, d=(.05+R()*.085)*W; trees.push([x+Math.cos(a)*d, y+Math.sin(a)*d*.5]); }
-    trees.sort((a,b)=>a[1]-b[1]);
-    for(const [tx,ty] of trees){ c.fillStyle='rgba(40,30,15,.25)'; ell(c,tx+2,ty+5,7,2.5);
-      if(A.pines>.5){ c.fillStyle=A.canopy[0]; c.beginPath(); c.moveTo(tx,ty-17); c.lineTo(tx+8,ty+4); c.lineTo(tx-8,ty+4); c.fill(); c.fillStyle=A.canopy[2]; c.beginPath(); c.moveTo(tx,ty-17); c.lineTo(tx+3,ty-6); c.lineTo(tx-3,ty-4); c.fill(); }
-      else { c.fillStyle=A.trunk[1]; c.fillRect(tx-1.2,ty-2,2.4,6); c.fillStyle=A.canopy[0]; circ(c,tx,ty-5,7.5); c.fillStyle=A.canopy[1]; circ(c,tx-1.5,ty-7,5.5); c.fillStyle=A.canopy[2]; circ(c,tx-2.5,ty-8.5,3); } } }
-  // berg bakom Jaktmarken IV
-  c.fillStyle='rgba(120,120,135,.55)'; for(const [mx,mh] of [[.52,.16],[.66,.22],[.78,.15]]){ c.beginPath(); c.moveTo(mx*W-70,H*.3); c.lineTo(mx*W,H*.3-mh*H); c.lineTo(mx*W+70,H*.3); c.fill(); c.fillStyle='rgba(255,255,255,.7)'; c.beginPath(); c.moveTo(mx*W-14,H*.3-mh*H+28); c.lineTo(mx*W,H*.3-mh*H); c.lineTo(mx*W+14,H*.3-mh*H+28); c.fill(); c.fillStyle='rgba(120,120,135,.55)'; }
-  // stigar mellan portalerna
-  c.strokeStyle='rgba(110,70,30,.75)'; c.lineWidth=5; c.setLineDash([12,10]); c.lineCap='round';
-  for(const [id,M] of Object.entries(MAPS)) for(const o of M.portals) if(+o.to>+id){ const B=MAPS[o.to]; const x1=M.wm.x*W, y1=M.wm.y*H, x2=B.wm.x*W, y2=B.wm.y*H; c.beginPath(); c.moveTo(x1,y1); c.quadraticCurveTo((x1+x2)/2,Math.min(y1,y2)-40,x2,y2); c.stroke(); }
+    if(M.terrain==='tower'){ c.fillStyle='rgba(30,20,10,.3)'; ell(c,a.x+3,a.y+10,24,6);
+      c.fillStyle='#6a6470'; c.fillRect(a.x-14,a.y-50,28,58); c.fillStyle='#4a4450'; for(let i=0;i<4;i++) c.fillRect(a.x-16+i*9,a.y-58,6,8);
+      c.fillStyle='#ffc070'; c.fillRect(a.x-4,a.y-38,8,10); c.fillRect(a.x-4,a.y-16,8,10);
+      c.fillStyle='#a8242a'; c.beginPath(); c.moveTo(a.x,a.y-58); c.lineTo(a.x,a.y-76); c.lineTo(a.x+13,a.y-70); c.lineTo(a.x,a.y-65); c.fill();
+      for(let i=0;i<8;i++){ const an=R()*6.28, d=40+R()*50; c.fillStyle='#7a7480'; circ(c,a.x+Math.cos(an)*d,a.y+Math.sin(an)*d*.6,4+R()*4); }
+      continue; }
+    if(M.town){ for(const [hx,hy,col] of [[-34,-8,'#9a2f22'],[0,-18,'#5d7488'],[30,-6,'#c8963a'],[-12,12,'#9a2f22'],[24,16,'#9a2f22']]){ const X=a.x+hx, Y=a.y+hy;
+        c.fillStyle='rgba(40,30,15,.3)'; ell(c,X+2,Y+7,11,3); c.fillStyle='#f0e0c0'; c.fillRect(X-9,Y-6,18,12); c.fillStyle=col; c.beginPath(); c.moveTo(X-12,Y-5); c.lineTo(X,Y-15); c.lineTo(X+12,Y-5); c.fill(); c.fillStyle='#5a3a20'; c.fillRect(X-2,Y,4,6); }
+      for(let i=0;i<10;i++){ const an=R()*6.28, d=50+R()*30; tree(a.x+Math.cos(an)*d, a.y+Math.sin(an)*d*.6, ART[5]||A, false); }
+      continue; }
+    if(M.terrain==='stone'){ for(let i=0;i<9;i++){ const an=R()*6.28, d=30+R()*70, X=a.x+Math.cos(an)*d, Y=a.y+Math.sin(an)*d*.6;
+        c.strokeStyle='#8a5a2a'; c.lineWidth=2.5; c.beginPath(); c.moveTo(X,Y+4); c.quadraticCurveTo(X+3,Y-6,X+1,Y-14); c.stroke();
+        c.fillStyle='#3e9a3a'; for(let k=0;k<5;k++){ const b=k/5*6.28; c.beginPath(); c.ellipse(X+1+Math.cos(b)*7,Y-14+Math.sin(b)*3,8,2.6,b,0,7); c.fill(); } }
+      for(let i=0;i<6;i++){ c.fillStyle='#9a948a'; circ(c,a.x+R()*120-60,a.y+R()*50-25,5+R()*5); }
+      continue; }
+    const pts=[]; for(let i=0;i<34;i++){ const an=R()*6.28, d=(.25+R()*.75)*110; pts.push([a.x+Math.cos(an)*d, a.y+Math.sin(an)*d*.62]); }
+    pts.sort((p1,p2)=>p1[1]-p2[1]); for(const [tx,ty] of pts) tree(tx,ty,A,A.pines>.5);
+  }
+  c.restore();
+  // stigar (gula prickade linjer som i MapleStory)
+  for(const [a,b] of links){ const mx=(a.x+b.x)/2, my=(a.y+b.y)/2-18;
+    c.strokeStyle='rgba(80,50,10,.55)'; c.lineWidth=6; c.setLineDash([]); c.beginPath(); c.moveTo(a.x,a.y); c.quadraticCurveTo(mx,my,b.x,b.y); c.stroke();
+    c.strokeStyle='#ffe27a'; c.lineWidth=3; c.setLineDash([7,6]); c.beginPath(); c.moveTo(a.x,a.y); c.quadraticCurveTo(mx,my,b.x,b.y); c.stroke(); }
   c.setLineDash([]);
-  // kompass
-  const cx=W*.06, cy=H*.16; c.strokeStyle='rgba(90,60,30,.8)'; c.lineWidth=2; c.beginPath(); c.arc(cx,cy,26,0,7); c.stroke(); c.fillStyle='rgba(90,60,30,.85)'; c.beginPath(); c.moveTo(cx,cy-30); c.lineTo(cx+6,cy); c.lineTo(cx,cy+30); c.lineTo(cx-6,cy); c.fill(); c.font='bold 14px Georgia'; c.textAlign='center'; c.fillText('N',cx,cy-34);
-  c.strokeStyle='rgba(80,50,20,.6)'; c.lineWidth=6; c.strokeRect(3,3,W-6,H-6);
+  // moln och ett skepp
+  for(const [x,y,s] of [[.04,.08,1],[.36,.06,.8],[.97,.5,.9],[.2,.95,1.1]]){ c.fillStyle='rgba(255,255,255,.75)'; for(const [dx,dy,r] of [[0,0,14],[14,-6,12],[28,0,13],[14,4,12]]) circ(c,x*W+dx*s,y*H+dy*s,r*s); }
+  { const x=W*.04, y=H*.9; c.fillStyle='#6a3a1a'; c.beginPath(); c.moveTo(x-20,y); c.lineTo(x+20,y); c.lineTo(x+14,y+9); c.lineTo(x-14,y+9); c.fill(); c.fillStyle='#f4ecd8'; c.beginPath(); c.moveTo(x,y-26); c.lineTo(x,y-2); c.lineTo(x+16,y-4); c.fill(); c.strokeStyle='#4a2a10'; c.lineWidth=2; line(c,x,y-28,x,y); }
+  // titel och kompass
+  c.fillStyle='rgba(60,35,10,.82)'; rr(c,12,10,150,34,8); c.fill(); c.strokeStyle='#e8c25a'; c.lineWidth=2; rr(c,12,10,150,34,8); c.stroke();
+  c.fillStyle='#ffe6a0'; c.font='bold 20px Georgia,serif'; c.textAlign='center'; c.fillText('🍁 Lövön',87,34);
+  const cx=W-44, cy=H-44; c.fillStyle='rgba(255,245,220,.85)'; circ(c,cx,cy,26); c.strokeStyle='#6a4a22'; c.lineWidth=2; c.beginPath(); c.arc(cx,cy,26,0,7); c.stroke();
+  c.fillStyle='#a8242a'; c.beginPath(); c.moveTo(cx,cy-22); c.lineTo(cx+6,cy); c.lineTo(cx-6,cy); c.fill(); c.fillStyle='#3a2a1a'; c.beginPath(); c.moveTo(cx,cy+22); c.lineTo(cx+6,cy); c.lineTo(cx-6,cy); c.fill();
+  c.fillStyle='#3a2a1a'; c.font='bold 11px Georgia,serif'; c.fillText('N',cx,cy-28+2);
+  c.strokeStyle='rgba(60,35,10,.8)'; c.lineWidth=6; c.strokeRect(3,3,W-6,H-6);
 }
 function renderWmap(){
   const sel=G.ui.wmSel||G.mapId;
   let h=`<div class="wm"><canvas id="wmCv" width="1100" height="560"></canvas>`;
   for(const [sid,M] of Object.entries(MAPS)){ const id=+sid, A=ART[id]||ART[1], [lo,hi]=mapLv(id), mk=mapQuestMark(id);
     h+=`<button class="wmn ${id===sel?'sel':''} ${id===G.mapId?'here':''}" data-wmn="${id}" style="left:${M.wm.x*100}%;top:${M.wm.y*100}%">
-      <span class="wmimg" style="background:linear-gradient(${A.sky[0]},${A.sky[1]} 45%,${A.grass[1]} 46%,${A.soil[1]})"></span>
+      <span class="wmimg ${M.town?'town':''}">${M.town?'🏠':''}</span>
       <span class="wmname">${M.name}</span><span class="wmlv">${M.town?'By':`Lv ${lo}${hi>lo?'–'+hi:''}`}</span>
       ${mk?`<span class="wmq ${mk==='?'?'done':''}">${mk}</span>`:''}${id===G.mapId?'<span class="wmpin">📍</span>':''}</button>`; }
+  { const S=MAPS[sel], mobs=mapMobs(sel), [l0,l1]=mapLv(sel), below=S.wm.y<.46;
+    h+=`<div class="wmpop ${below?'below':''}" style="left:${clamp(S.wm.x,.16,.84)*100}%;top:${S.wm.y*100}%"><b>${S.name}</b><small>${S.town?'Säker by – inga monster':`Level ${l0}${l1>l0?'–'+l1:''}`}</small>
+      ${mobs.length?`<div class="wmpm">${mobs.map(t=>`<span><canvas data-mobq="${t}" width="84" height="64"></canvas><i>${MOBS[t].name}</i></span>`).join('')}</div>`:''}</div>`; }
   h+=`</div>`;
   const M=MAPS[sel], [lo,hi]=mapLv(sel);
   h+=`<div class="wminfo"><div class="rowb"><b style="font-size:15px">${M.name}</b><span>${sel===G.mapId?'📍 Du är här':M.town?'🏡 Säker by – inga monster':`Rekommenderad level ${lo}${hi>lo?'–'+hi:''}`}</span></div>`;
@@ -5981,8 +6093,78 @@ function renderWmap(){
   $('#wmapBody').innerHTML=h;
   paintWorld($('#wmCv'));
   $$('#wmapBody [data-mobp]').forEach(cv=>drawMobPortrait(cv,cv.dataset.mobp,false,2.2));
+  $$('#wmapBody [data-mobq]').forEach(cv=>drawMobPortrait(cv,cv.dataset.mobq,false,1.1));
 }
 $('#wmapBody').addEventListener('click',e=>{ const n=e.target.closest('[data-wmn]'); if(n){ G.ui.wmSel=+n.dataset.wmn; renderWmap(); } });
+
+/* ---------- Databas: alla uppdrag, kartor och monster (nås från startskärmen, gubbvalet och menyn) ---------- */
+const MOB_SPECIAL = {
+  drake:'🔥 Eldboll: laddar 1 s och skjuter mot den som anfallit den (50 % av beröringsskadan), nedkylning 5 s.',
+  sten:'🪨 Härdning: reflekterar 20 % av skadan i 2 s, nedkylning 6 s.',
+  banditboss:'🪓 Kastar en yxa var 2:a sekund när striden börjat (40 % av beröringsskadan). Boss: dubbel HP, +50 % EXP, kan inte bli silver.',
+  stenappa:'☄️ Kallar ned tre stora stenar från himlen var 5–7 s – de slår ned efter 1,6 s och skadar allt inom räckhåll (60 % av beröringsskadan). Minibos med 8× HP.',
+};
+function dbMapSpawns(id){ const o={}; for(const [t,,xs] of MAPS[id].spawns) o[t]=(o[t]||0)+xs.length; return o; }
+function dbQuestRewards(Q){
+  const L=[`⭐ ${Q.exp} EXP`]; if(Q.gold) L.push(`🪙 ${Q.gold} guld`);
+  const itm=(b,r)=>`<span class="bkit" data-bkitem="${b}:${r}" style="color:${RAR[r].color}">${BASES[b].name} 🔍</span>`;
+  if(Q.classWpn) L.push(`<span style="color:${RAR[Q.classRar||'common'].color}">Vapen för din klass (Lv ${Q.classWpn})</span>`);
+  for(const [b,r] of Q.give||[]) L.push(itm(b,r));
+  if(Q.choose) L.push('Välj en av: '+Q.choose.map(b=>itm(b,Q.rarity)).join(', '));
+  for(const [b,n] of Q.cons||[]) L.push(`${n} × ${CONS[b].name}`);
+  return L.join(' · ');
+}
+function dbQuestsFor(t){ return QUEST_ORDER.filter(id=>QUESTS[id].goals[t]); }
+function dbHTML(tab, q){
+  q=(q||'').toLowerCase(); const hit=s=>!q || s.toLowerCase().includes(q); let h='';
+  if(tab==='quest'){
+    for(const C of QUEST_CHAINS){ const ids=chainQuests(C.npc), N=NPCS[C.npc]; if(!ids.length) continue;
+      const rows=ids.filter(id=>{ const Q=QUESTS[id]; return hit(Q.name+' '+N.name+' '+Q.text+' '+Object.keys(Q.goals).map(t=>goalName(t,Q.goals[t])).join(' ')); });
+      if(!rows.length) continue;
+      h+=`<h3>${N.name} <small>· ${MAPS[N.map].name} · ${C.name}</small></h3>`;
+      for(const id of rows){ const Q=QUESTS[id];
+        h+=`<div class="dbrow"><b>${Q.name}</b> <small>${Q.lvl?`Level ${Q.lvl}`:''}${Q.prev?`${Q.lvl?' · ':''}efter "${QUESTS[Q.prev].name}"`:''}${Q.needItem?` · startas av ${CONS[Q.needItem].name}`:''}</small>
+          <div class="dbg">🎯 ${Object.entries(Q.goals).map(([t,n])=>MOBS[t]?`Döda ${n} ${MOBS[t].name}`:goalName(t,n)).join(' · ')}</div>
+          <div class="dbr">🎁 ${dbQuestRewards(Q)}</div></div>`; }
+    }
+  } else if(tab==='map'){
+    for(const [sid,M] of Object.entries(MAPS)){ const id=+sid, sp=dbMapSpawns(id), [lo,hi]=mapLv(id);
+      if(!hit(M.name+' '+Object.keys(sp).map(t=>MOBS[t].name).join(' '))) continue;
+      h+=`<h3>${M.name} <small>· ${M.town?'säker by':`level ${lo}${hi>lo?'–'+hi:''}`}</small></h3><div class="dbrow">`;
+      if(Object.keys(sp).length){ h+=`<div class="dbmobs">${Object.entries(sp).map(([t,n])=>`<span><canvas data-dbmob="${t}" width="84" height="64"></canvas><b>${MOBS[t].name}</b><small>Lv ${MOBS[t].lvl} · ${n} st på kartan</small></span>`).join('')}</div>`;
+        h+=`<div class="dbg">♻️ Var 10:e sekund, om minst 3 är döda, återuppstår de med 75 % chans. ✦ 1 % chans att ett monster blir silver.</div>`; }
+      if(M.ape) h+=`<div class="dbg">🦍 <b>Stenappa</b>: varje minut 10 % chans att den dyker upp på den översta plattformen (bara en åt gången).</div>`;
+      const npcs=npcsOn(id); if(npcs.length) h+=`<div class="dbg">🧑 ${npcs.map(k=>NPCS[k].name).join(', ')}</div>`;
+      h+=`<div class="dbg">🌀 Portaler till: ${[...new Set(M.portals.map(o=>MAPS[o.to].name))].join(', ')}</div></div>`;
+    }
+  } else {
+    for(const t of MOB_ORDER){ const d=MOBS[t];
+      const maps=Object.keys(MAPS).filter(id=>dbMapSpawns(+id)[t]||(t==='stenappa'&&MAPS[id].ape)).map(id=>MAPS[id].name), qs=dbQuestsFor(t);
+      if(!hit(d.name+' '+maps.join(' ')+' '+mobDropList(t).map(x=>x.name).join(' '))) continue;
+      h+=`<div class="dbrow dbmon"><canvas data-dbmob="${t}" width="110" height="84"></canvas><div>
+        <b>${d.name}</b> <small>Level ${d.lvl} · ❤️ ${d.hp} HP · ⭐ ${d.exp} EXP · 🪙 ${d.gold} · 💥 ${d.touch} vid beröring</small>
+        <div class="dbg">📍 ${maps.join(', ')||'–'}${d.book?` · 📖 Monsterbok: ${d.book.join(' / ')} dödade`:''}</div>
+        ${MOB_SPECIAL[t]?`<div class="dbg">${MOB_SPECIAL[t]}</div>`:''}
+        <div class="dbr">🎒 ${mobDropList(t).map(x=>`<span class="${x.it?'bkit':''}" ${x.it?`data-bkitem="${x.it.join(':')}"`:''} style="color:${x.col||'inherit'}">${x.name}${x.it?' 🔍':''} <small>(${x.info.replace(/<[^>]+>/g,'')})</small></span>`).join(' · ')}</div>
+        ${qs.length?`<div class="dbg">📜 Ingår i: ${qs.map(id=>`${QUESTS[id].name} (${QUESTS[id].goals[t]} st, ${NPCS[QUESTS[id].npc].name})`).join(' · ')}</div>`:''}
+      </div></div>`;
+    }
+  }
+  return h || '<div class="hintx" style="padding:14px">Inget matchar sökningen.</div>';
+}
+function openDatabase(){
+  let el=$('#dbx'); if(!el){ el=document.createElement('div'); el.id='dbx'; document.body.appendChild(el); }
+  const st={tab:'quest', q:''};
+  el.innerHTML=`<div class="dbcard"><div class="dbhead"><b>📚 Databas</b>
+      <div class="tabs"><button class="tab on" data-dbt="quest">📜 Uppdrag</button><button class="tab" data-dbt="map">🗺️ Kartor</button><button class="tab" data-dbt="mob">👾 Monster</button></div>
+      <input class="inp" id="dbq" placeholder="Sök…" autocomplete="off"><button class="x" id="dbClose">✕</button></div><div class="dbbody" id="dbBody"></div></div>`;
+  const draw=()=>{ $('#dbBody').innerHTML=dbHTML(st.tab,st.q); $$('#dbBody [data-dbmob]').forEach(cv=>drawMobPortrait(cv,cv.dataset.dbmob,false,1.6)); };
+  el.onclick=e=>{ const t=e.target.closest('[data-dbt]'); if(t){ st.tab=t.dataset.dbt; $$('#dbx [data-dbt]').forEach(b=>b.classList.toggle('on',b===t)); $('#dbBody').scrollTop=0; draw(); }
+    if(e.target.id==='dbClose' || e.target===el){ el.remove(); hideTip(); } };
+  $('#dbq').oninput=e=>{ st.q=e.target.value; draw(); };
+  $('#dbq').onkeydown=e=>e.stopPropagation();
+  draw();
+}
 
 /* ---------- NPC:er & uppdrag ---------- */
 const NPCS = {
@@ -6130,6 +6312,7 @@ const QUESTS = {
 };
 function questGive(Q){ return [...(Q.classWpn?[[CLASSES[G.ch.cls].wtype+Q.classWpn,Q.classRar||'common']]:[]), ...(Q.give||[])]; }
 const fixedTxt = f => { const v=Object.values(f); return v.every(x=>x===v[0]) ? `+${v[0]} Str, Int och Agi` : Object.entries(f).filter(e=>e[1]).map(([k,v])=>`+${v} ${STATN[k]}`).join(', '); };
+for(const id in QUESTS) QUESTS[id].exp=Math.round(QUESTS[id].exp*1.2);   // uppdrag ger 20 % mer EXP
 const QUEST_ORDER = ['bar1','bar2','bar3','bar4','bar5','skr0','skr1','skr2','skr3','jakt1','jakt2','jakt3','jakt4','pot1','pot2','pot3','pot4','pot5','vild1','vild2','vild3','vildlw','vild4','bo1','bo2','bo3','saga0','saga1','saga2','saga3','gunnar0','gunnar1','gunnar2','gunnar3','sten1','drak1','drak2','drak3','band1','band2'];
 const QUEST_CHAINS = [ {npc:'berit', name:'Bärplockarens besvär'}, {npc:'sigvard', name:'Skrivarkonsten'}, {npc:'holger', name:'Vaktarens jakt'}, {npc:'vera', name:'Örtkvinnans brygder'}, {npc:'ylva', name:'Vargarnas spår'}, {npc:'bo', name:'Björnjakten'}, {npc:'saga', name:'Skrivarmästarens prov'}, {npc:'gunnar', name:'Garvarens lära'}, {npc:'dagny', name:'Drakvaktens prov'}, {npc:'kerstin', name:'Bandittornet'} ];
 const chainQuests = npc => QUEST_ORDER.filter(id=>QUESTS[id].npc===npc);
@@ -6315,19 +6498,32 @@ function drawMobPortrait(cnv, type, silhouette, sc){
 function mobDropList(t){
   const d=MOBS[t], L=[], gi=b=>iconURL({base:b,rarity:'common'}), ci=b=>iconURL({base:b});
   if(d.mat) L.push({ic:ci(d.mat), name:CONS[d.mat].name, info:`Material · ${pct(d.matP*100)}%`});
-  for(const [m,p] of d.extra||[]) L.push({ic:ci(m), name:CONS[m].name, info:`Material · ${pct(p*100)}%`});
+  for(const [m,p] of d.extra||[]) L.push({ic:ci(m), name:CONS[m].name, col:CONS[m].qitem?'#ffd25a':null, info:`${CONS[m].qitem?'Uppdragsföremål':'Material'} · ${pct(p*100)}%`});
   const [sj,sp] = d.lvl<=5 ? ['sjal1',.2] : d.lvl<=15 ? ['sjal2',.1] : ['sjal3',.05];
   L.push({ic:ci(sj), name:CONS[sj].name, info:`Själ · ${pct(sp*100)}%`});
   const per=d.pool.length?d.drop*100/d.pool.length:0;
   for(const id of d.pool) L.push({ic:gi(id), name:BASES[id].name, info:`Lv ${BASES[id].req} · ${pct(per)}%`});
-  if(d.stoneWpn) L.push({ic:gi('stYxa'), name:'Stenvapen för din klass', info:`Lv ${BASES.stYxa.req} · upp till <b style="color:${RAR.rare.color}">Rare</b> · ${pct(d.drop*100)}%`});
-  for(const [b,p,r] of d.loot||[]) L.push({ic:iconURL({base:b,rarity:r}), name:BASES[b].name, col:RAR[r].color, info:`${RAR[r].name} · ${pct(p*100)}%`});
-  if(d.ring) L.push({ic:iconURL({base:d.ring,rarity:'epic'}), name:BASES[d.ring].name, col:RAR.epic.color, info:`Epic · ${pct(d.ringP*100)}%`});
-  if(d.apeLoot) L.push({ic:gi(STONE_GEAR[0]), name:'Stenutrustning (Lv 18)', col:RAR.uncommon.color, info:`alltid · minst Uncommon (10% Rare, 3% Epic)`});
+  if(d.stoneWpn) L.push({ic:gi('stYxa'), it:['stYxa','rare'], name:'Stenvapen för din klass', info:`Lv ${BASES.stYxa.req} · upp till <b style="color:${RAR.rare.color}">Rare</b> · ${pct(d.drop*100)}%`});
+  for(const [b,p,r] of d.loot||[]) L.push({ic:iconURL({base:b,rarity:r}), it:[b,r], name:BASES[b].name, col:RAR[r].color, info:`${RAR[r].name} · ${pct(p*100)}%`});
+  if(d.ring) L.push({ic:iconURL({base:d.ring,rarity:'epic'}), it:[d.ring,'epic'], name:BASES[d.ring].name, col:RAR.epic.color, info:`Epic · ${pct(d.ringP*100)}%`});
+  if(d.apeLoot) L.push({ic:gi(STONE_GEAR[0]), it:[STONE_GEAR[0],'rare'], name:'Stenutrustning (Lv 18)', col:RAR.uncommon.color, info:`alltid · minst Uncommon (10% Rare, 3% Epic)`});
   L.push({ic:ci('hpPot'), name:CONS.hpPot.name, info:`${d.lvl>=7?3:5}%`});
   if(d.lvl>=7) L.push({ic:ci('hpPot2'), name:CONS.hpPot2.name, info:'3%'});
   return L;
 }
+/* Exempel på ett föremål ur monsterboken eller databasen (stats som slumpas visas som ett exempel) */
+function bookItemHtml(key){
+  const [b,r]=key.split(':'), B=BASES[b]; if(!B) return '';
+  const it=makeItem(b,r), sig=x=>[x.str,x.int,x.agi,x.atkMin,x.atkMax,x.armor].join(), rnd=[0,1,2,3,4].some(()=>sig(makeItem(b,r))!==sig(it));
+  const save=G.ch; if(!G.ch) G.ch={level:1, cls:'skog', eq:{}};
+  let h; try{ h=itemHtml(it,'book'); } finally { G.ch=save; }
+  return h+(rnd?`<div style="color:#ffcf6a;font-size:11.5px;margin-top:4px">Exempel – stats slumpas när föremålet droppar.</div>`:'');
+}
+document.addEventListener('click',e=>{
+  const el=e.target.closest && e.target.closest('[data-bkitem]');
+  if(el){ const r=el.getBoundingClientRect(); showTip(bookItemHtml(el.dataset.bkitem), r.left, r.bottom); e.stopPropagation(); return; }
+  if(!e.target.closest || !e.target.closest('#tip')) if(tip && tip.dataset.bk) { hideTip(); delete tip.dataset.bk; }
+}, true);
 function renderBook(){
   const ch=G.ch, pts=bookPoints(ch), bb=bookStatBonus(ch), sk=tv('k_drop');
   let h=`<div class="bookhead"><div><b style="font-size:15px">Monsterbokspoäng: ${pts}</b><div style="color:var(--muted);font-size:12.5px">Passiv bonus just nu: <b style="color:#7dff8a">+${bb}</b> på Str, Int och Agi</div></div>
@@ -6343,7 +6539,7 @@ function renderBook(){
       const per=d.pool.length?d.drop*100/d.pool.length:0;
       h+=`<div class="binfo"><div>❤️ HP <b>${d.hp}</b> · ⭐ EXP <b>${d.exp}</b> · 🪙 Guld <b>${d.gold}</b></div><div>💥 Skada vid beröring: <b>${d.touch}</b></div>
         <div style="margin-top:4px"><b>Drops</b>${d.pool.length?` (utrustning ${pct(d.drop*100)}% chans totalt${d.maxRar?`, upp till <span style="color:${RAR[d.maxRar].color}">${RAR[d.maxRar].name}</span>`:''})`:''}:</div>
-        ${mobDropList(t).map(x=>`<div class="bdrop"><img src="${x.ic}" alt=""> <span style="color:${x.col||'inherit'};float:none">${x.name}</span> <span>${x.info}</span></div>`).join('')}
+        ${mobDropList(t).map(x=>`<div class="bdrop ${x.it?'bkit':''}" ${x.it?`data-bkitem="${x.it.join(':')}"`:''}><img src="${x.ic}" alt=""> <span style="color:${x.col||'inherit'};float:none">${x.name}${x.it?' 🔍':''}</span> <span>${x.info}</span></div>`).join('')}
         <div class="bdrop">🪙 ${d.gold} guld <span>100%</span></div>
         ${sk?`<div style="color:#9fb1cb;font-size:11.5px">Skattjägare ger dig +${sk}% större dropchans.</div>`:''}</div>`;
     } else h+=`<div class="binfo lockedtxt">🔒 Döda ${BS[0]-k} till för att se stats och drops.</div>`;
@@ -6366,6 +6562,7 @@ function renderMenu(){
     <button class="btn" data-m="settings">⚙️ Inställningar</button>
     <button class="btn" data-m="fs">⛶ Fullskärm</button>
     <button class="btn sec" data-m="gfx">🎨 Grafik: ${gfxLabel()}</button>
+    <button class="btn sec" data-m="db">📚 Databas</button>
     <button class="btn sec" data-m="switch">👥 Byt gubbe</button>
     <button class="btn sec" data-m="logout">🚪 Logga ut</button>
     <button class="btn sec ${canInstall()?'':'hidden'}" data-m="install" data-install="1">📲 Installera som app</button>
@@ -6377,6 +6574,7 @@ $('#menuBody').addEventListener('click',async e=>{
   if(m==='save'){ await saveNow(); renderMenu(); toast(saveStateTxt); }
   else if(m==='fs') toggleFS();
   else if(m==='settings'){ closeWin('menu'); openWin('settings'); }
+  else if(m==='db'){ closeWin('menu'); openDatabase(); }
   else if(m==='gfx'){ setGfx(PERF.mode==='auto'?'high':PERF.mode==='high'?'low':'auto'); renderMenu(); toast(`🎨 Grafik: <b>${gfxLabel()}</b>`); }
   else if(m==='switch'){ await leaveGame(); showSelect(); }
   else if(m==='logout'){ await leaveGame(); G.acct=null; showLogin(); }
@@ -6418,6 +6616,7 @@ async function toggleFS(){
 /* =====================================================================
    SKÄRMAR: inloggning, gubbval, skapa gubbe
    ===================================================================== */
+document.addEventListener('click',e=>{ if(e.target.id==='btnDb') openDatabase(); });
 function showScreen(html){ $('#hint').classList.add('hidden'); $('#toast').innerHTML=''; const s=$('#screen'); s.innerHTML=html; s.classList.remove('hidden'); }
 function hideScreen(){ $('#screen').classList.add('hidden'); }
 function showLogin(){
@@ -6430,6 +6629,7 @@ function showLogin(){
     <label for="inName">Ditt namn (kontonamn)</label>
     <input id="inName" class="inp" maxlength="20" placeholder="Skriv ditt namn" autocomplete="off" value="${esc(last)}">
     <button class="btn gold wide" id="btnLogin">Spela</button>
+    <button class="btn sec wide" id="btnDb" style="margin-top:8px">📚 Databas – uppdrag, kartor och monster</button>
     <div class="savemode" id="saveMode"></div>
     <button class="link" id="btnSupa">⚙ Supabase-inställningar</button>
     <div id="supaBox" class="hidden">
@@ -6474,7 +6674,7 @@ function showSelect(){
     <div class="rowb"><h2>Hej, ${esc(a.name)}!</h2><span class="pill">🌍 Kontopoäng: ${acctPoints(a)}</span></div>
     <div style="color:var(--muted);font-size:13px">${a.chars.length?'Välj en gubbe att spela med.':'Du har inga gubbar än – skapa din första!'}</div>
     <div class="chars">${a.chars.map((c,i)=>`<div class="ccard" data-ci="${i}"><button class="del" data-del="${i}" title="Ta bort">🗑</button><button class="edit" data-edit="${i}" title="Ändra utseende">✏️</button><canvas width="200" height="220"></canvas><div class="cn">${esc(c.name)}</div><div class="cl">${CLASSES[c.cls].name} · Lv. ${c.level}</div></div>`).join('')}</div>
-    <div class="row"><button class="btn gold" id="btnNew">+ Ny gubbe</button><button class="btn sec" id="btnOut">Byt konto</button></div>
+    <div class="row"><button class="btn gold" id="btnNew">+ Ny gubbe</button><button class="btn sec" id="btnDb">📚 Databas</button><button class="btn sec" id="btnOut">Byt konto</button></div>
   </div>`);
   $$('.ccard').forEach(el=>{ const c=a.chars[+el.dataset.ci]; drawPortrait(el.querySelector('canvas'),c.cls,c.eq,2.6,c.app); });
   $('#screen').onclick=e=>{
@@ -6771,7 +6971,7 @@ function netOnData(peer, msg){
       case 'left':  { const n=nameOf(msg.id); delete G.others[msg.id]; log(`👥 ${esc(n)} lämnade partyt.`,'#9fe0ff'); return refreshParty(); }
       case 'mon':   return applyMonSnap(msg.m);
       case 'heal':  return healPlayer(+msg.v||0);
-      case 'mfire': G.mprojs.push({x:msg.x, y:msg.y, vx:msg.vx, vy:msg.vy, d:msg.d, life:3.5}); return;
+      case 'mfire': G.mprojs.push({x:msg.x, y:msg.y, vx:msg.vx, vy:msg.vy, d:msg.d, life:msg.life||3.5, k:msg.k, g:msg.g, gy:msg.gy, delay:msg.dl, r:msg.r}); return;
       case 'refl':  if(G.p && !G.p.dead){ G.fx.push({type:'text',x:G.p.x,y:G.p.y-G.p.h-30,text:'Studs!',color:'#d8d0c0',t:0,dur:.7,size:12}); hurtPlayer(+msg.v||0, 1, {noKb:true}); } return;
       case 'dmg':   { if(msg.by===Net.myId && msg.k!=='root' && msg.k!=='burn') return; const m=G.monById[msg.id]; if(m && !m.dead){ addNum(m.x, m.y-m.d.h-6, msg.v, msg.k||'dmg', m); m.showHp=4; sparks(m.x, m.y-m.d.h/2, msg.k==='burn'?'#ff9a3a':'#fff3b0', msg.k==='burn'?2:4); } return; }
       case 'kill':  { const m=G.monById[msg.id]; if(m && !m.dead){ m.dead=true; m.dieT=0.6; } return; }
