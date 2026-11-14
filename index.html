@@ -291,6 +291,23 @@ body.touch #win-bag .detail .btn.sm{padding:4px 8px;font-size:12px}
 .wmmob canvas{width:84px;height:64px}
 .wmmob small{color:var(--muted);font-size:11px}
 .bkit{cursor:pointer;border-radius:5px}
+.soulbox{margin:6px 0 2px;padding:5px 7px;border-radius:7px;background:rgba(120,70,190,.18);border:1px solid rgba(201,160,255,.35);font-size:11.5px;color:#e6d6ff;line-height:1.45}
+.soulbox .sbal{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.soulbox .sbal span{display:inline-flex;align-items:center;gap:2px;font-weight:800;opacity:.7}.soulbox .sbal span.cur{opacity:1;color:#fff;text-shadow:0 0 6px #c9a0ff}
+.soulbox img{width:18px;height:18px}.soulbox .bad{color:#ff9b9b}
+/* effekt när en scroll eller själ läggs på ett föremål */
+.ifx{position:fixed;pointer-events:none;z-index:200;width:0;height:0}
+.ifx .ring{position:absolute;left:0;top:0;border-radius:50%;border:3px solid var(--c);box-shadow:0 0 14px var(--c),inset 0 0 10px var(--c);transform:translate(-50%,-50%) scale(.2);opacity:1;width:90px;height:90px;animation:ifxRing .8s ease-out forwards}
+.ifx .ring.r2{animation-delay:.12s;border-width:2px}
+.ifx .flash{position:absolute;left:0;top:0;width:110px;height:110px;border-radius:50%;transform:translate(-50%,-50%);background:radial-gradient(circle,var(--c) 0%,transparent 65%);opacity:0;animation:ifxFlash .7s ease-out forwards}
+.ifx .sp{position:absolute;left:0;top:0;width:7px;height:7px;border-radius:50%;background:var(--c2);box-shadow:0 0 8px var(--c);animation:ifxSp 1s ease-out forwards}
+.ifx .txt{position:absolute;left:0;top:-30px;transform:translate(-50%,0);white-space:nowrap;font-weight:900;font-size:20px;color:var(--c2);text-shadow:0 0 10px var(--c),0 2px 0 #000,0 0 3px #000;animation:ifxTxt 1.4s ease-out forwards}
+.ifx.fail .ring{border-style:dashed}
+@keyframes ifxRing{to{transform:translate(-50%,-50%) scale(1.6);opacity:0}}
+@keyframes ifxFlash{25%{opacity:.95}100%{opacity:0}}
+@keyframes ifxSp{0%{transform:translate(-50%,-50%);opacity:1}100%{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy)));opacity:0}}
+@keyframes ifxTxt{0%{transform:translate(-50%,10px) scale(.5);opacity:0}15%{transform:translate(-50%,0) scale(1.15);opacity:1}30%{transform:translate(-50%,0) scale(1)}75%{opacity:1}100%{transform:translate(-50%,-34px);opacity:0}}
+.slot.ifxglow{animation:ifxGlow 1s ease-out}
+@keyframes ifxGlow{0%{box-shadow:0 0 0 0 var(--c),0 0 26px 8px var(--c);filter:brightness(2)}100%{box-shadow:0 0 0 0 transparent;filter:none}}
 .btn.purple{background:linear-gradient(#8a5ac8,#5a2a8a);border-color:#c9a0ff;color:#fff}
 #arenaHud{position:fixed;top:8px;left:50%;transform:translateX(-50%);z-index:12;text-align:center;pointer-events:none;background:rgba(20,10,4,.72);border:2px solid #c8963a;border-radius:12px;padding:4px 18px 8px;min-width:240px}
 #arenaHud .ahs{font:700 13px system-ui;color:#ffe6a0}
@@ -442,6 +459,7 @@ body.touch.portrait #rotate{display:flex}
 
 /* ---------- Touch ---------- */
 #touchUI{position:fixed;inset:0;pointer-events:none;z-index:15}
+#hud,#touchUI{left:env(safe-area-inset-left,0px);right:env(safe-area-inset-right,0px)}
 #joyZone{position:absolute;left:0;top:96px;bottom:16px;width:42%;pointer-events:auto;touch-action:none}
 #joyBase{position:absolute;left:110px;bottom:100px;width:124px;height:124px;margin:0 0 -62px -62px;border-radius:50%;background:rgba(255,255,255,.10);border:2px solid rgba(255,255,255,.30);pointer-events:none;opacity:.55}
 #joyBase.on{opacity:1}
@@ -643,6 +661,10 @@ body.touch .dk{display:none}
    Fyll i din projekt-URL och din anon/publishable key.
    Lämnas de tomma kan de anges i spelet (⚙ på startskärmen),
    annars sparas allt bara lokalt i webbläsaren. */
+/* TURN-server (behövs när spelare sitter på mobilnät/olika nätverk, t.ex. iPhone ↔ Android).
+   Klistra in din "TURN credentials"-länk från Metered (Open Relay, gratis 20 GB/mån), t.ex.
+   'https://DITTNAMN.metered.live/api/v1/turn/credentials?apiKey=DINNYCKEL'. Tom = bara STUN (fungerar oftast bara på samma/vanliga hemnätverk). */
+const TURN_API = '';
 const SUPABASE_URL   = 'https://ihordfvmtouxfsmmboca.supabase.co';
 const SUPABASE_KEY   = 'sb_publishable_cv4-17tzpJjegFh8aQSYUA_cyTaoNh5';
 const SUPABASE_TABLE = 'jaktmarken_accounts';
@@ -5991,9 +6013,12 @@ function renderBagDetail(){
     acts+=`<button class="btn sm" data-act="drop">⬇ Släpp på marken</button>`;
     acts+=`<button class="btn sm red" data-act="trash">${G.ui.trash===it.uid?'Säker? Tryck igen':'Släng'}</button>`;
   } else acts+=`<button class="btn sm" data-act="unequip">Ta av</button>`;
-  { const c=soulCost(it), ok=consCount(c.type)>=c.cnt && G.ch.gold>=c.gold;
-    acts+=`<button class="btn sm purple" data-act="soul" ${ok?'':'disabled'} title="${CONS[c.type].name}: du har ${consCount(c.type)}">🔮 ${it.soul?`Uppgradera själ → ${c.n}`:'Ge själ'} · ${c.cnt} × ${CONS[c.type].name} · ${c.gold} 🪙 · ${fmtSv(Math.round(c.chance*1000)/10)}%</button>`; }
-  box.innerHTML=`<div class="dinfo">${itemHtml(it,f.where)}${f.where==='inv'&&G.ch.level<it.req?`<div class="hintx" style="margin-top:4px">Du behöver level ${it.req} för att använda detta.</div>`:''}</div><div class="acts">${acts}</div>`;
+  let soulBox='';
+  { const c=soulCost(it), have=consCount(c.type), ok=have>=c.cnt && G.ch.gold>=c.gold;
+    acts+=`<button class="btn sm purple" data-act="soul" ${ok?'':'disabled'}>🔮 ${it.soul?`Uppgradera själ → nivå ${c.n}`:'Ge själ'}</button>`;
+    const sal=['sjal1','sjal2','sjal3'].map(t=>`<span class="${t===c.type?'cur':''}"><img src="${iconURL({base:t})}" alt="">${consCount(t)}</span>`).join('');
+    soulBox=`<div class="soulbox"><div class="sbal">Dina själar: ${sal}</div><div>Nästa nivå (${c.n}) kostar <b class="${have<c.cnt?'bad':''}">${c.cnt} × ${CONS[c.type].name}</b> – du har ${have}${have>=c.cnt?`, <b>${have-c.cnt}</b> kvar efteråt`:''} · <b class="${G.ch.gold<c.gold?'bad':''}">${c.gold} 🪙</b> · chans <b>${fmtSv(Math.round(c.chance*1000)/10)}%</b></div></div>`; }
+  box.innerHTML=`<div class="dinfo">${itemHtml(it,f.where)}${f.where==='inv'&&G.ch.level<it.req?`<div class="hintx" style="margin-top:4px">Du behöver level ${it.req} för att använda detta.</div>`:''}</div>${soulBox}<div class="acts">${acts}</div>`;
 }
 /* Dra i väskan (som i World of Warcraft):
    scroll → föremål · utrustning → rätt plats på gubben · utrustat föremål → väskan · föremål → annan ruta i väskan */
@@ -6093,6 +6118,21 @@ function scrollFits(sc, it){
   if((it.scrolls||0) >= SCROLL_SLOTS) return false;
   return CONS[sc.base].target==='weapon' ? it.slot==='vapen' : it.slot!=='vapen';
 }
+/* Visuell effekt på föremålet i väskan (eller över gubben om väskan är stängd): ring, blixt, gnistor och text */
+function itemFx(uid, ok, kind, label){
+  const C = !ok ? ['#ff5a5a','#ffb0b0'] : kind==='soul' ? ['#b070ff','#f0dcff'] : ['#ffd23f','#fff6c0'];
+  setTimeout(()=>{
+    let el=document.querySelector(`#win-bag:not(.hidden) .slot[data-uid="${uid}"]`), x, y;
+    if(el){ const r=el.getBoundingClientRect(); x=r.left+r.width/2; y=r.top+r.height/2; el.style.setProperty('--c',C[0]); el.classList.remove('ifxglow'); void el.offsetWidth; el.classList.add('ifxglow'); }
+    else { x=innerWidth/2; y=innerHeight*.42; }
+    const d=document.createElement('div'); d.className='ifx'+(ok?'':' fail'); d.style.left=x+'px'; d.style.top=y+'px'; d.style.setProperty('--c',C[0]); d.style.setProperty('--c2',C[1]);
+    let h=`<div class="flash"></div><div class="ring"></div>${ok?'<div class="ring r2"></div>':''}`;
+    const n=ok?(kind==='soul'?26:18):10;
+    for(let i=0;i<n;i++){ const a=Math.random()*Math.PI*2, r=ok?rand(40,95):rand(20,45); h+=`<div class="sp" style="--dx:${Math.cos(a)*r}px;--dy:${Math.sin(a)*r-(ok?20:-10)}px;animation-delay:${rand(0,.15)}s;width:${rand(4,8)}px;height:${rand(4,8)}px"></div>`; }
+    h+=`<div class="txt">${label}</div>`; d.innerHTML=h; document.body.appendChild(d); setTimeout(()=>d.remove(),1500);
+  },30);
+  const p=G.p; if(p && ok) for(let i=0;i<(kind==='soul'?30:20);i++){ const a=Math.random()*Math.PI*2; particle(p.x+Math.cos(a)*24, p.y-34+Math.sin(a)*24, pick([C[0],C[1],'#fff']), Math.cos(a)*rand(60,140), Math.sin(a)*rand(60,140)-80, .9, rand(2.5,4.5), 40); }
+}
 function applyScroll(su, iu){
   const ch=G.ch, sc=ch.inv.find(x=>x.uid===su), f=findItem(iu); if(!sc || !f) return;
   const it=f.it, c=CONS[sc.base];
@@ -6111,8 +6151,9 @@ function applyScroll(su, iu){
     const what = c.stat==='atk' ? `+${c.amt} attack` : `+${c.amt} ${STATN[c.stat]}`;
     toast(`✨ <b style="color:#7dff8a">Lyckades!</b> ${esc(itemName(it))} fick ${what}. (${left} platser kvar)`);
     log(`✨ Scrollen lyckades: ${esc(itemName(it))} fick ${what}. ${left} uppgraderingsplatser kvar.`,'#7dff8a');
-    if(p) for(let i=0;i<20;i++) particle(p.x+rand(-20,20),p.y-rand(0,60),pick(['#7dff8a','#ffe066','#fff']),rand(-80,80),rand(-160,-40),.8,3,60);
+    itemFx(it.uid, true, 'scroll', `✨ ${what}`); SFX.level&&SFX.level();
   } else {
+    itemFx(it.uid, false, 'scroll', '💥 Misslyckades'); SFX.hurt&&SFX.hurt();
     toast(`💥 <b style="color:#ff8a8a">Misslyckades.</b> Uppgraderingsplatsen förbrukades. (${left} kvar)`);
     log(`💥 Scrollen misslyckades på ${esc(itemName(it))}. ${left} uppgraderingsplatser kvar.`,'#ff9b9b');
   }
@@ -6388,8 +6429,8 @@ function soulUp(uid){
     for(const k of SOUL_KEYS(it)){ const b0=it.sbase[k]||0; if(b0>0){ const d=Math.max(1,Math.round(b0*.1)); it[k]=(it[k]||0)+d; it.soulAdd[k]=(it.soulAdd[k]||0)+d; } }
     it.soul=c.n; SFX.level&&SFX.level();
     log(`🔮 <b style="color:${RAR[it.rarity].color}">${esc(it.name)}</b> fick själ nivå <b>${c.n}</b>!`,'#c9a0ff'); toast(`🔮 Själ nivå <b>${c.n}</b>!`);
-    if(p) for(let i=0;i<26;i++) particle(p.x+rand(-20,20),p.y-rand(10,70),pick(['#c9a0ff','#8fe8ff','#ffffff','#e0b0ff']),rand(-70,70),rand(-160,-30),.9,3.5,-20);
-  } else { SFX.hurt&&SFX.hurt(); log(`💨 Själen flydde – uppgraderingen till nivå ${c.n} misslyckades.`,'#ff9b9b'); toast('💨 Uppgraderingen misslyckades.'); }
+    itemFx(it.uid, true, 'soul', `🔮 Själ nivå ${c.n}!`);
+  } else { SFX.hurt&&SFX.hurt(); itemFx(it.uid, false, 'soul', '💨 Själen flydde'); log(`💨 Själen flydde – uppgraderingen till nivå ${c.n} misslyckades.`,'#ff9b9b'); toast('💨 Uppgraderingen misslyckades.'); }
   if(f.eq) recalc();
   markDirty(true); refreshOpen();
 }
@@ -7392,7 +7433,16 @@ async function leaveGame(){
    ===================================================================== */
 const NET_VER = 3, PARTY_MAX = 4;
 const TESTNET = /[?&]testnet=1/.test(location.search);   // endast för lokala tester
-const rtcConf = () => ({iceServers: TESTNET ? [] : [{urls:['stun:stun.l.google.com:19302','stun:stun1.l.google.com:19302']}]});
+const STUN = [{urls:['stun:stun.l.google.com:19302','stun:stun1.l.google.com:19302']}];
+let ICE_CACHE=null, ICE_T=0;
+async function rtcConf(){
+  if(TESTNET) return {iceServers:[]};
+  if(TURN_API && (!ICE_CACHE || Date.now()-ICE_T>30*60e3)){
+    try{ const ac=new AbortController(), t=setTimeout(()=>ac.abort(),5000); const r=await fetch(TURN_API,{signal:ac.signal}); clearTimeout(t);
+      const j=await r.json(); const L=Array.isArray(j)?j:(j.iceServers||[]); if(L.length){ ICE_CACHE=L; ICE_T=Date.now(); } }catch(e){ console.warn('TURN',e); }
+  }
+  return {iceServers: STUN.concat(ICE_CACHE||[])};
+}
 
 const SigSupa = {
   client:null, lobby:null, lobbyReady:null, inbox:null, onMsg:null, onHosts:null, hosts:{},
@@ -7619,8 +7669,8 @@ function guestEnterMap(to, x, y, announce){
 }
 
 // --- Uppkoppling (WebRTC) ---
-function iceDone(pc){ return new Promise(res=>{ if(pc.iceGatheringState==='complete') return res(); const t=setTimeout(res,2500); pc.addEventListener('icegatheringstatechange',()=>{ if(pc.iceGatheringState==='complete'){ clearTimeout(t); res(); } }); }); }
-function dcOpen(dc,ms){ return new Promise((res,rej)=>{ if(dc.readyState==='open') return res(); const t=setTimeout(()=>rej(new Error('Ingen direktkontakt (P2P) kunde skapas – prova ett annat nätverk.')),ms); dc.addEventListener('open',()=>{ clearTimeout(t); res(); }); }); }
+function iceDone(pc){ return new Promise(res=>{ if(pc.iceGatheringState==='complete') return res(); const t=setTimeout(res,TURN_API?4500:2500); pc.addEventListener('icegatheringstatechange',()=>{ if(pc.iceGatheringState==='complete'){ clearTimeout(t); res(); } }); }); }
+function dcOpen(dc,ms){ return new Promise((res,rej)=>{ if(dc.readyState==='open') return res(); const t=setTimeout(()=>rej(new Error(TURN_API?'Ingen kontakt kunde skapas – prova igen eller byt nätverk.':'Ingen direktkontakt (P2P) kunde skapas. Mobilnät kräver en TURN-server – prova att båda sitter på samma wifi.')),ms); dc.addEventListener('open',()=>{ clearTimeout(t); res(); }); }); }
 function sigWait(from,ms){ return new Promise((res,rej)=>{ const t=setTimeout(()=>{ delete Net.waiters[from]; rej(new Error('Inget svar från värden.')); },ms); Net.waiters[from]={resolve:m=>{ clearTimeout(t); res(m); }}; }); }
 function netAddPeer(id, pc){
   const peer={id, pc, dc:null, ready:false}; Net.peers[id]=peer;
@@ -7641,7 +7691,7 @@ async function onSignal(msg){
   const why = msg.v!==NET_VER ? 'Ni har olika versioner av spelet – ladda om sidan (Ctrl+F5).' : !Net.open||G.mode!=='game' ? 'Partyt är stängt för nya spelare.' : total>=PARTY_MAX ? 'Partyt är fullt.' : '';
   if(why){ Sig.send(msg.from,{t:'reject', from:Net.myId, reason:why}).catch(()=>{}); return; }
   try{
-    const pc=new RTCPeerConnection(rtcConf()), peer=netAddPeer(msg.from, pc); peer.name=msg.name;
+    const pc=new RTCPeerConnection(await rtcConf()), peer=netAddPeer(msg.from, pc); peer.name=msg.name;
     pc.ondatachannel=e=>netBindDc(peer, e.channel);
     await pc.setRemoteDescription({type:'offer', sdp:msg.sdp});
     await pc.setLocalDescription(await pc.createAnswer()); await iceDone(pc);
@@ -7668,7 +7718,7 @@ async function netJoin(hostId){
   Net.role='guest'; Net.joining=true; Net.hostId=hostId; G.others={}; refreshParty();
   try{
     await Sig.ensureInbox();
-    const pc=new RTCPeerConnection(rtcConf()), dc=pc.createDataChannel('jm',{ordered:true});
+    const pc=new RTCPeerConnection(await rtcConf()), dc=pc.createDataChannel('jm',{ordered:true});
     const peer=netAddPeer(hostId, pc); netBindDc(peer, dc);
     await pc.setLocalDescription(await pc.createOffer()); await iceDone(pc);
     const wait=sigWait(hostId,15000);
