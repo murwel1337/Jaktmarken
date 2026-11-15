@@ -365,20 +365,20 @@ body.touch #arenaHud{top:auto;bottom:20px;padding:2px 12px 5px;min-width:190px}b
 .cskill .bprog{height:9px;margin:5px 0}
 .chint{color:var(--muted);font-size:11.5px;line-height:1.4}
 .cwrap{display:flex;gap:10px;align-items:flex-start}
-.clist{width:250px;max-height:min(46vh,360px);overflow:auto;background:#160f09;border:1px solid #4a3a28;border-radius:8px;padding:4px;touch-action:pan-y}
+.clist{width:250px;height:min(56vh,420px);overflow:auto;background:#160f09;border:1px solid #4a3a28;border-radius:8px;padding:4px;touch-action:pan-y}
 .crow{display:flex;align-items:center;gap:7px;padding:4px 6px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:700}
 .crow img{width:26px;height:26px;flex:none}
 .crow .cnm{flex:1;text-shadow:0 1px 1px #000}
 .crow .cn{font-size:11.5px;color:#e8dcc0;white-space:nowrap}
 .crow.sel{background:rgba(214,170,98,.22);outline:1px solid rgba(214,170,98,.6)}
 .crow.locked{opacity:.55}
-.cdet{width:300px;background:#160f09;border:1px solid #4a3a28;border-radius:8px;padding:8px 10px}
+.cdet{width:300px;height:min(56vh,420px);overflow:auto;box-sizing:border-box;background:#160f09;border:1px solid #4a3a28;border-radius:8px;padding:8px 10px;touch-action:pan-y}
 .cbig{width:46px;height:46px;margin-right:8px;flex:none}
 .cmat{display:flex;align-items:center;gap:7px;font-size:13px;padding:2px 0}
 .cmat img{width:24px;height:24px}
 .cmat span{flex:1}
 .cmat.miss b{color:#ff8a7a}
-@media (max-width:720px){.cwrap{flex-direction:column}.clist,.cdet{width:min(560px,86vw)}.clist{max-height:30vh}}
+@media (max-width:720px){.cwrap{flex-direction:column}.clist,.cdet{width:min(560px,86vw)}.clist{height:30vh}.cdet{height:auto}}
 /* Helskärmsknapp på mobil */
 #fsBtn{position:absolute;right:-10px;top:-10px;width:36px;height:36px;border-radius:8px;background:rgba(36,24,12,.92);border:1px solid #d8a862;color:#ffe6b0;font-size:16px;line-height:1;padding:0;display:none;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.5)}
 body.touch #fsBtn{display:flex}
@@ -501,6 +501,7 @@ body.touch.portrait #rotate{display:flex}
 #tAtk.rdy{box-shadow:0 0 0 3px #ffe066,0 0 16px #ffd23f}
 #tJump{right:124px;bottom:18px;width:64px;height:64px;font-size:28px}
 .sk{width:58px;height:58px}
+.skr{right:262px;bottom:92px;width:52px;height:52px}
 .sk0{right:36px;bottom:128px}.sk1{right:108px;bottom:98px}.sk2{right:182px;bottom:96px}.sk3{right:202px;bottom:20px}
 
 body.touch #hotbar{display:none}
@@ -1036,10 +1037,13 @@ const ABIL = {
   s_skalv:    {cd:()=>10, hp:()=>5},
   v_irrbloss: {cd:()=>40, mp:()=>15},
 };
+const ROLL_T = 0.5, ROLL_SPEED = 380;   // Kullerbytta: 0,5 s, ca 150 px, osårbar under tiden
+const ROLL_DEF = {name:'Kullerbytta', icon:'🤸', d:()=>'En snabb kullerbytta framåt. Du tar ingen skada under rullningen (0,5 s) – rulla genom monster, eldbollar och törnsnår.'};
+ABIL.roll = {cd:()=>6, fixedCd:true, mp:()=>0, hp:()=>0};
 for(const [id,sp] of Object.entries(SPELLS)) ABIL[id] = {cd:()=>sp.cd, mp:()=>sp.mp||0, hp:()=>sp.hp||0, atk:!!sp.atk};
 ABIL.rotter.can = () => { if(rootTargets().length) return true; throttleMsg('noroot','Inga fiender framför dig att snärja.','#cfe0ff'); return false; };
-const abilName = id => id==='attack' ? 'Basattack' : CONS[id] ? CONS[id].name : SPELLS[id] ? SPELLS[id].name : TAL[id] ? TAL[id].name : id;
-const abilIcon = id => id==='attack' ? '⚔️' : CONS[id] ? `<img class="hi" src="${iconURL({base:id})}" alt="">` : SPELLS[id] ? SPELLS[id].icon : TAL[id] ? TAL[id].icon : '❔';
+const abilName = id => id==='attack' ? 'Basattack' : id==='roll' ? ROLL_DEF.name : CONS[id] ? CONS[id].name : SPELLS[id] ? SPELLS[id].name : TAL[id] ? TAL[id].name : id;
+const abilIcon = id => id==='attack' ? '⚔️' : id==='roll' ? ROLL_DEF.icon : CONS[id] ? `<img class="hi" src="${iconURL({base:id})}" alt="">` : SPELLS[id] ? SPELLS[id].icon : TAL[id] ? TAL[id].icon : '❔';
 function abilCost(id){
   const a=ABIL[id];
   if(id==='attack') return {mp:G.stats?G.stats.manaCost:0, hp:0};
@@ -1054,13 +1058,14 @@ function abilCostTxt(id){
 }
 function abilDesc(id){
   if(id==='attack') return 'Din vanliga attack.';
+  if(id==='roll') return ROLL_DEF.d()+' '+abilCostTxt(id)+'.';
   const sp=SPELLS[id]; if(sp) return sp.d()+' '+abilCostTxt(id)+'.';
   const t=TAL[id]; if(t){ const r=rank(id)||1; return t.d(t.v[r-1],r); }
   return '';
 }
 function knownAbils(){
   const ch=G.ch; if(!ch) return [];
-  return [...classSpells(ch.cls).filter(id=>rank(id)>0), ...CLASSES[ch.cls].trees.flatMap(t=>TREES[t].talents).filter(t=>t.active && rank(t.id)>0).map(t=>t.id)];
+  return [...classSpells(ch.cls).filter(id=>rank(id)>0), ...CLASSES[ch.cls].trees.flatMap(t=>TREES[t].talents).filter(t=>t.active && rank(t.id)>0).map(t=>t.id), ...(ch.roll?['roll']:[])];
 }
 
 /* Monsternivå styr allt annat: HP, EXP, guld, skada vid beröring och vilken level utrustningen de droppar har.
@@ -1096,7 +1101,7 @@ Object.assign(MOBS, {
 });
 MOBS.skata.hp=Math.round(MOBS.skata.hp*.6); MOBS.hok.hp=Math.round(MOBS.hok.hp*.6);
 // Arenabossar: kan inte bli silver, droppar alltid utrustning eller själar (arenaLoot)
-const arenaBoss = (o,hp,exp,gold) => { const b=mobDefine({drop:0, pool:[], boss:true, arena:true, book:[1,3,10,25], ...o}); b.hp=Math.round(hp*1.3); b.touch*=2; b.exp=exp; b.gold=gold; return b; };   // +30 % HP och dubbel skada (även deras specialattacker, som räknas från beröringsskadan)
+const arenaBoss = (o,hp,exp,gold) => { const b=mobDefine({drop:0, pool:[], boss:true, arena:true, book:[1,3,10,25], ...o}); b.hp=Math.round(hp*1.3); b.touch*=6; b.exp=exp; b.gold=gold; return b; };   // +30 % HP och 6× skada (även deras specialattacker, som räknas från beröringsskadan)
 Object.assign(MOBS, {
   jattebar:  arenaBoss({lvl:15, name:'Jätteblåbäret', speed:40, w:110, h:104, map:11, stage:1}, 2000, 600, 200),
   mossjatte: arenaBoss({lvl:17, name:'Mossjätten',    speed:52, w:120, h:110, map:12, stage:2}, 4000, 1000, 320),
@@ -1333,6 +1338,7 @@ const MAPS = {
       ['vildhund','p4a',[920,1180,1380]], ['vildhund','p4b',[2450,2700]],
     ],
     portals:[{x:70, y:900, to:1, toX:3110, toY:900}, {x:3110, y:900, to:3, toX:70, toY:900}],
+    hazards:[{x:1745, y:780, w:44, dmg:10}],   // Holgers övningssnår (Kullerbytta-uppdraget)
     theme:{sky:['#5b8fe0','#f5c9a0','#ffe9cf'], mount:'#b7b6d6', hill:'#a8cf82', hillTree:'#90bb6e', trees:'#78ae5c', sun:'rgba(255,225,170,'}},
 };
 MAPS[3] = {name:'Jaktmarken III', start:SAFE_START, sign:{x:200,y:900}, wm:{x:.43,y:.68},
@@ -1573,10 +1579,11 @@ function fixAccount(a){
     if(c.escrow){ c.inv=[...(c.inv||[]), ...c.escrow]; delete c.escrow; } if(c.escrowGold){ c.gold=(c.gold||0)+c.escrowGold; delete c.escrowGold; }   // avbruten byteshandel
     c.inv=(c.inv||[]).filter(Boolean).map(it=>OLD_STARTERS.includes(it.base)?makeItem('pinne1'):it).filter(known);
     for(const k in c.eq){ if(c.eq[k] && OLD_STARTERS.includes(c.eq[k].base)) c.eq[k]=makeItem('pinne1'); if(c.eq[k] && !known(c.eq[k])) c.eq[k]=null; }
-    c.hotbar=c.hotbar.map(x=>(x && (x==='attack'||TAL[x]||CONS[x]))?x:null);
+    c.hotbar=c.hotbar.map(x=>(x && (x==='attack'||ABIL[x]||TAL[x]||CONS[x]))?x:null);   // ABIL innehåller klassens förmågor – de ska ligga kvar där man lagt dem
     const spent=Object.values(c.talents).reduce((a,b)=>a+b,0);
     if(spent > Math.max(0,c.level-(TALENT_LVL-1))){ for(const k of Object.keys(c.talents)){ if(TAL[k]&&TAL[k].active) c.hotbar=c.hotbar.map(x=>x===k?null:x); } c.talents={}; }
     if(c.quests && c.quests.bar && !c.quests.bar1){ c.quests.bar1=c.quests.bar; delete c.quests.bar; }
+    if(c.quests.jakt4 && c.quests.jakt4.state==='claimed') c.roll=1;   // Kullerbyttan för gubbar som redan klarat Holgers uppdrag
     if((c.qv||0)<2){ if(c.quests.jakt3 && c.quests.jakt3.state==='claimed') c.quests.jakt4={state:'claimed',prog:{}}; c.qv=2; }
     if(c.qv<3){ for(const [a,b] of [['skr0','skr1'],['vildlw','vild4'],['saga0','saga1'],['gunnar0','gunnar1']]) if(c.quests[b] && !c.quests[a]) c.quests[a]={state:'claimed',prog:{}}; c.qv=3; }
     for(const it of [...c.inv,...Object.values(c.eq)]) if(it && BASES[it.base] && !isCons(it) && !BASES[it.base].fixed) it.name=BASES[it.base].name;
@@ -1621,7 +1628,7 @@ document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState=
 /* =====================================================================
    STATS
    ===================================================================== */
-function rank(id){ const sp=SPELLS[id]; if(sp) return (G.ch && G.ch.cls===sp.cls && G.ch.level>=sp.lvl) ? 1 : 0;
+function rank(id){ if(id==='roll') return G.ch&&G.ch.roll?1:0; const sp=SPELLS[id]; if(sp) return (G.ch && G.ch.cls===sp.cls && G.ch.level>=sp.lvl) ? 1 : 0;
   const t=TAL[id]; if(!t) return 0; return (t.tree==='konto' ? (G.acct&&G.acct.talents[id]) : (G.ch&&G.ch.talents[id])) || 0; }
 function tv(id){ const r=rank(id); return r ? TAL[id].v[r-1] : 0; }
 function charSpent(ch){ return Object.values(ch.talents).reduce((a,b)=>a+b,0); }
@@ -1839,6 +1846,7 @@ function updatePlayer(dt){
   if(p.wisps && p.wisps.length) updateWisps(dt);
   if(p.healShow>0){ p.healShowT=(p.healShowT||0)-dt; if(p.healShowT<=0){ G.fx.push({type:'text',x:p.x,y:p.y-p.h-24,text:`+${fmt1(p.healShow)} HP`,color:'#7dff8a',t:0,dur:1,size:13}); p.healShow=0; p.healShowT=0.6; } }
   const I = input();
+  if(p.rollT>0){ p.rollT-=dt; if(p.rollT<=0 || p.climb){ p.rollT=0; rollEnd(); } }
 
   // Klättring
   if(p.climb){
@@ -1859,7 +1867,8 @@ function updatePlayer(dt){
   const attacking = p.atkAnim>0 && p.onGround;
   if(attacking) dir=0;
   if(dir && !attacking) p.face=dir;
-  if(p.onGround){ if(p.knockT<=0) p.vx = dir*spd; }
+  if(p.rollT>0){ p.vx = p.rollDir*ROLL_SPEED*(0.6+0.4*p.rollT/ROLL_T); p.face=p.rollDir; }   // kullerbytta framåt
+  else if(p.onGround){ if(p.knockT<=0) p.vx = dir*spd; }
   else if(dir){ p.vx += (dir*spd - p.vx)*Math.min(1, dt*3); }
   if(p.onGround && Math.abs(p.vx)>1){ p.walkT+=dt*s.move; const st=Math.floor(p.walkT*12/Math.PI); if(st!==p.stepN){ p.stepN=st; SFX.step(); } }
 
@@ -1916,6 +1925,13 @@ function updatePlayer(dt){
 
   useInputs(I);
 }
+function rollEnd(){   // rullade man genom ett törnsnår? (mitten av snåret ligger mellan start och slut, på samma höjd)
+  const p=G.p, a=Math.min(p.rollX0,p.x), b=Math.max(p.rollX0,p.x);
+  for(const h of curMap().hazards||[]){ const hy=h.g?groundY(h.x):h.y;
+    if(h.x>a && h.x<b && Math.abs(p.y-hy)<30 && Math.abs(p.rollY0-hy)<30){
+      G.fx.push({type:'text',x:p.x,y:p.y-p.h-20,text:'🤸 Rakt genom törnet!',color:'#7dff8a',t:0,dur:1.4,size:15});
+      questEvent('roll_thorn'); break; } }
+}
 function useInputs(I){
   if(I.attack) useAbility('attack');
   for(let i=0;i<9;i++) if(I.hot[i] && G.ch.hotbar[i]) useAbility(G.ch.hotbar[i]);
@@ -1931,10 +1947,10 @@ function checkContact(){
     const mw = m.d.w*0.38;
     if(Math.abs(m.x-p.x) < mw+p.w/2-4 && p.y > m.y-m.d.h+6 && p.y-CONTACT_H < m.y-2){ hurtPlayer(m.d.touch, Math.sign(p.x-m.x)||-m.dir); break; }
   }
-  if(p.inv>0 || p.dead) return;
+  if(p.inv>0 || p.dead || p.rollT>0) return;
   for(const h of curMap().hazards||[]){   // törnsnår skadar den som nuddar dem
     const hy=h.g?groundY(h.x):h.y;
-    if(Math.abs(p.x-h.x) < h.w/2+p.w/2-8 && p.y > hy-34 && p.y-CONTACT_H < hy+2){ hurtPlayer(HAZARD_DMG, Math.sign(p.x-h.x)||1); throttleMsg('thorn','🌵 Aj! Törnsnåren rev dig.','#ff9b9b'); break; }
+    if(Math.abs(p.x-h.x) < h.w/2+p.w/2-8 && p.y > hy-34 && p.y-CONTACT_H < hy+2){ hurtPlayer(h.dmg||HAZARD_DMG, Math.sign(p.x-h.x)||1); throttleMsg('thorn', G.ch.roll ? '🌵 Aj! Rulla med Kullerbyttan (🤸) så tar du ingen skada.' : '🌵 Aj! Törnsnåren rev dig.','#ff9b9b'); break; }
   }
 }
 const HAZARD_DMG = 35;
@@ -2105,6 +2121,7 @@ function paintThorns(c,w,R){   // ett taggigt törnsnår med tydliga svarta kont
 }
 function hurtPlayer(dmg, dir, o={}){
   const p=G.p, s=G.stats; if(!p || p.dead) return false;
+  if(p.rollT>0){ if(!p.rollHit){ p.rollHit=true; G.fx.push({type:'text',x:p.x,y:p.y-p.h-16,text:'Undvek!',color:'#bfe8ff',t:0,dur:.8,size:14}); } return false; }   // kullerbytta
   if(Math.random()<s.dodge/100){   // undvikande (Agi)
     G.fx.push({type:'text',x:p.x,y:p.y-p.h-16,text:'Undvek!',color:'#bfe8ff',t:0,dur:.8,size:14}); SFX.dodge();
     if(!o.noKb) p.inv=Math.max(p.inv,0.6); return false;
@@ -2272,6 +2289,12 @@ function updateWisps(dt){   // varje irrbloss stannar där det frammanades och s
   }
 }
 const ABIL_USE = {
+  roll(){
+    const p=G.p, I=input(), d=(I.right?1:0)-(I.left?1:0)||p.face;
+    p.face=d; p.rollDir=d; p.rollT=ROLL_T; p.rollX0=p.x; p.rollY0=p.y; p.rollHit=false; p.atkAnim=0;
+    for(let i=0;i<10;i++) particle(p.x+rand(-10,10),p.y-rand(0,6),pick(['#d8c8a0','#b8a880','#ffffff']),-d*rand(20,80),rand(-60,-10),.45,3,120);
+    netFx('roll', p.x, p.y);
+  },
   bombpil(){
     const p=G.p, s=G.stats; startSkillAnim('shoot');
     const range=BOW_RANGE*s.range, t=rangedTarget(range,115,72);
@@ -2343,7 +2366,7 @@ function useAbility(id){
   if(c.mp && G.ch.mp<c.mp){ throttleMsg('mana2','Inte tillräckligt med mana!','#9cc6ff'); return false; }
   if(c.hp && G.ch.hp<=c.hp+1){ throttleMsg('hp2','Inte tillräckligt med HP!','#ff9b9b'); return false; }
   if(a.can && !a.can()) return false;
-  const cd=a.cd(r)*(1-tv('k_cdr')/100)*(1-G.stats.cdr/100);
+  const cd=a.fixedCd ? a.cd(r) : a.cd(r)*(1-tv('k_cdr')/100)*(1-G.stats.cdr/100);
   G.ch.mp-=c.mp; G.ch.hp-=c.hp; p.cds[id]=cd; p.cdMax=p.cdMax||{}; p.cdMax[id]=cd;
   if(G.ui.newSp && G.ui.newSp.id===id){ G.ui.newSp=null; buildHotbar(); renderTouchSkills(); }
   ABIL_USE[id](r); SFX.skill(id);
@@ -2471,6 +2494,7 @@ function hitMonster(m, dmg, o={}){
     return;
   }
   m.hp -= dmg; m.showHp = 4; m.lastBy = by; m.aggro = by; m.aggroT = 10;
+  if(o.noKb && !m.d.arena && !m.d.fly && !(m.rootT>0)){ const a=by===Net.myId?G.p:G.others[by]; if(a){ m.dir=Math.sign(a.x-m.x)||m.dir; m.state='walk'; m.turnT=0; m.osc=0; } }   // t.ex. irrbloss: monstret vänder sig och går mot spelaren
   if(by===Net.myId && o.kind!=='burn' && o.kind!=='root') SFX.hit(o.kind==='crit');   // monstret går mot den som anföll (som i MapleStory)
   if(m.d.arena){ if(!o.noKb) m.hurtT=Math.max(m.hurtT,0.05); }
   else if(!o.noKb && !(m.hardT>0) && !(m.d.boss && m.type==='stenappa')){ m.kb=(o.dir||Math.sign(m.x-G.p.x)||1)*70; m.kbT=0.15; m.hurtT=0.45; m.dir=-(o.dir||1); }
@@ -2585,7 +2609,7 @@ function markNewSpell(id){ G.ui.newSp={id, until:G.time+12}; buildHotbar(); rend
 function nextFanfare(){
   const id=FANF.shift(); if(!id || G.mode!=='game'){ fanfOn=false; FANF.length=0; return; }
   fanfOn=true;
-  const sp=SPELLS[id]||TAL[id], el=document.createElement('div'); SFX.newSpell();
+  const sp=SPELLS[id]||TAL[id]||(id==='roll'?ROLL_DEF:null), el=document.createElement('div'); SFX.newSpell();
   el.className='spellFan'; el.innerHTML=`<div class="sfGlow"></div><div class="sfIcon">${sp.icon}</div><div class="sfTxt">Ny förmåga!</div><div class="sfName">${sp.name}</div>`;
   document.body.appendChild(el);
   for(let i=0;i<26;i++) if(G.p) particle(G.p.x+rand(-20,20), G.p.y-rand(10,70), pick(['#ffe066','#fff','#9fe0ff']), rand(-90,90), rand(-260,-60), 1, 3, 120);
@@ -2599,6 +2623,13 @@ function nextFanfare(){
       setTimeout(()=>{ el.remove(); markNewSpell(id); nextFanfare(); },680);
     } else { el.remove(); markNewSpell(id); nextFanfare(); }
   },1700);
+}
+function learnRoll(){
+  const ch=G.ch; if(!ch || ch.roll) return; ch.roll=1;
+  const hb=ch.hotbar; let slot=hb.indexOf('roll'); if(slot<0){ slot=hb.indexOf(null); if(slot>=0) hb[slot]='roll'; }
+  spellFanfare('roll'); markNewSpell('roll');
+  log(`🤸 Ny förmåga: <b>Kullerbytta</b> – ${ROLL_DEF.d()} ${G.touch?'Knappen 🤸 finns till höger.':slot>=0?`Ligger på tangent ${slot+1}.`:'Lägg den på snabbfältet i förmågor (F).'}`,'#9fe0ff');
+  buildHotbar(); renderTouchSkills(); markDirty(true);
 }
 function grantSpells(announce){
   const ch=G.ch; ch.spl=ch.spl||{}; let changed=false;
@@ -5348,7 +5379,7 @@ function drawOthers(){
     if(o.pose!=='jump' && o.pose!=='climb'){ ctx.fillStyle=art().shadowCol; ell(ctx,o.x,o.y,16,4.5); }
     if(o.pose==='dead') ctx.globalAlpha=0.35;
     const co={cls:o.cls, app:o.app, face:o.face, pose:o.pose==='dead'?'stand':o.pose, t:o.t, walkT:o.walkT, climbT:o.climbT, eq:o.eq||{}, av:o.av||0};
-    spriteFx(o.x,o.y,172,170,20,c=>drawChar(c,co),{h:78,hw:18});
+    spriteFx(o.x,o.y,172,170,20,c=>drawRolling(c,co,o.rl||0),{h:78,hw:18});
     ctx.globalAlpha=1;
     if(o.buff && Math.random()<0.2) fxPetal(o);
     if(o.rg && Math.random()<0.2) particle(o.x+rand(-14,14), o.y-rand(5,60), '#7dff8a', rand(-10,10), rand(-70,-30), .7, 2.5, -20);
@@ -5362,6 +5393,11 @@ function drawOthers(){
     ctx.fillStyle='rgba(0,0,0,.6)'; ctx.fillRect(o.x-hpw/2-1,o.y+23,hpw+2,5); ctx.fillStyle='#e8433b'; ctx.fillRect(o.x-hpw/2,o.y+24,hpw*hk,3);
   }
 }
+function drawRolling(c, co, rp){   // kullerbytta: gubben hopkrupen, ett helt varv runt sin mittpunkt
+  if(!(rp>0)) return drawChar(c,co);
+  const a=rp*Math.PI*2*co.face, lift=Math.sin(rp*Math.PI)*8;
+  c.save(); c.translate(0,-26-lift); c.rotate(a); c.scale(.86,.86); c.translate(0,30); drawChar(c,{...co, pose:'jump'}); c.restore();
+}
 function drawPlayer(){
   const p=G.p, ch=G.ch;
   let pose='stand';
@@ -5370,8 +5406,10 @@ function drawPlayer(){
   if(p.onGround){ ctx.fillStyle=art().shadowCol; ell(ctx,p.x,p.y,16,4.5); }
   if(p.dead) ctx.globalAlpha=0.35;
   else if(p.inv>0 && Math.floor(p.inv*14)%2===0) ctx.globalAlpha=0.45;
+  if(p.rollT>0) pose='jump';
   const co={cls:ch.cls, app:ch.app, face:p.face, pose, t, walkT:p.walkT, climbT:p.climbT, eq:ch.eq, av:p.atkVar||0, hurt:p.knockT>0};
-  spriteFx(p.x,p.y,172,170,20,c=>drawChar(c,co),{h:78,hw:18});
+  const rp=p.rollT>0?1-p.rollT/ROLL_T:0;
+  spriteFx(p.x,p.y,172,170,20,c=>drawRolling(c,co,rp),{h:78,hw:18});
   ctx.globalAlpha=1;
   for(const w of p.wisps||[]) drawWispOrb(w.x,w.y);
   if(!p.dead && G.stats){   // HP-bar ovanför gubben
@@ -6152,8 +6190,9 @@ function assignSlot(i,id){
 }
 function startAssign(id){ G.assigning=id; buildHotbar(); const h=$('#hint'); h.innerHTML=`Tryck en snabbtangent (${KEYB.map(k=>`<span class="kbd">${esc(keyLabel(k))}</span>`).join('')}) eller klicka en ruta i snabbfältet för ${abilIcon(id)} ${esc(abilName(id))} · Esc avbryter`; h.classList.remove('hidden'); }
 function renderTouchSkills(){
-  const list=knownAbils().slice(0,4);
-  $('#tSkills').innerHTML = list.map((id,i)=>`<button class="tbtn sk sk${i} ${G.ui.newSp&&G.ui.newSp.id===id?'newsp':''}" data-sk="${id}"><span>${abilIcon(id)}</span><i class="cd"></i><span class="cdt"></span></button>`).join('');
+  const list=knownAbils().filter(id=>id!=='roll').slice(0,4);
+  $('#tSkills').innerHTML = list.map((id,i)=>`<button class="tbtn sk sk${i} ${G.ui.newSp&&G.ui.newSp.id===id?'newsp':''}" data-sk="${id}"><span>${abilIcon(id)}</span><i class="cd"></i><span class="cdt"></span></button>`).join('')
+    + (G.ch&&G.ch.roll?`<button class="tbtn sk skr ${G.ui.newSp&&G.ui.newSp.id==='roll'?'newsp':''}" data-sk="roll"><span>🤸</span><i class="cd"></i><span class="cdt"></span></button>`:'');
   for(const el of $$('#tSkills .tbtn')){ const id=el.dataset.sk; holdBtn(el, ()=>{ Touch.skills[id]=true; useAbility(id); }, ()=>{ Touch.skills[id]=false; }); }
 }
 let potsKey='';
@@ -6549,11 +6588,11 @@ function renderBagDetail(){
     acts+=`<button class="btn sm red" data-act="trash">${G.ui.trash===it.uid?'Säker? Tryck igen':'Släng'}</button>`;
   } else acts+=`<button class="btn sm" data-act="unequip">Ta av</button>`;
   let soulBox='';
-  { const c=soulCost(it), have=consCount(c.type), ok=have>=c.cnt && G.ch.gold>=c.gold;
+  { const c=soulCost(it), have=consCount(c.type), ok=have>=c.cnt && G.ch.gold>=c.gold, gain=soulGain(it);
     acts+=`<button class="btn sm purple" data-act="soul" ${ok?'':'disabled'}>🔮 ${it.soul?`Uppgradera själ → nivå ${c.n}`:'Ge själ'}</button>`;
     const sal=['sjal1','sjal2','sjal3'].map(t=>`<span class="${t===c.type?'cur':''}"><img src="${iconURL({base:t})}" alt="">${consCount(t)}</span>`).join('');
-    soulBox=`<div class="soulbox"><div class="sbal">Dina själar: ${sal}</div><div>Nästa nivå (${c.n}) kostar <b class="${have<c.cnt?'bad':''}">${c.cnt} × ${CONS[c.type].name}</b> – du har ${have}${have>=c.cnt?`, <b>${have-c.cnt}</b> kvar efteråt`:''} · <b class="${G.ch.gold<c.gold?'bad':''}">${c.gold} 🪙</b> · chans <b>${fmtSv(Math.round(c.chance*1000)/10)}%</b></div></div>`; }
-  box.innerHTML=`<div class="dinfo">${itemHtml(it,f.where)}${f.where==='inv'&&G.ch.level<it.req?`<div class="hintx" style="margin-top:4px">Du behöver level ${it.req} för att använda detta.</div>`:''}</div>${soulBox}<div class="acts">${acts}</div>`;
+    soulBox=`<div class="soulbox"><div class="sbal">Dina själar: ${sal}</div><div>Nästa nivå (${c.n}) kostar <b class="${have<c.cnt?'bad':''}">${c.cnt} × ${CONS[c.type].name}</b> – du har ${have}${have>=c.cnt?`, <b>${have-c.cnt}</b> kvar efteråt`:''} · <b class="${G.ch.gold<c.gold?'bad':''}">${c.gold} 🪙</b> · chans <b>${fmtSv(Math.round(c.chance*1000)/10)}%</b></div>${gain.length?`<div>Lyckas den ger den: <b style="color:#7dff8a">${gain.join(', ')}</b></div>`:''}</div>`; }
+  box.innerHTML=`<div class="dinfo">${itemHtml(it,f.where)}${f.where==='inv'&&G.ch.level<it.req?`<div class="hintx" style="margin-top:4px">Du behöver level ${it.req} för att använda detta.</div>`:''}${soulBox}</div><div class="acts">${acts}</div>`;
 }
 /* Dra i väskan (som i World of Warcraft):
    scroll → föremål · utrustning → rätt plats på gubben · utrustat föremål → väskan · föremål → annan ruta i väskan */
@@ -6786,7 +6825,7 @@ function renderAbil(){
   let h=`<div class="abils big"><div class="hintx">Klassförmågor lärs in automatiskt i level ${lv} och läggs på snabbfältet. Aktiva talanger (✨ T) hamnar också här.${G.touch?' På mobil visas förmågorna som knappar till höger.':''}</div>`;
   for(const id of ab){
     const keysOn=ch.hotbar.map((x,i)=>x===id?keyLabel(KEYB[i]):null).filter(Boolean);
-    h+=`<div class="arow"><span class="ai">${abilIcon(id)}</span><span class="an">${abilName(id)} <span class="ak">${id==='attack'?'· Ctrl':''}${SPELLS[id]?' · level '+SPELLS[id].lvl:TAL[id]?' · talang':''}${keysOn.length?' · tangent '+esc(keysOn.join(', ')):''}</span>${id!=='attack'?`<div class="ad">${esc(abilDesc(id))}</div>`:''}</span>${G.touch?'':`<button class="btn sm" data-assign="${id}">Sätt på snabbfältet</button>`}</div>`;
+    h+=`<div class="arow"><span class="ai">${abilIcon(id)}</span><span class="an">${abilName(id)} <span class="ak">${id==='attack'?'· Ctrl':''}${SPELLS[id]?' · level '+SPELLS[id].lvl:TAL[id]?' · talang':id==='roll'?' · alla klasser':''}${keysOn.length?' · tangent '+esc(keysOn.join(', ')):''}</span>${id!=='attack'?`<div class="ad">${esc(abilDesc(id))}</div>`:''}</span>${G.touch?'':`<button class="btn sm" data-assign="${id}">Sätt på snabbfältet</button>`}</div>`;
   }
   const fut=classSpells(ch.cls).filter(id=>!rank(id));
   if(fut.length) h+=`<div class="abhead">🔒 Kommande förmågor</div>`;
@@ -6956,7 +6995,12 @@ function renderCraft(){
   const n=canMake(r);
   h+=`<div class="row" style="margin-top:8px"><button class="btn green" data-craft="1" ${n?'':'disabled'}>⚒️ Tillverka</button>${!gear?`<button class="btn" data-craft="${Math.min(n,10)}" ${n>1?'':'disabled'}>${n>1?`Tillverka ${Math.min(n,10)} st`:'Tillverka flera'}</button>`:''}</div>`;
   h+=`</div></div>`;
-  $('#craftBody').innerHTML=h;
+  keepScroll($('#craftBody'), ['.clist','.cdet'], ()=>{ $('#craftBody').innerHTML=h; });
+}
+function keepScroll(box, sels, fn){   // byt innehåll utan att listor och fönster hoppar upp till toppen
+  const win=box.closest('.win'), wb=box.closest('.wbody'), q=sels.map(x=>{ const e=box.querySelector(x); return e?e.scrollTop:0; });
+  const a=[box.scrollTop, wb?wb.scrollTop:0, win?win.scrollTop:0]; fn();
+  sels.forEach((x,i)=>{ const e=box.querySelector(x); if(e) e.scrollTop=q[i]; }); box.scrollTop=a[0]; if(wb) wb.scrollTop=a[1]; if(win) win.scrollTop=a[2];
 }
 $('#craftBody').addEventListener('click',e=>{
   const t=e.target.closest('[data-ctab]'); if(t){ G.ui.craftTab=t.dataset.ctab; G.ui.craftSel=null; renderCraft(); return; }
@@ -6969,6 +7013,11 @@ $('#craftBody').addEventListener('click',e=>{
    Antal själar = baskostnad × nivå (Common 1, Uncommon 2, Rare 3 …). Chans = 0,9^(nivå−1). Ingen övre gräns. */
 const SOUL_BASE = {common:1, uncommon:2, rare:3, epic:4, legendary:5};
 const soulType = it => it.req<=5 ? 'sjal1' : it.req<=15 ? 'sjal2' : 'sjal3';
+function soulGain(it){   // vad nästa själsnivå lägger till (samma uträkning som soulUp)
+  const L={atkMin:'min-attack', atkMax:'max-attack', armor:'armor', atk:'attack', ...STATN}, out=[];
+  for(const k of SOUL_KEYS(it)){ const b0=it.sbase?(it.sbase[k]||0):(it[k]||0); if(b0>0) out.push(`+${Math.max(1,Math.round(b0*.1))} ${L[k]||k}`); }
+  return out;
+}
 function soulCost(it){ const n=(it.soul||0)+1, cnt=(SOUL_BASE[it.rarity]||1)*n; return {n, type:soulType(it), cnt, chance:Math.pow(.9,n-1), gold:cnt*it.req*3}; }
 const SOUL_KEYS = it => it.slot==='vapen' ? ['atkMin','atkMax',...STATS] : ['armor',...STATS,'atk'];
 function findGear(uid){ const ch=G.ch; const i=ch.inv.find(x=>x.uid===uid); if(i) return {it:i, eq:false}; for(const k in ch.eq) if(ch.eq[k] && ch.eq[k].uid===uid) return {it:ch.eq[k], eq:true}; return null; }
@@ -7182,6 +7231,7 @@ function dbQuestRewards(Q){
   for(const [b,r] of Q.give||[]) L.push(itm(b,r));
   if(Q.choose) L.push('Välj en av: '+Q.choose.map(b=>itm(b,Q.rarity)).join(', '));
   for(const [b,n] of Q.cons||[]) L.push(`${n} × ${CONS[b].name}`);
+  if(Q.ability==='roll') L.push('🤸 Förmågan Kullerbytta');
   return L.join(' · ');
 }
 function dbQuestsFor(t){ return QUEST_ORDER.filter(id=>QUESTS[id].goals[t]); }
@@ -7204,7 +7254,7 @@ function dbHTML(tab, q){
       if(Object.keys(sp).length){ h+=`<div class="dbmobs">${Object.entries(sp).map(([t,n])=>`<span><canvas data-dbmob="${t}" width="84" height="64"></canvas><b>${MOBS[t].name}</b><small>Lv ${MOBS[t].lvl} · ${n} st på kartan</small></span>`).join('')}</div>`;
         h+=`<div class="dbg">♻️ Var 10:e sekund har varje dött monster (dött i minst 3 s) 75 % chans att återuppstå. Bossar har egen tid. ✦ 1 % chans att ett monster blir silver.</div>`; }
       if(M.arenaBoss){ const B=MOBS[M.arenaBoss]; h+=`<div class="dbmobs"><span><canvas data-dbmob="${M.arenaBoss}" width="84" height="64"></canvas><b>${B.name}</b><small>Lv ${B.lvl} · ${B.hp} HP</small></span></div><div class="dbg">⏱️ 2 minuter på dig. Kräver en silvernyckel (köps av Arenamästaren Torvald för 1 000 guld, eller 0,1 % från alla monster). När bossen dör öppnas en portal till nästa.</div>`; }
-      if(M.hazards) h+=`<div class="dbg">🌵 Törnsnår som gör ${HAZARD_DMG} i skada om man nuddar dem.</div>`;
+      if(M.hazards) h+=`<div class="dbg">🌵 Törnsnår som gör ${M.hazards[0].dmg||HAZARD_DMG} i skada om man nuddar dem (rulla igenom med Kullerbyttan).</div>`;
       if(M.ape) h+=`<div class="dbg">🦍 <b>Stenappa</b>: varje minut 30 % chans att den dyker upp på den översta plattformen (bara en åt gången).</div>`;
       const npcs=npcsOn(id); if(npcs.length) h+=`<div class="dbg">🧑 ${npcs.map(k=>NPCS[k].name).join(', ')}</div>`;
       h+=`<div class="dbg">🌀 Portaler till: ${[...new Set(M.portals.map(o=>MAPS[o.to].name))].join(', ')}</div></div>`;
@@ -7308,7 +7358,10 @@ const QUESTS = {
     goals:{kissekatt:10, vildhund:10}, exp:20, gold:60, cons:[['hpPot',4]]},
   jakt4:{npc:'holger', name:'Starkare utrustning', prev:'jakt3',
     text:'Längre in väntar vargar och björnar – du behöver bättre utrustning. Förstärk dina saker med scrolls två gånger (köp dem i butiken eller hitta dem som drops), så får du min jägarring.',
-    goals:{scroll:2}, exp:15, give:[['ringJakt','uncommon']], cons:[['hpPot',5]]},
+    goals:{scroll:2}, exp:15, give:[['ringJakt','uncommon']], cons:[['hpPot',5]], ability:'roll'},
+  jakt5:{npc:'holger', name:'Genom törnet', prev:'jakt4',
+    text:'Kullerbyttan jag lärde dig gör att du inte tar någon skada medan du rullar. Öva på mitt törnsnår här bredvid lägret!\n1. Ställ dig en bit ifrån snåret.\n2. Spring mot det.\n3. Tryck på Kullerbyttan (🤸) precis innan du når snåret – då rullar du rakt igenom utan en skråma. Går du in i det tar du skada.',
+    goals:{roll_thorn:1}, exp:25, gold:50, cons:[['hpPot',5]]},
   vild1:{npc:'ylva', name:'Vargspår', lvl:6,
     text:'Du tog dig hela vägen hit? Bra. Vargarna har blivit djärva – de smyger ända fram till lägret. Fäll 12 vargar, så får du förnödenheter av mig.',
     goals:{varg:12}, exp:30, cons:[['hpPot2',3],['mpPot',5]]},
@@ -7421,7 +7474,7 @@ const QUEST_SHORT = {   // det NPC:n säger – kort och tydligt vad som ska gö
 const qShort = id => QUEST_SHORT[id] || (QUESTS[id].text.split(/(?<=[.!?])\s/)[0]);
 for(const id in QUESTS) QUESTS[id].exp=Math.round(QUESTS[id].exp*1.2);   // uppdrag ger 20 % mer EXP
 for(const id in QUESTS){ const Q=QUESTS[id]; if(Q.lvl && NPCS[Q.npc] && NPCS[Q.npc].map===5) Q.lvl=Math.max(1,Q.lvl-2); }   // uppdragen i Lövbyn kräver 2 level lägre
-const QUEST_ORDER = ['bar1','bar2','bar3','bar4','bar5','skr0','skr1','skr2','skr3','jakt1','jakt2','jakt3','jakt4','pot1','pot2','pot3','pot4','pot5','vild1','vild2','vild3','vildlw','vild4','bo1','bo2','bo3','fag1','fag2','fag3','saga0','saga1','saga2','saga3','gunnar0','gunnar1','gunnar2','gunnar3','sten1','drak1','drak2','drak3','band1','band2','band3','silver1'];
+const QUEST_ORDER = ['bar1','bar2','bar3','bar4','bar5','skr0','skr1','skr2','skr3','jakt1','jakt2','jakt3','jakt4','jakt5','pot1','pot2','pot3','pot4','pot5','vild1','vild2','vild3','vildlw','vild4','bo1','bo2','bo3','fag1','fag2','fag3','saga0','saga1','saga2','saga3','gunnar0','gunnar1','gunnar2','gunnar3','sten1','drak1','drak2','drak3','band1','band2','band3','silver1'];
 const QUEST_CHAINS = [ {npc:'berit', name:'Bärplockarens besvär'}, {npc:'sigvard', name:'Skrivarkonsten'}, {npc:'holger', name:'Vaktarens jakt'}, {npc:'vera', name:'Örtkvinnans brygder'}, {npc:'ylva', name:'Vargarnas spår'}, {npc:'bo', name:'Björnjakten'}, {npc:'fritiof', name:'Fågelplågan'}, {npc:'saga', name:'Skrivarmästarens prov'}, {npc:'gunnar', name:'Garvarens lära'}, {npc:'dagny', name:'Drakvaktens prov'}, {npc:'kerstin', name:'Bandittornet'}, {npc:'solve', name:'Silverjägaren'} ];
 // Yrkesuppdragen och yrkes-NPC:erna är borttagna – Hantverkaren Siri på Jaktmarken I lär ut Crafting
 for(const id of ['skr0','skr1','skr2','skr3','saga0','saga1','saga2','saga3','gunnar0','gunnar1','gunnar2','gunnar3','vildlw','vild4','pot1','pot2','pot3','pot4','pot5']) delete QUESTS[id];
@@ -7440,8 +7493,8 @@ QUEST_CHAINS.splice(1, 0, {npc:'siri', name:'Hantverkarens lärling'});
 const chainQuests = npc => QUEST_ORDER.filter(id=>QUESTS[id].npc===npc);
 const npcsOn = mapId => Object.keys(NPCS).filter(k=>NPCS[k].map===mapId);
 const CRAFT_GOAL = {craft_handskar:['par handskar','Gör handskar','par handskar'], craft_hjalm:['mössor','Gör en mössa','mössa'], craft_skor:['par skor','Gör skor','par skor'], craft_vapen:['vapen','Gör ett vapen','vapen'], craft_pot:['drycker eller elixir','Brygg drycker','dryck'], craft_elix:['elixir','Brygg elixir','elixir']};
-const goalName = (t,n) => t==='use_elix' ? `Drick ${n} elixir` : t.startsWith('buy_') ? `Köp ${n} ${CONS[t.slice(4)].name} i butiken (B)` : t==='scroll_wpn' ? `Använd vapenscrolls på ditt vapen ${n} gånger` : t.startsWith('have_') ? `Samla ${n} ${CONS[t.slice(5)].name}` : t.startsWith('item_') ? `Lämna in ${n} ${CONS[t.slice(5)].name}` : t==='scroll' ? `Använd scrolls ${n} gånger` : CRAFT_GOAL[t] ? `Tillverka ${n} ${n===1?CRAFT_GOAL[t][2]:CRAFT_GOAL[t][0]} (hantverk, H)` : t.startsWith('silver_') ? `Döda ${n} ${RARE_DEFS[t.slice(7)].name}` : `Döda ${n} ${MOBS[t].name}`;
-const goalShort = t => t==='use_elix' ? 'Drick elixir' : t.startsWith('buy_') ? 'Köp '+CONS[t.slice(4)].name : t==='scroll_wpn' ? 'Scrolla vapnet' : (t.startsWith('item_')||t.startsWith('have_')) ? CONS[t.slice(5)].name : t==='scroll' ? 'Scrolls' : CRAFT_GOAL[t] ? CRAFT_GOAL[t][1] : t.startsWith('silver_') ? RARE_DEFS[t.slice(7)].name : MOBS[t].name;
+const goalName = (t,n) => t==='roll_thorn' ? `Rulla genom Holgers törnsnår med Kullerbyttan${n>1?` ${n} gånger`:''}` : t==='use_elix' ? `Drick ${n} elixir` : t.startsWith('buy_') ? `Köp ${n} ${CONS[t.slice(4)].name} i butiken (B)` : t==='scroll_wpn' ? `Använd vapenscrolls på ditt vapen ${n} gånger` : t.startsWith('have_') ? `Samla ${n} ${CONS[t.slice(5)].name}` : t.startsWith('item_') ? `Lämna in ${n} ${CONS[t.slice(5)].name}` : t==='scroll' ? `Använd scrolls ${n} gånger` : CRAFT_GOAL[t] ? `Tillverka ${n} ${n===1?CRAFT_GOAL[t][2]:CRAFT_GOAL[t][0]} (hantverk, H)` : t.startsWith('silver_') ? `Döda ${n} ${RARE_DEFS[t.slice(7)].name}` : `Döda ${n} ${MOBS[t].name}`;
+const goalShort = t => t==='roll_thorn' ? 'Rulla genom törnet' : t==='use_elix' ? 'Drick elixir' : t.startsWith('buy_') ? 'Köp '+CONS[t.slice(4)].name : t==='scroll_wpn' ? 'Scrolla vapnet' : (t.startsWith('item_')||t.startsWith('have_')) ? CONS[t.slice(5)].name : t==='scroll' ? 'Scrolls' : CRAFT_GOAL[t] ? CRAFT_GOAL[t][1] : t.startsWith('silver_') ? RARE_DEFS[t.slice(7)].name : MOBS[t].name;
 function questState(id, ch=G.ch){
   const q=(ch.quests||{})[id], Q=QUESTS[id];
   if(q) return q.state;
@@ -7522,6 +7575,7 @@ function claimQuest(id, chosen){
   for(const [b,n] of Q.cons||[]) addStack(b,n);
   if(Q.gold) addGold(Q.gold,false);
   q.state='claimed'; SFX.quest();
+  if(Q.ability==='roll') setTimeout(learnRoll, 600);
   const txt=[...got.map(it=>`<b style="color:${RAR[it.rarity].color}">${esc(it.name)}</b>`), ...(Q.cons||[]).map(([b,n])=>`${n} ${CONS[b].name}`), ...(Q.gold?[`${Q.gold} guld`]:[])].join(', ');
   log(`🎁 Belöning för <b>${Q.name}</b>: ${txt?txt+' och ':''}${Q.exp} EXP!`,'#7ee787');
   toast(`🎁 ${txt?txt+' + ':''}${Q.exp} EXP`);
@@ -7568,7 +7622,7 @@ function renderQuest(){
   if(st==='locked' && Q.lvl && G.ch.level<Q.lvl) h+=`<div class="qlow">🔒 Kräver level ${Q.lvl} – du är level ${G.ch.level}.</div>`;
   h+=`<div class="qshort">“${qShort(id)}”</div>`;
   const rewards=[...(Q.choose?[`valfritt vapen (${Q.choose.map(b=>BASES[b].name).join(' / ')}, <span style="color:${RAR[Q.rarity].color}">${RAR[Q.rarity].name}</span>)`]:[]), ...questGive(Q).map(([b,r])=>{ const B=BASES[b]; return `<img src="${iconURL({base:b,rarity:r})}" alt="" style="width:22px;height:22px;vertical-align:middle;margin:0 2px"><span style="color:${RAR[r].color}">${B.name}</span>${B.fixed?` (${[...(Object.values(B.fixed).some(v=>v)?[fixedTxt(B.fixed)]:[]), ...(B.atk&&B.slot!=='vapen'?[`+${B.atk} attack`]:[]), ...(B.cdmg?[`+${B.cdmg}% kritisk skada`]:[]), ...(B.dodge?[`+${B.dodge}% undvikande`]:[])].join(', ')})`:B.slot==='vapen'?` (${WTYPE[B.wtype]}, attack ${B.atk[0]}–${B.atk[1]})`:''}`; }),
-    ...(Q.cons||[]).map(([b,n])=>`<img src="${iconURL({base:b})}" alt="" style="width:22px;height:22px;vertical-align:middle;margin:0 2px">${n} ${CONS[b].name}`), ...(Q.gold?[`🪙 ${Q.gold} guld`]:[]), `${Q.exp} EXP`];
+    ...(Q.cons||[]).map(([b,n])=>`<img src="${iconURL({base:b})}" alt="" style="width:22px;height:22px;vertical-align:middle;margin:0 2px">${n} ${CONS[b].name}`), ...(Q.gold?[`🪙 ${Q.gold} guld`]:[]), ...(Q.ability==='roll'?['<b style="color:#9fe0ff">🤸 Ny förmåga: Kullerbytta</b>']:[]), `${Q.exp} EXP`];
   h+=`<div class="pstat" style="font-weight:600"><div class="qtodo">🎯 Att göra</div>${Object.entries(Q.goals).map(([t,n])=>{ const v=Math.min(n,(q&&q.prog[t])||0); return `<div class="qgoal ${q&&v>=n?'ok':''}"><span>${goalName(t,n)}</span><span>${q?v+'/'+n:''}</span></div>`; }).join('')}
     <div style="margin-top:6px;color:#ffe08a">Belöning: ${rewards.join(' + ')}</div>
     ${inParty() && Object.keys(Q.goals).some(t=>MOBS[t])?'<div style="color:var(--muted);font-size:11.5px">Monster som ditt party dödar räknas också.</div>':''}</div>`;
@@ -8108,13 +8162,13 @@ function applyLook(L){
 }
 function myState(){
   const p=G.p, ch=G.ch; let pose='stand';
-  if(p.dead) pose='dead'; else if(p.climb) pose='climb'; else if(p.atkAnim>0) pose=p.atkMode; else if(!p.onGround) pose='jump'; else if(Math.abs(p.vx)>1) pose='walk';
-  return {t:'p', id:Net.myId, x:Math.round(p.x), y:Math.round(p.y), f:p.face, po:pose, k:p.atkAnim>0?+(1-p.atkAnim/p.atkDur).toFixed(2):0, w:+p.walkT.toFixed(2), c:+p.climbT.toFixed(2), hp:Math.ceil(ch.hp), mhp:G.stats.maxHp, b:p.buffT>0?1:0, ws:(p.wisps||[]).map(w=>[Math.round(w.x),Math.round(w.by)]), rg:p.regenT>0?1:0, m:G.mapId, v:p.atkVar||0};
+  if(p.dead) pose='dead'; else if(p.rollT>0) pose='jump'; else if(p.climb) pose='climb'; else if(p.atkAnim>0) pose=p.atkMode; else if(!p.onGround) pose='jump'; else if(Math.abs(p.vx)>1) pose='walk';
+  return {t:'p', id:Net.myId, x:Math.round(p.x), y:Math.round(p.y), f:p.face, po:pose, k:p.atkAnim>0?+(1-p.atkAnim/p.atkDur).toFixed(2):0, w:+p.walkT.toFixed(2), c:+p.climbT.toFixed(2), hp:Math.ceil(ch.hp), mhp:G.stats.maxHp, b:p.buffT>0?1:0, ws:(p.wisps||[]).map(w=>[Math.round(w.x),Math.round(w.by)]), rg:p.regenT>0?1:0, m:G.mapId, v:p.atkVar||0, rl:p.rollT>0?+(1-p.rollT/ROLL_T).toFixed(2):0};
 }
 function applyState(S){
   const o=G.others[S.id]; if(!o) return;
   if(!o.seen || o.map!==S.m){ o.x=S.x; o.y=S.y; o.seen=true; }
-  Object.assign(o,{tx:S.x, ty:S.y, face:S.f, pose:S.po, t:S.k, walkT:S.w, climbT:S.c, hp:S.hp, mhp:S.mhp, buff:S.b, ws:S.ws||0, rg:S.rg||0, map:S.m, av:S.v||0, last:G.time});
+  Object.assign(o,{tx:S.x, ty:S.y, face:S.f, pose:S.po, t:S.k, walkT:S.w, climbT:S.c, hp:S.hp, mhp:S.mhp, buff:S.b, ws:S.ws||0, rg:S.rg||0, map:S.m, av:S.v||0, rl:S.rl||0, last:G.time});
 }
 
 // --- Monster (värden skickar ögonblicksbilder ~10 ggr/s) ---
@@ -8166,6 +8220,7 @@ function spawnNetFx(S){ if(S.id===Net.myId) return; if(S.k==='beam') G.fx.push({
   else if(S.k==='rain'){ for(let i=0;i<8;i++) (G.rainA=G.rainA||[]).push({x:S.x+rand(-85,85)-110, y:S.y-430, tx:S.x+rand(-85,85), ty:S.y, t:-i*.19, T:.32}); }   // bara utseende, skadan räknas hos den som sköt
   else if(S.k==='quake') G.fx.push({type:'quake', x:S.x, y:S.y, t:0, dur:.45, r:100, c:'#ffcf7a'});
   else if(S.k==='quake2') G.fx.push({type:'quake', x:S.x, y:S.y, t:0, dur:.55, r:210, c:'#ff9a3a'});
+  else if(S.k==='roll'){ for(let i=0;i<10;i++) particle(S.x+rand(-10,10),S.y-rand(0,6),pick(['#d8c8a0','#b8a880','#ffffff']),rand(-80,80),rand(-60,-10),.45,3,120); }
   else if(S.k==='rootsR' || S.k==='rootsL') G.fx.push({type:'roots', x:S.x, y:S.y, dir:S.k==='rootsR'?1:-1, t:0, dur:.7}); }
 
 // --- Meddelanden ---
