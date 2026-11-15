@@ -58,7 +58,7 @@ label{display:block;font-size:12px;color:var(--muted);margin:10px 0 4px}
 .ccard .cn{font-weight:800}
 .ccard .cl{font-size:12px;color:var(--muted)}
 .ccard .del{position:absolute;right:6px;top:6px;background:#2a1820;border:1px solid #6a3040;border-radius:6px;font-size:12px;padding:2px 6px}
-.classes{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}
+.classes{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:12px 0}
 .clcard{background:#141d2d;border:2px solid #33456a;border-radius:12px;padding:10px;text-align:center;cursor:pointer}
 .clcard.on{border-color:#ffd25a;box-shadow:0 0 14px rgba(255,210,90,.3)}
 .clcard canvas{width:90px;height:100px}
@@ -437,8 +437,8 @@ body.touch.isfs #fsBtn{opacity:.55}
 .lockedtxt{color:#9fb1cb}
 .tbtn.pot{width:52px;height:52px}
 .tbtn.pot img{width:30px;height:30px;position:relative;z-index:1}
-.pot3{right:332px;bottom:20px}
-.tbtn.pot.oncd::before{content:'';position:absolute;inset:0;border-radius:inherit;z-index:2;background:linear-gradient(to top,rgba(0,0,0,.65) var(--cdp),transparent var(--cdp))}.tbtn.pot.oncd::after{content:attr(data-cd);position:absolute;inset:0;z-index:3;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:20px;color:#fff;text-shadow:0 0 4px #000}.pot0{right:270px;bottom:20px}.pot1{right:270px;bottom:82px}.pot2{right:270px;bottom:144px}
+.pot3{right:348px;bottom:20px}
+.tbtn.pot.oncd::before{content:'';position:absolute;inset:0;border-radius:inherit;z-index:2;background:linear-gradient(to top,rgba(0,0,0,.65) var(--cdp),transparent var(--cdp))}.tbtn.pot.oncd::after{content:attr(data-cd);position:absolute;inset:0;z-index:3;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:20px;color:#fff;text-shadow:0 0 4px #000}.pot0{right:286px;bottom:20px}.pot1{right:286px;bottom:82px}.pot2{right:286px;bottom:144px}
 
 /* Party & sidoflöde för EXP/guld */
 #rightCol{position:absolute;right:8px;top:62px;display:flex;flex-direction:column;align-items:flex-end;gap:6px;pointer-events:none!important;max-width:60vw}
@@ -502,8 +502,8 @@ body.touch.portrait #rotate{display:flex}
 #tAtk.rdy{box-shadow:0 0 0 3px #ffe066,0 0 16px #ffd23f}
 #tJump{right:124px;bottom:18px;width:64px;height:64px;font-size:28px}
 .sk{width:58px;height:58px}
-.skr{right:262px;bottom:92px;width:52px;height:52px}
-.sk0{right:36px;bottom:128px}.sk1{right:108px;bottom:98px}.sk2{right:182px;bottom:96px}.sk3{right:202px;bottom:20px}
+.skr{right:200px;bottom:16px;width:54px;height:54px}
+.sk0{right:36px;bottom:148px}.sk1{right:112px;bottom:128px}.sk2{right:172px;bottom:84px}.sk3{right:198px;bottom:150px}
 
 body.touch #hotbar{display:none}
 body.touch #minimap{width:130px;height:43px}
@@ -759,7 +759,7 @@ function rollRarity(boost, maxRar){
 const STATS = ['str','int','agi'];
 const STATN = {str:'Str', int:'Int', agi:'Agi'};
 
-const EQ_SLOTS = [['hjalm','Hjälm'],['halsband','Halsband'],['axel','Axelskydd'],['mantel','Mantel'],['brost','Bröstpansar'],['handskar','Handskar'],['balte','Bälte'],['byxor','Byxor'],['skor','Skor'],['ring1','Ring'],['ring2','Ring'],['vapen','Vapen']];
+const EQ_SLOTS = [['hjalm','Hjälm'],['halsband','Halsband'],['axel','Axelskydd'],['mantel','Mantel'],['brost','Bröstpansar'],['handskar','Handskar'],['balte','Bälte'],['byxor','Byxor'],['skor','Skor'],['ring1','Ring'],['ring2','Ring'],['vapen','Vapen'],['vapen2','Andra hand']];   // andra handen: bara Psykopatens knivar
 const SLOTN = Object.fromEntries(EQ_SLOTS); SLOTN.ring = 'Ring';
 
 // Gear: [slot, namn level 2, namn level 5]
@@ -775,13 +775,14 @@ for(const [slot,n2,n5] of GEAR){
   BASES[slot+'2'] = {id:slot+'2', slot, name:n2, req:2, armor:1, smin:0, smax:1};
   BASES[slot+'5'] = {id:slot+'5', slot, name:n5, req:5, armor:3, smin:1, smax:2};
 }
-const WTYPE = {yxa:'Yxa', bage:'Pilbåge', stav:'Stav', pinne:'Pinne'};
+const WTYPE = {yxa:'Yxa', bage:'Pilbåge', stav:'Stav', pinne:'Pinne', kniv:'Kniv'};
 for(const [id,wtype,name,req,atk] of [
   ['pinne1','pinne','Träpinne',1,[1,1]],   // startvapen för alla klasser – endast närstrid
   ['yxa2','yxa','Vedyxa',2,[2,3]],     ['yxa5','yxa','Skogsyxa',5,[4,6]],
   ['bage2','bage','Kvistbåge',2,[1,2]],['bage5','bage','Almbåge',5,[2,4]],
   ['stav2','stav','Pinnstav',2,[1,2]], ['stav5','stav','Viskstav',5,[2,4]],
   ['yxa8','yxa','Björnyxa',8,[7,10]], ['bage8','bage','Björnbåge',8,[4,7]], ['stav8','stav','Björnstav',8,[4,7]],
+  ['kniv1','kniv','Fickkniv',1,[1,1]], ['kniv2','kniv','Täljkniv',2,[1,2]], ['kniv5','kniv','Slaktkniv',5,[3,4]], ['kniv8','kniv','Vargkniv',8,[5,7]],   // Psykopatens knivar: lägre skada men två åt gången
 ]) BASES[id] = {id, slot:'vapen', wtype, name, req, atk};
 // Level 8-utrustning (från vargar) – varginspirerat utseende
 BASES.hjalm8 = {id:'hjalm8', slot:'hjalm', name:'Varghuva',       req:8, armor:5, smin:2, smax:3};
@@ -816,10 +817,13 @@ BASES.handskarAska= {id:'handskarAska',slot:'handskar',name:'Glödhandskarna',  
 BASES.brostAska   = {id:'brostAska',  slot:'brost',    name:'Askfjällsbrynjan',       req:20, armor:24, atk:3, fixed:{str:8,int:8,agi:8}, cdmg:5, look:'dragon'};
 BASES.mantelAska = {id:'mantelAska', slot:'mantel',   name:'Askdrakens mantel',      req:20, armor:14, atk:5, fixed:{str:7,int:7,agi:7}, xp:3, cdmg:10};
 function gearBase(id, slot, name, L, wtype){
+  if(slot==='vapen' && wtype==='kniv') return BASES[id]={id, slot, wtype, name, req:L, atk:[Math.round(L*.6),Math.round(L*.82+.5)]};
   if(slot==='vapen'){ const melee=wtype==='yxa'||wtype==='pinne'; return BASES[id]={id, slot, wtype, name, req:L, atk: melee?[Math.round(L*.85-.2),Math.round(L*1.15+.7)]:[Math.floor(L*.55),Math.floor(L*.85+.4)]}; }
   return BASES[id]={id, slot, name, req:L, armor:Math.round(L*.62), smin:Math.floor((L-1)/3.5), smax:Math.floor((L+1)/3)};
 }
+BASES.kniv8.name='Vargkniv';
 BASES.yxa8.name='Vargyxa'; BASES.bage8.name='Vargbåge'; BASES.stav8.name='Vargstav';
+gearBase('kniv12','vapen','Björnklokniv',12,'kniv'); gearBase('kniv15','vapen','Arenakniv',15,'kniv'); gearBase('kniv17','vapen','Mosskniv',17,'kniv'); gearBase('kniv20','vapen','Askkniv',20,'kniv');
 gearBase('yxa12','vapen','Björnyxa',12,'yxa'); gearBase('bage12','vapen','Björnbåge',12,'bage'); gearBase('stav12','vapen','Björnstav',12,'stav');
 // Crafting: fasta stats och fast rarity (Uncommon eller Rare). Vapnet blir alltid för din egen klass.
 const CRB = (id,slot,name,req,armor,fixed,o={}) => BASES[id]={id,slot,name,req,armor,fixed,craft:true,...o};
@@ -836,9 +840,9 @@ CRB('crGlovBandit','handskar','Banditläderhandskar',15,9,{str:5,int:5,agi:5},{l
 CRB('crHatSkugga','hjalm','Skuggdrakhjälm',18,15,{str:8,int:8,agi:8},{look:'shadow',cdmg:5});
 CRB('crPantSkugga','byxor','Skuggdrakbyxor',18,15,{str:8,int:8,agi:8},{look:'shadow',atk:2});
 CRB('crBootSkugga','skor','Skuggdrakstövlar',18,14,{str:8,int:8,agi:8},{look:'shadow',move:6});
-const CR_MAIN = {yxa:'str', bage:'agi', stav:'int'};
-for(const [tier,L,names,mv,ov] of [[1,8,['Vargtandsyxa','Kattsvansbåge','Vargbensstav'],3,1],[2,15,['Björnklösyxa','Fjäderbåge','Klippstav'],6,2],[3,19,['Drakfjällsyxa','Drakfjällsbåge','Drakfjällsstav'],9,3]])
-  ['yxa','bage','stav'].forEach((wt,i)=>{ const id='cr'+wt+tier; gearBase(id,'vapen',names[i],L,wt); Object.assign(BASES[id],{craft:true, fixed:{str:ov,int:ov,agi:ov,[CR_MAIN[wt]]:mv}}); });
+const CR_MAIN = {yxa:'str', bage:'agi', stav:'int', kniv:'agi'};
+for(const [tier,L,names,mv,ov] of [[1,8,['Vargtandsyxa','Kattsvansbåge','Vargbensstav','Vargtandskniv'],3,1],[2,15,['Björnklösyxa','Fjäderbåge','Klippstav','Björnklokniv'],6,2],[3,19,['Drakfjällsyxa','Drakfjällsbåge','Drakfjällsstav','Drakfjällskniv'],9,3]])
+  ['yxa','bage','stav','kniv'].forEach((wt,i)=>{ const id='cr'+wt+tier; gearBase(id,'vapen',names[i],L,wt); Object.assign(BASES[id],{craft:true, fixed:{str:ov,int:ov,agi:ov,[CR_MAIN[wt]]:mv}}); });
 // Gamla Leatherworker-föremål (kan inte längre tillverkas, men finns kvar i väskor)
 for(const [id,slot,name,req,armor,smin,smax,look] of [
   ['lwHand1','handskar','Pälshandskar',6,3,1,3,'fur'],   ['lwHat1','hjalm','Pälsmössa',6,3,1,3,'fur'],          ['lwBoot1','skor','Pälsstövlar',6,3,1,3,'fur'],
@@ -856,9 +860,10 @@ BASES.hjalmSten   = {id:'hjalmSten',   slot:'hjalm',  name:'Stenskallen',       
 // Stenappans byte: nya föremål med stentema (level 18), och stenkulornas klassvapen (level 17)
 const STONE_GEAR = [];
 for(const [id,slot,name] of [['stHjalm','hjalm','Granithjälm'],['stHals','halsband','Kvartshalsband'],['stAxel','axel','Skifferaxlar'],['stMantel','mantel','Mossstensmantel'],['stBrost','brost','Granitpansar'],['stHand','handskar','Stenknogar'],['stBalte','balte','Kvartsbälte'],['stByxor','byxor','Granitbyxor'],['stSkor','skor','Stenstövlar'],['stRing','ring','Kvartsring']]){ gearBase(id,slot,name,18); BASES[id].theme='sten'; STONE_GEAR.push(id); }
+gearBase('stKniv','vapen','Stenkniv',17,'kniv');
 gearBase('stYxa','vapen','Stenyxa',17,'yxa'); gearBase('stBage','vapen','Stenbåge',17,'bage'); gearBase('stStav','vapen','Stenstav',17,'stav');
 for(const k of ['stYxa','stBage','stStav']) BASES[k].theme='sten';
-const STONE_WPN = {skog:'stYxa', hippie:'stBage', viskare:'stStav'};
+const STONE_WPN = {skog:'stYxa', hippie:'stBage', viskare:'stStav', psykopat:'stKniv'};
 const LW_PAL = {dragon:{main:'#3a6aa8',dark:'#1a3460',trim:'#9ad0ff',stitch:'#e8f4ff'}, fur:{main:'#9aa0a8',dark:'#5a6068',trim:'#eceef0'}, bear:{main:'#8a5a36',dark:'#4e2e18',trim:'#c8a070'}, track:{main:'#3e5236',dark:'#1e2a18',trim:'#a0a6ae',stitch:'#e8c34a'}, bandit:{main:'#4a3c34',dark:'#221a16',trim:'#c8342a',stitch:'#e8c34a'}, shadow:{main:'#4a3e66',dark:'#1e1830',trim:'#e07a3a',stitch:'#ffcf80'}};
 const gearLook = it => it && BASES[it.base] ? BASES[it.base].look : null;
 
@@ -966,16 +971,21 @@ const CLASSES = {
     desc:'Skjuter pilar när hon har en pilbåge – inga pilar behövs. Varje poäng Smidighet (Agi) ger +0,2 skada per anfall. Börjar med en träpinne (närstrid). Nya förmågor i level 4 och 8.'},
   viskare:{id:'viskare', name:'Viskare', main:'int', mainMult:1, wtype:'stav', starter:'pinne1', aspd:0.2, trees:['schh','visk_b','visk_c'],
     desc:'Kastar målsökande viskningar med stav (0,5 mana per stavens level). Varje poäng Intellekt (Int) ger +0,2 skada per anfall. +20% attackhastighet. Börjar med en träpinne (närstrid). Nya förmågor i level 4 och 8.'},
+  psykopat:{id:'psykopat', name:'Psykopat', main:'agi', mainMult:1, wtype:'kniv', starter:'kniv1', aspd:0, trees:['psyko','psyko_b','psyko_c'],
+    desc:'Snabb närstrid med två knivar – en i varje hand. Huvudhanden gör 100% skada och andra handen 50%, och de hugger varannan gång (+40% attackhastighet med två knivar). Varje poäng Smidighet (Agi) ger +0,2 skada. Nya förmågor i level 4, 8 och 12.'},
 };
 
 /* Klassförmågor – lärs in automatiskt när gubben når rätt level.
    mp = manakostnad, hp = kostnad i % av max-HP (Skogshuggaren har ingen mana), cd = nedkylning i sekunder. */
-const BOMB_R = 85;
+const BOMB_R = 85, KNIV_N = 6, KNIV_G = 820;
 const SPELLS = {
   bombpil:  {cls:'hippie',  lvl:4, icon:'💣', name:'Bombpil',          cd:8,  mp:8,  atk:true, d:()=>`Skjuter en pil som exploderar och gör 100% skada på alla fiender i närheten (radie ${Math.round(BOMB_R*(1+tv('h_radie')/100))}).`},
   flower:   {cls:'hippie',  lvl:8, icon:'🌸', name:'Flower power',     cd:20, mp:15, d:()=>`+100% attackhastighet i ${4+tv('h_blomma')} sekunder.`},
   pilregn:  {cls:'hippie',  lvl:12, icon:'🌧️', name:'Pilregn',         cd:14, mp:18, atk:true, d:()=>`Skjuter upp en skur pilar som regnar ner över fienden framför dig: ${PILREGN_N+tv('h_regn')} pilar under drygt 1,5 s. Varje pil gör 45% skada på alla fiender där den slår ner.`},
   eko:      {cls:'viskare', lvl:4, icon:'🔊', name:'Ekande viskning',  cd:10, mp:10, atk:true, d:()=>{ const h=3+tv('v_ekohopp'), f=20-tv('v_ekoklar'); return `En viskning som gör 100% skada och studsar vidare till ${h} fiender till. Tappar ${f}% skada per träff (${Array.from({length:h+1},(_,i)=>Math.max(0,100-i*f)+'%').join(' → ')}).`; }},
+  backstab: {cls:'psykopat', lvl:4,  icon:'🔪', name:'Backstab',     cd:8,  mp:8,  atk:true, d:()=>`Ett hugg med huvudhanden mot en fiende framför dig: 150% skada – 250% om du står i fiendens rygg.${tv('p_rygg')?` ${tv('p_rygg')}% chans att det räknas som ryggen ändå.`:''}`},
+  shadowstep:{cls:'psykopat', lvl:8, icon:'👤', name:'Shadowstep',   cd:10, mp:10, d:()=>`Du försvinner i en rökpuff och dyker upp bakom närmaste fiende framför dig, vänd mot dess rygg.${tv('p_skugga')?` +${tv('p_skugga')}% kritisk chans i 3 s.`:''}`},
+  knivsits: {cls:'psykopat', lvl:12, icon:'🗡️', name:'Knivig sits!', cd:12, mp:16, atk:true, d:()=>`Kastar ${KNIV_N} långsamma knivar åt höger och vänster som en fontän. Varje kniv som träffar gör 80% skada.`},
   rotter:   {cls:'viskare', lvl:8, icon:'🌿', name:'Snärjande rötter', cd:20, mp:20, atk:true, d:()=>`Upp till 5 fiender framför dig fastnar i rötter i 6 sekunder och tar 30% skada per sekund.${rank('v_rothel')?' Du helas lika mycket som rötterna skadar.':''}`},
   kraftslag:{cls:'skog',    lvl:4, icon:'💥', name:'Kraftslag',        cd:6,  hp:5,  atk:true, d:()=>`Slår yxan kraftigt i marken framför dig – 120% skada på alla fiender i området.`},
   stockrull:{cls:'skog',    lvl:8, icon:'🪵', name:'Stockrullning',    cd:12, hp:8,  atk:true, d:()=>`Rullar iväg en stock framför dig. Den rullar tills den träffar en vägg (och trillar ner från kanter) och gör 60% skada på varje fiende den passerar.`},
@@ -1028,7 +1038,15 @@ const TREES = {
     {id:'k_cdr',   tier:3, max:3, icon:'⏳', name:'Tålamod',       v:[5,10,15], d:v=>`${v}% kortare nedkylning på förmågor.`},
   ]},
 };
-for(const k of ['skog_b','skog_c','hippie_b','hippie_c','visk_b','visk_c']) TREES[k] = {name:k.endsWith('_b')?'Träd 2':'Träd 3', locked:true, talents:[]};
+TREES.psyko = {name:'Psyko', talents:[
+  {id:'p_kritsk', tier:1, max:3, icon:'💢', name:'Kallblodig',      v:[10,20,30], d:v=>`+${v}% kritisk skada.`},
+  {id:'p_snabb',  tier:1, max:3, icon:'💨', name:'Snabba händer',   v:[5,10,15],  d:v=>`+${v}% attackhastighet.`},
+  {id:'p_skugga', tier:2, max:3, icon:'🌑', name:'Ur skuggorna',    v:[10,20,30], d:v=>`Shadowstep ger +${v}% kritisk chans i 3 sekunder.`},
+  {id:'p_rygg',   tier:2, max:3, icon:'🎯', name:'Alltid i ryggen', v:[33,67,100],d:v=>`Backstab har ${v}% chans att räknas som om du stod bakom fienden (250% skada).`},
+  {id:'p_blod',   tier:3, max:3, icon:'🩸', name:'Blödning',        v:[1,2,3],    d:v=>`Dina attacker får fienden att blöda: 10% av skadan per sekund i 10 sekunder. Staplas upp till ${v} gång${v>1?'er':''}.`},
+  {id:'p_steg',   tier:3, max:3, icon:'⏱️', name:'Snabba steg',     v:[1,2,3],    d:v=>`Shadowstep har ${v} sekund${v>1?'er':''} kortare nedkylning.`},
+]};
+for(const k of ['skog_b','skog_c','hippie_b','hippie_c','visk_b','visk_c','psyko_b','psyko_c']) TREES[k] = {name:k.endsWith('_b')?'Träd 2':'Träd 3', locked:true, talents:[]};
 const TAL = {};
 for(const [tk,t] of Object.entries(TREES)) for(const x of t.talents){ x.tree = tk; TAL[x.id] = x; }
 
@@ -1043,6 +1061,8 @@ const ROLL_T = 0.5, ROLL_SPEED = 380;   // Kullerbytta: 0,5 s, ca 150 px, osårb
 const ROLL_DEF = {name:'Kullerbytta', icon:'🤸', d:()=>'En snabb kullerbytta framåt. Du tar ingen skada under rullningen (0,5 s) – rulla genom monster, eldbollar och törnsnår.'};
 ABIL.roll = {cd:()=>6, fixedCd:true, mp:()=>0, hp:()=>0};
 for(const [id,sp] of Object.entries(SPELLS)) ABIL[id] = {cd:()=>sp.cd, mp:()=>sp.mp||0, hp:()=>sp.hp||0, atk:!!sp.atk};
+ABIL.shadowstep.cd = () => SPELLS.shadowstep.cd - tv('p_steg');
+ABIL.shadowstep.can = () => { if(shadowTarget()) return true; throttleMsg('noss','Ingen fiende framför dig att smyga bakom.','#cfe0ff'); return false; };
 ABIL.rotter.can = () => { if(rootTargets().length) return true; throttleMsg('noroot','Inga fiender framför dig att snärja.','#cfe0ff'); return false; };
 const abilName = id => id==='attack' ? 'Basattack' : id==='roll' ? ROLL_DEF.name : CONS[id] ? CONS[id].name : SPELLS[id] ? SPELLS[id].name : TAL[id] ? TAL[id].name : id;
 const abilIcon = id => id==='attack' ? '⚔️' : id==='roll' ? ROLL_DEF.icon : CONS[id] ? `<img class="hi" src="${iconURL({base:id})}" alt="">` : SPELLS[id] ? SPELLS[id].icon : TAL[id] ? TAL[id].icon : '❔';
@@ -1082,9 +1102,9 @@ const MOBS = {
   blabar:   mobDefine({lvl:1,  name:'Blåbär',    speed:52,  w:34, h:34, drop:0,    pool:[], mat:'bar',       matP:.10, map:1, ring:'ringBar', ringP:.001}),
   mossa:    mobDefine({lvl:2,  name:'Mossaboll', speed:68,  w:44, h:44, drop:0,    pool:[], mat:'mossa',     matP:.20, map:1, loot:[['byxorMossa',.002,'epic']]}),
   kissekatt:mobDefine({lvl:4,  name:'Kissekatt', speed:78,  w:42, h:36, drop:0.02, pool:['handskar5','mantel5','skor5'], maxRar:'uncommon', mat:'kattsvans', matP:.10, map:2}),
-  vildhund: mobDefine({lvl:4,  name:'Vildhund',  speed:88,  w:50, h:42, drop:0.02, pool:['yxa5','bage5','stav5'],         maxRar:'uncommon', mat:'hundtass',  matP:.10, map:2}),
-  varg:     mobDefine({lvl:7,  name:'Varg',      speed:100, w:54, h:46, drop:0.02, pool:['hjalm8','byxor8','brost8','yxa8','bage8','stav8'], maxRar:'uncommon', mat:'vargpals', matP:.15, map:3}),
-  bjorn:    mobDefine({lvl:12, name:'Björn',     speed:58,  w:66, h:60, drop:0.02, pool:['yxa12','bage12','stav12'],     maxRar:'uncommon', mat:'bjornpals', matP:.15, map:4}),
+  vildhund: mobDefine({lvl:4,  name:'Vildhund',  speed:88,  w:50, h:42, drop:0.02, pool:['yxa5','bage5','stav5','kniv5'],         maxRar:'uncommon', mat:'hundtass',  matP:.10, map:2}),
+  varg:     mobDefine({lvl:7,  name:'Varg',      speed:100, w:54, h:46, drop:0.02, pool:['hjalm8','byxor8','brost8','yxa8','bage8','stav8','kniv8'], maxRar:'uncommon', mat:'vargpals', matP:.15, map:3}),
+  bjorn:    mobDefine({lvl:12, name:'Björn',     speed:58,  w:66, h:60, drop:0.02, pool:['yxa12','bage12','stav12','kniv12'],     maxRar:'uncommon', mat:'bjornpals', matP:.15, map:4}),
 };
 /* Nya monster. Drakar ligger lika mycket över björnar som björnar över vargar (+5 level).
    Banditer är snäppet högre. Stenkulor har drakarnas nivå. Bossar kan aldrig bli silvermonster. */
@@ -1145,6 +1165,7 @@ const isMatBase = b => !!(CONS[b] && CONS[b].kind==='mat');
 const invCount = mat => G.ch.inv.reduce((n,x)=>n+(isMatBase(x.base)===mat?1:0),0) + (G.ch.escrow||[]).reduce((n,x)=>n+(isMatBase(x.base)===mat?1:0),0);   // föremål i en pågående byteshandel håller kvar sina platser
 const STAT_DMG = 0.2;   // skada per poäng i klassens huvudstat (Str/Agi/Int)
 const BASE_ATK_T = 0.75;          // sekunder per attack vid 100% attackhastighet
+const DUAL_ASPD = 0.4, OFF_MULT = 0.5;   // två knivar: +40% attackhastighet, andra handen gör 50%
 const MELEE_RANGE = 88, BOW_RANGE = 360, WHISPER_RANGE = 270;
 const PHY = {g:1900, jump:620, walk:210, climb:135, maxFall:950};
 // Ljudeffekter: allt skapas med Web Audio (inga ljudfiler). Startar vid första tryck/knapp (krävs av webbläsare).
@@ -1201,6 +1222,9 @@ const SFX = (()=>{
         case 'stockrull': for(let i=0;i<6;i++) noise({type:'lowpass',f:260,f2:140,q:1,d:.12,v:.2,t0:i*.09}); tone(80,{type:'triangle',f2:55,a:.03,d:.6,v:.14}); break;
         case 's_kada': arp([392,523,659,784],{type:'triangle',d:.3,v:.09,step:.09}); noise({f:3000,q:8,d:.06,v:.04,t0:.2}); noise({f:3400,q:8,d:.06,v:.04,t0:.32}); break;
         case 's_skalv': noise({type:'lowpass',f:220,f2:60,q:.6,a:.05,d:1.2,v:.5}); tone(55,{f2:32,a:.05,d:1.1,v:.32}); tone(82,{type:'triangle',f2:40,a:.1,d:.9,v:.12}); break;
+        case 'backstab': noise({f:3200,f2:900,q:2,d:.1,v:.2}); tone(240,{type:'square',f2:90,d:.12,v:.08}); break;
+        case 'shadowstep': noise({type:'lowpass',f:900,f2:200,q:.8,a:.02,d:.35,v:.25}); tone(300,{type:'sine',f2:900,d:.25,v:.06}); break;
+        case 'knivsits': for(let i=0;i<6;i++) noise({f:4200,f2:2000,q:3,d:.06,v:.1,t0:i*.05}); break;
         case 'v_irrbloss': arp([880,1175,1480,1760],{type:'sine',d:.22,v:.08,step:.05}); tone(440,{type:'triangle',f2:660,a:.05,d:.3,v:.06}); break;
         default: tone(520,{f2:900,d:.17,v:.11});
       } },
@@ -1549,7 +1573,7 @@ const MOSS = (()=>{ const R=seeded(99), a=[]; for(let i=0;i<34;i++) a.push({r:4+
    ===================================================================== */
 const G = {
   mode:'title', mapId:1, acct:null, ch:null, p:null, stats:null, others:{}, monById:{}, monSeq:0, dropSeq:0,
-  monsters:[], drops:[], projs:[], fx:[], nums:[], spawns:[],
+  monsters:[], drops:[], projs:[], fx:[], nums:[], spawns:[], bleeds:[],
   time:0, spawnTimer:0, cam:{x:600,y:420}, zoom:1, view:{x1:0,y1:0,x2:0,y2:0},
   assigning:null, dirty:false, touch:false, mouse:{x:0,y:0,in:false},
   ui:{sel:null, talTab:null, talSel:null, trash:null, z:30}, msgT:{},
@@ -1696,16 +1720,19 @@ function calcStats(ch){
   s.crit = agiPct(s.agi,ch.level); s.dodge = Math.min(AGI_CAP, agiPct(s.agi,ch.level) + (s.eqDodge||0)); s.cdr = Math.min(CDR_CAP, Math.max(0,s.int)*AGI_PCT(ch.level));
   s.maxHp = Math.round((50 + s.str*10)*(1+tv('s_tjock')/100));
   s.maxMp = C.noMana ? 0 : Math.round((20 + s.int*10)*(1+tv('v_klok')/100));
-  s.crit = Math.min(100, s.crit + tv('h_skarp'));
-  s.cdmg = (s.cdmg||0) + tv('h_vass');   // Vass spets
+  s.crit = Math.min(100, s.crit + tv('h_skarp') + (G.p && G.ch===ch && G.p.ssT>0 ? tv('p_skugga') : 0));   // Ur skuggorna: efter Shadowstep
+  s.cdmg = (s.cdmg||0) + tv('h_vass') + tv('p_kritsk');   // Vass spets, Kallblodig
   s.hpReg = s.str*0.1;
   if(G.p && G.ch===ch && G.p.regenT>0) s.hpReg *= 1 + tv('s_kada')/100;   // Kådläkning: +300%
   s.mpReg = C.noMana ? 0 : s.int*0.1;
-  s.aspd = 1 + C.aspd + tv('k_aspd')/100 + tv('h_snabb')/100 + (G.p && G.ch===ch && G.p.buffT>0 ? 1 : 0);   // Flower power: +100% (Agi ger inte längre attackhastighet)
+  const w2 = ch.eq.vapen2;
+  s.dual = ch.cls==='psykopat' && !!ch.eq.vapen && ch.eq.vapen.wtype==='kniv' && !!w2 && w2.wtype==='kniv';   // två knivar
+  s.aspd = 1 + C.aspd + tv('k_aspd')/100 + tv('h_snabb')/100 + tv('p_snabb')/100 + (s.dual ? DUAL_ASPD : 0) + (G.p && G.ch===ch && G.p.buffT>0 ? 1 : 0);   // Flower power: +100% (Agi ger inte längre attackhastighet)
   s.move = 1 + tv('k_move')/100 + s.eqMove/100;
   s.range = 1 + tv('h_range')/100;
   const w = ch.eq.vapen;
   s.wMin = w ? w.atkMin : 1; s.wMax = w ? w.atkMax : 1;
+  s.oMin = s.dual ? w2.atkMin : 0; s.oMax = s.dual ? w2.atkMax : 0;
   s.bookAtk = bookAtkOf(bb);
   s.statAtk = s[C.main]*STAT_DMG + tv('k_atk') + s.eqAtk + s.bookAtk;   // klassens huvudstat ger 0,2 skada per poäng
   s.atkMin = s.wMin + s.statAtk; s.atkMax = s.wMax + s.statAtk;
@@ -1724,6 +1751,7 @@ const RAGE_CAP = 0.6;   // Bärsärk ger max +60 % attackhastighet
 const rageAspd = () => { const v=tv('s_raseri'); if(!v || !G.ch || !G.stats) return 0; return Math.min(RAGE_CAP, v*clamp(100-G.ch.hp/G.stats.maxHp*100,0,100)/100); };
 const atkInterval = () => BASE_ATK_T / (G.stats.aspd + rageAspd());
 // Vapnets slag + attack från huvudstat. Decimaler (t.ex. 1,2 per Str) avrundas slumpvis så snittet blir rätt.
+const rollOff = () => { const v=(randInt(G.stats.oMin,G.stats.oMax)+G.stats.statAtk)*OFF_MULT; const f=Math.floor(v); return Math.max(1, f + (Math.random()<v-f?1:0)); };   // andra handens hugg
 const rollAtk = () => { let v=randInt(G.stats.wMin,G.stats.wMax)+G.stats.statAtk; if(rank('s_vrede') && G.ch.hp<G.stats.maxHp*.3) v*=1+tv('s_vrede')/100; const f=Math.floor(v); return f + (Math.random()<v-f?1:0); };
 
 /* =====================================================================
@@ -1884,6 +1912,8 @@ function updatePlayer(dt){
   if(p.buffT>0){ p.buffT-=dt; if(Math.random()<dt*14) fxPetal(p); if(p.buffT<=0){ p.buffT=0; recalc(); log('🌸 Flower power tog slut.','#ffb3de'); } }
   if(p.regenT>0){ p.regenT-=dt; if(Math.random()<dt*12) particle(p.x+rand(-14,14), p.y-rand(5,60), pick(['#7dff8a','#c8ffb0','#3fdc6a']), rand(-10,10), rand(-70,-30), .7, 2.5, -20); if(p.regenT<=0){ p.regenT=0; recalc(); } }
   if(p.wisps && p.wisps.length) updateWisps(dt);
+  if(p.ssT>0){ p.ssT-=dt; if(p.ssT<=0){ p.ssT=0; recalc(); } }
+  if(G.bleeds.length) updateBleeds(dt);
   if(p.healShow>0){ p.healShowT=(p.healShowT||0)-dt; if(p.healShowT<=0){ G.fx.push({type:'text',x:p.x,y:p.y-p.h-24,text:`+${fmt1(p.healShow)} HP`,color:'#7dff8a',t:0,dur:1,size:13}); p.healShow=0; p.healShowT=0.6; } }
   const I = input();
   if(p.rollT>0){ p.rollT-=dt; if(p.rollT<=0 || p.climb){ p.rollT=0; rollEnd(); } }
@@ -2004,7 +2034,7 @@ const ARENA_DROPS = {   // [text, chans, föremål för förhandsvisning]
   askdrake:  [['Askdrakens mantel · Epic',8,'mantelAska:epic'],['Askfjällsbrynjan · Epic',5,'brostAska:epic'],['Vapen (Lv 20) för slumpad klass · Rare',25,'yxa20:rare'],['Askdrakens horn · Rare',10,'hjalmAska:rare'],['Glödhandskarna · Rare',10,'handskarAska:rare'],['5 × Stor själ',42],['Silvernyckel (extra)',20]],
 };
 function arenaLoot(m, killer){   // alltid utrustning eller själar
-  const r=Math.random(), cls=['yxa','bage','stav'], drop=it=>spawnDrop(m,{kind:'item', item:it, owner:killer}), souls=(b,n)=>drop({uid:uid(), base:b, count:n});
+  const r=Math.random(), cls=['yxa','bage','stav','kniv'], drop=it=>spawnDrop(m,{kind:'item', item:it, owner:killer}), souls=(b,n)=>drop({uid:uid(), base:b, count:n});
   // en sak per kill enligt ARENA_DROPS (sista raden med själar tar resten)
   const T={ jattebar:[[.18,()=>drop(makeItem(pick(cls)+'15','uncommon',true))],[.10,()=>drop(makeItem('vantarBar','uncommon'))],[.08,()=>drop(makeItem('halsBar','uncommon'))],[.08,()=>drop(makeItem('balteBar','uncommon'))],[1,()=>souls('sjal2',5)]],
     mossjatte:[[.12,()=>drop(makeItem('axelMoss','rare'))],[.22,()=>drop(makeItem(pick(cls)+'17',Math.random()<.3?'rare':'uncommon',true))],[.10,()=>drop(makeItem('skorMoss','rare'))],[.08,()=>drop(makeItem('ringMoss','rare'))],[1,()=>souls('sjal3',3)]],
@@ -2264,10 +2294,10 @@ function startAtkAnim(mode){
 function startSkillAnim(mode){
   const p=G.p; p.atkDur=0.32; p.atkAnim=p.atkDur; p.atkMode=mode; p.atkVar=((p.atkVar||0)+1)%2;
 }
-function meleeStrike(mult, maxN, range){
+function meleeStrike(mult, maxN, range, roll){
   const p=G.p;
   const targets = inFrontMonsters(range, maxN);
-  for(const m of targets) hitMonster(m, Math.max(1,Math.round(rollAtk()*mult)), {dir:p.face});
+  for(const m of targets) hitMonster(m, Math.max(1,Math.round((roll||rollAtk)()*mult)), {dir:p.face});
   G.fx.push({type:'slash', x:p.x+p.face*18, y:p.y-32, dir:p.face, t:0, dur:.22, r:range*0.62, wide:maxN>1});
   return targets.length;
 }
@@ -2285,7 +2315,9 @@ function basicAttack(){
     netShot(G.projs[G.projs.length-1]);
   } else {
     if(s.mode==='whisper') throttleMsg('mana','Inte tillräckligt med mana – du slår med staven.','#9cc6ff');
-    startAtkAnim('swing'); SFX.swing(); meleeStrike(1,1,MELEE_RANGE*s.range);
+    startAtkAnim('swing'); SFX.swing();
+    const off = s.dual && p.atkVar===1;   // två knivar: huvudhand, andra hand, huvudhand …
+    meleeStrike(1,1,MELEE_RANGE*s.range*(G.ch.cls==='psykopat'?.85:1), off?rollOff:null);
   }
   return true;
 }
@@ -2330,7 +2362,42 @@ function updateWisps(dt){   // varje irrbloss stannar där det frammanades och s
     G.projs.push(pr); netShot(pr);
   }
 }
+function shadowTarget(){   // närmaste fiende framför spelaren (inom 420 px)
+  const p=G.p; let best=null, bd=1e9;
+  for(const m of G.monsters){ if(m.dead || m.spawnT>0 || m.pend) continue;
+    const dx=(m.x-p.x)*p.face; if(dx<10 || dx>420) continue; if(Math.abs(m.y-p.y)>170) continue;
+    if(dx<bd){ bd=dx; best=m; } }
+  return best;
+}
+function smokePuff(x,y){ for(let i=0;i<18;i++) particle(x+rand(-14,14),y-rand(4,60),pick(['#3a3440','#5a5466','#8a8496','#1e1a24']),rand(-70,70),rand(-90,-10),.6,5,-30); }
+const ABIL_USE_PSYKO = {
+  backstab(){
+    const p=G.p, s=G.stats; startSkillAnim('swing');
+    const t=inFrontMonsters(MELEE_RANGE*s.range+10,1)[0];
+    G.fx.push({type:'slash', x:p.x+p.face*18, y:p.y-32, dir:p.face, t:0, dur:.22, r:60, wide:false});
+    if(!t) return;
+    const behind = Math.sign(p.x-t.x)===-t.dir, lucky = !behind && Math.random()*100<tv('p_rygg');
+    hitMonster(t, Math.max(1,Math.round(rollAtk()*(behind||lucky?2.5:1.5))), {dir:p.face});
+    if(behind||lucky){ G.fx.push({type:'text',x:t.x,y:t.y-t.d.h-26,text:'🔪 I ryggen!',color:'#ff6a6a',t:0,dur:1,size:15}); for(let i=0;i<10;i++) particle(t.x,t.y-t.d.h/2,pick(['#ff3a3a','#a01818','#ffffff']),rand(-90,90),rand(-120,-20),.4,2.5,300); }
+  },
+  shadowstep(){
+    const p=G.p, t=shadowTarget(); if(!t) return;
+    smokePuff(p.x,p.y); netFx('smoke',p.x,p.y);
+    const pl=t.plat, off=t.d.w/2+18; let bx=t.x - t.dir*off;
+    if(pl && !pl.solid) bx=clamp(bx, pl.x1+8, pl.x2-8); bx=clamp(bx,20,WORLD.w-20);
+    p.x=bx; p.y=pl?yAt(pl,bx):t.y; p.plat=pl||p.plat; p.onGround=true; p.vx=0; p.vy=0; p.climb=null; p.drop=null; p.face=Math.sign(t.x-bx)||t.dir; p.inv=Math.max(p.inv,.25);
+    smokePuff(p.x,p.y); netFx('smoke',p.x,p.y);
+    if(tv('p_skugga')){ p.ssT=3; recalc(); }
+  },
+  knivsits(){
+    const p=G.p; startSkillAnim('cast');
+    for(let i=0;i<KNIV_N;i++){ const side=i%2?1:-1, k=Math.floor(i/2);
+      const pr={type:'kniv', x:p.x+side*8, y:p.y-48, vx:side*(110+k*75), vy:-(430+k*45), g:KNIV_G, speed:0, homing:0, target:null, dmg:Math.max(1,Math.round(rollAtk()*.8)), dist:0, maxDist:99999, life:2.6, hit:new Set()};
+      G.projs.push(pr); netShot(pr); }
+  },
+};
 const ABIL_USE = {
+  ...ABIL_USE_PSYKO,
   roll(){
     const p=G.p, I=input(), d=(I.right?1:0)-(I.left?1:0)||p.face;
     p.face=d; p.rollDir=d; p.rollT=ROLL_T; p.rollX0=p.x; p.rollY0=p.y; p.rollHit=false; p.atkAnim=0;
@@ -2520,11 +2587,24 @@ function changeMap(to, x, y){
   arenaOnEnter(to);
 }
 
-let HIT_BASIC=false;   // sätts medan basattacken körs
+let HIT_BASIC=false;
+function addBleed(m, dmg){
+  const max=tv('p_blod'); if(!max) return;
+  const mine=G.bleeds.filter(b=>b.m===m); if(mine.length>=max) G.bleeds.splice(G.bleeds.indexOf(mine[0]),1);
+  G.bleeds.push({m, dps:dmg*0.1, t:10, tick:1});
+}
+function updateBleeds(dt){
+  for(let i=G.bleeds.length-1;i>=0;i--){ const b=G.bleeds[i];
+    if(b.m.dead || b.m.pend || !G.monsters.includes(b.m)){ G.bleeds.splice(i,1); continue; }
+    b.t-=dt; b.tick-=dt;
+    if(b.tick<=0){ b.tick+=1; hitMonster(b.m, Math.max(1,Math.round(b.dps)), {kind:'bleed', noKb:true, noBurn:true}); for(let k=0;k<3;k++) particle(b.m.x+rand(-8,8),b.m.y-b.m.d.h*.5,pick(['#c81818','#ff3a3a']),rand(-20,20),rand(-10,40),.5,2,300); }
+    if(b.t<=0) G.bleeds.splice(i,1); }
+}   // sätts medan basattacken körs
 function hitMonster(m, dmg, o={}){
   if(HIT_BASIC && o.basic===undefined) o={...o, basic:true};
   if(m.dead || m.pend) return;
   if(!o.kind && !o.by && G.stats && Math.random()<G.stats.crit/100){ dmg=Math.max(2,Math.round(dmg*(CRIT_MULT+(G.stats.cdmg||0)/100))); o={...o, kind:'crit'}; }
+  if(!o.by && o.kind!=='bleed' && o.kind!=='burn' && o.kind!=='root' && G.ch && G.ch.cls==='psykopat' && dmg>0) addBleed(m, dmg);   // Blödning (talang)
   const by = o.by || Net.myId;
   if(isGuestNet()){
     // Gäst: visa direkt, låt värden avgöra (värden äger monstren)
@@ -2750,7 +2830,7 @@ function spearAI(m, dt, tgt){   // pinnen: studsar på stället (0,45 s) och kas
   if(tgt && m.spCd<=0 && !(m.rootT>0) && !(m.hurtT>0) && m.kbT<=0){
     const dx=tgt.x-m.x, mg=m.d.w/2+2, x1=clamp(tgt.x+Math.sign(dx)*30, m.plat.x1+mg, m.plat.x2-mg);
     if(Math.abs(dx)>80 && Math.abs(dx)<430 && Math.abs(tgt.y-m.y)<200 && Math.abs(x1-m.x)>60){
-      m.spear={ph:'crouch', t:0, x0:m.x, x1, dur:clamp(Math.abs(x1-m.x)/560,.38,.8), h:50+Math.abs(x1-m.x)*.16};
+      m.spear={ph:'crouch', t:0, x0:m.x, x1, dur:clamp(Math.abs(x1-m.x)/230,1,1.9), h:60+Math.abs(x1-m.x)*.18};   // långsam båge (ca 230 px/s)
       m.spCd=rand(3.5,5.5); m.dir=Math.sign(dx)||m.dir; m.state='idle'; return true; }
   }
   return false;
@@ -3012,6 +3092,7 @@ function updateProjs(dt){
       if(pr.homing>=1){ pr.vx=dx/d*pr.speed; pr.vy=dy/d*pr.speed; }
       else { const k=Math.min(1,dt*pr.homing*10); pr.vx+=(dx/d*pr.speed-pr.vx)*k; pr.vy+=(dy/d*pr.speed-pr.vy)*k; }
     }
+    if(pr.g){ pr.vy+=pr.g*dt; if(pr.y>groundY(pr.x)+6) pr.life=0; }   // knivfontänen faller
     const step=Math.hypot(pr.vx,pr.vy)*dt; pr.x+=pr.vx*dt; pr.y+=pr.vy*dt; pr.dist+=step;
     if(pr.type==='echo' && Math.random()<.9) particle(pr.x,pr.y,pick(['#c9a2ff','#7fd8ff','#ffffff']),rand(-30,30),rand(-30,30),.5,3,0);
     if(pr.type==='bomb' && Math.random()<.8) particle(pr.x-pr.vx*0.01,pr.y,pick(['#ffd23f','#ff9a3a','#fff1b0']),rand(-30,30),rand(-40,10),.3,2.5,80);
@@ -3037,6 +3118,7 @@ function projHit(pr, m){
     return;
   }
   if(pr.type==='wispshot'){ sparks(m.x, m.y-m.d.h/2, '#bff7ff', 4); return; }
+  if(pr.type==='kniv'){ sparks(m.x, m.y-m.d.h/2, '#e8eef6', 5); return; }
   if(pr.type==='arrow'){
     if(pr.canBounce){ const c=tv('h_studs'); if(c && Math.random()<c/100) bounceArrow(m, 1, pr.dmg, pr.hit); }
     else if(pr.chain>0) bounceArrow(m, pr.chain, pr.dmg, pr.hit);
@@ -4295,6 +4377,8 @@ const LOOK = {
            top:['#ffd23f','#c98a1a'], pants:['#86b8e8','#4a78b0'], shoe:['#b07a44','#74481f'], sleeve:'short'},
   viskare:{style:'viskare', skin:['#f8dcc4','#d6a284'], hair:['#3a2a55','#1c1230'], eye:'#8a5ae8',
            top:['#6e44c2','#341c6e'], pants:['#3a2178','#22104a'], shoe:['#2c1d4a','#140a28'], sleeve:'robe'},
+  psykopat:{style:'viskare', torso:'psykopat', skin:['#f8dcc4','#d6a284'], hair:['#2a2a30','#101014'], eye:'#9a2a2a',
+           top:['#34343e','#16161c'], pants:['#2a2a32','#141418'], shoe:['#1e1a1a','#0a0808'], sleeve:'long'},
 };
 const NPC_LOOK = {
   berit: {style:'berit',  skin:['#f6d0aa','#d49a70'], hair:['#a8552e','#6a2e14'], eye:'#2f6a9a',
@@ -4340,11 +4424,12 @@ const APP_OPT = {
 };
 const APP_KEYS = Object.keys(APP_OPT);
 const HS_ID = ['kort','lugg','lang','hast','spretig','flata','flint'];
-const HAT_NAME = {skog:'Toppluva', hippie:'Pannband', viskare:'Huva'};
+const HAT_NAME = {skog:'Toppluva', hippie:'Pannband', viskare:'Huva', psykopat:'Huva'};
 const DEF_APP = {
   skog:   {skin:0, hc:0, hs:0, eye:0, ec:0, mouth:2, beard:3, hat:1, glas:0},
   hippie: {skin:0, hc:1, hs:2, eye:0, ec:1, mouth:0, beard:0, hat:1, glas:1},
   viskare:{skin:1, hc:5, hs:0, eye:0, ec:3, mouth:0, beard:0, hat:1, glas:0},
+  psykopat:{skin:1, hc:2, hs:1, eye:3, ec:4, mouth:1, beard:1, hat:1, glas:0},
 };
 function appOf(cls, app){ const d=DEF_APP[cls]||DEF_APP.skog, a={}; for(const k of APP_KEYS){ const v=app&&app[k]; a[k]=Number.isInteger(v)&&v>=0&&v<APP_OPT[k].list.length ? v : d[k]; } return a; }
 const LOOK_CACHE = new Map();
@@ -4532,10 +4617,12 @@ function poseOf(o){
   const w=(o.eq||{}).vapen, wt=w?w.wtype:'', rest=wt==='bage'?REST.bow:wt==='stav'?REST.staff:REST.melee;
   const k=o.t||0;
   let name=null;
-  if(o.pose==='swing') name=(o.av||0)%2?'swing1':'swing0';
+  const dual = wt==='kniv' && o.eq && o.eq.vapen2 && o.eq.vapen2.wtype==='kniv';
+  if(o.pose==='swing') name=(o.av||0)%2?(dual?'offstab':'swing1'):'swing0';
   else if(o.pose==='shoot') name='shoot';
   else if(o.pose==='cast') name='cast';
-  const P = name ? animAt(name,rest,k) : {...rest};
+  const P = name && name!=='offstab' ? animAt(name,rest,k) : {...rest};
+  if(name==='offstab'){ const q=Math.sin(Math.min(1,k/.7)*Math.PI); P.ba=rest.ba+(1.95-rest.ba)*q; P.bb=.15*q; P.l=(rest.l||0)+.16*q; P.a=rest.a-.9*q; P.b=rest.b+.5*q; P.off=q; name=null; }   // andra handen hugger
   P.name=name; P.rest=rest;
   if(o.pose==='walk'){ const sw=Math.sin(o.walkT*12); P.a=rest.a+sw*.4; P.ba=rest.ba-sw*.4; P.b=rest.b-Math.max(0,sw)*.3; }
   if(o.pose==='jump'){ P.a=2.1; P.b=-.6; P.ba=2.3; P.bb=-.5; }
@@ -4592,6 +4679,17 @@ const TORSO = {
     const sg=c.createLinearGradient(-8,0,8,0); sg.addColorStop(0,'rgba(0,0,0,.28)'); sg.addColorStop(.6,'rgba(0,0,0,0)'); c.fillStyle=sg; c.fillRect(-9,-42+by,18,24); c.restore();
     c.strokeStyle='#5a3a1a'; c.lineWidth=.8; c.beginPath(); c.moveTo(-1,-39.5+by); c.quadraticCurveTo(2.5,-33+by,6,-39.5+by); c.stroke();
     c.strokeStyle='#e8e8e8'; c.lineWidth=1; c.beginPath(); c.arc(2.6,-32.4+by,2.1,0,7); c.stroke(); line(c,2.6,-34.5+by,2.6,-30.3+by); line(c,2.6,-32.4+by,1.2,-30.9+by); line(c,2.6,-32.4+by,4,-30.9+by);
+  },
+  psykopat(c,L,by){   // mörk läderväst med korsade knivremmar och en röd halsduk
+    fillTorso(c,by,L.top);
+    c.save(); torsoPath(c,by); c.clip();
+    c.strokeStyle='#0e0a0c'; c.lineWidth=2.8; line(c,-9,-41+by,9,-21+by); line(c,9,-41+by,-9,-21+by);
+    c.strokeStyle='#5a4436'; c.lineWidth=1.5; line(c,-9,-41+by,9,-21+by); line(c,9,-41+by,-9,-21+by);
+    c.fillStyle='#c8ccd8'; for(const [x,y] of [[-4.5,-35.5],[4.6,-35.5],[0,-30.5]]) c.fillRect(x-1.1,y-1.1+by,2.2,2.2);
+    c.restore();
+    c.fillStyle='#8a1418'; c.beginPath(); c.moveTo(-2,-40.8+by); c.lineTo(7.4,-40.8+by); c.lineTo(5.2,-36.4+by); c.lineTo(1.2,-37.6+by); c.closePath(); c.fill();
+    c.fillStyle='#a8202a'; c.beginPath(); c.moveTo(5,-38+by); c.lineTo(8.6,-31+by); c.lineTo(6,-31.6+by); c.closePath(); c.fill();
+    c.fillStyle='#16121a'; c.fillRect(-8,-23.5+by,16.4,2.6); c.fillStyle='#b8bcc8'; c.fillRect(1.6,-23.9+by,3,3.2);
   },
   viskare(c,L,by){
     fillTorso(c,by,L.top);
@@ -4756,7 +4854,19 @@ function woodGrad(c,x,w,col){ const g=c.createLinearGradient(x-w,0,x+w,0); g.add
 function drawWeapon(c,it,draw,glow){
   const rc=RAR[it.rarity||'common'].color, lv=it.req||1, wt=it.wtype, hiR=['epic','legendary'].includes(it.rarity);
   c.lineCap='round'; c.lineJoin='round';
-  if(hiR){ c.save(); c.globalCompositeOperation='lighter'; c.globalAlpha=.35+.15*Math.sin(G.time*4); c.drawImage(glowFor(rc),-22,wt==='bage'?-30:-70,44,wt==='bage'?60:70); c.restore(); }
+  if(hiR){ c.save(); c.globalCompositeOperation='lighter'; c.globalAlpha=.35+.15*Math.sin(G.time*4); c.drawImage(glowFor(rc),-22,wt==='bage'?-30:wt==='kniv'?-34:-70,44,wt==='bage'?60:wt==='kniv'?40:70); c.restore(); }
+  if(wt==='kniv'){   // kort kniv: grepp nedåt, blad uppåt
+    const L2=lv>=12?24:lv>=8?22:lv>=5?20:16, dark=lv>=12;
+    c.fillStyle=lv>=8?'#2a1a10':'#6a4424'; rr(c,-2,0,4,9,1.6); c.fill(); c.fillStyle='rgba(255,255,255,.18)'; c.fillRect(-1.4,1,1,7);
+    c.fillStyle=lv>=5?'#c9a24a':'#8a8f98'; rr(c,-4.2,-1.6,8.4,2.4,1); c.fill();
+    const g=c.createLinearGradient(-3,0,3,0); g.addColorStop(0,dark?'#c8ccd8':'#f6f9ff'); g.addColorStop(1,dark?'#4a4e5e':'#8a96a8'); c.fillStyle=g;
+    c.beginPath(); c.moveTo(-2.4,-1.6); c.lineTo(-2.2,-L2+5); c.quadraticCurveTo(-1,-L2-1,1,-L2-2); c.lineTo(2.8,-L2+7); c.lineTo(2.6,-1.6); c.closePath(); c.fill(); c.strokeStyle='rgba(20,20,30,.6)'; c.lineWidth=.7; c.stroke();
+    c.strokeStyle='rgba(255,255,255,.75)'; c.lineWidth=.7; line(c,-1.3,-3,-1.2,-L2+5);
+    if(lv>=8){ c.fillStyle=dark?'#4a4e5e':'#8a96a8'; for(let y=-5;y>-L2+8;y-=3){ c.beginPath(); c.moveTo(2.6,y); c.lineTo(4,y-1.2); c.lineTo(2.7,y-2.4); c.closePath(); c.fill(); } }
+    if(dark){ c.fillStyle='#c81818'; circ(c,0,-.4,1.1); }
+    c.fillStyle=rc; circ(c,0,9.6,1.5);
+    return;
+  }
   if(wt==='yxa'){
     const L2=lv>=8?56:lv>=5?50:40, wood=lv>=8?'#3d2817':lv>=5?'#6b4423':'#a87a48';
     c.fillStyle=woodGrad(c,0,2.2,wood); rr(c,-2.2,-L2+6,4.4,L2+4,2); c.fill();
@@ -4815,7 +4925,7 @@ function drawWeapon(c,it,draw,glow){
   }
 }
 function goldGlint(c,x,y,s){ c.save(); c.globalCompositeOperation='lighter'; c.fillStyle='rgba(255,210,90,.95)'; c.beginPath(); c.moveTo(x,y-s); c.lineTo(x+s*.25,y-s*.25); c.lineTo(x+s,y); c.lineTo(x+s*.25,y+s*.25); c.lineTo(x,y+s); c.lineTo(x-s*.25,y+s*.25); c.lineTo(x-s,y); c.lineTo(x-s*.25,y-s*.25); c.closePath(); c.fill(); c.restore(); }
-const WPN_LEN = it => !it?0 : it.wtype==='yxa'?(it.req>=8?52:it.req>=5?46:38) : it.wtype==='stav'?(it.req>=5?52:44) : it.wtype==='pinne'?32 : 0;
+const WPN_LEN = it => !it?0 : it.wtype==='kniv'?(it.req>=8?24:20) : it.wtype==='yxa'?(it.req>=8?52:it.req>=5?46:38) : it.wtype==='stav'?(it.req>=5?52:44) : it.wtype==='pinne'?32 : 0;
 /* ---------- Själva figuren ---------- */
 function drawChar(c,o){
   const L=o.look || lookFor(o.cls||'skog', o.app), eq=o.eq||L.eq||{}, w=eq.vapen;
@@ -4847,11 +4957,17 @@ function drawChar(c,o){
     c.strokeStyle=RAR[it.rarity].color; c.lineWidth=1.2; c.beginPath(); c.moveTo(1,-5); c.quadraticCurveTo(-9,-1,-18-fl,-7); c.stroke();
   }
   if(L.style==='berit'){ c.save(); c.translate(-8,-33+by); c.rotate(-.35); c.fillStyle=woodGrad(c,0,3.5,'#7a4e2d'); rr(c,-3.5,-12,7,24,2); c.fill(); c.fillStyle='#d9d2c0'; for(const x of [-1.5,1,3.5]){ c.beginPath(); c.moveTo(x-1.2,-12); c.lineTo(x,-18); c.lineTo(x+1.2,-12); c.fill(); } c.restore(); }
-  // bakre arm
+  // bakre arm (när andra handen hugger ritas den framför kroppen i stället, se längre ned)
+  const backArm = () => {
   c.save(); c.translate(0,-19); c.rotate(P.l); c.translate(0,19);
   const bsh={x:-4,y:-35+by};
+  { const w1=eq.vapen, w2=eq.vapen2; if(w1 && w2 && w1.wtype==='kniv' && w2.wtype==='kniv'){ const ex=bsh.x+Math.sin(P.ba)*6.8, ey=bsh.y-Math.cos(P.ba)*6.8, a2=P.ba+P.bb, hx=ex+Math.sin(a2)*6.4, hy=ey-Math.cos(a2)*6.4;
+    c.save(); c.translate(hx,hy); c.rotate(a2-Math.PI/2+(P.w||0)); drawWeapon(c,w2,0,0); c.restore();
+    if(P.off>.5){ c.save(); c.globalCompositeOperation='lighter'; c.strokeStyle=`rgba(255,255,255,${(P.off-.5)*1.4})`; c.lineWidth=1.4; line(c,hx+4,hy-6,hx+20,hy-9); c.restore(); } } }
   armP(c,bsh.x,bsh.y,P.ba,P.bb,L,{up:[shadeC(slCol.up[0],-.15),slCol.up[1]],lo:[shadeC(slCol.lo[0],-.15),slCol.lo[1]]},[shadeC(L.skin[0],-.12),L.skin[1]],glove?[shadeC(glove[0],-.12),glove[1]]:null,robe);
   c.restore();
+  };
+  if(!(P.off>0)) backArm();
   // ben
   let la=[.07,-.07], lk=[.06,.06];
   if(walk){ for(let i=0;i<2;i++){ const f=ph+i*Math.PI; la[i]=Math.sin(f)*.55; lk[i]=Math.cos(f)>0?Math.cos(f)*.85+.05:.08; } }
@@ -4864,7 +4980,7 @@ function drawChar(c,o){
   }
   // överkropp (lutar i anfallen)
   c.save(); c.translate(0,-19); c.rotate(P.l); c.translate(0,19);
-  (TORSO[L.style]||TORSO.skog)(c,L,by);
+  (TORSO[L.torso||L.style]||TORSO.skog)(c,L,by);
   if(eq.brost){ const b=eq.brost, bl3=gearLook(b);
     if(bl3){ const P3=LW_PAL[bl3]; torsoPath(c,by); c.save(); c.clip(); const g=c.createLinearGradient(-8,-40+by,8,-20+by); g.addColorStop(0,P3.dark); g.addColorStop(.6,P3.main); g.addColorStop(1,shadeC(P3.main,.25)); c.fillStyle=g; c.fillRect(-10,-42+by,20,24);
       c.fillStyle=P3.dark; c.fillRect(-10,-27+by,20,2.6); c.fillStyle='#e8c34a'; c.fillRect(-1.2,-27.4+by,2.6,3.4); c.restore();
@@ -4896,6 +5012,7 @@ function drawChar(c,o){
     else if(h.base==='halsVarg'){ c.fillStyle='#f2ead8'; for(const x of [0,2.5,5]){ c.beginPath(); c.moveTo(x,-36.5+by); c.lineTo(x+.9,-32.5+by); c.lineTo(x+1.8,-36.5+by); c.fill(); } }
     else { const col=h.req>=5?['#ffd27a','#e07a10']:['#fff6ec','#d8b8a8']; const g=c.createRadialGradient(2,-35.6+by,.3,2.5,-35+by,2.4); g.addColorStop(0,col[0]); g.addColorStop(1,col[1]); c.fillStyle=g; circ(c,2.5,-35+by,2.1); } }
   drawHeadP(c,L,by,eq,o);
+  if(P.off>0) backArm();   // andra handens hugg korsar framför bröstet
   // främre arm och vapen
   const sh={x:3,y:-35+by};
   const ex=sh.x+Math.sin(P.a)*6.8, ey=sh.y-Math.cos(P.a)*6.8, a2=P.a+P.b, hand={x:ex+Math.sin(a2)*6.4, y:ey-Math.cos(a2)*6.4};
@@ -5607,6 +5724,13 @@ function drawDrop(d){
   ctx.globalAlpha=1;
 }
 function drawProj(pr){
+  if(pr.type==='kniv'){   // snurrande kniv
+    ctx.save(); ctx.translate(pr.x,pr.y); ctx.rotate(pr.t*14*Math.sign(pr.vx||1));
+    ctx.fillStyle='#3a2414'; rr(ctx,-2,2,4,9,1.5); ctx.fill(); ctx.fillStyle='#8a8f98'; ctx.fillRect(-4,1,8,2);
+    const g=ctx.createLinearGradient(-3,0,3,0); g.addColorStop(0,'#f4f8ff'); g.addColorStop(1,'#8a96a8'); ctx.fillStyle=g;
+    ctx.beginPath(); ctx.moveTo(-2.6,1); ctx.lineTo(-2,-11); ctx.lineTo(0,-15); ctx.lineTo(2.8,-9); ctx.lineTo(2.6,1); ctx.closePath(); ctx.fill(); ctx.strokeStyle='#2a2a34'; ctx.lineWidth=.8; ctx.stroke();
+    ctx.restore(); return;
+  }
   if(pr.type==='arrow'){
     const a=Math.atan2(pr.vy,pr.vx); ctx.save(); ctx.translate(pr.x,pr.y); ctx.rotate(a);
     ctx.strokeStyle='#7a5230'; ctx.lineWidth=2.2; line(ctx,-22,0,4,0);
@@ -5699,11 +5823,11 @@ function drawNums(){
     const k=n.t, y=n.y-k*34, sc=k<0.1?1+(0.1-k)*4:1;
     let txt = n.v<9.95 && !Number.isInteger(Math.round(n.v*10)/10) ? fmt1(n.v) : String(Math.round(n.v)); if(n.kind==='crit') txt+='!';
     ctx.globalAlpha=k>0.7?(1-k)/0.3:1;
-    const size = (n.kind==='burn'||n.kind==='root')?15:n.kind==='hurt'?18:n.kind==='crit'?27:21;
+    const size = (n.kind==='burn'||n.kind==='root'||n.kind==='bleed')?15:n.kind==='hurt'?18:n.kind==='crit'?27:21;
     ctx.font=`900 ${Math.round(size*sc)}px "Trebuchet MS",system-ui`;
     ctx.lineWidth=4;
-    ctx.strokeStyle = n.kind==='hurt'?'#2a0a4a':n.kind==='burn'?'#4a1500':n.kind==='root'?'#123a0e':n.kind==='crit'?'#4a0400':'#5a2a00';
-    ctx.fillStyle   = n.kind==='hurt'?'#d08bff':n.kind==='burn'?'#ff8a3a':n.kind==='root'?'#8fe36a':n.kind==='crit'?'#ff4a2a':'#ffb12b';
+    ctx.strokeStyle = n.kind==='hurt'?'#2a0a4a':n.kind==='bleed'?'#3a0000':n.kind==='burn'?'#4a1500':n.kind==='root'?'#123a0e':n.kind==='crit'?'#4a0400':'#5a2a00';
+    ctx.fillStyle   = n.kind==='hurt'?'#d08bff':n.kind==='bleed'?'#ff4a4a':n.kind==='burn'?'#ff8a3a':n.kind==='root'?'#8fe36a':n.kind==='crit'?'#ff4a2a':'#ffb12b';
     ctx.strokeText(txt,n.x,y); ctx.fillText(txt,n.x,y);
   }
   ctx.globalAlpha=1;
@@ -6196,6 +6320,18 @@ function drawIcon(c,baseId,rarity,S,noBg){
         c.fillStyle='#8a929c'; circ(c,0,0,3.5); c.restore();
       }
       break;
+    case 'kniv': {   // diagonal kniv
+      c.save(); c.translate(32,32); c.rotate(Math.PI/4);
+      c.fillStyle=b.req>=8?'#2a1a10':'#6a4424'; rr(c,-3.5,6,7,18,3); c.fill(); S_(); c.stroke();
+      c.strokeStyle='rgba(255,255,255,.2)'; c.lineWidth=1; line(c,-1.5,9,-1.5,21);
+      c.fillStyle=b.req>=5?'#c9a24a':'#8a8f98'; rr(c,-8,2.5,16,4.5,2); c.fill(); S_(); c.stroke();
+      const g=c.createLinearGradient(-5,0,5,0); g.addColorStop(0,b.req>=12?'#d8dce8':'#ffffff'); g.addColorStop(1,b.req>=12?'#4a4e5e':'#8a96a8'); c.fillStyle=g;
+      c.beginPath(); c.moveTo(-4,2.5); c.lineTo(-3.6,-17); c.quadraticCurveTo(-1.5,-26,1.5,-28); c.lineTo(4.6,-13); c.lineTo(4.2,2.5); c.closePath(); c.fill(); S_(); c.stroke();
+      c.strokeStyle='rgba(255,255,255,.85)'; c.lineWidth=1.2; line(c,-2,0,-1.8,-18);
+      if(b.req>=8){ c.fillStyle=b.req>=12?'#4a4e5e':'#8a96a8'; for(let y=-3;y>-14;y-=3.6){ c.beginPath(); c.moveTo(4.3,y); c.lineTo(6.8,y-1.6); c.lineTo(4.4,y-3.2); c.closePath(); c.fill(); } }
+      if(b.req>=12){ c.fillStyle='#c81818'; circ(c,0,4.7,1.6); }
+      c.fillStyle=rc; circ(c,0,25.5,3.2); S_(); c.beginPath(); c.arc(0,25.5,3.2,0,7); c.stroke();
+      c.restore(); break; }
     case 'bage':
       if(b.req>=8){ // Björnbåge: mörk recurve med klospetsar och pälsgrepp
         c.strokeStyle='#1e140c'; c.lineWidth=7.5; c.beginPath(); c.moveTo(16,6); c.quadraticCurveTo(28,10,25,17); c.quadraticCurveTo(54,32,25,47); c.quadraticCurveTo(28,54,16,58); c.stroke();
@@ -6564,7 +6700,7 @@ function renderInsp(){
   const n=Object.keys(g).length;
   let h=`<div class="doll insp"><div class="dcol">${['hjalm','halsband','axel','mantel','brost','handskar'].map(cell).join('')}</div>
     <div class="dmid"><canvas id="inspPortrait" width="200" height="250"></canvas><div class="pname">${esc(o.name||'?')}</div><div class="pcls">${C.name} · Lv. ${o.lvl||'?'}</div></div>
-    <div class="dcol">${['balte','byxor','skor','ring1','ring2','vapen'].map(cell).join('')}</div></div>`;
+    <div class="dcol">${['balte','byxor','skor','ring1','ring2','vapen',...(o.cls==='psykopat'?['vapen2']:[])].map(cell).join('')}</div></div>`;
   if(!n) h+=`<div class="hintx" style="margin-top:6px">${o.gear?'Spelaren har ingen utrustning på sig.':'Spelaren har en äldre version av spelet – utrustningen kan inte visas.'}</div>`;
   const sel=G.ui.inspSel && Object.values(g).find(x=>x&&x.uid===G.ui.inspSel);
   h+=`<div class="trbtns" style="margin-top:6px"><button class="btn sm gold" data-trade="${G.ui.inspId}" ${G.trade?'disabled':''}>🤝 Byt med ${esc(o.name||'spelaren')}</button></div>`;
@@ -6703,10 +6839,10 @@ function renderBag(){
   const slotHtml=(sid)=>{ const it=ch.eq[sid]; return `<div class="slot ${it?'r-'+it.rarity:''} ${it&&sel===it.uid&&!sm?'sel':''} ${it?smc(it):''} ${hiSlots.has(sid)?'hlslot':''} ${sid==='vapen'&&tutStep()==='bag'?'hl':''}" ${it?`data-uid="${it.uid}"`:''} data-eq="${sid}">${it?`<img src="${iconURL(it)}" alt="">${it.plus?`<span class="cnt plus">+${it.plus}</span>`:''}`:`<span class="lbl">${SLOTN[sid]}</span>`}</div>`; };
   $('#bagDoll').innerHTML=`<div class="dcol">${['hjalm','halsband','axel','mantel','brost','handskar'].map(slotHtml).join('')}</div>
     <div class="dmid"><canvas id="portrait" width="240" height="300"></canvas><div class="pname">${esc(ch.name)}</div><div class="pcls">${C.name} · Lv. ${ch.level}</div></div>
-    <div class="dcol">${['balte','byxor','skor','ring1','ring2','vapen'].map(slotHtml).join('')}</div>`;
+    <div class="dcol">${['balte','byxor','skor','ring1','ring2','vapen',...(ch.cls==='psykopat'?['vapen2']:[])].map(slotHtml).join('')}</div>`;
   drawPortrait($('#portrait'), ch.cls, ch.eq, 2.3);
   const m=C.main, row=(k,v,cls='')=>`<span class="${cls}">${k}</span><b class="${cls}">${v}</b>`;
-  const modeTxt = s.mode==='bow'?'Pilskott':s.mode==='whisper'?`Viskning (${fmtSv(s.manaCost)} mana)`:'Närstrid';
+  const modeTxt = s.mode==='bow'?'Pilskott':s.mode==='whisper'?`Viskning (${fmtSv(s.manaCost)} mana)`:s.dual?`Två knivar (andra hand ${fmt1(s.oMin*OFF_MULT+s.statAtk*OFF_MULT)}–${fmt1(s.oMax*OFF_MULT+s.statAtk*OFF_MULT)})`:'Närstrid';
   $('#statList').innerHTML = row('Str'+(m==='str'?' ★':''),s.str,m==='str'?'main':'')+row('Int'+(m==='int'?' ★':''),s.int,m==='int'?'main':'')+row('Agi'+(m==='agi'?' ★':''),s.agi,m==='agi'?'main':'')
     +row('Attack',`${fmt1(s.atkMin)}–${fmt1(s.atkMax)}`)+row('Armor',s.armor)+row('Max HP',s.maxHp)+row('Max mana',s.maxMp>0?s.maxMp:'– (ingen mana)')
     +row('HP-reg',fmt1(s.hpReg)+'/s')+(s.maxMp>0?row('Mana-reg',fmt1(s.mpReg)+'/s'):'')+row('Attackhastighet',Math.round((s.aspd+rageAspd())*100)+'%')+row('Kritisk chans',fmtSv(Math.round(s.crit*10)/10)+'%','agi')+(s.cdmg?row('Kritisk skada',Math.round((CRIT_MULT*100)+s.cdmg)+'%'):'')+(s.xpPct?row('EXP från monster','+'+s.xpPct+'%'):'')+row('Undvikande',fmtSv(Math.round(s.dodge*10)/10)+'%','agi')+row('Kortare nedkylning',fmtSv(Math.round(s.cdr*10)/10)+'%','int')+row('Rörelse',Math.round(s.move*100)+'%')
@@ -6758,7 +6894,7 @@ function renderBagDetail(){
 }
 /* Dra i väskan (som i World of Warcraft):
    scroll → föremål · utrustning → rätt plats på gubben · utrustat föremål → väskan · föremål → annan ruta i väskan */
-const slotFits = (it, sid) => !!it && !isCons(it) && (it.slot===sid || (it.slot==='ring' && (sid==='ring1'||sid==='ring2')));
+const slotFits = (it, sid) => !!it && !isCons(it) && (sid==='vapen2' ? (it.wtype==='kniv' && !!G.ch && G.ch.cls==='psykopat') : (it.slot===sid || (it.slot==='ring' && (sid==='ring1'||sid==='ring2'))));
 let scrDrag=null, eatClick=false;
 $('#win-bag').addEventListener('pointerdown',e=>{
   if(!G.ch || G.ui.scrollMode || e.button>0) return;
@@ -6839,6 +6975,8 @@ function equip(u, want){
   const it=ch.inv[i]; if(isCons(it)) return;
   if(ch.level<it.req){ throttleMsg('req',`Du behöver level ${it.req} för ${esc(it.name)}.`,'#ff9b9b'); return; }
   let slot=it.slot; if(slot==='ring') slot = want==='ring1'||want==='ring2' ? want : !ch.eq.ring1 ? 'ring1' : !ch.eq.ring2 ? 'ring2' : 'ring1';
+  if(it.wtype==='kniv' && ch.cls==='psykopat') slot = want==='vapen'||want==='vapen2' ? want : (ch.eq.vapen && ch.eq.vapen.wtype==='kniv' && !ch.eq.vapen2) ? 'vapen2' : 'vapen';   // två knivar
+  if(slot==='vapen2' && it.wtype!=='kniv') slot='vapen';
   if(G.ui.hiItems){ G.ui.hiItems.delete(u); if(!G.ui.hiItems.size) G.ui.hiItems=null; }
   const old=ch.eq[slot]; ch.eq[slot]=it; ch.inv.splice(i,1); if(old) ch.inv.splice(i,0,old);
   G.ui.sel=it.uid; recalc(); markDirty(); refreshOpen();
@@ -7089,14 +7227,14 @@ const RECIPES = [
   {id:'c_hat1',  prof:'craft', out:'crHatBar',      rar:'uncommon', mats:{bar:3, mossa:4}},
   {id:'c_boot1', prof:'craft', out:'crBootMossa',   rar:'uncommon', mats:{mossa:5, bar:2}},
   {id:'c_glov1', prof:'craft', out:'crGlovVarg',    rar:'uncommon', mats:{vargpals:4, hundtass:3}},
-  {id:'c_wpn1',  prof:'craft', outCls:{skog:'cryxa1',hippie:'crbage1',viskare:'crstav1'}, rar:'uncommon', mats:{vargpals:4, kattsvans:4, hundtass:2}},
+  {id:'c_wpn1',  prof:'craft', outCls:{skog:'cryxa1',hippie:'crbage1',viskare:'crstav1',psykopat:'crkniv1'}, rar:'uncommon', mats:{vargpals:4, kattsvans:4, hundtass:2}},
   {id:'c_hat2',  prof:'craft', out:'crHatBjorn',    rar:'rare', mats:{bjornpals:8, vargpals:5}},
   {id:'c_cloak2',prof:'craft', out:'crCloakFjader', rar:'rare', mats:{fjader:10, bjornpals:4}},
   {id:'c_chest4',prof:'craft', out:'crChestBandit', rar:'rare', mats:{banditprylar:6, bjornpals:6, fjader:6}},
   {id:'c_glov4', prof:'craft', out:'crGlovBandit',  rar:'rare', mats:{banditprylar:5, bjornpals:4, fjader:5}},
-  {id:'c_wpn2',  prof:'craft', outCls:{skog:'cryxa2',hippie:'crbage2',viskare:'crstav2'}, rar:'rare', mats:{bjornpals:6, fjader:8, vargpals:4}},
+  {id:'c_wpn2',  prof:'craft', outCls:{skog:'cryxa2',hippie:'crbage2',viskare:'crstav2',psykopat:'crkniv2'}, rar:'rare', mats:{bjornpals:6, fjader:8, vargpals:4}},
   {id:'c_boot3', prof:'craft', out:'crBootDrake',   rar:'rare', mats:{drakfjall:6, smasten:5, fosfor:2}},
-  {id:'c_wpn3',  prof:'craft', outCls:{skog:'cryxa3',hippie:'crbage3',viskare:'crstav3'}, rar:'rare', mats:{drakfjall:8, smasten:6, fosfor:3}},
+  {id:'c_wpn3',  prof:'craft', outCls:{skog:'cryxa3',hippie:'crbage3',viskare:'crstav3',psykopat:'crkniv3'}, rar:'rare', mats:{drakfjall:8, smasten:6, fosfor:3}},
   {id:'c_hat5',  prof:'craft', out:'crHatSkugga',   rar:'rare', mats:{banditprylar:12, drakfjall:10, smasten:10, fosfor:4}},
   {id:'c_pant5', prof:'craft', out:'crPantSkugga',  rar:'rare', mats:{banditprylar:14, drakfjall:10, smasten:12, fosfor:4}},
   {id:'c_boot5', prof:'craft', out:'crBootSkugga',  rar:'rare', mats:{banditprylar:12, drakfjall:10, smasten:10, fosfor:4}},
@@ -8167,7 +8305,7 @@ function showCreate(){
     <div class="row"><button class="btn sec" id="btnBack">Tillbaka</button><button class="btn gold" id="btnCreate">Skapa &amp; spela</button></div>
     <div class="msg" id="createMsg"></div>
   </div>`);
-  const apps={skog:{},hippie:{},viskare:{}};   // eget utseende per klass medan man bläddrar
+  const apps={skog:{},hippie:{},viskare:{},psykopat:{}};   // eget utseende per klass medan man bläddrar
   let app=apps[cls];
   const redrawApp=appEditorBind(()=>cls, ()=>app);
   $$('.clcard').forEach(el=>{ const C=CLASSES[el.dataset.cls]; drawPortrait(el.querySelector('canvas'),C.id,{vapen:{wtype:C.wtype,rarity:'common',req:1}},2.4); });
@@ -8179,7 +8317,7 @@ function showCreate(){
       if(n.length<2){ $('#createMsg').textContent='Namnet måste vara minst 2 tecken.'; return; }
       if(G.acct.chars.some(x=>x.name.toLowerCase()===n.toLowerCase())){ $('#createMsg').textContent='Du har redan en gubbe med det namnet.'; return; }
       const C=CLASSES[cls];
-      const ch={id:uid(), name:n, cls, level:1, exp:0, gold:0, talents:{}, inv:[], eq:{vapen:makeItem(C.starter,'common')}, app:appOf(cls,app), tut:{}, hotbar:Array(9).fill(null), hp:9999, mp:9999, kills:{}, map:1, quests:{}, qv:3, prof:{scroll:{skill:1},leather:{skill:1}}, created:Date.now()};
+      const ch={id:uid(), name:n, cls, level:1, exp:0, gold:0, talents:{}, inv:[], eq:{vapen:makeItem(C.starter,'common'), ...(cls==='psykopat'?{vapen2:makeItem('kniv1','common')}:{})}, app:appOf(cls,app), tut:{}, hotbar:Array(9).fill(null), hp:9999, mp:9999, kills:{}, map:1, quests:{}, qv:3, prof:{scroll:{skill:1},leather:{skill:1}}, created:Date.now()};
       G.acct.chars.push(ch); markDirty(true); startGame(ch, true);
     }
   };
@@ -8325,7 +8463,7 @@ function netBroadcast(msg){ if(Net.role==='host') netToGuests(msg); else if(Net.
 // --- Utseende & position ---
 function myLook(){
   const ch=G.ch, eq={};
-  for(const k of ['vapen','hjalm','mantel','axel','handskar','skor','byxor','brost','balte','halsband']){ const it=ch.eq[k]; if(it) eq[k]={wtype:it.wtype, req:it.req, rarity:it.rarity, base:it.base}; }
+  for(const k of ['vapen','vapen2','hjalm','mantel','axel','handskar','skor','byxor','brost','balte','halsband']){ const it=ch.eq[k]; if(it) eq[k]={wtype:it.wtype, req:it.req, rarity:it.rarity, base:it.base}; }
   const gear={}; for(const [k] of EQ_SLOTS) if(ch.eq[k]) gear[k]=JSON.parse(JSON.stringify(ch.eq[k]));   // hela föremålen, för inspektion
   return {id:Net.myId, name:ch.name, cls:ch.cls, app:ch.app||null, lvl:ch.level, eq, gear, db:tv('k_drop')};
 }
@@ -8390,12 +8528,13 @@ function hostOnPick(from, id){
 
 // --- Kosmetiska skott & effekter från andra ---
 function netShot(pr){ if(!inParty()) return; netBroadcast({t:'shot', id:Net.myId, ty:pr.type, x:Math.round(pr.x), y:Math.round(pr.y), vx:Math.round(pr.vx), vy:Math.round(pr.vy), sp:pr.speed, h:pr.homing, tid:pr.target?pr.target.id:0, md:Math.round(Math.min(pr.maxDist,2000)), r:pr.r?Math.round(pr.r):0}); }
-function spawnCosShot(S){ if(S.id===Net.myId) return; G.projs.push({type:S.ty, cos:true, x:S.x, y:S.y, vx:S.vx, vy:S.vy, speed:S.sp, homing:S.h, target:G.monById[S.tid]||null, dist:0, maxDist:S.md, life:S.ty==='log'?7:1.6, r:S.r||0, plat:null, rot:0, hit:new Set()}); }
+function spawnCosShot(S){ if(S.id===Net.myId) return; G.projs.push({type:S.ty, g:S.ty==='kniv'?KNIV_G:0, cos:true, x:S.x, y:S.y, vx:S.vx, vy:S.vy, speed:S.sp, homing:S.h, target:G.monById[S.tid]||null, dist:0, maxDist:S.md, life:S.ty==='log'?7:1.6, r:S.r||0, plat:null, rot:0, hit:new Set()}); }
 function netFx(k,x,y){ if(inParty()) netBroadcast({t:'fx', id:Net.myId, k, x:Math.round(x), y:Math.round(y)}); }
 function spawnNetFx(S){ if(S.id===Net.myId) return; if(S.k==='beam') G.fx.push({type:'beam', x:S.x, y:S.y, t:0, dur:1.6}); else if(S.k==='radial') G.fx.push({type:'radial', x:S.x, y:S.y, t:0, dur:.4});
   else if(S.k==='rain'){ for(let i=0;i<8;i++) (G.rainA=G.rainA||[]).push({x:S.x+rand(-85,85)-110, y:S.y-430, tx:S.x+rand(-85,85), ty:S.y, t:-i*.19, T:.32}); }   // bara utseende, skadan räknas hos den som sköt
   else if(S.k==='quake') G.fx.push({type:'quake', x:S.x, y:S.y, t:0, dur:.45, r:100, c:'#ffcf7a'});
   else if(S.k==='quake2') G.fx.push({type:'quake', x:S.x, y:S.y, t:0, dur:.55, r:210, c:'#ff9a3a'});
+  else if(S.k==='smoke') smokePuff(S.x,S.y);
   else if(S.k==='roll'){ for(let i=0;i<10;i++) particle(S.x+rand(-10,10),S.y-rand(0,6),pick(['#d8c8a0','#b8a880','#ffffff']),rand(-80,80),rand(-60,-10),.45,3,120); }
   else if(S.k==='rootsR' || S.k==='rootsL') G.fx.push({type:'roots', x:S.x, y:S.y, dir:S.k==='rootsR'?1:-1, t:0, dur:.7}); }
 
