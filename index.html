@@ -971,13 +971,15 @@ const CLASSES = {
     desc:'Skjuter pilar när hon har en pilbåge – inga pilar behövs. Varje poäng Smidighet (Agi) ger +0,2 skada per anfall. Börjar med en träpinne (närstrid). Nya förmågor i level 4 och 8.'},
   viskare:{id:'viskare', name:'Viskare', main:'int', mainMult:1, wtype:'stav', starter:'pinne1', aspd:0.2, trees:['schh','visk_b','visk_c'],
     desc:'Kastar målsökande viskningar med stav (0,5 mana per stavens level). Varje poäng Intellekt (Int) ger +0,2 skada per anfall. +20% attackhastighet. Börjar med en träpinne (närstrid). Nya förmågor i level 4 och 8.'},
-  psykopat:{id:'psykopat', name:'Psykopat', main:'agi', mainMult:1, wtype:'kniv', starter:'kniv1', aspd:0, trees:['psyko','tjur','psyko_c'],
+  psykopat:{id:'psykopat', name:'Psykopat', main:'agi', mainMult:1, wtype:'kniv', starter:'kniv1', aspd:0, trees:['psyko','tjur','kast'],
     desc:'Snabb närstrid med två knivar – en i varje hand. Huvudhanden gör 100% skada och andra handen 50%, och de hugger varannan gång (+40% attackhastighet med två knivar). Varje poäng Smidighet (Agi) ger +0,2 skada. Nya förmågor i level 4, 8 och 12.'},
 };
 
 /* Klassförmågor – lärs in automatiskt när gubben når rätt level.
    mp = manakostnad, hp = kostnad i % av max-HP (Skogshuggaren har ingen mana), cd = nedkylning i sekunder. */
-const BOMB_R = 85, KNIV_N = 6, KNIV_G = 820;
+const kastRange = () => tv('k_kast')*(G.stats?G.stats.range:1);
+const BOMB_R = 85, KNIV_N = 10, KNIV_G = 820;
+const knivN = () => KNIV_N + tv('k_fler');
 const SPELLS = {
   bombpil:  {cls:'hippie',  lvl:4, icon:'💣', name:'Bombpil',          cd:8,  mp:8,  atk:true, d:()=>`Skjuter en pil som exploderar och gör 100% skada på alla fiender i närheten (radie ${Math.round(BOMB_R*(1+tv('h_radie')/100))}).`},
   flower:   {cls:'hippie',  lvl:8, icon:'🌸', name:'Flower power',     cd:20, mp:15, d:()=>`+100% attackhastighet i ${4+tv('h_blomma')} sekunder.`},
@@ -985,7 +987,7 @@ const SPELLS = {
   eko:      {cls:'viskare', lvl:4, icon:'🔊', name:'Ekande viskning',  cd:10, mp:10, atk:true, d:()=>{ const h=3+tv('v_ekohopp'), f=20-tv('v_ekoklar'); return `En viskning som gör 100% skada och studsar vidare till ${h} fiender till. Tappar ${f}% skada per träff (${Array.from({length:h+1},(_,i)=>Math.max(0,100-i*f)+'%').join(' → ')}).`; }},
   backstab: {cls:'psykopat', lvl:4,  icon:'🔪', get name(){ return G.ch&&tv('t_front')?'Frontstab':'Backstab'; }, cd:8,  mp:8,  atk:true, d:()=>tv('t_front') ? `Ett hugg med huvudhanden mot en fiende framför dig: 150% skada och +${tv('t_front')}% kritisk chans. Hugger automatiskt när du slår och den inte har nedkylning.` : `Ett hugg med huvudhanden mot en fiende framför dig: 150% skada – 250% om du står i fiendens rygg.${tv('p_rygg')?` ${tv('p_rygg')}% chans att det räknas som ryggen ändå.`:''}`},
   shadowstep:{cls:'psykopat', lvl:8, icon:'👤', name:'Shadowstep',   cd:10, mp:10, d:()=>`Du försvinner i en rökpuff och dyker upp bakom närmaste fiende framför dig, vänd mot dess rygg.${tv('p_skugga')?` +${tv('p_skugga')}% kritisk chans i 3 s.`:''}`},
-  knivsits: {cls:'psykopat', lvl:12, icon:'🗡️', name:'Knivig sits!', cd:12, mp:16, atk:true, d:()=>`Kastar ${KNIV_N} långsamma knivar åt höger och vänster som en fontän. Varje kniv som träffar gör 80% skada.`},
+  knivsits: {cls:'psykopat', lvl:12, icon:'🗡️', name:'Knivig sits!', cd:12, mp:16, atk:true, d:()=>`Kastar ${knivN()} långsamma knivar åt höger och vänster som en fontän. Varje kniv som träffar gör 80% skada.`},
   rotter:   {cls:'viskare', lvl:8, icon:'🌿', name:'Snärjande rötter', cd:20, mp:20, atk:true, d:()=>`Upp till 5 fiender framför dig fastnar i rötter i 6 sekunder och tar 30% skada per sekund.${rank('v_rothel')?' Du helas lika mycket som rötterna skadar.':''}`},
   kraftslag:{cls:'skog',    lvl:4, icon:'💥', name:'Kraftslag',        cd:6,  hp:5,  atk:true, d:()=>`Slår yxan kraftigt i marken framför dig – 120% skada på alla fiender i området.`},
   stockrull:{cls:'skog',    lvl:8, icon:'🪵', name:'Stockrullning',    cd:12, hp:8,  atk:true, d:()=>`Rullar iväg en stock framför dig. Den rullar tills den träffar en vägg (och trillar ner från kanter) och gör 60% skada på varje fiende den passerar.`},
@@ -1053,7 +1055,14 @@ TREES.tjur = {name:'Tjuringen', talents:[
   {id:'t_ssaspd', tier:2, max:3, icon:'⚡', name:'Ur skuggan, in i striden', v:[20,40,60], d:v=>`Shadowstep ger +${v}% attackhastighet i 3 sekunder.`},
   {id:'t_cdmg',   tier:3, max:3, icon:'💥', name:'Slaktare',          v:[10,20,30], d:v=>`+${v}% kritisk skada.`},
 ]};
-for(const k of ['skog_b','skog_c','hippie_b','hippie_c','visk_b','visk_c','psyko_c']) TREES[k] = {name:k.endsWith('_b')?'Träd 2':'Träd 3', locked:true, talents:[]};
+TREES.kast = {name:'Jag kan ju kasta den', talents:[
+  {id:'k_kast',  tier:1, max:3, icon:'🎯', name:'Kastkniv',      v:[240,290,330], d:v=>`Du kastar knivar i stället för att hugga (räckvidd ${v}). Står fienden nära hugger du som vanligt. Back-/Frontstab kastas också när ingen fiende står nära.`},
+  {id:'k_klon',  tier:2, max:3, icon:'👥', name:'Skuggklon',     v:[3,4,5],     d:v=>`Shadowstep skickar en skuggklon bakom fienden i stället för dig. Klonen anfaller i ${v} sekunder.`},
+  {id:'k_blod',  tier:2, max:3, icon:'🩸', name:'Blodiga knivar',v:[10,20,30],  d:v=>`Kastade knivar har ${v}% chans att ge blödning: 100% av skadan över 6 sekunder. Staplas upp till 3 gånger.`},
+  {id:'k_fler',  tier:3, max:3, icon:'🗡️', name:'Fler knivar',   v:[2,4,6],     d:v=>`Knivig sits kastar ${v} knivar till.`},
+  {id:'k_snabb', tier:3, max:1, icon:'🌀', name:'Ingen tid att sikta', v:[1],   d:()=>`All din kritiska chans blir attackhastighet i stället, och kritisk skada från utrustning blir kortare nedkylning.`},
+]};
+for(const k of ['skog_b','skog_c','hippie_b','hippie_c','visk_b','visk_c']) TREES[k] = {name:k.endsWith('_b')?'Träd 2':'Träd 3', locked:true, talents:[]};
 const TAL = {};
 for(const [tk,t] of Object.entries(TREES)) for(const x of t.talents){ x.tree = tk; TAL[x.id] = x; }
 
@@ -1580,7 +1589,7 @@ const MOSS = (()=>{ const R=seeded(99), a=[]; for(let i=0;i<34;i++) a.push({r:4+
    ===================================================================== */
 const G = {
   mode:'title', mapId:1, acct:null, ch:null, p:null, stats:null, others:{}, monById:{}, monSeq:0, dropSeq:0,
-  monsters:[], drops:[], projs:[], fx:[], nums:[], spawns:[], bleeds:[],
+  monsters:[], drops:[], projs:[], fx:[], nums:[], spawns:[], bleeds:[], clones:[],
   time:0, spawnTimer:0, cam:{x:600,y:420}, zoom:1, view:{x1:0,y1:0,x2:0,y2:0},
   assigning:null, dirty:false, touch:false, mouse:{x:0,y:0,in:false},
   ui:{sel:null, talTab:null, talSel:null, trash:null, z:30}, msgT:{},
@@ -1723,7 +1732,7 @@ function calcStats(ch){
   const ex = (ch===G.ch) ? elixV('stat') : 0;
   const s = {str:5+L+bb+ka+ex, int:5+L+bb+ka+ex, agi:5+L+bb+ka+ex, armor:0, book:bb};
   s.eqAtk=0; s.eqMove=0;
-  for(const k in ch.eq){ const it=ch.eq[k]; if(!it) continue; s.armor+=it.armor||0; for(const st of STATS) s[st]+=it[st]||0; if(it.slot!=='vapen') s.eqAtk+=it.atk||0; s.eqMove+=it.move||0; s.xpPct=(s.xpPct||0)+(it.xp||0); s.cdmg=(s.cdmg||0)+(it.cdmg||0); s.eqDodge=(s.eqDodge||0)+(it.dodge||0); }
+  for(const k in ch.eq){ const it=ch.eq[k]; if(!it) continue; s.armor+=it.armor||0; for(const st of STATS) s[st]+=it[st]||0; if(it.slot!=='vapen') s.eqAtk+=it.atk||0; s.eqMove+=it.move||0; s.xpPct=(s.xpPct||0)+(it.xp||0); s.cdmg=(s.cdmg||0)+(it.cdmg||0); s.eqCdmg=(s.eqCdmg||0)+(it.cdmg||0); s.eqDodge=(s.eqDodge||0)+(it.dodge||0); }
   s.crit = agiPct(s.agi,ch.level); s.dodge = Math.min(AGI_CAP, agiPct(s.agi,ch.level) + (s.eqDodge||0)); s.cdr = Math.min(CDR_CAP, Math.max(0,s.int)*AGI_PCT(ch.level));
   s.maxHp = Math.round((50 + s.str*10)*(1+tv('s_tjock')/100));
   s.maxMp = C.noMana ? 0 : Math.round((20 + s.int*10)*(1+tv('v_klok')/100));
@@ -1745,6 +1754,7 @@ function calcStats(ch){
   s.atkMin = s.wMin + s.statAtk; s.atkMax = s.wMax + s.statAtk;
   s.mode = (ch.cls==='hippie' && w && w.wtype==='bage') ? 'bow' : (ch.cls==='viskare' && w && w.wtype==='stav') ? 'whisper' : 'melee';
   s.manaCost = s.mode==='whisper' ? w.req*0.5*(1-tv('v_tyst')/100) : 0;   // 0,5 mana per stavens level
+  if(ch.cls==='psykopat' && tv('k_snabb')){ s.aspd += s.crit/100; s.critToAspd=s.crit; s.crit=0; s.cdr=Math.min(CDR_CAP, s.cdr+(s.eqCdmg||0)); s.cdmg=Math.max(0,(s.cdmg||0)-(s.eqCdmg||0)); }   // Ingen tid att sikta
   return s;
 }
 function recalc(){
@@ -1921,6 +1931,7 @@ function updatePlayer(dt){
   if(p.wisps && p.wisps.length) updateWisps(dt);
   if(p.ssT>0){ p.ssT-=dt; if(p.ssT<=0){ p.ssT=0; recalc(); } }
   if(G.bleeds.length) updateBleeds(dt);
+  if(G.clones.length) updateClones(dt);
   if(p.healShow>0){ p.healShowT=(p.healShowT||0)-dt; if(p.healShowT<=0){ G.fx.push({type:'text',x:p.x,y:p.y-p.h-24,text:`+${fmt1(p.healShow)} HP`,color:'#7dff8a',t:0,dur:1,size:13}); p.healShow=0; p.healShowT=0.6; } }
   const I = input();
   if(p.rollT>0){ p.rollT-=dt; if(p.rollT<=0 || p.climb){ p.rollT=0; rollEnd(); } }
@@ -2324,7 +2335,9 @@ function basicAttack(){
     if(s.mode==='whisper') throttleMsg('mana','Inte tillräckligt med mana – du slår med staven.','#9cc6ff');
     startAtkAnim('swing'); SFX.swing();
     const off = s.dual && p.atkVar===1;   // två knivar: huvudhand, andra hand, huvudhand …
-    meleeStrike(1,1,MELEE_RANGE*s.range*(G.ch.cls==='psykopat'?.85:1), off?rollOff:null);
+    const mr=MELEE_RANGE*s.range*(G.ch.cls==='psykopat'?.85:1);
+    if(G.ch.cls==='psykopat' && tv('k_kast') && !inFrontMonsters(mr,1).length){ throwKnife(rangedTarget(kastRange(),115,72), (off?rollOff:rollAtk)(), {basic:true}); }   // Kastkniv
+    else meleeStrike(1,1,mr, off?rollOff:null);
   }
   return true;
 }
@@ -2369,6 +2382,11 @@ function updateWisps(dt){   // varje irrbloss stannar där det frammanades och s
     G.projs.push(pr); netShot(pr);
   }
 }
+function throwKnife(t, dmg, o={}){
+  const p=G.p, range=kastRange();
+  const pr={type:'kastkniv', x:p.x+p.face*16, y:p.y-36, vx:p.face*720, vy:0, speed:720, homing:1, target:t, dmg:Math.max(1,Math.round(dmg)), dist:0, maxDist:t?99999:range, life:1.4, hit:new Set(), basic:!!o.basic, critAdd:o.critAdd||0};
+  G.projs.push(pr); netShot(pr);
+}
 function shadowTarget(){   // närmaste fiende framför spelaren (inom 420 px)
   const p=G.p; let best=null, bd=1e9;
   for(const m of G.monsters){ if(m.dead || m.spawnT>0 || m.pend) continue;
@@ -2376,19 +2394,51 @@ function shadowTarget(){   // närmaste fiende framför spelaren (inom 420 px)
     if(dx<bd){ bd=dx; best=m; } }
   return best;
 }
+function spawnClone(t){   // en mörk skuggkopia av spelaren dyker upp bakom fienden och anfaller
+  const pl=t.plat, off=t.d.w/2+18; let bx=t.x - t.dir*off;
+  if(pl && !pl.solid) bx=clamp(bx, pl.x1+8, pl.x2-8); bx=clamp(bx,20,WORLD.w-20);
+  const c={x:bx, y:pl?yAt(pl,bx):t.y, plat:pl, face:Math.sign(t.x-bx)||t.dir, t:tv('k_klon'), tgt:t, atkCd:.15, anim:0, av:0, map:G.mapId};
+  G.clones.push(c); smokePuff(c.x,c.y); netFx('smoke',c.x,c.y); SFX.skill&&SFX.skill('shadowstep');
+}
+function updateClones(dt){
+  for(let i=G.clones.length-1;i>=0;i--){ const c=G.clones[i];
+    c.t-=dt; c.anim=Math.max(0,c.anim-dt);
+    if(c.map!==G.mapId){ G.clones.splice(i,1); continue; }
+    if(c.t<=0){ smokePuff(c.x,c.y); netFx('smoke',c.x,c.y); G.clones.splice(i,1); continue; }
+    if(!c.tgt || c.tgt.dead || c.tgt.pend || !G.monsters.includes(c.tgt)){   // ny fiende i närheten
+      c.tgt=null; let bd=320; for(const m of G.monsters){ if(m.dead||m.pend||m.spawnT>0) continue; const d=Math.abs(m.x-c.x); if(d<bd && Math.abs(m.y-c.y)<90){ bd=d; c.tgt=m; } } }
+    const m=c.tgt; if(!m) continue;
+    const dx=m.x-c.x; c.face=Math.sign(dx)||c.face;
+    if(Math.abs(dx)>m.d.w/2+28){ c.x+=Math.sign(dx)*Math.min(Math.abs(dx),300*dt); if(c.plat){ c.x=clamp(c.x,c.plat.solid?20:c.plat.x1+6,c.plat.solid?WORLD.w-20:c.plat.x2-6); c.y=yAt(c.plat,c.x); } }
+    else { c.atkCd-=dt; if(c.atkCd<=0){ c.atkCd=.42/Math.max(.5,G.stats.aspd*.8); c.anim=.28; c.av++; const off=G.stats.dual && c.av%2===0;
+      hitMonster(m, Math.max(1,Math.round((off?rollOff:rollAtk)())), {dir:c.face}); SFX.swing&&SFX.swing(); } }
+  }
+}
+function drawClones(){
+  if(!G.clones.length || !G.ch) return; const ch=G.ch;
+  for(const c of G.clones){ const fade=Math.min(1,c.t/.4);
+    ctx.save(); ctx.globalAlpha=.6*fade; const g=ctx.createRadialGradient(c.x,c.y-34,4,c.x,c.y-34,46); g.addColorStop(0,'rgba(150,80,220,.45)'); g.addColorStop(1,'rgba(150,80,220,0)'); ctx.fillStyle=g; ctx.fillRect(c.x-50,c.y-90,100,100);
+    ctx.translate(c.x,c.y); ctx.filter='brightness(.45) saturate(.4)';
+    drawChar(ctx,{cls:ch.cls, app:ch.app, face:c.face, pose:c.anim>0?'swing':'stand', t:c.anim>0?1-c.anim/.28:G.time, walkT:0, climbT:0, eq:ch.eq, av:c.av});
+    ctx.restore(); }
+}
 function smokePuff(x,y){ for(let i=0;i<18;i++) particle(x+rand(-14,14),y-rand(4,60),pick(['#3a3440','#5a5466','#8a8496','#1e1a24']),rand(-70,70),rand(-90,-10),.6,5,-30); }
 const ABIL_USE_PSYKO = {
   backstab(){
     const p=G.p, s=G.stats; startSkillAnim('swing');
-    const t=inFrontMonsters(MELEE_RANGE*s.range+10,1)[0];
-    G.fx.push({type:'slash', x:p.x+p.face*18, y:p.y-32, dir:p.face, t:0, dur:.22, r:60, wide:false});
+    let t=inFrontMonsters(MELEE_RANGE*s.range+10,1)[0], thrown=false;
+    if(!t && tv('k_kast')){ t=rangedTarget(kastRange(),115,72); thrown=!!t; }
+    if(!thrown) G.fx.push({type:'slash', x:p.x+p.face*18, y:p.y-32, dir:p.face, t:0, dur:.22, r:60, wide:false});
     if(!t) return;
     const front=tv('t_front'), behind = !front && Math.sign(p.x-t.x)===-t.dir, lucky = !front && !behind && Math.random()*100<tv('p_rygg');
-    hitMonster(t, Math.max(1,Math.round(rollAtk()*(behind||lucky?2.5:1.5))), {dir:p.face, critAdd:front});
+    const dmg=Math.max(1,Math.round(rollAtk()*(behind||lucky?2.5:1.5)));
+    if(thrown){ throwKnife(t, dmg, {critAdd:front}); if(behind||lucky) G.fx.push({type:'text',x:t.x,y:t.y-t.d.h-26,text:'🔪 I ryggen!',color:'#ff6a6a',t:0,dur:1,size:15}); return; }
+    hitMonster(t, dmg, {dir:p.face, critAdd:front});
     if(behind||lucky){ G.fx.push({type:'text',x:t.x,y:t.y-t.d.h-26,text:'🔪 I ryggen!',color:'#ff6a6a',t:0,dur:1,size:15}); for(let i=0;i<10;i++) particle(t.x,t.y-t.d.h/2,pick(['#ff3a3a','#a01818','#ffffff']),rand(-90,90),rand(-120,-20),.4,2.5,300); }
   },
   shadowstep(){
     const p=G.p, t=shadowTarget(); if(!t) return;
+    if(tv('k_klon')){ spawnClone(t); if(tv('p_skugga')||tv('t_ssaspd')){ p.ssT=3; recalc(); } return; }   // Skuggklon i stället för teleport
     smokePuff(p.x,p.y); netFx('smoke',p.x,p.y);
     const pl=t.plat, off=t.d.w/2+18; let bx=t.x - t.dir*off;
     if(pl && !pl.solid) bx=clamp(bx, pl.x1+8, pl.x2-8); bx=clamp(bx,20,WORLD.w-20);
@@ -2398,8 +2448,9 @@ const ABIL_USE_PSYKO = {
   },
   knivsits(){
     const p=G.p; startSkillAnim('cast');
-    for(let i=0;i<KNIV_N;i++){ const side=i%2?1:-1, k=Math.floor(i/2);
-      const pr={type:'kniv', x:p.x+side*8, y:p.y-48, vx:side*(110+k*75), vy:-(430+k*45), g:KNIV_G, speed:0, homing:0, target:null, dmg:Math.max(1,Math.round(rollAtk()*.8)), dist:0, maxDist:99999, life:2.6, hit:new Set()};
+    const N=knivN(), rows=Math.ceil(N/2);
+    for(let i=0;i<N;i++){ const side=i%2?1:-1, k=Math.floor(i/2);
+      const pr={type:'kniv', x:p.x+side*8, y:p.y-48, vx:side*(90+k*(300/rows)), vy:-(410+k*(220/rows)), g:KNIV_G, speed:0, homing:0, target:null, dmg:Math.max(1,Math.round(rollAtk()*.8)), dist:0, maxDist:99999, life:2.6, hit:new Set()};
       G.projs.push(pr); netShot(pr); }
   },
 };
@@ -2474,7 +2525,7 @@ const ABIL_USE = {
 function useAbility(id){
   const p=G.p; if(!p || p.dead || G.mode!=='game') return false;
   if(id==='attack'){ if(p.atkCd>0 || p.climb) return false; HIT_BASIC=true; let ok; try{ ok=basicAttack(); } finally{ HIT_BASIC=false; }
-    if(ok && G.ch.cls==='psykopat' && tv('t_front') && rank('backstab') && !((p.cds.backstab||0)>0) && G.ch.mp>=abilCost('backstab').mp && inFrontMonsters(MELEE_RANGE*G.stats.range+10,1).length) useAbility('backstab');   // Frontstab hugger automatiskt
+    if(ok && G.ch.cls==='psykopat' && tv('t_front') && rank('backstab') && !((p.cds.backstab||0)>0) && G.ch.mp>=abilCost('backstab').mp && (inFrontMonsters(MELEE_RANGE*G.stats.range+10,1).length || (tv('k_kast') && rangedTarget(kastRange(),115,72)))) useAbility('backstab');   // Frontstab hugger automatiskt
     return ok; }
   if(CONS[id]) return usePot(id);
   const a=ABIL[id], r=rank(id); if(!a || !r || !ABIL_USE[id]) return false;
@@ -2597,10 +2648,10 @@ function changeMap(to, x, y){
 }
 
 let HIT_BASIC=false;
-function addBleed(m, dmg){
-  const max=tv('p_blod'); if(!max) return;
-  const mine=G.bleeds.filter(b=>b.m===m); if(mine.length>=max) G.bleeds.splice(G.bleeds.indexOf(mine[0]),1);
-  G.bleeds.push({m, dps:dmg*0.1, t:10, tick:1});
+function addBleed(m, dmg, o){   // Blödning (10 % i 10 s) – eller Blodiga knivar (100 % över 6 s), var för sig med egna staplar
+  const src=o?o.src:'p', max=o?o.max:tv('p_blod'); if(!max) return;
+  const mine=G.bleeds.filter(b=>b.m===m && b.src===src); if(mine.length>=max) G.bleeds.splice(G.bleeds.indexOf(mine[0]),1);
+  G.bleeds.push({m, src, dps:o?o.dps:dmg*0.1, t:o?o.t:10, tick:1});
 }
 function updateBleeds(dt){
   for(let i=G.bleeds.length-1;i>=0;i--){ const b=G.bleeds[i];
@@ -3120,7 +3171,8 @@ function projHit(pr, m){
   const dir=Math.sign(pr.vx)||1, boom=pr.type==='fire'||pr.type==='bomb';
   if(pr.cos){ if(boom) explode(pr); else sparks(m.x, m.y-m.d.h/2, (pr.type==='whisper'||pr.type==='echo')?'#c9a2ff':pr.type==='wispshot'?'#bff7ff':'#fff3b0', 4); return; }
   if(boom){ explode(pr); return; }
-  hitMonster(m, pr.dmg, {dir, noKb:pr.type==='wispshot', basic:pr.type==='arrow'||pr.type==='whisper'});
+  hitMonster(m, pr.dmg, {dir, noKb:pr.type==='wispshot', basic:pr.type==='arrow'||pr.type==='whisper'||!!pr.basic, critAdd:pr.critAdd||0});
+  if(pr.type==='kastkniv' && !pr.cos && Math.random()*100<tv('k_blod')) addBleed(m, pr.dmg, {dps:pr.dmg/6, t:6, max:3, src:'k'});
   pr.hit.add(m);
   if(pr.type==='whisper' || pr.type==='echo'){
     for(let i=0;i<8;i++) particle(m.x,m.y-m.d.h/2,pick(['#c9a2ff','#fff']),rand(-90,90),rand(-90,90),.4,2.5,0);
@@ -3128,7 +3180,7 @@ function projHit(pr, m){
     return;
   }
   if(pr.type==='wispshot'){ sparks(m.x, m.y-m.d.h/2, '#bff7ff', 4); return; }
-  if(pr.type==='kniv'){ sparks(m.x, m.y-m.d.h/2, '#e8eef6', 5); return; }
+  if(pr.type==='kniv'||pr.type==='kastkniv'){ sparks(m.x, m.y-m.d.h/2, '#e8eef6', 5); return; }
   if(pr.type==='arrow'){
     if(pr.canBounce){ const c=tv('h_studs'); if(c && Math.random()<c/100) bounceArrow(m, 1, pr.dmg, pr.hit); }
     else if(pr.chain>0) bounceArrow(m, pr.chain, pr.dmg, pr.hit);
@@ -5734,7 +5786,7 @@ function drawDrop(d){
   ctx.globalAlpha=1;
 }
 function drawProj(pr){
-  if(pr.type==='kniv'){   // snurrande kniv
+  if(pr.type==='kniv'||pr.type==='kastkniv'){   // snurrande kniv
     ctx.save(); ctx.translate(pr.x,pr.y); ctx.rotate(pr.t*14*Math.sign(pr.vx||1));
     ctx.fillStyle='#3a2414'; rr(ctx,-2,2,4,9,1.5); ctx.fill(); ctx.fillStyle='#8a8f98'; ctx.fillRect(-4,1,8,2);
     const g=ctx.createLinearGradient(-3,0,3,0); g.addColorStop(0,'#f4f8ff'); g.addColorStop(1,'#8a96a8'); ctx.fillStyle=g;
@@ -5855,6 +5907,7 @@ function render(){
   for(const m of G.monsters) if(m.x>G.view.x1-60 && m.x<G.view.x2+60) drawMonster(m);
   if(G.mode==='game') drawOthers();
   if(G.mode==='game' && G.p) drawPlayer();
+  drawClones();
   drawShelter(true);
   for(const pr of G.projs) drawProj(pr);
   for(const f of (G.mprojs||[])) drawMProj(f);
@@ -7654,13 +7707,13 @@ const QUESTS = {
   // Fågelskådaren Fritiof (Vindklippan) – tre fågeluppdrag med mycket EXP
   fag1:{npc:'fritiof', name:'Skatornas stöld', lvl:12,
     text:'Skatorna har stulit min kikare – och allt annat som glänser! De dyker ned mot alla som kommer nära. Jaga bort 25 skator, men akta dig för törnsnåren.',
-    goals:{skata:25}, exp:600, gold:100, cons:[['hpPot2',3]]},
+    goals:{skata:25}, exp:85, gold:100, cons:[['hpPot2',3]]},
   fag2:{npc:'fritiof', name:'Hökens skugga', prev:'fag1', lvl:13,
     text:'Hökarna högst upp på klipporna är snabbare och elakare. Fäll 25 hökar så att fåglarna på klippan får lite lugn.',
-    goals:{hok:25}, exp:900, gold:150, cons:[['hpPot2',4]]},
+    goals:{hok:25}, exp:110, gold:150, cons:[['hpPot2',4]]},
   fag3:{npc:'fritiof', name:'Stormen över klippan', prev:'fag2', lvl:14,
     text:'Nu är de riktigt arga – hela flocken har tagit sig upp. Fäll 30 skator och 30 hökar så kan jag äntligen skåda fåglar i fred!',
-    goals:{skata:30, hok:30}, exp:1400, gold:250, cons:[['hpPot2',5],['elxExp',1]]},
+    goals:{skata:30, hok:30}, exp:180, gold:250, cons:[['hpPot2',5],['elxExp',1]]},
   jakt1:{npc:'holger', name:'Kattjakten', lvl:4,
     text:'Kissekatterna här är sötare än de är snälla. Jaga bort 15 av dem åt mig!',
     goals:{kissekatt:15}, exp:15, cons:[['hpPot',4]]},
@@ -7765,11 +7818,11 @@ const QUESTS = {
   pinn1:{npc:'ruben', name:'Pinnar med finess', lvl:14,
     text:'Pinnarna här blir bara argare av vanliga slag – de studsar upp och kastar sig som spjut! Visa vad du kan: fäll 30 vandrande pinnar med dina förmågor. Det är det sista slaget som räknas, och det får inte vara basattacken.',
     how:['Använd dina förmågor (inte basattacken) för att göra det sista slaget.','Pinnar som du skadar studsar upp och kastar sig mot dig – hoppa åt sidan eller rulla igenom dem.','Lägret i mitten av banan är säkert om du behöver vila.'],
-    goals:{abil_pinne:30}, exp:450, gold:250, cons:[['hpPot2',6],['mpPot2',4]]},
+    goals:{abil_pinne:30}, exp:140, gold:250, cons:[['hpPot2',6],['mpPot2',4]]},
   stock1:{npc:'stina', name:'Stockflottarens prov', lvl:14,
     text:'Stockarna spottar bark längs marken. En riktig flottare hoppar över barken och rullar rakt genom stockarna! 1. Hoppa över 5 barkskott (hoppa när barken är nära). 2. Rulla genom 5 stockar med Kullerbyttan (🤸) – spring mot en stock och rulla precis innan du når den. 3. Fäll 40 stockar.',
     how:['Slå till en stock så att den börjar skjuta bark mot dig.','Hoppa (mellanslag/⤒) när barkbiten är nära – den flyger lågt längs marken.','Spring mot en stock och tryck på Kullerbyttan (🤸) precis innan du når den – då rullar du rakt igenom den.','Fäll 40 stockar.'],
-    goals:{jump_bark:5, roll_stock:5, stock:40}, exp:600, gold:350, cons:[['hpPot2',8]]},
+    goals:{jump_bark:5, roll_stock:5, stock:40}, exp:190, gold:350, cons:[['hpPot2',8]]},
   silver1:{npc:'solve', name:'Silverjägare', lvl:12,
     text:'Har du sett ett monster som glänser som silver? Ungefär ett av hundra gör det. Fäll ett silvermonster av varje sort som finns ute i markerna – bossar räknas inte – så smider jag ett halsband av silvret åt dig.',
     goals:Object.fromEntries(['blabar','mossa','kissekatt','vildhund','varg','bjorn','skata','hok','drake','sten','bandit'].map(t=>['silver_'+t,1])), exp:1500, gold:1000, give:[['halsSilver','epic']]},
@@ -7795,7 +7848,7 @@ const QUEST_SHORT = {   // det NPC:n säger – kort och tydligt vad som ska gö
   jakt5:'Rulla genom mitt törnsnår med Kullerbyttan – då tar du ingen skada!', band1:'Klättra upp i Bandittornet och besegra Banditbossen.', band2:'Döda 20 av varje monster i skogen.', band3:'Döda 50 banditer i Bandittornet. Akta dig för deras yxor!', pinn1:'Döda 30 vandrande pinnar med förmågor – inte med basattacken.', stock1:'Hoppa över 5 barkskott, rulla genom 5 stockar och fäll 40 stockar.', silver1:'Döda ett silvermonster av varje sort (inte bossar). De är sällsynta – 1 % chans.',
 };
 const qShort = id => QUEST_SHORT[id] || (QUESTS[id].text.split(/(?<=[.!?])\s/)[0]);
-for(const id in QUESTS) QUESTS[id].exp=Math.round(QUESTS[id].exp*1.2);   // uppdrag ger 20 % mer EXP
+for(const id in QUESTS) QUESTS[id].exp=Math.round(QUESTS[id].exp*1.2*2);   // uppdrag ger 20 % mer EXP – och sedan dubbelt
 for(const id in QUESTS){ const Q=QUESTS[id]; if(Q.lvl && NPCS[Q.npc] && NPCS[Q.npc].map===5) Q.lvl=Math.max(1,Q.lvl-2); }   // uppdragen i Lövbyn kräver 2 level lägre
 const QUEST_ORDER = ['bar1','bar2','bar3','bar4','bar5','skr0','skr1','skr2','skr3','jakt1','jakt2','jakt3','jakt4','jakt5','pot1','pot2','pot3','pot4','pot5','vild1','vild2','vild3','vildlw','vild4','bo1','bo2','bo3','fag1','fag2','fag3','saga0','saga1','saga2','saga3','gunnar0','gunnar1','gunnar2','gunnar3','sten1','drak1','drak2','drak3','band1','band2','band3','silver1','pinn1','stock1'];
 const QUEST_CHAINS = [ {npc:'berit', name:'Bärplockarens besvär'}, {npc:'sigvard', name:'Skrivarkonsten'}, {npc:'holger', name:'Vaktarens jakt'}, {npc:'vera', name:'Örtkvinnans brygder'}, {npc:'ylva', name:'Vargarnas spår'}, {npc:'bo', name:'Björnjakten'}, {npc:'fritiof', name:'Fågelplågan'}, {npc:'saga', name:'Skrivarmästarens prov'}, {npc:'gunnar', name:'Garvarens lära'}, {npc:'dagny', name:'Drakvaktens prov'}, {npc:'kerstin', name:'Bandittornet'}, {npc:'solve', name:'Silverjägaren'}, {npc:'ruben', name:'Pinnskogen'}, {npc:'stina', name:'Stockskogen'} ];
