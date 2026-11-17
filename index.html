@@ -816,6 +816,11 @@ BASES.hjalmAska   = {id:'hjalmAska',  slot:'hjalm',    name:'Askdrakens horn',  
 BASES.handskarAska= {id:'handskarAska',slot:'handskar',name:'Glödhandskarna',         req:20, armor:10, atk:4, roll:'perm', vals:[7,5,3]};
 BASES.brostAska   = {id:'brostAska',  slot:'brost',    name:'Askfjällsbrynjan',       req:20, armor:24, atk:3, fixed:{str:8,int:8,agi:8}, cdmg:5, look:'dragon'};
 BASES.mantelAska = {id:'mantelAska', slot:'mantel',   name:'Askdrakens mantel',      req:20, armor:14, atk:5, fixed:{str:7,int:7,agi:7}, xp:3, cdmg:10};
+// Ovanliga Rare-drops (0,2 %): fasta stats
+BASES.tassvantar = {id:'tassvantar', slot:'handskar', name:'Tassvantar', req:4,  armor:3, fixed:{str:1,int:1,agi:3}, atk:1, aspd:3,  look:'paw'};       // kissekatt & vildhund
+BASES.vargkangor = {id:'vargkangor', slot:'skor',     name:'Vargkängor', req:8,  armor:5, fixed:{str:5,int:1,agi:1}, atk:1, hpreg:3, look:'wolfB'};     // varg
+BASES.bjornplad  = {id:'bjornplad',  slot:'mantel',   name:'Björnpläd',  req:12, armor:8, fixed:{str:2,int:7,agi:2}, atk:1, cdr:5,   look:'plaid'};     // björn
+BASES.fjaderhatt = {id:'fjaderhatt', slot:'hjalm',    name:'Fjäderhatt', req:13, armor:8, fixed:{str:4,int:4,agi:4}, atk:2,          look:'featherR'};  // skata & hök
 function gearBase(id, slot, name, L, wtype){
   if(slot==='vapen' && wtype==='kniv') return BASES[id]={id, slot, wtype, name, req:L, atk:[Math.round(L*.6),Math.round(L*.82+.5)]};
   if(slot==='vapen'){ const melee=wtype==='yxa'||wtype==='pinne'; return BASES[id]={id, slot, wtype, name, req:L, atk: melee?[Math.round(L*.85-.2),Math.round(L*1.15+.7)]:[Math.floor(L*.55),Math.floor(L*.85+.4)]}; }
@@ -863,12 +868,33 @@ for(const [id,slot,name] of [['stHjalm','hjalm','Granithjälm'],['stHals','halsb
 gearBase('stKniv','vapen','Stenkniv',17,'kniv');
 gearBase('stYxa','vapen','Stenyxa',17,'yxa'); gearBase('stBage','vapen','Stenbåge',17,'bage'); gearBase('stStav','vapen','Stenstav',17,'stav');
 for(const k of ['stYxa','stBage','stStav']) BASES[k].theme='sten';
+// Eget utseende för föremål som annars hade sett ut som något med annan level
+for(const [ids,lk] of [[['hjalm14','skor14','handskar14','mantel14','crCloakFjader'],'feather'], [['byxor15','brost15'],'twig'], [['axel15'],'bark'], [['balteBandit','byxorTorn'],'bandit'],
+  [['brostBandit'],'banditB'], [['vantarBar','balteBar','halsBar','crHatBar'],'berry'], [['crBootMossa','byxorMossa'],'moss'], [['axelMoss','skorMoss','ringMoss'],'mossG'], [['hjalmSten'],'stone2'],
+  [['axelDrake'],'dragon'], [['mantelAska','handskarAska'],'ash'], [['crGlovVarg'],'wolfB'], [['crHatBjorn'],'bear2'], [['lwHat4','lwBoot4','lwHand4'],'dragonL']]) for(const id of ids) if(BASES[id]) BASES[id].look=lk;
 const STONE_WPN = {skog:'stYxa', hippie:'stBage', viskare:'stStav', psykopat:'stKniv'};
-const LW_PAL = {dragon:{main:'#3a6aa8',dark:'#1a3460',trim:'#9ad0ff',stitch:'#e8f4ff'}, fur:{main:'#9aa0a8',dark:'#5a6068',trim:'#eceef0'}, bear:{main:'#8a5a36',dark:'#4e2e18',trim:'#c8a070'}, track:{main:'#3e5236',dark:'#1e2a18',trim:'#a0a6ae',stitch:'#e8c34a'}, bandit:{main:'#4a3c34',dark:'#221a16',trim:'#c8342a',stitch:'#e8c34a'}, shadow:{main:'#4a3e66',dark:'#1e1830',trim:'#e07a3a',stitch:'#ffcf80'}};
-const gearLook = it => it && BASES[it.base] ? BASES[it.base].look : null;
+const LW_PAL = {dragon:{main:'#3a6aa8',dark:'#1a3460',trim:'#9ad0ff',stitch:'#e8f4ff'}, fur:{main:'#9aa0a8',dark:'#5a6068',trim:'#eceef0'}, bear:{main:'#8a5a36',dark:'#4e2e18',trim:'#c8a070'}, track:{main:'#3e5236',dark:'#1e2a18',trim:'#a0a6ae',stitch:'#e8c34a'}, bandit:{main:'#4a3c34',dark:'#221a16',trim:'#c8342a',stitch:'#e8c34a'}, shadow:{main:'#4a3e66',dark:'#1e1830',trim:'#e07a3a',stitch:'#ffcf80'},
+  // nya utseenden – så att utrustning med olika level aldrig ser likadan ut
+  feather:{main:'#6ac8e8',dark:'#2a6a8a',trim:'#ffffff',stitch:'#ffd23f'}, featherR:{main:'#e8e2d0',dark:'#8a7a5a',trim:'#ffd23f',stitch:'#c8342a'},
+  twig:{main:'#8a6a3a',dark:'#46301a',trim:'#7ab84a',stitch:'#c8e08a'}, bark:{main:'#5e4630',dark:'#2c1e12',trim:'#8ab04a',stitch:'#c8a070'},
+  berry:{main:'#4a5ad8',dark:'#1e2470',trim:'#9ad06a',stitch:'#c8d0ff'}, moss:{main:'#6aa83a',dark:'#2e5a1a',trim:'#d8ec9a',stitch:'#f4f0c0'},
+  mossG:{main:'#2e6a34',dark:'#123016',trim:'#e8c34a',stitch:'#a8d86a'}, stone:{main:'#b8ad9a',dark:'#6a604e',trim:'#bfe0ff',stitch:'#e8e4dc'},
+  stone2:{main:'#7a766e',dark:'#3a3630',trim:'#7ab84a',stitch:'#c8c0b0'}, paw:{main:'#e8a050',dark:'#9a5a20',trim:'#fff2dc',stitch:'#7a4a20'},
+  wolfB:{main:'#5a6068',dark:'#262a30',trim:'#f0f0f2',stitch:'#c8342a'}, plaid:{main:'#a83a2a',dark:'#4a1a12',trim:'#e8c34a',stitch:'#2a3a1a'},
+  ash:{main:'#5a2a20',dark:'#220c08',trim:'#ff8a3a',stitch:'#ffd23f'}, bear2:{main:'#5a3a24',dark:'#26140a',trim:'#e8d8b0',stitch:'#d8b04a',like:'bear'},
+  dragonL:{main:'#2e8a86',dark:'#0e3e3c',trim:'#a8f0e0',stitch:'#e8fff8',like:'dragon'}, banditB:{main:'#2e2a2c',dark:'#121012',trim:'#f2ece0',stitch:'#c8342a'}};
+const lkShape = lk => (LW_PAL[lk] && LW_PAL[lk].like) || lk;   // varianter ritas med samma form som originalet
+const gearLook = it => { const b=it && BASES[it.base]; return !b ? null : b.look || (b.theme==='sten' && b.slot!=='vapen' ? 'stone' : null); };
+// Vapen: färgade lindningar och en sten per level (ikon + på gubben), så att t.ex. level 8 och 12 inte ser likadana ut
+function wpnTier(b){
+  if(!b || b.slot!=='vapen') return null;
+  if(b.theme==='sten' || b.id==='stKniv') return {c:'#8a847a', g:'#bfe0ff'};
+  const r=b.req; return r>=20?{c:'#ff5a1a',g:'#ffb03a',glow:1}: r>=19?{c:'#6a2ad8',g:'#e8c34a'}: r>=17?{c:'#3a9a3a',g:'#b8f06a'}: r>=15?{c:'#c8342a',g:'#ffd23f'}: r>=12?{c:'#8a4a24',g:'#ff3a3a'}: null;
+}
 
 /* Förbrukningsvaror (köps i butiken, staplas upp till 20 per plats i väskan) */
-const STACK_MAX = 20, SCROLL_SLOTS = 6, SCROLL_CHANCE = 0.6;
+const STACK_MAX = 20, POT_STACK = 100, SCROLL_SLOTS = 6, SCROLL_CHANCE = 0.6;
+const stackMax = base => CONS[base] && CONS[base].kind==='pot' ? POT_STACK : STACK_MAX;   // drycker (även elixir och bomber) 100 per plats
 const CONS = {
   hpPot: {kind:'pot',    name:'HP-dryck',    price:10, sell:2, hp:50, desc:'Återställer 50 HP.'},
   mpPot: {kind:'pot',    name:'Mana-dryck',  price:10, sell:2, mp:50, desc:'Återställer 50 mana.'},
@@ -876,6 +902,7 @@ const CONS = {
   scrInt:{kind:'scroll', name:'Scroll: Int +1',        price:100, target:'gear',   stat:'int', amt:1, desc:'Utrustning (ej vapen): 60% chans till +1 Int.'},
   scrAgi:{kind:'scroll', name:'Scroll: Agi +1',        price:100, target:'gear',   stat:'agi', amt:1, desc:'Utrustning (ej vapen): 60% chans till +1 Agi.'},
   scrAtk:{kind:'scroll', name:'Scroll: Vapenskada +2', price:100, target:'weapon', stat:'atk', amt:2, desc:'Vapen: 60% chans till +2 attack.'},
+  scrGlov:{kind:'scroll', name:'Scroll: Handskar attack +2', rarity:'rare', target:'handskar', stat:'atk', amt:2, sell:60, desc:'Handskar: 60% chans till +2 attack. Faller ibland från banditer.'},
 };
 const isCons = it => !!(it && CONS[it.base]);
 const SCROLL_IDS = ['scrStr','scrInt','scrAgi','scrAtk'];
@@ -960,6 +987,9 @@ function makeItem(baseId, rarity='common', split=false){
   if(b.cdmg) it.cdmg=b.cdmg; // +% kritisk skada
   if(b.dodge) it.dodge=b.dodge; // +% undvikande
   if(b.move) it.move=b.move;
+  if(b.aspd) it.aspd=b.aspd;    // +% attackhastighet
+  if(b.hpreg) it.hpreg=b.hpreg; // +HP-reg per sekund
+  if(b.cdr) it.cdr=b.cdr;       // +% kortare nedkylning
   return it;
 }
 const sellPrice = it => isCons(it) ? 0 : Math.round(5*it.req*(100+RAR[it.rarity].sell)/100);
@@ -1154,7 +1184,10 @@ for(const t in MOBS){ const d=MOBS[t]; if(d.matP) d.matP=Math.round(d.matP*.6*10
 // Askdraken har en egen ritning (drawAskdrake): sotsvart, fyrbent drake med glödande lavasprickor
 MOBS.banditboss.axe = true; MOBS.banditboss.axeEvery = 1;   // kastar en yxa varje sekund i strid
 MOBS.bandit.axe = true; MOBS.bandit.axeEvery = 3;   // banditerna kastar yxor mot den som skadat dem (var 3:e sekund)
-MOBS.bandit.extra = [['banditprylar', .10]];   // 10 % chans (räknas inte ned som de andra materialen)
+MOBS.bandit.extra = [['banditprylar', .10], ['scrGlov', .01]];   // 10 % chans (räknas inte ned som de andra materialen) + 1 % handskscroll
+MOBS.pinne.extra = [...(MOBS.pinne.extra||[]), ['scrReset', .01]];   // 1 % Scroll reset
+for(const [mobs,base] of [[['kissekatt','vildhund'],'tassvantar'], [['varg'],'vargkangor'], [['bjorn'],'bjornplad'], [['skata','hok'],'fjaderhatt']])
+  for(const t of mobs) MOBS[t].loot = [...(MOBS[t].loot||[]), [base, .002, 'rare']];   // 0,2 % Rare
 MOBS.banditboss.respawn = 30;   // bossen kommer tillbaka efter 30 sekunder    // kastar en yxa var 2:a sekund i strid (40 % av beröringsskadan)
 MOBS.stenappa.rocks = true;    // kallar ned stora stenar från himlen (yt-skada efter 1,6 s)   // en boss högst upp i tornet
 MOBS.stenappa.book   = [1,5,15,40];     // dyker bara upp ibland
@@ -1175,7 +1208,7 @@ const bookAtkOf = v => Math.max(0, v-4);   // nivå 5: +1 attack, nivå 6: +2 �
 function bookStatBonus(ch){ const pts=bookPoints(ch); let b=0; for(const [n,v] of BOOK_TIERS) if(pts>=n) b=v; return b; }
 const bookAtkBonus = ch => bookAtkOf(bookStatBonus(ch));
 
-const INV_MAX = 32;
+const INV_MAX = 40;
 const MAT_MAX = 32;   // egen väska för material och själar
 const isMatBase = b => !!(CONS[b] && CONS[b].kind==='mat');
 const invCount = mat => G.ch.inv.reduce((n,x)=>n+(isMatBase(x.base)===mat?1:0),0) + (G.ch.escrow||[]).reduce((n,x)=>n+(isMatBase(x.base)===mat?1:0),0);   // föremål i en pågående byteshandel håller kvar sina platser
@@ -1219,6 +1252,12 @@ const SFX = (()=>{
     swing(){ if(!ok('swing',80)) return; noise({f:600,f2:2600,q:1.3,a:.02,d:.13,v:.24}); },
     bow(){ if(!ok('bow',80)) return; tone(190,{type:'triangle',f2:120,d:.12,v:.22}); noise({f:3200,f2:1100,q:2,d:.09,v:.1}); },
     cast(){ if(!ok('cast',80)) return; tone(520,{f2:900,d:.17,v:.11}); tone(780,{type:'triangle',f2:1350,d:.15,v:.055,t0:.03}); },
+    meow(x){ if(!near(x) || !ok('meow',380)) return;   // kissekattens jamande: sågtand genom ett formantfilter, tonhöjden går upp och ner
+      const t=ac.currentTime, f0=560+Math.random()*120, o=ac.createOscillator(), o2=ac.createOscillator(), fl=ac.createBiquadFilter(), g=ac.createGain();
+      o.type='sawtooth'; o2.type='triangle'; for(const [os,m] of [[o,1],[o2,2]]){ os.frequency.setValueAtTime(f0*m*.8,t); os.frequency.linearRampToValueAtTime(f0*m*1.25,t+.12); os.frequency.linearRampToValueAtTime(f0*m*.72,t+.42); }
+      fl.type='bandpass'; fl.Q.value=4; fl.frequency.setValueAtTime(900,t); fl.frequency.linearRampToValueAtTime(1900,t+.13); fl.frequency.linearRampToValueAtTime(1000,t+.42);
+      g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(.32,t+.05); g.gain.setValueAtTime(.3,t+.26); g.gain.exponentialRampToValueAtTime(0.0001,t+.46);
+      const g2=ac.createGain(); g2.gain.value=.25; o.connect(fl); o2.connect(g2); g2.connect(fl); fl.connect(g); g.connect(master); o.start(t); o2.start(t); o.stop(t+.5); o2.stop(t+.5); },
     hit(crit){ if(!ok('hit',40)) return;
       if(crit){ noise({f:1800,f2:380,q:.8,d:.13,v:.32}); tone(230,{type:'square',f2:80,d:.1,v:.1}); tone(1250,{f2:1900,d:.12,v:.08,t0:.02}); }
       else { noise({type:'lowpass',f:700,f2:180,q:1,d:.08,v:.3}); tone(165,{type:'triangle',f2:70,d:.08,v:.2}); } },
@@ -1440,7 +1479,7 @@ MAPS[4] = {name:'Jaktmarken IV', start:SAFE_START, sign:{x:200,y:900}, wm:{x:.58
   portals:[{x:70, y:900, to:3, toX:3110, toY:900}, {x:3110, y:900, to:9, toX:70, toY:900}],
   theme:{sky:['#5f7f9e','#b8c8d0','#e8eef0'], mount:'#8a9cb0', hill:'#6a8a7a', hillTree:'#5a7a6a', trees:'#4a6a5a', sun:'rgba(255,250,235,'}};
 // Byn efter Jaktmarken IV – inga monster, två hantverkare
-MAPS[5] = {name:'Lövbyn', town:true, terrain:'town', start:{x:240,y:900}, sign:{x:220,y:900}, wm:{x:.77,y:.64},
+MAPS[5] = {waySigns:[{x:462, y:900, dir:-1, tilt:-.18, text:'Easier path', sub:'⬆ Pinnskogen (rep upp till vänster)'}], name:'Lövbyn', town:true, terrain:'town', start:{x:240,y:900}, sign:{x:220,y:900}, wm:{x:.77,y:.64},
   spawns:[], portals:[{x:70, y:900, to:9, toX:2930, toY:900}, {x:110, y:600, to:14, toX:150, toY:900}, {x:2690, y:600, to:7, toX:70, toY:2000}, {x:2730, y:900, to:8, toX:70, toY:900}],
   theme:{sky:['#57aef0','#a7dcfb','#e8f8ff'], mount:'#a6cfe3', hill:'#97d38a', hillTree:'#82c477', trees:'#6cb866', sun:'rgba(255,250,220,'}};
 // Drakslätten (via portalen uppe till höger på Stenmarken): ett enda brett plan med 12 drakar
@@ -1504,6 +1543,12 @@ function genHuntDeco(){
     const depth = p.solid?150:22, arr=[];
     for(let i=0;i<w/(p.solid?28:40);i++) arr.push({x:p.x1+6+R()*(w-12), y:p.y+18+R()*depth, r:1.5+R()*3, c:pc(['#8d5f35','#c08a55','#9b6b40','#6f4a2a'])});
     DECO.pebbles[p.id]=arr;
+  }
+  if(TERRAIN!=='hunt'){   // Pinnskogen/Stockskogen: träd på marken, svampar och stenar ovanpå plattformarna (inte svävande)
+    for(const [x,s] of [[260,1.1],[1000,.95],[1500,1.25],[2050,1.05],[2760,1.15]]) DECO.back.push({t:'tree',x,y:900,s});
+    for(const p of PLATS){ if(p.solid) continue; const w=p.x2-p.x1; for(let i=0;i<Math.max(1,w/420);i++){ const x=p.x1+40+R()*(w-80); DECO.back.push({t:R()<.6?'mush':'rock',x,y:p.y,s:.6+R()*.4}); } }
+    for(const [x,s] of [[640,.9],[1330,.8],[2330,1],[2900,.75]]) DECO.back.push({t:'mush',x,y:900,s});
+    DECO.back.sort((a,b)=>(a.t==='tree'?0:1)-(b.t==='tree'?0:1)); return;
   }
   DECO.back.push({t:'tree',x:300,y:900,s:1.15},{t:'tree',x:1010,y:900,s:.95},{t:'tree',x:2180,y:900,s:1.3},{t:'tree',x:3060,y:900,s:1.05},{t:'tree',x:560,y:620,s:.7},{t:'tree',x:2860,y:480,s:.75},{t:'tree',x:1250,y:480,s:.62});
   DECO.back.push({t:'fence',x1:2440,x2:2620,y:900});
@@ -1732,18 +1777,18 @@ function calcStats(ch){
   const ex = (ch===G.ch) ? elixV('stat') : 0;
   const s = {str:5+L+bb+ka+ex, int:5+L+bb+ka+ex, agi:5+L+bb+ka+ex, armor:0, book:bb};
   s.eqAtk=0; s.eqMove=0;
-  for(const k in ch.eq){ const it=ch.eq[k]; if(!it) continue; s.armor+=it.armor||0; for(const st of STATS) s[st]+=it[st]||0; if(it.slot!=='vapen') s.eqAtk+=it.atk||0; s.eqMove+=it.move||0; s.xpPct=(s.xpPct||0)+(it.xp||0); s.cdmg=(s.cdmg||0)+(it.cdmg||0); s.eqCdmg=(s.eqCdmg||0)+(it.cdmg||0); s.eqDodge=(s.eqDodge||0)+(it.dodge||0); }
-  s.crit = agiPct(s.agi,ch.level); s.dodge = Math.min(AGI_CAP, agiPct(s.agi,ch.level) + (s.eqDodge||0)); s.cdr = Math.min(CDR_CAP, Math.max(0,s.int)*AGI_PCT(ch.level));
+  for(const k in ch.eq){ const it=ch.eq[k]; if(!it) continue; s.armor+=it.armor||0; for(const st of STATS) s[st]+=it[st]||0; if(it.slot!=='vapen') s.eqAtk+=it.atk||0; s.eqMove+=it.move||0; s.xpPct=(s.xpPct||0)+(it.xp||0); s.cdmg=(s.cdmg||0)+(it.cdmg||0); s.eqCdmg=(s.eqCdmg||0)+(it.cdmg||0); s.eqDodge=(s.eqDodge||0)+(it.dodge||0); s.eqAspd=(s.eqAspd||0)+(it.aspd||0); s.eqHpreg=(s.eqHpreg||0)+(it.hpreg||0); s.eqCdr=(s.eqCdr||0)+(it.cdr||0); }
+  s.crit = agiPct(s.agi,ch.level); s.dodge = Math.min(AGI_CAP, agiPct(s.agi,ch.level) + (s.eqDodge||0)); s.cdr = Math.min(CDR_CAP, Math.max(0,s.int)*AGI_PCT(ch.level) + (s.eqCdr||0));
   s.maxHp = Math.round((50 + s.str*10)*(1+tv('s_tjock')/100));
   s.maxMp = C.noMana ? 0 : Math.round((20 + s.int*10)*(1+tv('v_klok')/100));
   s.crit = Math.min(100, s.crit + tv('h_skarp') + (G.p && G.ch===ch && G.p.ssT>0 ? tv('p_skugga') : 0));   // Ur skuggorna: efter Shadowstep
   s.cdmg = (s.cdmg||0) + tv('h_vass') + tv('p_kritsk') + tv('t_cdmg');   // Vass spets, Kallblodig
-  s.hpReg = s.str*0.1;
+  s.hpReg = s.str*0.1 + (s.eqHpreg||0);
   if(G.p && G.ch===ch && G.p.regenT>0) s.hpReg *= 1 + tv('s_kada')/100;   // Kådläkning: +300%
   s.mpReg = C.noMana ? 0 : s.int*0.1;
   const w2 = ch.eq.vapen2;
   s.dual = ch.cls==='psykopat' && !!ch.eq.vapen && ch.eq.vapen.wtype==='kniv' && !!w2 && w2.wtype==='kniv';   // två knivar
-  s.aspd = 1 + C.aspd + tv('k_aspd')/100 + tv('h_snabb')/100 + tv('p_snabb')/100 + (s.dual ? DUAL_ASPD : 0) + (G.p && G.ch===ch && G.p.ssT>0 ? tv('t_ssaspd')/100 : 0) + (G.p && G.ch===ch && G.p.buffT>0 ? 1 : 0);   // Flower power: +100% (Agi ger inte längre attackhastighet)
+  s.aspd = 1 + C.aspd + tv('k_aspd')/100 + tv('h_snabb')/100 + tv('p_snabb')/100 + (s.dual ? DUAL_ASPD : 0) + (G.p && G.ch===ch && G.p.ssT>0 ? tv('t_ssaspd')/100 : 0) + (G.p && G.ch===ch && G.p.buffT>0 ? 1 : 0) + (s.eqAspd||0)/100;   // Flower power: +100% (Agi ger inte längre attackhastighet)
   s.move = 1 + tv('k_move')/100 + s.eqMove/100;
   s.range = 1 + tv('h_range')/100;
   const w = ch.eq.vapen;
@@ -2544,12 +2589,13 @@ function useAbility(id){
 
 /* ---------- Drycker & staplar ---------- */
 const consCount = base => G.ch ? G.ch.inv.reduce((s,it)=>s+(it.base===base?it.count:0),0) : 0;
-function stackRoom(base){ const ch=G.ch, m=isMatBase(base); let r=0; for(const it of ch.inv) if(it.base===base) r+=STACK_MAX-it.count; return r+Math.max(0,(m?MAT_MAX:INV_MAX)-invCount(m))*STACK_MAX; }
+function stackRoom(base){ const ch=G.ch, m=isMatBase(base), sm=stackMax(base); let r=0; for(const it of ch.inv) if(it.base===base) r+=Math.max(0,sm-it.count); return r+Math.max(0,(m?MAT_MAX:INV_MAX)-invCount(m))*sm; }
 function addStack(base, n){
   const ch=G.ch; let left=n;
-  for(const it of ch.inv){ if(!left) break; if(it.base===base && it.count<STACK_MAX){ const a=Math.min(STACK_MAX-it.count,left); it.count+=a; left-=a; } }
+  const sm=stackMax(base);
+  for(const it of ch.inv){ if(!left) break; if(it.base===base && it.count<sm){ const a=Math.min(sm-it.count,left); it.count+=a; left-=a; } }
   const mb=isMatBase(base), cap=mb?MAT_MAX:INV_MAX;
-  while(left>0 && invCount(mb)<cap){ const a=Math.min(STACK_MAX,left); ch.inv.push({uid:uid(), base, count:a}); left-=a; }
+  while(left>0 && invCount(mb)<cap){ const a=Math.min(sm,left); ch.inv.push({uid:uid(), base, count:a}); left-=a; }
   return n-left;
 }
 function takeOne(base){
@@ -2669,7 +2715,7 @@ function hitMonster(m, dmg, o={}){
   const by = o.by || Net.myId;
   if(isGuestNet()){
     // Gäst: visa direkt, låt värden avgöra (värden äger monstren)
-    m.hp -= dmg; m.showHp=4; m.predT=G.time+0.7; if(o.kind!=='burn' && o.kind!=='root') SFX.hit(o.kind==='crit');
+    m.hp -= dmg; m.showHp=4; m.predT=G.time+0.7; if(o.kind!=='burn' && o.kind!=='root') SFX.hit(o.kind==='crit'); if(m.type==='kissekatt' && o.kind!=='bleed') SFX.meow(m.x);
     if(!o.noKb){ m.hurtT=0.4; m.dir=-(o.dir||1); }
     addNum(m.x, m.y-m.d.h-6, dmg, o.kind||'dmg', m);
     sparks(m.x, m.y-m.d.h/2, '#fff3b0', 6);
@@ -2680,7 +2726,8 @@ function hitMonster(m, dmg, o={}){
   }
   m.hp -= dmg; m.showHp = 4; m.lastBy = by; m.aggro = by; m.aggroT = 10; m.lastBasic = !!o.basic;
   if(o.noKb && !m.d.arena && !m.d.fly && !(m.rootT>0)){ const a=by===Net.myId?G.p:G.others[by]; if(a){ m.dir=Math.sign(a.x-m.x)||m.dir; m.state='walk'; m.turnT=0; m.osc=0; } }   // t.ex. irrbloss: monstret vänder sig och går mot spelaren
-  if(by===Net.myId && o.kind!=='burn' && o.kind!=='root') SFX.hit(o.kind==='crit');   // monstret går mot den som anföll (som i MapleStory)
+  if(by===Net.myId && o.kind!=='burn' && o.kind!=='root') SFX.hit(o.kind==='crit');
+  if(by===Net.myId && m.type==='kissekatt' && o.kind!=='bleed') SFX.meow(m.x);   // jamar när man slår den   // monstret går mot den som anföll (som i MapleStory)
   if(m.d.arena){ if(!o.noKb) m.hurtT=Math.max(m.hurtT,0.05); }
   else if(!o.noKb && !(m.hardT>0) && !(m.d.boss && m.type==='stenappa')){ m.kb=(o.dir||Math.sign(m.x-G.p.x)||1)*70; m.kbT=0.15; m.hurtT=0.45; m.dir=-(o.dir||1); }
   else if(!o.noKb) m.hurtT=Math.max(m.hurtT,0.15);
@@ -2790,7 +2837,7 @@ function onLevelUp(){
 const FANF=[]; let fanfOn=false;
 function spellFanfare(id){ FANF.push(id); if(!fanfOn){ fanfOn=true; setTimeout(nextFanfare, 1300); } }
 function abilSlotEl(id){ if(!G.ch) return null; if(G.touch) return $(`#tSkills [data-sk="${id}"]`); const i=G.ch.hotbar.indexOf(id); return i>=0 ? $$('#hotbar .hs')[i] : null; }
-function markNewSpell(id){ G.ui.newSp={id, until:G.time+12}; buildHotbar(); renderTouchSkills(); }
+function markNewSpell(id){ if(!G.ch || G.mode!=='game') return; G.ui.newSp={id, until:G.time+12}; buildHotbar(); renderTouchSkills(); }
 function nextFanfare(){
   const id=FANF.shift(); if(!id || G.mode!=='game'){ fanfOn=false; FANF.length=0; return; }
   fanfOn=true;
@@ -4344,6 +4391,23 @@ function drawSign(){
   ctx.font='bold 15px Georgia,"Palatino Linotype",serif'; ctx.textAlign='center'; ctx.lineWidth=3; ctx.strokeStyle='#2a160a';
   ctx.strokeText(curMap().name,x,y-79); ctx.fillStyle='#f8e6b8'; ctx.fillText(curMap().name,x,y-79);
 }
+// Vägvisare (pilskylt) – t.ex. i Lövbyn mot Pinnskogen
+function drawWaySigns(){
+  const L=curMap().waySigns; if(!L) return; const A=art();
+  for(const w of L){ const x=w.x, y=w.y; if(x<G.view.x1-120||x>G.view.x2+120) continue;
+    ctx.fillStyle='rgba(0,0,0,.28)'; ell(ctx,x,y,22,5);
+    const g=ctx.createLinearGradient(x-5,0,x+5,0); g.addColorStop(0,A.trunk[0]); g.addColorStop(1,A.trunk[2]); ctx.fillStyle=g; rr(ctx,x-5,y-96,10,98,3); ctx.fill();
+    ctx.save(); ctx.translate(x,y-78); ctx.rotate(w.tilt||0); const d=w.dir||-1, W=124, H=34;
+    const bg=ctx.createLinearGradient(0,-H/2,0,H/2); bg.addColorStop(0,'#b0844e'); bg.addColorStop(1,'#6a4426'); ctx.fillStyle=bg;
+    ctx.beginPath(); ctx.moveTo(d*(W/2+16),0); ctx.lineTo(d*W/2,-H/2); ctx.lineTo(-d*W/2,-H/2); ctx.lineTo(-d*W/2,H/2); ctx.lineTo(d*W/2,H/2); ctx.closePath(); ctx.fill(); ctx.strokeStyle='#24140a'; ctx.lineWidth=3; ctx.stroke();
+    ctx.strokeStyle='rgba(40,20,8,.3)'; ctx.lineWidth=1.1; for(const yy of [-8,3,11]){ ctx.beginPath(); ctx.moveTo(-W/2+6,yy); ctx.lineTo(W/2-6,yy+1); ctx.stroke(); }
+    ctx.fillStyle='#3a2410'; for(const xx of [-W/2+8, W/2-8]) circ(ctx,xx*-d*-1,0,2.2);
+    ctx.font='bold 16px Georgia,"Palatino Linotype",serif'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.lineWidth=3; ctx.strokeStyle='#2a160a';
+    ctx.strokeText(w.text,d*6,-1); ctx.fillStyle='#fff3c8'; ctx.fillText(w.text,d*6,-1); ctx.textBaseline='alphabetic';
+    ctx.restore();
+    if(w.sub){ ctx.font='bold 11px system-ui,sans-serif'; ctx.textAlign='center'; ctx.lineWidth=3; ctx.strokeStyle='rgba(20,10,4,.85)'; ctx.strokeText(w.sub,x,y-48); ctx.fillStyle='#e8f4c8'; ctx.fillText(w.sub,x,y-48); }
+  }
+}
 function drawPortals(){
   const t=G.time, A=art();
   for(const o of curMap().portals){
@@ -4845,16 +4909,24 @@ function hairFront(c,L,hx,hy,cov){
 }
 // hjälmar och huvor (från utrustning)
 function drawHelm(c,it,hx,hy,face){
-  const rc=RAR[it.rarity||'common'].color, lk=gearLook(it);
+  const rc=RAR[it.rarity||'common'].color, lk=gearLook(it), sh=lkShape(lk);
   if(lk){ const P=LW_PAL[lk];
-    if(lk==='track'){ const g=c.createLinearGradient(hx-14,hy-20,hx+14,hy+10); g.addColorStop(0,'#5a7050'); g.addColorStop(1,P.dark);
+    if(lk==='featherR'){   // Fjäderhatt: bredbrättad hatt med fjädrar
+      const g=c.createLinearGradient(hx,hy-24,hx,hy-4); g.addColorStop(0,'#f4eedc'); g.addColorStop(1,'#a8946a'); c.fillStyle=g;
+      c.beginPath(); c.ellipse(hx,hy-6,22,4.5,0,0,7); c.fill(); c.strokeStyle='rgba(0,0,0,.35)'; c.lineWidth=.8; c.stroke();
+      c.beginPath(); c.moveTo(hx-11,hy-6); c.quadraticCurveTo(hx-11,hy-23,hx,hy-23); c.quadraticCurveTo(hx+11,hy-23,hx+11,hy-6); c.closePath(); c.fill(); c.stroke();
+      c.fillStyle='#c8342a'; c.fillRect(hx-10.5,hy-11,21,3);
+      for(const [a,len,col] of [[-.5,20,'#2a5aa8'],[-.85,16,'#e8a020'],[-.25,15,'#ffffff']]){ c.save(); c.translate(hx-7,hy-12); c.rotate(a); c.fillStyle=col; c.beginPath(); c.moveTo(0,0); c.quadraticCurveTo(len*.35,-len*.5,0,-len); c.quadraticCurveTo(-len*.35,-len*.5,0,0); c.fill(); c.strokeStyle='rgba(0,0,0,.35)'; c.lineWidth=.6; c.stroke(); c.restore(); }
+      c.fillStyle=rc; circ(c,hx+9,hy-11,1.2); return; }
+    if(sh==='track'){ const g=c.createLinearGradient(hx-14,hy-20,hx+14,hy+10); g.addColorStop(0,'#5a7050'); g.addColorStop(1,P.dark);
       c.fillStyle=g; c.beginPath(); c.moveTo(hx-4,hy-18); c.quadraticCurveTo(hx-18,hy-22,hx-22,hy-12); c.quadraticCurveTo(hx-20,hy,hx-17,hy+10); c.lineTo(hx-8,hy+12); c.quadraticCurveTo(hx-12,hy-2,hx-6,hy-8); c.quadraticCurveTo(hx+4,hy-14,hx+14,hy-6); c.quadraticCurveTo(hx+16,hy-16,hx-4,hy-18); c.fill();
       c.fillStyle=P.trim; for(let i=0;i<8;i++){ const a=Math.PI*(1.05+i*.11); circ(c,hx+Math.cos(a)*14.5,hy-1+Math.sin(a)*13,2.1); }
       c.strokeStyle=P.stitch; c.lineWidth=.8; c.setLineDash([1.4,1.2]); c.beginPath(); c.moveTo(hx-12,hy-16); c.quadraticCurveTo(hx-18,hy-4,hx-14,hy+8); c.stroke(); c.setLineDash([]); }
     else { const g=c.createLinearGradient(hx,hy-20,hx,hy-3); g.addColorStop(0,shadeC(P.main,.25)); g.addColorStop(1,P.dark);
       c.fillStyle=g; c.beginPath(); c.arc(hx,hy-3,15.6,Math.PI,2*Math.PI); c.fill();
-      if(lk==='dragon'||lk==='shadow'){ c.fillStyle=lk==='shadow'?'#cfc4e0':'#e8e0c8'; for(const ex of [-8,7]){ c.beginPath(); c.moveTo(hx+ex-3,hy-13); c.lineTo(hx+ex-5,hy-24); c.lineTo(hx+ex+3,hy-14); c.fill(); } }
-      if(lk==='bear'){ for(const ex of [-9,8]){ c.fillStyle=P.main; circ(c,hx+ex,hy-16,4.6); c.fillStyle=P.dark; circ(c,hx+ex,hy-16,2.2); } }
+      if(sh==='dragon'||sh==='shadow'){ c.fillStyle=sh==='shadow'?'#cfc4e0':lk==='dragonL'?P.trim:'#e8e0c8'; for(const ex of [-8,7]){ c.beginPath(); c.moveTo(hx+ex-3,hy-13); c.lineTo(hx+ex-5,hy-24); c.lineTo(hx+ex+3,hy-14); c.fill(); } }
+      if(sh==='bear'){ for(const ex of [-9,8]){ c.fillStyle=P.main; circ(c,hx+ex,hy-16,4.6); c.fillStyle=P.dark; circ(c,hx+ex,hy-16,2.2); } }
+      else if(lk==='feather'){ for(const [a,len,col] of [[-.35,17,P.trim],[-.7,13,'#9ac0f0']]){ c.save(); c.translate(hx-6,hy-15); c.rotate(a); c.fillStyle=col; c.beginPath(); c.moveTo(0,0); c.quadraticCurveTo(len*.35,-len*.5,0,-len); c.quadraticCurveTo(-len*.35,-len*.5,0,0); c.fill(); c.strokeStyle='rgba(0,0,0,.35)'; c.lineWidth=.6; c.stroke(); c.restore(); } }
       else { c.fillStyle=P.main; rr(c,hx-15,hy-4,6.5,13,3); c.fill(); c.fillStyle=P.trim; for(let i=0;i<3;i++) circ(c,hx-13.5+i*1.8,hy+8.5,1.6); }
       c.strokeStyle='rgba(0,0,0,.25)'; c.lineWidth=.8; for(let i=-3;i<=3;i++) line(c,hx+i*3.6,hy-7,hx+i*2.8,hy-14);
       c.fillStyle=P.trim; for(let i=0;i<9;i++) circ(c,hx-15+i*3.75,hy-4.5+(i%2)*.8,2.3); }
@@ -4914,12 +4986,29 @@ function drawHeadP(c,L,by,eq,o){
 function metalGrad(c,x1,y1,x2,y2,dark){ const g=c.createLinearGradient(x1,y1,x2,y2); g.addColorStop(0,dark?'#8a929c':'#f2f5f8'); g.addColorStop(.45,dark?'#5c636d':'#b8c0c8'); g.addColorStop(1,dark?'#2e3238':'#6e7680'); return g; }
 function woodGrad(c,x,w,col){ const g=c.createLinearGradient(x-w,0,x+w,0); g.addColorStop(0,shadeC(col,.25)); g.addColorStop(.5,col); g.addColorStop(1,shadeC(col,-.35)); return g; }
 function drawWeapon(c,it,draw,glow){
+  drawWeapon0(c,it,draw,glow);
+  const t=it && wpnTier(BASES[it.base]); if(!t) return;
+  const wt=it.wtype, bow=wt==='bage', gy=wt==='kniv'?2:wt==='stav'?-2:0;
+  c.save(); c.fillStyle=t.c; c.strokeStyle='rgba(0,0,0,.45)'; c.lineWidth=.5;
+  if(bow){ for(const y of [-4.5,-1,2.5]){ rr(c,3.4,y,5.4,2.2,.8); c.fill(); c.stroke(); } }
+  else for(const y of [gy-1,gy+2.4,gy+5.8]){ rr(c,-3.1,y,6.2,2.2,.8); c.fill(); c.stroke(); }
+  const gx=bow?-8:0, gyy=bow?0:wt==='kniv'?-6:wt==='stav'?-14:-12;
+  if(t.glow){ c.globalCompositeOperation='lighter'; c.globalAlpha=.55+.25*Math.sin(G.time*5); c.drawImage(glowFor(t.c),gx-10,gyy-10,20,20); c.globalAlpha=1; c.globalCompositeOperation='source-over'; }
+  c.save(); c.globalCompositeOperation='lighter'; c.globalAlpha=.45; c.drawImage(glowFor(t.g),gx-9,gyy-9,18,18); c.restore();
+  c.fillStyle=t.g; c.beginPath(); c.moveTo(gx,gyy-3.6); c.lineTo(gx+2.8,gyy); c.lineTo(gx,gyy+3.6); c.lineTo(gx-2.8,gyy); c.closePath(); c.fill(); c.stroke();
+  // tofs i level-färgen som hänger från greppet
+  const tx=bow?6:0, ty=bow?4:(wt==='kniv'?9:gy+6), sw=Math.sin(G.time*3)*1.5;
+  c.strokeStyle=t.c; c.lineWidth=1.6; for(const k of [-1,1]){ c.beginPath(); c.moveTo(tx,ty); c.quadraticCurveTo(tx+k*1.5+sw*.5,ty+5,tx+k*2+sw,ty+10); c.stroke(); }
+  c.fillStyle=t.g; circ(c,tx,ty,1.6);
+  c.restore();
+}
+function drawWeapon0(c,it,draw,glow){
   const rc=RAR[it.rarity||'common'].color, lv=it.req||1, wt=it.wtype, hiR=['epic','legendary'].includes(it.rarity);
   c.lineCap='round'; c.lineJoin='round';
   if(hiR){ c.save(); c.globalCompositeOperation='lighter'; c.globalAlpha=.35+.15*Math.sin(G.time*4); c.drawImage(glowFor(rc),-22,wt==='bage'?-30:wt==='kniv'?-34:-70,44,wt==='bage'?60:wt==='kniv'?40:70); c.restore(); }
   if(wt==='kniv'){   // kort kniv: grepp nedåt, blad uppåt
     const L2=lv>=12?24:lv>=8?22:lv>=5?20:16, dark=lv>=12;
-    c.fillStyle=lv>=8?'#2a1a10':'#6a4424'; rr(c,-2,0,4,9,1.6); c.fill(); c.fillStyle='rgba(255,255,255,.18)'; c.fillRect(-1.4,1,1,7);
+    c.fillStyle=lv>=8?'#2a1a10':lv<2?'#c8342a':'#6a4424'; rr(c,-2,0,4,9,1.6); c.fill(); c.fillStyle='rgba(255,255,255,.18)'; c.fillRect(-1.4,1,1,7);
     c.fillStyle=lv>=5?'#c9a24a':'#8a8f98'; rr(c,-4.2,-1.6,8.4,2.4,1); c.fill();
     const g=c.createLinearGradient(-3,0,3,0); g.addColorStop(0,dark?'#c8ccd8':'#f6f9ff'); g.addColorStop(1,dark?'#4a4e5e':'#8a96a8'); c.fillStyle=g;
     c.beginPath(); c.moveTo(-2.4,-1.6); c.lineTo(-2.2,-L2+5); c.quadraticCurveTo(-1,-L2-1,1,-L2-2); c.lineTo(2.8,-L2+7); c.lineTo(2.6,-1.6); c.closePath(); c.fill(); c.strokeStyle='rgba(20,20,30,.6)'; c.lineWidth=.7; c.stroke();
@@ -5010,12 +5099,14 @@ function drawChar(c,o){
   c.save(); c.translate(P.s||0,0);
   // mantel bakom
   if(eq.mantel){
-    const it=eq.mantel, fl=walk?Math.abs(sw)*6:jump?8:Math.sin(G.time*2)*1.5, col=it.base==='mantelDrake'?['#3a6ad0','#1a3a7a']:it.base==='mantelBjorn'||it.req>=8?['#8a5a36','#4e2e18']:it.req>=5?['#4f8a40','#2a4e22']:['#c09a66','#7a5a34'];
+    const it=eq.mantel, mlk=gearLook(it), fl=walk?Math.abs(sw)*6:jump?8:Math.sin(G.time*2)*1.5, col=mlk?[LW_PAL[mlk].main,LW_PAL[mlk].dark]:it.base==='mantelDrake'?['#3a6ad0','#1a3a7a']:it.base==='mantelBjorn'||it.req>=8?['#8a5a36','#4e2e18']:it.req>=5?['#4f8a40','#2a4e22']:['#c09a66','#7a5a34'];
     const g=c.createLinearGradient(0,-40,0,-4); g.addColorStop(0,col[0]); g.addColorStop(1,col[1]);
     c.fillStyle=g; c.beginPath(); c.moveTo(-6,-39+by); c.lineTo(5,-39+by); c.quadraticCurveTo(3,-20,1,-5); c.quadraticCurveTo(-9,-1,-18-fl,-7); c.quadraticCurveTo(-12,-22,-6,-39+by); c.closePath(); c.fill();
     c.strokeStyle='rgba(0,0,0,.3)'; c.lineWidth=.8; for(const x of [-6,-10]){ c.beginPath(); c.moveTo(x+3,-34+by); c.quadraticCurveTo(x,-18,x-4-fl*.5,-5); c.stroke(); }
-    if(it.base==='mantelBjorn'||it.req>=8){ c.fillStyle='#6a4024'; for(let i=0;i<6;i++){ const x=-17-fl+i*3.2; c.beginPath(); c.moveTo(x,-7+i*.4); c.lineTo(x+1.6,-2+i*.4); c.lineTo(x+3.2,-6.5+i*.4); c.fill(); } }
-    if(it.req>=5 && it.req<8 && it.base!=='mantelBjorn'){ for(let i=0;i<5;i++) leafP(c,-4-i*3-fl*.3,-30+i*5,2.2,i,'#8cbf4f'); }
+    if(mlk){ c.fillStyle=LW_PAL[mlk].trim; for(let i=0;i<6;i++) circ(c,-16-fl+i*3.1,-5.5+i*.35,1.4);
+      if(mlk==='plaid'){ c.strokeStyle='rgba(232,195,74,.6)'; c.lineWidth=.7; for(const y of [-30,-22,-14]) line(c,-12-fl*.3,y,3,y); for(const x of [-12,-6]) line(c,x,-36,x-3-fl*.5,-6); } }
+    else if(it.base==='mantelBjorn'||it.req>=8){ c.fillStyle='#6a4024'; for(let i=0;i<6;i++){ const x=-17-fl+i*3.2; c.beginPath(); c.moveTo(x,-7+i*.4); c.lineTo(x+1.6,-2+i*.4); c.lineTo(x+3.2,-6.5+i*.4); c.fill(); } }
+    if(!mlk && it.req>=5 && it.req<8 && it.base!=='mantelBjorn'){ for(let i=0;i<5;i++) leafP(c,-4-i*3-fl*.3,-30+i*5,2.2,i,'#8cbf4f'); }
     c.strokeStyle=RAR[it.rarity].color; c.lineWidth=1.2; c.beginPath(); c.moveTo(1,-5); c.quadraticCurveTo(-9,-1,-18-fl,-7); c.stroke();
   }
   if(L.style==='berit'){ c.save(); c.translate(-8,-33+by); c.rotate(-.35); c.fillStyle=woodGrad(c,0,3.5,'#7a4e2d'); rr(c,-3.5,-12,7,24,2); c.fill(); c.fillStyle='#d9d2c0'; for(const x of [-1.5,1,3.5]){ c.beginPath(); c.moveTo(x-1.2,-12); c.lineTo(x,-18); c.lineTo(x+1.2,-12); c.fill(); } c.restore(); }
@@ -5060,7 +5151,8 @@ function drawChar(c,o){
       c.strokeStyle='#8a6a40'; c.lineWidth=.8; for(let y=-38;y<-31;y+=2.2){ line(c,1.5,y+by,4.5,y+1.4+by); line(c,4.5,y+by,1.5,y+1.4+by); }
       c.strokeStyle='rgba(120,100,60,.35)'; c.lineWidth=.7; line(c,-5,-36+by,-6,-21+by); }
   }
-  if(eq.balte){ const b=eq.balte; c.fillStyle=b.req>=5?'#3a2614':'#b08a54'; rr(c,-8.2,-23+by,16.6,3.4,1.2); c.fill(); if(b.req>=5){ c.fillStyle='#e8c34a'; rr(c,2.4,-23.6+by,4,4.4,1); c.fill(); c.fillStyle='#3a2614'; c.fillRect(3.4,-22.6+by,2,2.4); } else { c.strokeStyle='rgba(80,50,20,.6)'; c.lineWidth=.6; for(let x=-7;x<8;x+=2) line(c,x,-23+by,x+1.4,-19.6+by); } }
+  if(eq.balte && gearLook(eq.balte)){ const P4=LW_PAL[gearLook(eq.balte)]; c.fillStyle=P4.dark; rr(c,-8.2,-23+by,16.6,3.4,1.2); c.fill(); c.fillStyle=P4.trim; rr(c,2.2,-23.8+by,4.4,4.8,1); c.fill(); c.fillStyle=P4.main; c.fillRect(3.3,-22.6+by,2.2,2.4); }
+  else if(eq.balte){ const b=eq.balte; c.fillStyle=b.req>=5?'#3a2614':'#b08a54'; rr(c,-8.2,-23+by,16.6,3.4,1.2); c.fill(); if(b.req>=5){ c.fillStyle='#e8c34a'; rr(c,2.4,-23.6+by,4,4.4,1); c.fill(); c.fillStyle='#3a2614'; c.fillRect(3.4,-22.6+by,2,2.4); } else { c.strokeStyle='rgba(80,50,20,.6)'; c.lineWidth=.6; for(let x=-7;x<8;x+=2) line(c,x,-23+by,x+1.4,-19.6+by); } }
   if(eq.byxor && eq.byxor.base==='byxorMossa'){   // Mjuk Mossa: tjock mosskjol runt midjan
     const sw=Math.sin((o.t||0)*3)*.4;
     for(let i=0;i<9;i++){ const x=-9+i*2.3, len=5.5+((i*7)%3)*1.6;
@@ -5072,6 +5164,7 @@ function drawChar(c,o){
   if(eq.halsband){ const h=eq.halsband; c.strokeStyle='#5a3a1a'; c.lineWidth=.7; c.beginPath(); c.moveTo(-1,-39.5+by); c.quadraticCurveTo(2.5,-33.5+by,6,-39.5+by); c.stroke();
     if(h.base==='halsSilver'){ const g=c.createRadialGradient(2,-35.6+by,.3,2.5,-35+by,2.6); g.addColorStop(0,'#ffffff'); g.addColorStop(1,'#8a96aa'); c.fillStyle=g; circ(c,2.5,-35+by,2.3); c.fillStyle='#b070ff'; circ(c,2.5,-35+by,1); }
     else if(h.base==='halsVarg'){ c.fillStyle='#f2ead8'; for(const x of [0,2.5,5]){ c.beginPath(); c.moveTo(x,-36.5+by); c.lineTo(x+.9,-32.5+by); c.lineTo(x+1.8,-36.5+by); c.fill(); } }
+    else if(gearLook(h)){ const P5=LW_PAL[gearLook(h)]; const g=c.createRadialGradient(2,-35.6+by,.3,2.5,-35+by,2.4); g.addColorStop(0,P5.trim); g.addColorStop(1,P5.main); c.fillStyle=g; circ(c,2.5,-35+by,2.2); }
     else { const col=h.req>=5?['#ffd27a','#e07a10']:['#fff6ec','#d8b8a8']; const g=c.createRadialGradient(2,-35.6+by,.3,2.5,-35+by,2.4); g.addColorStop(0,col[0]); g.addColorStop(1,col[1]); c.fillStyle=g; circ(c,2.5,-35+by,2.1); } }
   drawHeadP(c,L,by,eq,o);
   if(P.off>0) backArm();   // andra handens hugg korsar framför bröstet
@@ -5096,9 +5189,10 @@ function drawChar(c,o){
   if(w){ c.save(); c.translate(hand.x,hand.y); c.rotate(w.wtype==='bage'&&P.name!=='shoot'?wA:w.wtype==='bage'?P.w:wA); drawWeapon(c,w,P.d||0,P.g||0);
     if((w.req||0)>=12){ const tw=.6+.4*Math.sin(G.time*5); goldGlint(c,w.wtype==='bage'?-6:w.wtype==='stav'?0:14,w.wtype==='bage'?-29:w.wtype==='stav'?-56:-48,4.5*tw); } c.restore(); }
   armP(c,sh.x,sh.y,P.a,P.b,L,slCol,skinC,glove,robe);
-  if(eq.axel){ const a=eq.axel, g=c.createRadialGradient(2,-38+by,.5,3,-35.5+by,6.5); if(a.req>=5){ g.addColorStop(0,'#b08a5e'); g.addColorStop(1,'#5a3e22'); } else { g.addColorStop(0,'#d4a070'); g.addColorStop(1,'#8a5a32'); }
+  if(eq.axel){ const a=eq.axel, alk=gearLook(a), g=c.createRadialGradient(2,-38+by,.5,3,-35.5+by,6.5); if(alk){ g.addColorStop(0,shadeC(LW_PAL[alk].main,.25)); g.addColorStop(1,LW_PAL[alk].dark); } else if(a.req>=5){ g.addColorStop(0,'#b08a5e'); g.addColorStop(1,'#5a3e22'); } else { g.addColorStop(0,'#d4a070'); g.addColorStop(1,'#8a5a32'); }
     c.fillStyle=g; c.beginPath(); c.ellipse(3.2,-35.5+by,6,4.6,-.2,Math.PI*.95,Math.PI*2.05); c.fill(); c.strokeStyle='rgba(0,0,0,.35)'; c.lineWidth=.8; c.stroke();
-    if(a.req>=5) leafP(c,1,-39.5+by,2.2,-.4,'#6fa044'); c.fillStyle=RAR[a.rarity].color; circ(c,3.6,-36.5+by,.9); }
+    if(alk){ c.fillStyle=LW_PAL[alk].trim; c.beginPath(); c.moveTo(1.6,-38.6+by); c.lineTo(3,-43.5+by); c.lineTo(4.6,-38.6+by); c.closePath(); c.fill(); }
+    else if(a.req>=5) leafP(c,1,-39.5+by,2.2,-.4,'#6fa044'); c.fillStyle=RAR[a.rarity].color; circ(c,3.6,-36.5+by,.9); }
   c.restore(); // lutning
   c.restore(); // steg
   c.restore(); // spegling
@@ -5109,7 +5203,7 @@ function drawBack(c,o,L,eq){
   if(robe){ const g=c.createLinearGradient(0,-40,0,0); g.addColorStop(0,L.top[0]); g.addColorStop(1,L.top[1]); c.fillStyle=g; c.beginPath(); c.moveTo(-8,-39); c.lineTo(8,-39); c.lineTo(11,-3); c.lineTo(-11,-3); c.closePath(); c.fill(); c.fillStyle='#e8c25a'; c.fillRect(-11,-5.5,22,2.5); }
   else { tube(c,-3.5,-19,-3.5+ph,-3+ph*3,7,pants[0],pants[1]); tube(c,3.5,-19,3.5-ph,-3-ph*3,7,pants[0],pants[1]); c.fillStyle=(L.shoe)[1]; ell(c,-3.5+ph,-1+ph*3,4.4,2.8); ell(c,3.5-ph,-1-ph*3,4.4,2.8);
     torsoPath(c,0); const g=c.createLinearGradient(-8,0,8,0); g.addColorStop(0,L.top[1]); g.addColorStop(.5,L.top[0]); g.addColorStop(1,L.top[1]); c.fillStyle=g; c.fill(); }
-  if(eq.mantel){ const it=eq.mantel, col=it.base==='mantelDrake'?'#2e5ab8':it.base==='mantelBjorn'||it.req>=8?'#7a4e2c':it.req>=5?'#3f7a3a':'#b08a5a'; c.fillStyle=col; c.beginPath(); c.moveTo(-8,-38); c.lineTo(8,-38); c.lineTo(10,-8); c.lineTo(-10,-8); c.closePath(); c.fill(); }
+  if(eq.mantel){ const it=eq.mantel, col=gearLook(it)?LW_PAL[gearLook(it)].main:it.base==='mantelDrake'?'#2e5ab8':it.base==='mantelBjorn'||it.req>=8?'#7a4e2c':it.req>=5?'#3f7a3a':'#b08a5a'; c.fillStyle=col; c.beginPath(); c.moveTo(-8,-38); c.lineTo(8,-38); c.lineTo(10,-8); c.lineTo(-10,-8); c.closePath(); c.fill(); }
   const sl=robe||L.sleeve==='long'?[L.top[0],L.top[1]]:[L.skin[0],L.skin[1]];
   tube(c,-6,-36,-7-ph*2,-48+ph*4,6,sl[0],sl[1]); tube(c,6,-36,7+ph*2,-48-ph*4,6,sl[0],sl[1]);
   c.fillStyle=L.skin[0]; circ(c,-7-ph*2,-49+ph*4,3); circ(c,7+ph*2,-49-ph*4,3);
@@ -5902,7 +5996,7 @@ function render(){
   const cx=Math.round((G.cam.x+shx)*s)/s, cy=Math.round((G.cam.y+shy)*s)/s;
   ctx.setTransform(s,0,0,s,-cx*s,-cy*s);
   G.view={x1:cx,y1:cy,x2:cx+VW/Z,y2:cy+VH/Z};
-  drawDecoBack(); drawTorches(); drawSign(); drawTerrain(); drawCamp(); drawRopes(); drawPortals(); drawHazards(); drawDecoFront(); drawShelter(false); drawNpcs();
+  drawDecoBack(); drawTorches(); drawSign(); drawWaySigns(); drawTerrain(); drawCamp(); drawRopes(); drawPortals(); drawHazards(); drawDecoFront(); drawShelter(false); drawNpcs();
   for(const d of G.drops) drawDrop(d);
   for(const m of G.monsters) if(m.x>G.view.x1-60 && m.x<G.view.x2+60) drawMonster(m);
   if(G.mode==='game') drawOthers();
@@ -6056,20 +6150,22 @@ function drawConsIcon(c,id,S){
     c.fillText(d.stat==='atk'?'ATK':d.stat.toUpperCase(),32,36);
     if(d.rarity){ const rc=RAR[d.rarity].color; c.fillStyle=rc; c.beginPath(); c.moveTo(44,40); c.lineTo(56,40); c.lineTo(56,58); c.lineTo(50,53); c.lineTo(44,58); c.closePath(); c.fill(); c.strokeStyle=ol; c.lineWidth=1.5; c.stroke();
       c.fillStyle='#fff'; c.font='bold 10px system-ui'; c.fillText('+'+d.amt,50,51); c.strokeStyle=rc; c.lineWidth=2; rr(c,14,14,36,36,3); c.stroke(); }
+    if(d.target==='handskar'){ c.font='14px system-ui'; c.textAlign='center'; c.fillText('🧤',21,27); }
   }
   c.restore();
 }
 function craftIcon(c,b,rc,S_){
-  const P=LW_PAL[b.look];
+  const P=LW_PAL[b.look], sh=lkShape(b.look);
+  const grad=(x1,y1,x2,y2)=>{ const g=c.createLinearGradient(x1,y1,x2,y2); g.addColorStop(0,shadeC(P.main,.25)); g.addColorStop(1,P.dark); return g; };
   const fur=(x,y,w,n)=>{ c.fillStyle=P.trim; for(let i=0;i<n;i++) circ(c,x+i*w/(n-1),y+(i%2?1.5:-1),w/n*.9); };
   if(b.slot==='hjalm'){
-    if(b.look==='track'){ const g=c.createLinearGradient(10,8,54,56); g.addColorStop(0,'#5a7050'); g.addColorStop(1,P.dark); c.fillStyle=g; c.beginPath(); c.moveTo(32,6); c.quadraticCurveTo(56,10,54,42); c.lineTo(56,56); c.lineTo(8,56); c.lineTo(10,42); c.quadraticCurveTo(8,10,32,6); c.fill(); S_(); c.stroke();
+    if(sh==='track'){ const g=c.createLinearGradient(10,8,54,56); g.addColorStop(0,'#5a7050'); g.addColorStop(1,P.dark); c.fillStyle=g; c.beginPath(); c.moveTo(32,6); c.quadraticCurveTo(56,10,54,42); c.lineTo(56,56); c.lineTo(8,56); c.lineTo(10,42); c.quadraticCurveTo(8,10,32,6); c.fill(); S_(); c.stroke();
       c.fillStyle='#1a1410'; c.beginPath(); c.ellipse(32,38,13,15,0,0,7); c.fill(); fur(18,24,28,7); c.strokeStyle=P.stitch; c.lineWidth=1.2; c.setLineDash([2,2]); c.beginPath(); c.moveTo(32,8); c.lineTo(32,22); c.stroke(); c.setLineDash([]); }
     else { const g=c.createLinearGradient(0,10,0,44); g.addColorStop(0,shadeC(P.main,.25)); g.addColorStop(1,P.dark); c.fillStyle=g; c.beginPath(); c.arc(32,40,22,Math.PI,2*Math.PI); c.fill(); S_(); c.stroke();
-      if(b.look==='bear'){ for(const x of [14,50]){ c.fillStyle=P.main; circ(c,x,20,7); c.fillStyle=P.dark; circ(c,x,20,3.5); } }
+      if(sh==='bear'){ for(const x of [14,50]){ c.fillStyle=P.main; circ(c,x,20,7); c.fillStyle=P.dark; circ(c,x,20,3.5); } }
       else { c.fillStyle=P.main; for(const x of [9,43]){ rr(c,x,38,12,16,5); c.fill(); S_(); c.stroke(); } }
       fur(10,42,44,9); c.strokeStyle='rgba(0,0,0,.25)'; c.lineWidth=1.2; for(let i=0;i<7;i++) line(c,16+i*5,24,15+i*5,34);
-      if(b.look==='shadow'){ c.fillStyle='#cfc4e0'; for(const sx of [-1,1]){ c.beginPath(); c.moveTo(32+sx*9,22); c.lineTo(32+sx*21,3); c.lineTo(32+sx*17,25); c.closePath(); c.fill(); S_(); c.stroke(); } } }
+      if(sh==='shadow'){ c.fillStyle='#cfc4e0'; for(const sx of [-1,1]){ c.beginPath(); c.moveTo(32+sx*9,22); c.lineTo(32+sx*21,3); c.lineTo(32+sx*17,25); c.closePath(); c.fill(); S_(); c.stroke(); } } }
   } else if(b.slot==='handskar'){
     const g=c.createLinearGradient(14,10,50,56); g.addColorStop(0,shadeC(P.main,.25)); g.addColorStop(1,P.dark); c.fillStyle=g;
     c.beginPath(); c.moveTo(20,42); c.lineTo(18,20); c.quadraticCurveTo(19,12,26,12); c.lineTo(40,12); c.quadraticCurveTo(46,12,46,20); c.lineTo(46,30); c.quadraticCurveTo(54,26,56,32); c.quadraticCurveTo(52,40,44,44); c.closePath(); c.fill(); S_(); c.stroke();
@@ -6083,13 +6179,33 @@ function craftIcon(c,b,rc,S_){
     c.fillStyle=P.dark; rr(c,17,41,30,6,2); c.fill(); c.fillStyle='#e8c34a'; rr(c,29,40,7,8,1.5); c.fill(); c.fillStyle=P.dark; c.fillRect(31,42,3,4);
     fur(19,11,26,6);
     if(P.stitch){ c.strokeStyle=P.stitch; c.lineWidth=1.2; c.setLineDash([2,2]); line(c,23,22,23,40); line(c,41,22,41,40); c.setLineDash([]); }
-    if(b.look==='shadow'){ c.fillStyle=P.trim; for(const [x,y] of [[22,30],[42,30]]){ c.beginPath(); c.moveTo(x,y-5); c.lineTo(x+3,y); c.lineTo(x,y+5); c.lineTo(x-3,y); c.closePath(); c.fill(); } }
+    if(sh==='shadow'){ c.fillStyle=P.trim; for(const [x,y] of [[22,30],[42,30]]){ c.beginPath(); c.moveTo(x,y-5); c.lineTo(x+3,y); c.lineTo(x,y+5); c.lineTo(x-3,y); c.closePath(); c.fill(); } }
   } else if(b.slot==='byxor'){   // byxor med midjeband och knälappar
     const g=c.createLinearGradient(12,10,52,58); g.addColorStop(0,shadeC(P.main,.25)); g.addColorStop(1,P.dark); c.fillStyle=g;
     c.beginPath(); c.moveTo(16,14); c.lineTo(48,14); c.lineTo(52,56); c.lineTo(36,56); c.lineTo(32,30); c.lineTo(28,56); c.lineTo(12,56); c.closePath(); c.fill(); S_(); c.stroke();
     c.fillStyle=P.dark; rr(c,14,9,36,9,3); c.fill(); S_(); c.stroke(); fur(17,13,30,7);
     c.fillStyle=P.trim; rr(c,15,40,10,6,2); c.fill(); rr(c,39,40,10,6,2); c.fill();
     if(P.stitch){ c.strokeStyle=P.stitch; c.lineWidth=1.2; c.setLineDash([2,2]); line(c,20,20,18,52); line(c,44,20,46,52); c.setLineDash([]); }
+  } else if(b.slot==='mantel'){   // mantel med fransad kant och spänne
+    c.fillStyle=grad(10,10,54,58); c.beginPath(); c.moveTo(20,11); c.lineTo(44,11); c.quadraticCurveTo(58,36,54,52); for(let x=54;x>10;x-=8.8) c.quadraticCurveTo(x-4.4,58,x-8.8,52); c.quadraticCurveTo(6,36,20,11); c.closePath(); c.fill(); S_(); c.stroke();
+    c.strokeStyle='rgba(0,0,0,.28)'; c.lineWidth=1.3; line(c,26,16,22,50); line(c,38,16,42,50); fur(20,12,24,6);
+    if(b.look==='plaid'){ c.save(); c.beginPath(); c.moveTo(20,11); c.lineTo(44,11); c.quadraticCurveTo(58,36,54,52); c.lineTo(10,52); c.quadraticCurveTo(6,36,20,11); c.clip(); c.strokeStyle=hexA(P.trim,.55); c.lineWidth=2; for(let x=8;x<60;x+=9) line(c,x,8,x,58); for(let y=16;y<58;y+=9) line(c,4,y,60,y); c.strokeStyle=hexA(P.stitch,.6); c.lineWidth=1; for(let x=12;x<60;x+=9) line(c,x,8,x,58); c.restore(); }
+    c.fillStyle=P.trim; circ(c,32,14,4.5); S_(); c.beginPath(); c.arc(32,14,4.5,0,7); c.stroke();
+  } else if(b.slot==='axel'){   // två skulderplattor med kant och pigg
+    for(const x of [19,45]){ c.fillStyle=grad(x-13,24,x+13,46); c.beginPath(); c.ellipse(x,36,14,10,0,0,7); c.fill(); S_(); c.stroke();
+      c.fillStyle=P.dark; c.beginPath(); c.ellipse(x,40,10,4,0,0,7); c.fill(); c.fillStyle=P.trim; c.beginPath(); c.moveTo(x-3,28); c.lineTo(x,17); c.lineTo(x+3,28); c.closePath(); c.fill(); S_(); c.stroke(); }
+  } else if(b.slot==='balte'){   // bälte med spänne
+    c.fillStyle=grad(8,26,56,40); rr(c,6,26,52,13,4); c.fill(); S_(); c.stroke();
+    if(P.stitch){ c.strokeStyle=P.stitch; c.lineWidth=1.2; c.setLineDash([2,2]); line(c,9,29,55,29); line(c,9,36,55,36); c.setLineDash([]); }
+    c.fillStyle=P.trim; rr(c,25,22,14,21,3); c.fill(); S_(); c.stroke(); c.fillStyle=P.dark; rr(c,29,27,6,11,1.5); c.fill();
+  } else if(b.slot==='halsband'){   // snodd med ett hänge
+    c.strokeStyle=P.dark; c.lineWidth=2.6; c.beginPath(); c.arc(32,12,19,.12*Math.PI,.88*Math.PI); c.stroke();
+    c.fillStyle=grad(22,30,42,56); c.beginPath(); c.moveTo(32,30); c.quadraticCurveTo(46,42,32,56); c.quadraticCurveTo(18,42,32,30); c.fill(); S_(); c.stroke();
+    c.fillStyle=P.trim; circ(c,32,43,4); c.fillStyle='rgba(255,255,255,.7)'; circ(c,30.5,41.5,1.3);
+  } else if(b.slot==='ring'){   // ring med sten
+    c.strokeStyle='rgba(0,0,0,.5)'; c.lineWidth=9; c.beginPath(); c.arc(32,40,13,0,7); c.stroke(); c.strokeStyle=P.main; c.lineWidth=5.5; c.beginPath(); c.arc(32,40,13,0,7); c.stroke();
+    c.strokeStyle=P.trim; c.lineWidth=1.5; c.beginPath(); c.arc(32,40,13,3.6,5.8); c.stroke();
+    c.fillStyle=P.trim; c.beginPath(); c.moveTo(32,16); c.lineTo(39,24); c.lineTo(32,32); c.lineTo(25,24); c.closePath(); c.fill(); S_(); c.stroke();
   } else {
     const g=c.createLinearGradient(14,8,50,58); g.addColorStop(0,shadeC(P.main,.25)); g.addColorStop(1,P.dark); c.fillStyle=g;
     c.beginPath(); c.moveTo(18,12); c.lineTo(36,12); c.lineTo(36,38); c.quadraticCurveTo(52,40,54,48); c.lineTo(54,54); c.lineTo(16,54); c.closePath(); c.fill(); S_(); c.stroke();
@@ -6097,7 +6213,26 @@ function craftIcon(c,b,rc,S_){
     c.strokeStyle='rgba(0,0,0,.3)'; c.lineWidth=1.2; line(c,20,26,34,26); line(c,20,34,34,34);
     if(P.stitch){ c.strokeStyle=P.stitch; c.lineWidth=1.2; c.setLineDash([2,2]); line(c,26,16,26,50); c.setLineDash([]); }
   }
+  lookMark(c,b.look,P,b.slot);
   c.fillStyle=rc; circ(c,52,12,3.2);
+}
+// Litet märke per utseende (fjäder, kvist, bär …) så att varianterna känns igen även i små ikoner
+function lookMark(c,lk,P,slot){
+  const feather=(x,y,a,len,col)=>{ c.save(); c.translate(x,y); c.rotate(a); c.fillStyle=col; c.beginPath(); c.moveTo(0,0); c.quadraticCurveTo(len*.38,-len*.45,0,-len); c.quadraticCurveTo(-len*.38,-len*.45,0,0); c.fill(); c.strokeStyle='rgba(0,0,0,.45)'; c.lineWidth=1; c.stroke(); line(c,0,2,0,-len*.9); c.restore(); };
+  const top=slot==='hjalm';
+  if(lk==='feather'){ if(top){ feather(36,24,.35,22,P.trim); feather(40,26,.7,17,P.main); } else { feather(50,58,.5,20,P.trim); feather(54,58,.9,15,'#9ac0f0'); } }
+  else if(lk==='featherR'){ feather(top?38:50,top?24:58,.4,24,'#ffd23f'); feather(top?42:54,top?26:58,.8,18,'#4a86d8'); }
+  else if(lk==='twig'){ c.strokeStyle='#5a3a1a'; c.lineWidth=2.6; line(c,44,58,58,40); leafP(c,52,46,4.5,-.6,'#6fbf4a'); leafP(c,57,40,3.6,.4,'#8cd060'); }
+  else if(lk==='bark'){ c.fillStyle='#6a4a2a'; c.beginPath(); c.moveTo(44,46); c.lineTo(58,42); c.lineTo(60,56); c.lineTo(46,58); c.closePath(); c.fill(); c.strokeStyle='rgba(0,0,0,.5)'; c.lineWidth=1; c.stroke(); c.strokeStyle='#3a2414'; line(c,48,48,50,56); line(c,53,46,55,55); leafP(c,47,44,3,-.8,'#8ab04a'); }
+  else if(lk==='berry'){ for(const [x,y] of [[50,52],[56,50],[53,57]]){ c.fillStyle='#3a4ad8'; circ(c,x,y,3.6); c.fillStyle='#9aa8ff'; circ(c,x-1,y-1,1); } leafP(c,52,45,3.4,-.5,'#5aa83a'); }
+  else if(lk==='moss'||lk==='mossG'){ c.fillStyle=lk==='moss'?'#8ac84a':'#3e8a3a'; for(const [x,y,r] of [[48,54,4],[54,52,4.5],[58,56,3.5]]) circ(c,x,y,r); if(lk==='mossG'){ c.fillStyle='#e8c34a'; circ(c,53,51,1.8); } }
+  else if(lk==='stone'||lk==='stone2'){ c.fillStyle='#8a847a'; c.beginPath(); c.ellipse(52,53,7,5,-.3,0,7); c.fill(); c.strokeStyle='rgba(0,0,0,.5)'; c.lineWidth=1; c.stroke(); if(lk==='stone2'){ c.fillStyle='#6a9a3a'; circ(c,50,49,2.6); } }
+  else if(lk==='paw'){ c.fillStyle='#ff9ab0'; ell(c,52,54,4,3.2); for(const [x,y] of [[47,49],[51,47],[55,47],[58,50]]) circ(c,x,y,1.8); }
+  else if(lk==='wolfB'){ c.fillStyle='#f4ecd8'; for(const x of [48,53,58]){ c.beginPath(); c.moveTo(x-2.4,46); c.quadraticCurveTo(x,58,x+2.4,46); c.closePath(); c.fill(); c.strokeStyle='rgba(0,0,0,.45)'; c.lineWidth=1; c.stroke(); } }
+  else if(lk==='ash'){ c.save(); c.globalCompositeOperation='lighter'; const g=c.createRadialGradient(53,52,1,53,52,9); g.addColorStop(0,'rgba(255,220,120,.95)'); g.addColorStop(1,'rgba(255,80,20,0)'); c.fillStyle=g; circ(c,53,52,9); c.restore(); }
+  else if(lk==='bear2'){ c.fillStyle='#ece4d0'; for(const x of [48,53,58]){ c.beginPath(); c.moveTo(x-2,58); c.quadraticCurveTo(x+1,50,x+3,46); c.lineTo(x+2,58); c.closePath(); c.fill(); } }
+  else if(lk==='dragonL'){ c.strokeStyle=P.trim; c.lineWidth=1.3; for(let i=0;i<3;i++){ c.beginPath(); c.arc(48+i*5,54,3,0,Math.PI); c.stroke(); } }
+  else if(lk==='banditB'){ c.fillStyle='#f2ece0'; circ(c,53,51,5); c.fillStyle='#2e2a2c'; circ(c,51,50,1.3); circ(c,55,50,1.3); }
 }
 // Egna ikoner för specialföremål
 const SPECIAL_ICON = {
@@ -6139,6 +6274,31 @@ const SPECIAL_ICON = {
     leafP(c,22,24,8,-.8,'#4fae3a'); leafP(c,42,24,8,.8,'#4fae3a'); leafP(c,32,18,7,0,'#7ad04a');
     const g=c.createRadialGradient(30,24,1,32,26,7); g.addColorStop(0,'#d8ffd0'); g.addColorStop(1,'#1a8a3a'); c.fillStyle=g; circ(c,32,26,6); S_(); c.beginPath(); c.arc(32,26,6,0,7); c.stroke(); },
 };
+// De ovanliga Rare-föremålen (0,2 %)
+Object.assign(SPECIAL_ICON, {
+  tassvantar(c,S_,P){ for(const [ox,f] of [[0,1],[20,-1]]){ c.save(); c.translate(ox,0);   // randiga kattvantar med rosa trampdynor
+      const g=c.createLinearGradient(8,10,30,54); g.addColorStop(0,'#f4b060'); g.addColorStop(1,'#b0661e'); c.fillStyle=g;
+      c.beginPath(); c.moveTo(8,46); c.lineTo(8,24); c.quadraticCurveTo(8,10,19,10); c.quadraticCurveTo(30,10,30,24); c.lineTo(30,46); c.closePath(); c.fill(); S_(); c.stroke();
+      c.strokeStyle='#8a4a14'; c.lineWidth=2; for(const y of [18,26,34]){ c.beginPath(); c.moveTo(9,y); c.quadraticCurveTo(14,y+2,17,y-1); c.stroke(); }
+      c.fillStyle='#ff9ab0'; ell(c,19,30,5,4); for(const [x,y] of [[13,21],[18,18],[23,18],[27,21]]) circ(c,x,y,2.1);
+      c.fillStyle='#fff2dc'; rr(c,7,42,24,8,3); c.fill(); S_(); c.stroke(); c.restore(); } },
+  vargkangor(c,S_,P){ const g=c.createLinearGradient(14,8,50,58); g.addColorStop(0,'#8a9099'); g.addColorStop(1,'#33383f'); c.fillStyle=g;   // gråa pälskängor med klor
+    c.beginPath(); c.moveTo(16,12); c.lineTo(36,12); c.lineTo(36,36); c.quadraticCurveTo(54,38,56,48); c.lineTo(56,54); c.lineTo(14,54); c.closePath(); c.fill(); S_(); c.stroke();
+    c.fillStyle='#f0f0f2'; for(let i=0;i<7;i++) circ(c,15+i*3.4,13+(i%2)*1.6,3.2); for(let i=0;i<4;i++) circ(c,30+i*2.6,36+(i%2),2.4);
+    c.fillStyle='#ece4d0'; for(const x of [44,50,56]){ c.beginPath(); c.moveTo(x-2,53); c.quadraticCurveTo(x+2,56,x+3,60); c.lineTo(x+2,53); c.closePath(); c.fill(); }
+    c.strokeStyle='#c8342a'; c.lineWidth=1.3; c.setLineDash([2,2]); line(c,22,20,22,48); c.setLineDash([]); c.fillStyle='#2a1a10'; c.fillRect(14,51,42,4); },
+  bjornplad(c,S_,P){ c.save(); const path=()=>{ c.beginPath(); c.moveTo(18,10); c.lineTo(46,10); c.quadraticCurveTo(58,34,55,54); c.lineTo(9,54); c.quadraticCurveTo(6,34,18,10); c.closePath(); };   // rutig pläd med björnklo-spänne
+    path(); c.fillStyle='#a83a2a'; c.fill(); c.clip(); c.fillStyle='rgba(60,20,10,.45)'; for(let x=6;x<60;x+=12) c.fillRect(x,6,6,52); for(let y=12;y<58;y+=12) c.fillRect(4,y,56,6);
+    c.strokeStyle='rgba(232,195,74,.8)'; c.lineWidth=1; for(let x=10;x<60;x+=12) line(c,x,6,x,58); for(let y=16;y<58;y+=12) line(c,4,y,60,y); c.restore(); path(); S_(); c.stroke();
+    c.fillStyle='#fff2dc'; for(let x=11;x<55;x+=4.4){ c.beginPath(); c.moveTo(x,54); c.lineTo(x+1.5,60); c.lineTo(x+3,54); c.fill(); }
+    c.fillStyle='#6a4024'; circ(c,32,13,6); S_(); c.beginPath(); c.arc(32,13,6,0,7); c.stroke(); c.fillStyle='#ece4d0'; for(const x of [28,32,36]){ c.beginPath(); c.moveTo(x-1.4,9); c.quadraticCurveTo(x,3,x+1.4,9); c.fill(); } },
+  fjaderhatt(c,S_,P){ const g=c.createLinearGradient(0,18,0,50); g.addColorStop(0,'#f4eedc'); g.addColorStop(1,'#a8946a'); c.fillStyle=g;   // bredbrättad hatt med stora fjädrar
+    c.beginPath(); c.ellipse(32,44,27,8,0,0,7); c.fill(); S_(); c.stroke();
+    c.beginPath(); c.moveTo(18,44); c.quadraticCurveTo(17,20,32,19); c.quadraticCurveTo(47,20,46,44); c.closePath(); c.fill(); S_(); c.stroke();
+    c.fillStyle='#c8342a'; c.fillRect(18.5,35,27,5); c.fillStyle='#ffd23f'; rr(c,28,34,7,7,1.5); c.fill();
+    const fe=(x,y,a,len,col,col2)=>{ c.save(); c.translate(x,y); c.rotate(a); const gg=c.createLinearGradient(0,0,0,-len); gg.addColorStop(0,col); gg.addColorStop(1,col2); c.fillStyle=gg; c.beginPath(); c.moveTo(0,0); c.quadraticCurveTo(len*.36,-len*.5,0,-len); c.quadraticCurveTo(-len*.36,-len*.5,0,0); c.fill(); c.strokeStyle='rgba(0,0,0,.45)'; c.lineWidth=1; c.stroke(); line(c,0,1,0,-len*.92); c.restore(); };
+    fe(40,36,.55,30,'#2a5aa8','#9ad0ff'); fe(42,37,.95,24,'#c88a1a','#ffe066'); fe(38,36,.2,22,'#eef3f8','#ffffff'); },
+});
 // Stenföremålen: enkla stenformer per plats
 function stoneIcon(c,b,S_,P){
   const g=c.createLinearGradient(10,8,54,56); g.addColorStop(0,'#cfc9be'); g.addColorStop(1,'#6a655d'); c.fillStyle=g;
@@ -6166,11 +6326,11 @@ function drawIcon(c,baseId,rarity,S,noBg){
   if(rarity!=='common' && !noBg){ const g=c.createRadialGradient(32,34,4,32,34,30); g.addColorStop(0,hexA(rc,.45)); g.addColorStop(1,hexA(rc,0)); c.fillStyle=g; c.fillRect(0,0,64,64); }
   const ol='rgba(0,0,0,.55)';
   const S_=()=>{ c.strokeStyle=ol; c.lineWidth=2.5; };
-  if(b.look){ craftIcon(c,b,rc,S_); c.restore(); return; }
   const P=(pts)=>{ c.beginPath(); c.moveTo(pts[0][0],pts[0][1]); for(let i=1;i<pts.length;i++) c.lineTo(pts[i][0],pts[i][1]); c.closePath(); c.fill(); S_(); c.stroke(); };
   const stitch=(x1,y1,x2,y2,col)=>{ c.save(); c.setLineDash([3,3]); c.strokeStyle=col; c.lineWidth=1.3; line(c,x1,y1,x2,y2); c.restore(); };
   S_();
   if(SPECIAL_ICON[b.id]){ SPECIAL_ICON[b.id](c,S_,P); c.fillStyle=rc; circ(c,52,12,3.2); c.restore(); return; }
+  if(b.look){ craftIcon(c,b,rc,S_); c.restore(); return; }
   if(b.theme==='sten'){ stoneIcon(c,b,S_,P); c.restore(); return; }
   switch(b.slot==='vapen'?b.wtype:b.slot){
     case 'hjalm':
@@ -6385,7 +6545,7 @@ function drawIcon(c,baseId,rarity,S,noBg){
       break;
     case 'kniv': {   // diagonal kniv
       c.save(); c.translate(32,32); c.rotate(Math.PI/4);
-      c.fillStyle=b.req>=8?'#2a1a10':'#6a4424'; rr(c,-3.5,6,7,18,3); c.fill(); S_(); c.stroke();
+      c.fillStyle=b.req>=8?'#2a1a10':b.req<2?'#c8342a':'#6a4424'; rr(c,-3.5,6,7,18,3); c.fill(); S_(); c.stroke();
       c.strokeStyle='rgba(255,255,255,.2)'; c.lineWidth=1; line(c,-1.5,9,-1.5,21);
       c.fillStyle=b.req>=5?'#c9a24a':'#8a8f98'; rr(c,-8,2.5,16,4.5,2); c.fill(); S_(); c.stroke();
       const g=c.createLinearGradient(-5,0,5,0); g.addColorStop(0,b.req>=12?'#d8dce8':'#ffffff'); g.addColorStop(1,b.req>=12?'#4a4e5e':'#8a96a8'); c.fillStyle=g;
@@ -6456,6 +6616,10 @@ function iconCanvas(it){
   const rar=it.rarity||'common', key=it.base+'|'+rar;
   if(ICON_CV[key]) return ICON_CV[key];
   const S=64, src=mkCv(S,S), sc=src.getContext('2d'); drawIcon(sc,it.base,rar,S,true);
+  const wt=wpnTier(BASES[it.base]);
+  if(wt){ sc.globalCompositeOperation='source-atop'; sc.fillStyle=hexA(wt.c,.26); sc.fillRect(0,0,S,S); sc.globalCompositeOperation='source-over';
+    sc.fillStyle=wt.g; sc.strokeStyle='rgba(0,0,0,.6)'; sc.lineWidth=1.4; sc.beginPath(); sc.moveTo(11,4); sc.lineTo(17,11); sc.lineTo(11,18); sc.lineTo(5,11); sc.closePath(); sc.fill(); sc.stroke();
+    sc.fillStyle='rgba(255,255,255,.75)'; sc.beginPath(); sc.arc(9.5,9.5,1.6,0,7); sc.fill(); }
   sc.globalCompositeOperation='source-atop';
   const g=sc.createLinearGradient(8,4,58,62); g.addColorStop(0,'rgba(255,246,224,.30)'); g.addColorStop(.45,'rgba(255,255,255,0)'); g.addColorStop(1,'rgba(24,10,34,.34)'); sc.fillStyle=g; sc.fillRect(0,0,S,S);
   sc.globalCompositeOperation='source-over';
@@ -6655,6 +6819,9 @@ function itemStatsHtml(it){
   if(it.cdmg) h+=`<div class="tt-stat">+${it.cdmg}% kritisk skada</div>`;
   if(it.dodge) h+=`<div class="tt-stat">+${it.dodge}% chans att undvika</div>`;
   if(it.move) h+=`<div class="tt-stat">+${it.move}% rörelsehastighet</div>`;
+  if(it.aspd) h+=`<div class="tt-stat">+${it.aspd}% attackhastighet</div>`;
+  if(it.hpreg) h+=`<div class="tt-stat">+${it.hpreg} HP-reg per sekund</div>`;
+  if(it.cdr) h+=`<div class="tt-stat">+${it.cdr}% kortare nedkylning</div>`;
   return h;
 }
 function itemHtml(it, where){
@@ -6665,7 +6832,7 @@ function itemHtml(it, where){
     if(c.kind==='mat') return `<div class="tt-name">${c.name}</div><div class="tt-sub">Material</div><div>${c.desc}</div><div style="margin-top:3px">Antal: <b>${it.count}</b> / ${STACK_MAX}</div><div class="tt-sell">Säljvärde: ${c.sell} 🪙 styck</div>`;
     return `<div class="tt-name" style="color:${c.kind==='scroll'?cr.color:''}">${c.name}</div><div class="tt-sub">${c.kind==='pot'?(c.buff?'Elixir (30 minuter)':'Dryck'):`Uppgraderingsscroll (${cr.name})`}</div><div>${c.desc}</div>`
       + (c.kind==='scroll'?`<div class="hintx" style="color:#9fb1cb;font-size:11.5px;margin-top:3px">${c.reset?'Fungerar på all utrustning och alla vapen som har scrollats.':'Förbrukar en uppgraderingsplats även om den misslyckas.'} Dra scrollen till ett föremål för att använda den.</div>`:'')
-      + `<div style="margin-top:3px">Antal: <b>${it.count}</b> / ${STACK_MAX}</div>${c.price?`<div class="tt-sell">Köppris: ${c.price} 🪙</div>`:''}`;
+      + `<div style="margin-top:3px">Antal: <b>${it.count}</b> / ${stackMax(it.base)}</div>${c.price?`<div class="tt-sell">Köppris: ${c.price} 🪙</div>`:''}`;
   }
   const r=RAR[it.rarity];
   let h=`<div class="tt-name" style="color:${r.color}">${esc(itemName(it))}</div><div class="tt-sub">${r.name} · ${slotLabel(it)}</div>`;
@@ -6806,7 +6973,7 @@ function tradeSetGold(n){
 function tradeRoomOk(){   // finns det plats för det man får? (de egna platserna i handeln räknas som lediga)
   const ch=G.ch, need={false:0,true:0}, mine={false:0,true:0};
   for(const it of ch.escrow) mine[isMatBase(it.base)]++;
-  for(const it of G.trade.their.items){ const m=isMatBase(it.base); need[m]+= isCons(it) ? Math.ceil(it.count/STACK_MAX) : 1; }
+  for(const it of G.trade.their.items){ const m=isMatBase(it.base); need[m]+= isCons(it) ? Math.ceil(it.count/stackMax(it.base)) : 1; }
   return INV_MAX-invCount(false)+mine[false]>=need[false] && MAT_MAX-invCount(true)+mine[true]>=need[true];
 }
 function tradeToggleOk(){
@@ -7054,7 +7221,7 @@ function scrollFits(sc, it){
   if(!sc || !it || isCons(it)) return false;
   if(CONS[sc.base].reset) return (it.scrolls||0)>0;
   if((it.scrolls||0) >= SCROLL_SLOTS) return false;
-  return CONS[sc.base].target==='weapon' ? it.slot==='vapen' : it.slot!=='vapen';
+  const tg=CONS[sc.base].target; return tg==='weapon' ? it.slot==='vapen' : tg==='handskar' ? it.slot==='handskar' : it.slot!=='vapen';
 }
 /* Visuell effekt på föremålet i väskan (eller över gubben om väskan är stängd): ring, blixt, gnistor och text */
 function itemFx(uid, ok, kind, label){
@@ -7087,7 +7254,7 @@ function applyScroll(su, iu){
   const it=f.it, c=CONS[sc.base];
   if(c.reset && !isCons(it) && (it.scrolls||0)>0){ resetScrolls(sc, it, f); return; }
   if(!scrollFits(sc,it)){
-    throttleMsg('scr', isCons(it) ? 'Välj en utrustning eller ett vapen.' : c.reset ? 'Föremålet har inga scrolls att nollställa.' : (it.scrolls||0)>=SCROLL_SLOTS ? 'Föremålet har inga uppgraderingsplatser kvar.' : c.target==='weapon' ? 'Den här scrollen fungerar bara på vapen.' : 'Den här scrollen fungerar bara på utrustning (inte vapen).', '#ff9b9b');
+    throttleMsg('scr', isCons(it) ? 'Välj en utrustning eller ett vapen.' : c.reset ? 'Föremålet har inga scrolls att nollställa.' : (it.scrolls||0)>=SCROLL_SLOTS ? 'Föremålet har inga uppgraderingsplatser kvar.' : c.target==='weapon' ? 'Den här scrollen fungerar bara på vapen.' : c.target==='handskar' ? 'Den här scrollen fungerar bara på handskar.' : 'Den här scrollen fungerar bara på utrustning (inte vapen).', '#ff9b9b');
     return;
   }
   sc.count--; if(sc.count<=0) ch.inv.splice(ch.inv.indexOf(sc),1);
@@ -7096,7 +7263,7 @@ function applyScroll(su, iu){
   const sure = c.target==='weapon' && tutStep()==='bag';   // Berits uppdrag: de två första vapenscrollsen lyckas alltid
   if(sure || Math.random()<SCROLL_CHANCE){
     it.plus=(it.plus||0)+1;
-    if(c.stat==='atk'){ it.atkMin+=c.amt; it.atkMax+=c.amt; } else it[c.stat]=(it[c.stat]||0)+c.amt;
+    if(c.stat==='atk' && it.slot==='vapen'){ it.atkMin+=c.amt; it.atkMax+=c.amt; } else it[c.stat]=(it[c.stat]||0)+c.amt;
     it.sb=it.sb||{}; it.sb[c.stat]=(it.sb[c.stat]||0)+c.amt;   // bonus från lyckade scrolls (visas i tooltip)
     const what = c.stat==='atk' ? `+${c.amt} attack` : `+${c.amt} ${STATN[c.stat]}`;
     toast(`✨ <b style="color:#7dff8a">Lyckades!</b> ${esc(itemName(it))} fick ${what}. (${left} platser kvar)`);
@@ -7228,7 +7395,7 @@ function renderShop(){
   let h=`<div class="tabs"><button class="tab ${tab==='buy'?'on':''}" data-stab="buy">🛒 Köp</button><button class="tab ${tab==='sell'?'on':''}" data-stab="sell">💰 Sälj</button></div>`;
   h+=`<div class="rowb" style="margin-bottom:8px"><span>Ditt guld: <b class="goldtxt">${ch.gold} 🪙</b></span><span class="hintx" style="color:var(--muted);font-size:12px">Väska: ${invCount(false)}/${INV_MAX} · Material: ${invCount(true)}/${MAT_MAX}</span></div>`;
   if(tab==='buy'){
-    h+=`<div class="shopinfo">Drycker och scrolls staplas upp till ${STACK_MAX} per plats i väskan. Scrolls har ${Math.round(SCROLL_CHANCE*100)}% chans att lyckas. Varje föremål har ${SCROLL_SLOTS} uppgraderingsplatser, och en plats förbrukas även om scrollen misslyckas. Använd scrolls från väskan (I).</div>`;
+    h+=`<div class="shopinfo">Drycker staplas upp till ${POT_STACK} och scrolls upp till ${STACK_MAX} per plats i väskan. Scrolls har ${Math.round(SCROLL_CHANCE*100)}% chans att lyckas. Varje föremål har ${SCROLL_SLOTS} uppgraderingsplatser, och en plats förbrukas även om scrollen misslyckas. Använd scrolls från väskan (I).</div>`;
     const SO=['hpPot','mpPot','hpPot2','mpPot2'], so=id=>SO.includes(id)?SO.indexOf(id):id==='scrReset'?99:10;
     for(const [id,c] of Object.entries(CONS).filter(([,c])=>c.price).sort((a,b)=>so(a[0])-so(b[0]))){
       h+=`<div class="srow ${tutStep()==='shop'&&id==='scrAtk'?'hl':''}"><div class="slot r-cons"><img src="${iconURL({base:id})}" alt=""></div><div class="sn"><b>${c.name}</b><small>${c.desc} · Du har ${consCount(id)}</small></div><span class="sp">${c.price} 🪙</span>
@@ -8105,7 +8272,7 @@ function mobDropList(t){
   const d=MOBS[t], L=[], gi=b=>iconURL({base:b,rarity:'common'}), ci=b=>iconURL({base:b});
   if(d.arena) return ARENA_DROPS[t].map(([n,p,it])=>{ const [b,r]=(it||'').split(':'); return {ic: it?iconURL({base:b,rarity:r}) : n.includes('Silver')?ci('silvernyckel') : ci(n.includes('Mellan')?'sjal2':'sjal3'), it:it?[b,r]:null, col:it?RAR[r].color:null, name:n, info:`${p}%`}; });
   if(d.mat) L.push({ic:ci(d.mat), name:CONS[d.mat].name, info:`Material · ${pct(d.matP*100)}%`});
-  for(const [m,p] of d.extra||[]) L.push({ic:ci(m), name:CONS[m].name, col:CONS[m].qitem?'#ffd25a':null, info:`${CONS[m].qitem?'Uppdragsföremål':'Material'} · ${pct(p*100)}%`});
+  for(const [m,p] of d.extra||[]) L.push({ic:ci(m), name:CONS[m].name, col:CONS[m].qitem?'#ffd25a':null, info:`${CONS[m].qitem?'Uppdragsföremål':CONS[m].kind==='scroll'?'Scroll':'Material'} · ${pct(p*100)}%`});
   const [sj,sp] = d.lvl<=5 ? ['sjal1',.2] : d.lvl<=15 ? ['sjal2',.1] : ['sjal3',.05];
   L.push({ic:ci(sj), name:CONS[sj].name, info:`Själ · ${pct(sp*100)}%`});
   const per=d.pool.length?d.drop*100/d.pool.length:0;
@@ -8185,8 +8352,8 @@ $('#menuBody').addEventListener('click',async e=>{
   else if(m==='settings'){ closeWin('menu'); openWin('settings'); }
   else if(m==='db'){ closeWin('menu'); openDatabase(); }
   else if(m==='gfx'){ setGfx(PERF.mode==='auto'?'high':PERF.mode==='high'?'low':'auto'); renderMenu(); toast(`🎨 Grafik: <b>${gfxLabel()}</b>`); }
-  else if(m==='switch'){ await leaveGame(); showSelect(); }
-  else if(m==='logout'){ await leaveGame(); G.acct=null; showLogin(); }
+  else if(m==='switch'){ if(G.leaving) return; G.leaving=true; try{ await leaveGame(); }catch(e){ console.warn(e); } finally{ G.leaving=false; G.mode='title'; showSelect(); } }
+  else if(m==='logout'){ if(G.leaving) return; G.leaving=true; try{ await leaveGame(); }catch(e){ console.warn(e); } finally{ G.leaving=false; G.mode='title'; G.acct=null; showLogin(); } }
   else if(m==='install') doInstall();
 });
 const isStandalone = () => (window.matchMedia && matchMedia('(display-mode: standalone), (display-mode: fullscreen)').matches && !document.fullscreenElement && !document.webkitFullscreenElement) || navigator.standalone===true;
@@ -8403,11 +8570,12 @@ function startGame(ch, isNew){
   if(!(ch.hp>0)) ch.hp=G.stats.maxHp;
   ch.hp=Math.min(ch.hp,G.stats.maxHp); ch.mp=Math.min(ch.mp,G.stats.maxMp);
   if(isNew){ ch.hp=G.stats.maxHp; ch.mp=G.stats.maxMp; }
-  initSpawns(); G.drops=[]; G.projs=[]; G.mprojs=[]; G.fx=[]; G.nums=[]; G.apeT=0;
+  initSpawns(); G.drops=[]; G.projs=[]; G.mprojs=[]; G.fx=[]; G.nums=[]; G.apeT=0; G.bleeds=[]; G.clones=[]; Touch.reset();
   G.ui.sel=null; G.ui.talSel=null; G.ui.talTab=null; G.assigning=null; G.ui.hiItems=null; G.ui.hiBag=false; G.ui.hiCraft=false; G.ui.newSp=null; G.ui.bindSlot=null; updateBagHi();
   hideScreen(); $('#hud').classList.remove('hidden'); $('#touchUI').classList.toggle('hidden',!G.touch);
   $('#log').innerHTML=''; resize();
-  buildHotbar(); renderTouchSkills(); updateTalDot(); updateHud(); snapCam();
+  for(const f of [buildHotbar, renderTouchSkills, updateTalDot, updateHud, snapCam]) try{ f(); }catch(e){ console.warn(e); }
+  setTimeout(()=>{ if(G.mode==='game'){ resize(); snapCam(); } }, 350);   // mobil: viewporten kan ändras strax efter bytet
   $('#mapName').textContent=curMap().name;
   log(`Välkommen till <b>${curMap().name}</b>, ${esc(ch.name)}!`,'#ffe9a8');
   if(refunded) log(`🔄 Talangträden har gjorts om – dina ${refunded} talangpoäng har återbetalats. Öppna talangerna med T.`,'#ffe066');
@@ -8419,12 +8587,14 @@ function startGame(ch, isNew){
   }
 }
 async function leaveGame(){
-  if(G.trade) tradeCancel(true);
-  netLeave(true);
+  try{ if(G.trade) tradeCancel(true); }catch(e){ console.warn(e); G.trade=null; }
+  try{ netLeave(true); }catch(e){ console.warn(e); }
+  FANF.length=0; fanfOn=false; $$('.spellFan').forEach(x=>x.remove());
   $$('.win').forEach(w=>w.classList.add('hidden')); $('#deathBox').classList.add('hidden'); $('#hint').classList.add('hidden'); $('#tutBox').classList.add('hidden');
   G.assigning=null; Touch.reset(); for(const k in keys) keys[k]=false;
-  await saveNow();
-  G.mode='title'; G.p=null; G.ch=null; G.drops=[]; G.projs=[]; G.nums=[]; G.fx=[];
+  // Sparar – men väntar max 4 s (på mobil kan nätet hänga, då blev skärmen tom). Det lokala sparet sker alltid direkt.
+  try{ await Promise.race([saveNow(), new Promise(r=>setTimeout(r,4000))]); }catch(e){ console.warn(e); }
+  G.mode='title'; G.p=null; G.ch=null; G.drops=[]; G.projs=[]; G.nums=[]; G.fx=[]; G.bleeds=[]; G.clones=[]; G.mprojs=[]; G.ui.newSp=null; G.ui.scrollMode=null;
   G.mapId=1; $('#mapName').textContent=curMap().name; initSpawns();
 }
 
@@ -8857,7 +9027,8 @@ function update(dt){
 let last=performance.now();
 function frame(now){
   const raw=(now-last)/1000, dt=Math.min(0.05,raw); last=now; perfTick(raw);
-  try{ update(dt); render(); }catch(e){ console.error(e); }
+  try{ update(dt); }catch(e){ console.error(e); }
+  try{ render(); }catch(e){ console.error(e); }
   requestAnimationFrame(frame);
 }
 
