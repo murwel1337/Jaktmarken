@@ -395,6 +395,8 @@ body.touch.isfs #fsBtn{opacity:.55}
 #tutBox kbd{display:inline-block;min-width:22px;padding:2px 6px;border:1px solid #e8c25a;border-bottom-width:3px;border-radius:6px;background:#3a2c1c;color:#fff;font:800 12px system-ui;text-align:center}
 #tutBox .tk{width:150px;flex:none}#tutBox .tl{font-weight:700}#tutBox .ti{color:#bfae8e;font-size:12px;margin-top:6px;line-height:1.5}
 .qshort{margin:2px 0 8px;font-size:14px;color:#fff2cc}
+.qinfo{margin:0 0 8px;padding:7px 10px;border-radius:8px;background:rgba(150,90,220,.14);border:1px solid rgba(190,150,255,.4);font-size:12.5px;color:#eadcff;line-height:1.45}
+.qsouls{display:flex;flex-direction:column;gap:3px;margin:5px 0}.qsouls span{display:flex;align-items:center;gap:6px}.qsouls img{width:22px;height:22px}
 .qhow{margin:0 0 8px;padding:6px 9px;border-radius:8px;background:rgba(80,140,200,.14);border:1px solid rgba(140,190,240,.35);font-size:12.5px;color:#dceaff}.qhow ol{margin:4px 0 0 18px;padding:0}.qhow li{margin:2px 0}
 .qlow{background:rgba(120,120,120,.25);border:1px solid #8a8a8a;border-radius:8px;padding:5px 9px;margin:2px 0 8px;font-weight:800;color:#e0e0e0}
 .qtodo{font-size:12px;font-weight:900;color:#ffd77a;letter-spacing:.5px;margin-bottom:2px}
@@ -422,6 +424,7 @@ body.touch.isfs #fsBtn{opacity:.55}
 .srow.hl{animation:itemPulse .7s ease-in-out infinite alternate;border-radius:10px;outline:2px solid #ffe066}
 .slot.hlslot{box-shadow:0 0 0 2px rgba(255,224,102,.75) inset}
 @keyframes itemPulse{from{box-shadow:0 0 3px 1px rgba(255,224,102,.5)}to{box-shadow:0 0 14px 5px rgba(255,224,102,.95)}}
+.btn.hl{animation:itemPulse .7s ease-in-out infinite alternate;outline:2px solid #ffe066}
 #topBtns button.hl{animation:itemPulse .7s ease-in-out infinite alternate;border-color:#ffe066}
 .plus{color:#ffe066}
 .bookhead{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:8px}
@@ -826,7 +829,7 @@ const TRINK = {
   bjornhjarta: {name:'Björnhjärta',           req:11, rar:'epic', d:'När ditt HP faller under 30 % får du en sköld som tar upp skada motsvarande 30 % av ditt max-HP i 8 sekunder. Högst en gång per minut.', mobs:['bjorn']},
   glitter:     {name:'Skatans glitter',       req:13, rar:'epic', d:'+40 % guld från allt du plockar upp, och du når guld på mycket längre avstånd. Hjälper inte alls i strid.', mobs:['skata']},
   hokfjader:   {name:'Hökfjäder',             req:14, rar:'epic', d:'Lätt som en fjäder: du hoppar högre (även dubbelhoppet).', mobs:['hok']},
-  spjutspets:  {name:'Pinnens spjutspets',    req:15, rar:'epic', d:'Din första träff mot ett monster med fullt HP gör +150 % skada. Bäst när du byter mål ofta.', mobs:['pinne']},
+  spjutspets:  {name:'Pinnens spjutspets',    req:15, rar:'epic', d:'Din första träff mot ett monster med fullt HP gör +20 % skada. Högst en gång var 3:e sekund.', mobs:['pinne']},
   barkskold:   {name:'Barksköld',             req:15, rar:'epic', use:true, cd:45, d:'Använd: en barksköld som tar upp skada motsvarande 25 % av ditt max-HP. Varar i 10 sekunder.', mobs:['stock']},
   stenhjarta:  {name:'Stenhjärta',            req:17, rar:'epic', d:'Du blir aldrig knuffad bakåt när du tar skada – stå kvar på smala kanter och i bosstrider. Men du går 10 % långsammare.', mobs:['sten']},
   draktand:    {name:'Drakens andedräkt',     req:17, rar:'epic', use:true, cd:30, d:'Använd: spruta eld framför dig – 300 % av din basattack till alla fiender i lågan, och de brinner en stund efteråt.', mobs:['drake']},
@@ -1125,10 +1128,11 @@ const SPELLS = {
   turbo:    {cls:'gata', lvl:8,  icon:'👊', name:'Turboslag', cd:9,  mp:12, atk:true, d:()=>`${TURBO_N+tv('g_fler')} blixtsnabba slag på en halv sekund mot fienden framför dig (träffar upp till 2 fiender). Varje slag gör ${TURBO_MULT*100}% av basattacken.`},
   bodyslam: {cls:'gata', lvl:12, icon:'🤼', name:'Bodyslam',  cd:6,  mp:8,  atk:true, d:()=>`Kan bara användas i luften – hoppa först! Du kastar dig rakt ner och slår i marken: alla fiender inom ${SLAM_R} px tar ${SLAM_MULT*100}% av basattacken och slås undan.`},
   s_skalv:  {cls:'skog',    lvl:12, icon:'🌋', name:'Jordskalv',      cd:10, hp:5,  atk:true, d:()=>`Skadar alla fiender i en stor cirkel runt dig för 30% av basattacken + ${SKALV_HP}% av ditt max-HP. Kartan skakar.`},
-  v_irrbloss:{cls:'viskare', lvl:12, icon:'✨', name:'Irrbloss',      cd:40, mp:15, d:()=>`Frammanar ett irrbloss där du står. Det stannar kvar och skjuter på fiender (1,6 skott/s) för 50% av din basskada i ${IRR_T} sekunder.`},
+  v_irrbloss:{cls:'viskare', lvl:12, icon:'✨', name:'Irrbloss',      cd:40, mp:15, d:()=>`Frammanar ett irrbloss där du står. Det stannar kvar och skjuter på fiender (1,6 skott/s) för ${Math.round(IRR_DMG*100)}% av din basskada i ${IRR_T} sekunder.`},
 };
-const ECHO_BASE = 120, IRR_CD = 1/1.6;   // Ekande viskning: 120 % (+20 %-enheter även på varje studs) · Irrbloss: 1,6 skott/s
-const PILREGN_N = 8, SKALV_HP = 10, IRR_T = 30;   // Jordskalv: +10 % av max-HP · Irrbloss: 30 s
+const ECHO_BASE = 120, IRR_CD = 1/1.6, IRR_DMG = 1.0;   // Irrbloss: 100 % av basskadan per skott (var 50 %)
+//   // Ekande viskning: 120 % (+20 %-enheter även på varje studs) · Irrbloss: 1,6 skott/s
+const PILREGN_N = 8, SKALV_HP = 10, IRR_T = 9.6;   // Jordskalv: +10 % av max-HP · Irrbloss: 9,6 s
 const SPELL_IDS = Object.keys(SPELLS);
 const classSpells = cls => SPELL_IDS.filter(id=>SPELLS[id].cls===cls);
 
@@ -1453,7 +1457,8 @@ const SFX = (()=>{
 })();
 for(const ev of ['pointerdown','keydown','touchstart']) window.addEventListener(ev, ()=>SFX.init(), {capture:true, passive:true});
 const expReqOld = l => Math.round(15*Math.pow(1.5, l-1));
-const expReq = l => l<10 ? expReqOld(l) : Math.round(expReqOld(9)*Math.pow(1.15, l-9));   // 15 EXP till level 2, +50 % per level upp till level 10, därefter +15 % per level
+const expReqV2 = l => l<10 ? expReqOld(l) : Math.round(expReqOld(9)*Math.pow(1.15, l-9));
+const expReq = l => l<15 ? expReqV2(l) : Math.round(expReqV2(14)*Math.pow(1.2, l-14));   // +50 % per level upp till 10, +15 % per level 10–14, +20 % per level från 15
 const TALENT_LVL = 10;   // klassernas talangträd låses upp i level 10 (kontoträdet som förut: 1 poäng per 5 levlar)
 
 /* =====================================================================
@@ -1911,7 +1916,8 @@ function fixAccount(a){
       if(B.xp && !it.xp) it.xp=B.xp; if(B.cdmg && !it.cdmg) it.cdmg=B.cdmg; if(it.base==='mantelBjorn' && !it.atk) it.atk=B.atk; }   // Inre lugn är borttagen – poängen frigörs
     c.eq=c.eq||{}; c.hotbar=c.hotbar||Array(9).fill(null); while(c.hotbar.length<9) c.hotbar.push(null);
     c.gold=c.gold||0; c.exp=c.exp||0; c.level=c.level||1;
-    if(!c.xpv){ c.xpv=2; if(c.level>=10 && c.exp>0) c.exp=Math.min(expReq(c.level)-1, Math.floor(c.exp/expReqOld(c.level)*expReq(c.level))); }   /* ny EXP-kurva: samma andel av leveln som förut */ c.kills=c.kills||{}; c.map=MAPS[c.map]?c.map:1; c.quests=c.quests||{}; c.prof=c.prof||{}; for(const k in PROFS) c.prof[k]=c.prof[k]||{skill:1};
+    if(!c.xpv){ c.xpv=2; if(c.level>=10 && c.exp>0) c.exp=Math.min(expReqV2(c.level)-1, Math.floor(c.exp/expReqOld(c.level)*expReqV2(c.level))); }
+    if(c.xpv<3){ c.xpv=3; if(c.level>=15 && c.exp>0) c.exp=Math.min(expReq(c.level)-1, Math.floor(c.exp/expReqV2(c.level)*expReq(c.level))); }   /* ny EXP-kurva: samma andel av leveln som förut */ c.kills=c.kills||{}; c.map=MAPS[c.map]?c.map:1; c.quests=c.quests||{}; c.prof=c.prof||{}; for(const k in PROFS) c.prof[k]=c.prof[k]||{skill:1};
     if(c.escrow){ c.inv=[...(c.inv||[]), ...c.escrow]; delete c.escrow; } if(c.escrowGold){ c.gold=(c.gold||0)+c.escrowGold; delete c.escrowGold; }   // avbruten byteshandel
     c.inv=(c.inv||[]).filter(Boolean).map(it=>OLD_STARTERS.includes(it.base)?makeItem('pinne1'):it).filter(known);
     for(const k in c.eq){ if(c.eq[k] && OLD_STARTERS.includes(c.eq[k].base)) c.eq[k]=makeItem('pinne1'); if(c.eq[k] && !known(c.eq[k])) c.eq[k]=null; }
@@ -1980,6 +1986,7 @@ const CRIT_MULT = 1.5;
    per level, räknat på det föregående (procent på procent): 1 % · 0,95^(level−1). Level 20 ≈ 0,377 % per Agi. Tak 75 %. */
 const AGI_PCT = lvl => Math.pow(0.95, Math.max(0,lvl-1));
 const AGI_CAP = 75;
+const STAT_SCALE = 0.7, ARMOR_EFF = 0.6;   // crit/nedkylning från stats −30 % · armor −40 %
 const CDR_CAP = 50;   // Int → kortare nedkylning: samma skalning som Agi (1 % per Int på level 1, −5 % per level), tak 50 %
 const agiPct = (agi,lvl) => Math.min(AGI_CAP, Math.max(0,agi)*AGI_PCT(lvl));
 function calcStats(ch){
@@ -1990,7 +1997,7 @@ function calcStats(ch){
   s[C.main] += L;   // varje level: +2 i klassens huvudstat, +1 i övriga
   s.eqAtk=0; s.eqMove=0;
   for(const k in ch.eq){ const it=ch.eq[k]; if(!it) continue; s.armor+=it.armor||0; for(const st of STATS) s[st]+=it[st]||0; if(it.slot!=='vapen') s.eqAtk+=it.atk||0; s.eqMove+=it.move||0; s.xpPct=(s.xpPct||0)+(it.xp||0); s.cdmg=(s.cdmg||0)+(it.cdmg||0); s.eqCdmg=(s.eqCdmg||0)+(it.cdmg||0); s.eqDodge=(s.eqDodge||0)+(it.dodge||0); s.eqAspd=(s.eqAspd||0)+(it.aspd||0); s.eqHpreg=(s.eqHpreg||0)+(it.hpreg||0); s.eqCdr=(s.eqCdr||0)+(it.cdr||0); }
-  s.crit = agiPct(s.agi,ch.level); s.dodge = Math.min(AGI_CAP, agiPct(s.agi,ch.level) + (s.eqDodge||0)); s.cdr = Math.min(CDR_CAP, Math.max(0,s.int)*AGI_PCT(ch.level) + (s.eqCdr||0));
+  s.crit = agiPct(s.agi,ch.level)*STAT_SCALE; s.dodge = Math.min(AGI_CAP, agiPct(s.agi,ch.level)*STAT_SCALE + (s.eqDodge||0)); s.cdr = Math.min(CDR_CAP, Math.max(0,s.int)*AGI_PCT(ch.level)*STAT_SCALE + (s.eqCdr||0));   // Agi→crit/undvikande och Int→nedkylning: 70 %
   s.maxHp = Math.round(50 + s.str*10);
   s.maxMp = C.noMana ? 0 : Math.round((20 + s.int*10)*(1+tv('v_klok')/100));
   s.crit = Math.min(100, s.crit + tv('h_skarp') + (G.p && G.ch===ch && G.p.ssT>0 ? tv('p_skugga') : 0));   // Ur skuggorna: efter Shadowstep
@@ -2012,6 +2019,7 @@ function calcStats(ch){
   s.mode = (ch.cls==='hippie' && w && w.wtype==='bage') ? 'bow' : (ch.cls==='viskare' && w && w.wtype==='stav') ? 'whisper' : 'melee';
   s.manaCost = s.mode==='whisper' ? w.req*0.5*(1-tv('v_tyst')/100) : 0;   // 0,5 mana per stavens level
   if(ch.cls==='psykopat' && tv('k_snabb')){ s.aspd += s.crit/100; s.critToAspd=s.crit; s.crit=0; s.cdr=Math.min(CDR_CAP, s.cdr+(s.eqCdmg||0)); s.cdmg=Math.max(0,(s.cdmg||0)-(s.eqCdmg||0)); }   // Ingen tid att sikta
+  s.armor = Math.round(s.armor*ARMOR_EFF);   // armor −40 %
   return s;
 }
 function recalc(){
@@ -2519,7 +2527,7 @@ function hurtPlayer(dmg, dir, o={}){
 const HURT_INV = 1.44;   // skyddstid efter en träff (var 1,2 s)
 function trHit(m, dmg, o){   // skademodifierare på dina egna träffar
   const T=TRS(), id=trk(), p=G.p; let k=1+cbtV('dmg')/100;   // Vredesbrygd
-  if(id==='spjutspets' && m.hp>=m.maxHp-0.01){ k*=2.5; G.fx.push({type:'text', x:m.x, y:m.y-m.d.h-26, text:'🔺 Första stöten!', color:'#ffd27a', t:0, dur:.8, size:13}); }
+  if(id==='spjutspets' && m.hp>=m.maxHp-0.01 && G.time>=(T.spCd||0)){ k*=1.2; T.spCd=G.time+3; G.fx.push({type:'text', x:m.x, y:m.y-m.d.h-26, text:'🔺 Första stöten!', color:'#ffd27a', t:0, dur:.8, size:13}); }
   if(id==='tarningar'){ const w=Math.random()<.5; k*=w?1.6:.7; if(Math.random()<.35) G.fx.push({type:'text', x:m.x+rand(-10,10), y:m.y-m.d.h-24, text:w?'🎲 6!':'🎲 1…', color:w?'#7dff8a':'#ff9b9b', t:0, dur:.7, size:12}); }
   if(id==='vargtand' && o.kind==='crit'){ T.vt={n:Math.min(5,((T.vt&&T.vt.t>0)?T.vt.n:0)+1), t:6}; }
   if(id==='glod') addBleed(m, 0, {src:'glod', max:1, dps:Math.max(1,rollAtk()*.25), t:4, fire:true});
@@ -2799,7 +2807,7 @@ function updateWisps(dt){   // varje irrbloss stannar där det frammanades och s
     const t=nearestMonster(w.x, w.y+50, 340);
     if(!t){ w.cd=0.2; continue; }
     w.cd=IRR_CD;
-    const pr={type:'wispshot', x:w.x, y:w.y, vx:0, vy:0, speed:640, homing:1, target:t, dmg:Math.max(1,Math.round(rollAtk()*0.5*(1+tv('v_irrdans')/100))), dist:0, maxDist:99999, life:1.4, hit:new Set()};
+    const pr={type:'wispshot', x:w.x, y:w.y, vx:0, vy:0, speed:640, homing:1, target:t, dmg:Math.max(1,Math.round(rollAtk()*IRR_DMG*(1+tv('v_irrdans')/100))), dist:0, maxDist:99999, life:1.4, hit:new Set()};
     G.projs.push(pr); netShot(pr);
   }
 }
@@ -7738,7 +7746,7 @@ function closeWin(n){ if(n==='trade' && G.trade){ tradeCancel(true); return; } $
 /* Guidning för Berits vapenscroll-uppdrag: först butiken och scrollen, sedan väskan, scrollen och vapnet */
 function tutStep(){ const q=G.ch&&G.ch.quests&&G.ch.quests.bar5; if(!q||q.state!=='active') return null;
   if((q.prog.buy_scrAtk||0)<2) return 'shop'; if((q.prog.scroll_wpn||0)<2) return 'bag'; return null; }
-function updateBagHi(){ const st=tutStep(), b=$('[data-open="bag"]'); if(b) b.classList.toggle('hl', !!G.ui.hiBag || (st==='bag' && !isOpen('bag')));
+function updateBagHi(){ const st=tutStep(), b=$('[data-open="bag"]'); if(b) b.classList.toggle('hl', !!G.ui.hiBag || ((st==='bag' || soulTut()) && !isOpen('bag')));
   const sh=$('[data-open="shop"]'); if(sh) sh.classList.toggle('hl', st==='shop' && !isOpen('shop')); const c=$('[data-open="craft"]'); if(c) c.classList.toggle('hl', !!G.ui.hiCraft); }
 function toggleWin(n){ if(G.mode!=='game') return; isOpen(n)?closeWin(n):openWin(n); }
 function refreshOpen(){ if(G.mode!=='game') return; if(isOpen('bank')) renderBank(); if(isOpen('bag')) renderBag(); if(isOpen('tal')) renderTal(); if(isOpen('abil')) renderAbil(); if(isOpen('settings')) renderSettings(); if(isOpen('shop')) renderShop(); if(isOpen('craft')) renderCraft(); }
@@ -8021,7 +8029,7 @@ function renderBag(){
   const sm=G.ui.scrollMode && ch.inv.find(x=>x.uid===G.ui.scrollMode);
   const smc = it => !sm ? '' : (it.uid===sm.uid ? 'sel' : scrollFits(sm,it) ? 'elig' : 'inelig');
   const hiSlots=new Set(); if(G.ui.hiItems) for(const u of G.ui.hiItems){ const x=ch.inv.find(q=>q.uid===u); if(x) for(const [sid] of EQ_SLOTS) if(slotFits(x,sid)) hiSlots.add(sid); }
-  const slotHtml=(sid)=>{ const it=ch.eq[sid]; return `<div class="slot ${it?'r-'+it.rarity:''} ${it&&sel===it.uid&&!sm?'sel':''} ${it?smc(it):''} ${hiSlots.has(sid)?'hlslot':''} ${sid==='vapen'&&tutStep()==='bag'?'hl':''}" ${it?`data-uid="${it.uid}"`:''} data-eq="${sid}">${it?`<img src="${iconURL(it)}" alt="">${it.plus?`<span class="cnt plus">+${it.plus}</span>`:''}`:`<span class="lbl">${SLOTN[sid]}</span>`}</div>`; };
+  const slotHtml=(sid)=>{ const it=ch.eq[sid]; return `<div class="slot ${it?'r-'+it.rarity:''} ${it&&sel===it.uid&&!sm?'sel':''} ${it?smc(it):''} ${hiSlots.has(sid)?'hlslot':''} ${sid==='vapen'&&(tutStep()==='bag'||(soulTut()&&sel!==(it&&it.uid)))?'hl':''}" ${it?`data-uid="${it.uid}"`:''} data-eq="${sid}">${it?`<img src="${iconURL(it)}" alt="">${it.plus?`<span class="cnt plus">+${it.plus}</span>`:''}`:`<span class="lbl">${SLOTN[sid]}</span>`}</div>`; };
   $('#bagDoll').innerHTML=`<div class="dcol">${['hjalm','halsband','axel','mantel','brost','handskar','trinket'].map(slotHtml).join('')}</div>
     <div class="dmid"><canvas id="portrait" width="240" height="300"></canvas><div class="pname">${esc(ch.name)}</div><div class="pcls">${C.name} · Lv. ${ch.level}</div></div>
     <div class="dcol">${['balte','byxor','skor','ring1','ring2','vapen',...(ch.cls==='psykopat'?['vapen2']:[])].map(slotHtml).join('')}</div>`;
@@ -8072,9 +8080,9 @@ function renderBagDetail(){
   } else acts+=`<button class="btn sm" data-act="unequip">Ta av</button>`;
   let soulBox='';
   if(it.slot!=='trinket'){ const c=soulCost(it), have=consCount(c.type), ok=have>=c.cnt && G.ch.gold>=c.gold, gain=soulGain(it);
-    acts+=`<button class="btn sm purple" data-act="soul" ${ok?'':'disabled'}>🔮 ${it.soul?`Uppgradera själ → nivå ${c.n}`:'Ge själ'}</button>`;
+    acts+=`<button class="btn sm purple ${soulTut()&&it.slot==='vapen'?'hl':''}" data-act="soul" ${ok?'':'disabled'}>🔮 ${it.soul?`Uppgradera själ → nivå ${c.n}`:'Ge själ'}</button>`;
     const sal=['sjal1','sjal2','sjal3'].map(t=>`<span class="${t===c.type?'cur':''}"><img src="${iconURL({base:t})}" alt="">${consCount(t)}</span>`).join('');
-    soulBox=`<div class="soulbox"><div class="sbal">Dina själar: ${sal}</div><div>Nästa nivå (${c.n}) kostar <b class="${have<c.cnt?'bad':''}">${c.cnt} × ${CONS[c.type].name}</b> – du har ${have}${have>=c.cnt?`, <b>${have-c.cnt}</b> kvar efteråt`:''} · <b class="${G.ch.gold<c.gold?'bad':''}">${c.gold} 🪙</b> · chans <b>${fmtSv(Math.round(c.chance*1000)/10)}%</b></div>${gain.length?`<div>Lyckas den ger den: <b style="color:#7dff8a">${gain.join(', ')}</b></div>`:''}</div>`; }
+    soulBox=`<div class="soulbox"><div class="sbal">Dina själar: ${sal}</div><div>Nästa nivå (${c.n}) kostar <b class="${have<c.cnt?'bad':''}">${c.cnt} × ${CONS[c.type].name}</b> – du har ${have}${have>=c.cnt?`, <b>${have-c.cnt}</b> kvar efteråt`:''} · <b class="${G.ch.gold<c.gold?'bad':''}">${c.gold} 🪙</b> · chans <b>${soulTut()&&it.slot==='vapen'?'100 % (garanterat i Ylvas uppdrag)':fmtSv(Math.round(c.chance*1000)/10)+'%'}</b></div>${gain.length?`<div>Lyckas den ger den: <b style="color:#7dff8a">${gain.join(', ')}</b></div>`:''}</div>`; }
   box.innerHTML=`<div class="dinfo">${itemHtml(it,f.where)}${f.where==='inv'&&G.ch.level<it.req?`<div class="hintx" style="margin-top:4px">Du behöver level ${it.req} för att använda detta.</div>`:''}${soulBox}</div><div class="acts">${acts}</div>`;
 }
 /* Dra i väskan (som i World of Warcraft):
@@ -8523,19 +8531,21 @@ function soulGain(it){   // vad nästa själsnivå lägger till (samma uträknin
 function soulCost(it){ const n=(it.soul||0)+1, cnt=(SOUL_BASE[it.rarity]||1)*n; return {n, type:soulType(it), cnt, chance:Math.pow(.9,n-1), gold:cnt*it.req*3}; }
 const SOUL_KEYS = it => it.slot==='vapen' ? ['atkMin','atkMax',...STATS] : ['armor',...STATS,'atk'];
 function findGear(uid){ const ch=G.ch; const i=ch.inv.find(x=>x.uid===uid); if(i) return {it:i, eq:false}; for(const k in ch.eq) if(ch.eq[k] && ch.eq[k].uid===uid) return {it:ch.eq[k], eq:true}; return null; }
+function soulTut(){ const q=G.ch&&G.ch.quests&&G.ch.quests.vildsj; return !!q && q.state==='active' && (q.prog.soul_wpn||0)<2; }   // Ylvas själsuppdrag pågår
 function soulUp(uid){
   const f=findGear(uid), ch=G.ch; if(!f || isCons(f.it) || f.it.slot==='trinket') return; const it=f.it, c=soulCost(it);
   if(consCount(c.type)<c.cnt){ throttleMsg('soul',`Du behöver ${c.cnt} × ${CONS[c.type].name}.`,'#ff9b9b'); return; }
   if(ch.gold<c.gold){ throttleMsg('soul',`Du behöver ${c.gold} guld.`,'#ff9b9b'); return; }
   takeN(c.type,c.cnt); ch.gold-=c.gold;
   const p=G.p;
-  if(Math.random()<c.chance){
+  if(Math.random()<c.chance || (soulTut() && it.slot==='vapen')){   // Ylvas uppdrag: lyckas garanterat
     if(!it.sbase){ it.sbase={}; for(const k of SOUL_KEYS(it)) it.sbase[k]=it[k]||0; }
     it.soulAdd=it.soulAdd||{};
     for(const k of SOUL_KEYS(it)){ const b0=it.sbase[k]||0; if(b0>0){ const d=Math.max(1,Math.round(b0*.1)); it[k]=(it[k]||0)+d; it.soulAdd[k]=(it.soulAdd[k]||0)+d; } }
     it.soul=c.n; SFX.level&&SFX.level();
     log(`🔮 <b style="color:${RAR[it.rarity].color}">${esc(it.name)}</b> fick själ nivå <b>${c.n}</b>!`,'#c9a0ff'); toast(`🔮 Själ nivå <b>${c.n}</b>!`);
     itemFx(it.uid, true, 'soul', `🔮 Själ nivå ${c.n}!`);
+    if(it.slot==='vapen') questEvent('soul_wpn');
   } else { SFX.hurt&&SFX.hurt(); itemFx(it.uid, false, 'soul', '💨 Själen flydde'); log(`💨 Själen flydde – uppgraderingen till nivå ${c.n} misslyckades.`,'#ff9b9b'); toast('💨 Uppgraderingen misslyckades.'); }
   if(f.eq) recalc();
   markDirty(true); refreshOpen();
@@ -8899,6 +8909,14 @@ const QUESTS = {
   vild3:{npc:'ylva', name:'Alfahannen', prev:'vild2',
     text:'Nu är du redo för riktig jakt. Fäll 30 vargar, så smider jag ett vapen åt dig av deras klor.',
     goals:{varg:30}, exp:45, classWpn:8, classRar:'uncommon', cons:[['hpPot2',3]]},
+  vildsj:{npc:'ylva', name:'Själ i vapnet', prev:'vild3', startCons:[['sjal2',6]], startGold:150,
+    text:'Vapnet jag smidde åt dig kan bli ännu starkare – med själar! Här får du 6 mellansjälar och lite guld. Ge vapnet själ två gånger, så visar jag hur det går till.',
+    info:`<b>🔮 Varför själar?</b> Varje själsnivå gör föremålet starkare: <b>+10 %</b> av dess ursprungliga stats (attack och Str/Int/Agi) per nivå – och det finns ingen övre gräns. Men varje nivå kostar fler själar, och chansen att lyckas sjunker lite för varje nivå. Misslyckas det försvinner själarna, men föremålet är kvar. (Under det här uppdraget lyckas det garanterat.)
+      <br><br><b>⚖️ Rätt sorts själ:</b> Starkare utrustning kräver starkare själar:
+      <div class="qsouls"><span><img src="SJ1" alt=""><b>Liten själ</b> utrustning level 1–5</span><span><img src="SJ2" alt=""><b>Mellansjäl</b> level 6–15</span><span><img src="SJ3" alt=""><b>Stor själ</b> level 16+</span></div>
+      Ditt nya vapen är level 8 – alltså behöver det <b>mellansjälar</b>. Själar tappas av monster i samma level. I väskan kan du slå ihop 3 själar till 1 starkare, eller dela 1 till 3 svagare.`,
+    how:['Öppna väskan – tangenten <b>I</b> på dator, 🎒-knappen uppe till höger på mobil. Knappen lyser.','Ditt vapen sitter på vapenplatsen på gubben – den blinkar gult. Klicka (eller tryck) på vapnet så att det blir markerat.','Under föremålet syns rutan med dina själar och vad nästa nivå kostar. Tryck på den lila knappen <b>🔮 Ge själ</b> – nivå 1 kostar 2 mellansjälar och lite guld.','Tryck en gång till på <b>🔮 Uppgradera själ → nivå 2</b> (4 mellansjälar). Klart! Jämför attacken på vapnet före och efter.'],
+    goals:{soul_wpn:2}, exp:40, gold:80, cons:[['hpPot2',3]]},
   vildlw:{npc:'ylva', name:'Pälsjakt', prev:'vild3',
     text:'Vill du lära dig sy din egen utrustning? Då behöver du päls. Samla 2 vargpälsar från vargarna här – det räcker till ett par handskar.',
     goals:{have_vargpals:2}, exp:20, cons:[['hpPot2',2]]},
@@ -8983,13 +9001,13 @@ const QUESTS = {
     text:'Stockarna spottar bark längs marken. En riktig flottare hoppar över barken och rullar rakt genom stockarna! 1. Hoppa över 5 barkskott (hoppa när barken är nära). 2. Rulla genom 5 stockar med Kullerbyttan (🤸) – spring mot en stock och rulla precis innan du når den. 3. Fäll 40 stockar.',
     how:['Slå till en stock så att den börjar skjuta bark mot dig.','Hoppa (mellanslag/⤒) när barkbiten är nära – den flyger lågt längs marken.','Spring mot en stock och tryck på Kullerbyttan (🤸) precis innan du når den – då rullar du rakt igenom den.','Fäll 40 stockar.'],
     goals:{jump_bark:5, roll_stock:5, stock:40}, exp:190, gold:350, cons:[['hpPot2',8]]},
-  stock2:{npc:'stina', name:'Röj skogen', lvl:15,
+  stock2:{npc:'stina', name:'Röj skogen', prev:'stock1', lvl:15,
     text:'Pinnarna och stockarna blir bara fler – snart kommer man inte fram längs ån! Fäll 80 vandrande pinnar (i Pinnskogen) och 80 vandrande stockar. Stockskogen II, till höger härifrån, är full av stockar.',
     goals:{pinne:80, stock:80}, exp:700, gold:600, give:[['tr_irrflaska','epic']], cons:[['hpPot2',10],['cbDmg',3]]},
   sten2:{npc:'kerstin', name:'Stenmarkens skräck', lvl:17,
     text:'Stenkulorna rullar ända fram till byn nu, och folk säger att Stenpappan har vaknat på Stenmarken igen. Fäll 80 stenkulor – och fäll Stenpappan 3 gånger. Den dyker upp på den översta platån ibland.',
     goals:{sten:80, stenappa:3}, exp:1000, gold:900, give:[['tr_stenhjarta','epic']], cons:[['cbDef',3]]},
-  silver2:{npc:'ruben', name:'Glänsande pinnar', lvl:15,
+  silver2:{npc:'ruben', name:'Glänsande pinnar', prev:'pinn1', lvl:15,
     text:'Ibland går det en pinne här som glänser som silver. Jag vill ha två silverkvistar till min samling – fäll två silverpinnar här i Pinnskogen. De är sällsynta, så håll ögonen öppna.',
     goals:{silver_pinne:2}, exp:900, gold:800, give:[['tr_spjutspets','epic']]},
   stock3:{npc:'stina', name:'Stockholmaren', prev:'stock2', lvl:16, arrow:{map:15, to:18, txt:'Stockholmaren finns i Stockskogen II'},
@@ -9026,6 +9044,7 @@ const fixedTxt = f => { const v=Object.values(f); return v.every(x=>x===v[0]) ? 
 const QUEST_SHORT = {   // det NPC:n säger – kort och tydligt vad som ska göras
   bar1:'Döda 5 blåbär här i jaktmarken.', bar2:'Döda blåbär och mossabollar.', bar3:'Döda fler blåbär och mossabollar.', bar4:'Döda blåbär och mossabollar en sista gång.',
   bar5:'Köp 2 vapenscrolls i butiken (B) och dra dem till ditt vapen i väskan (I). De lyckas garanterat.',
+  vildsj:'Öppna väskan (I), klicka på vapnet och tryck 🔮 Ge själ – två gånger. Det lyckas garanterat.',
   pot1:'Samla bär (från blåbär) och mossa (från mossabollar) på Jaktmarken I.', pot2:'Öppna Hantverk (H) → ⚗️ Potionär och brygg 2 drycker.',
   pot3:'Brygg 8 drycker till. Orange recept höjer alltid din skill.', pot4:'Samla kattsvansar (från kissekatter) och bär.', pot5:'Brygg ett Jägarelixir (H) och drick det från väskan.',
   fag1:'Döda 25 skator. Akta dig för törnsnåren!', fag2:'Döda 25 hökar.', fag3:'Döda 30 skator och 30 hökar.',
@@ -9043,7 +9062,7 @@ const QUEST_SHORT = {   // det NPC:n säger – kort och tydligt vad som ska gö
 const qShort = id => QUEST_SHORT[id] || (QUESTS[id].text.split(/(?<=[.!?])\s/)[0]);
 for(const id in QUESTS) QUESTS[id].exp=Math.round(QUESTS[id].exp*1.2*2);   // uppdrag ger 20 % mer EXP – och sedan dubbelt
 for(const id in QUESTS){ const Q=QUESTS[id]; if(Q.lvl && NPCS[Q.npc] && NPCS[Q.npc].map===5) Q.lvl=Math.max(1,Q.lvl-2); }   // uppdragen i Lövbyn kräver 2 level lägre
-const QUEST_ORDER = ['bar1','bar2','bar3','bar4','bar5','skr0','skr1','skr2','skr3','jakt1','jakt2','jakt3','jakt4','jakt5','pot1','pot2','pot3','pot4','pot5','vild1','vild2','vild3','vildlw','vild4','bo1','bo2','bo3','fag1','fag2','fag3','saga0','saga1','saga2','saga3','gunnar0','gunnar1','gunnar2','gunnar3','sten1','sten2','drak1','drak2','drak3','band1','band2','band3','silver1','silver2','pinn1','stock1','stock2','stock3','sol1','sol2','sol3','gos1','gos2'];
+const QUEST_ORDER = ['bar1','bar2','bar3','bar4','bar5','skr0','skr1','skr2','skr3','jakt1','jakt2','jakt3','jakt4','jakt5','pot1','pot2','pot3','pot4','pot5','vild1','vild2','vild3','vildsj','vildlw','vild4','bo1','bo2','bo3','fag1','fag2','fag3','saga0','saga1','saga2','saga3','gunnar0','gunnar1','gunnar2','gunnar3','sten1','sten2','drak1','drak2','drak3','band1','band2','band3','silver1','silver2','pinn1','stock1','stock2','stock3','sol1','sol2','sol3','gos1','gos2'];
 const QUEST_CHAINS = [ {npc:'berit', name:'Bärplockarens besvär'}, {npc:'sigvard', name:'Skrivarkonsten'}, {npc:'holger', name:'Vaktarens jakt'}, {npc:'vera', name:'Örtkvinnans brygder'}, {npc:'ylva', name:'Vargarnas spår'}, {npc:'bo', name:'Björnjakten'}, {npc:'fritiof', name:'Fågelplågan'}, {npc:'saga', name:'Skrivarmästarens prov'}, {npc:'gunnar', name:'Garvarens lära'}, {npc:'dagny', name:'Drakvaktens prov'}, {npc:'kerstin', name:'Bandittornet'}, {npc:'solve', name:'Silverjägaren'}, {npc:'ruben', name:'Pinnskogen'}, {npc:'stina', name:'Stockskogen'}, {npc:'sunniva', name:'Solrosornas uppror'}, {npc:'gosta', name:'Glassbaren'} ];
 // Yrkesuppdragen och yrkes-NPC:erna är borttagna – Hantverkaren Siri på Jaktmarken I lär ut Crafting
 for(const id of ['skr0','skr1','skr2','skr3','saga0','saga1','saga2','saga3','gunnar0','gunnar1','gunnar2','gunnar3','vildlw','vild4','pot1','pot2','pot3','pot4','pot5']) delete QUESTS[id];
@@ -9062,8 +9081,8 @@ QUEST_CHAINS.splice(1, 0, {npc:'siri', name:'Hantverkarens lärling'});
 const chainQuests = npc => QUEST_ORDER.filter(id=>QUESTS[id].npc===npc);
 const npcsOn = mapId => Object.keys(NPCS).filter(k=>NPCS[k].map===mapId);
 const CRAFT_GOAL = {craft_handskar:['par handskar','Gör handskar','par handskar'], craft_hjalm:['mössor','Gör en mössa','mössa'], craft_skor:['par skor','Gör skor','par skor'], craft_vapen:['vapen','Gör ett vapen','vapen'], craft_pot:['drycker eller elixir','Brygg drycker','dryck'], craft_elix:['elixir','Brygg elixir','elixir']};
-const goalName = (t,n) => t==='jump_bark' ? `Hoppa över ${n} barkskott` : t==='roll_stock' ? `Rulla genom ${n} stockar med Kullerbyttan` : t.startsWith('abil_') ? `Döda ${n} ${MOBS[t.slice(5)].name.toLowerCase()} med förmågor (inte basattack)` : t==='roll_thorn' ? `Rulla genom Holgers törnsnår med Kullerbyttan${n>1?` ${n} gånger`:''}` : t==='use_elix' ? `Drick ${n} elixir` : t.startsWith('buy_') ? `Köp ${n} ${CONS[t.slice(4)].name} i butiken (B)` : t==='scroll_wpn' ? `Använd vapenscrolls på ditt vapen ${n} gånger` : t.startsWith('have_') ? `Samla ${n} ${CONS[t.slice(5)].name}` : t.startsWith('item_') ? `Lämna in ${n} ${CONS[t.slice(5)].name}` : t==='scroll' ? `Använd scrolls ${n} gånger` : CRAFT_GOAL[t] ? `Tillverka ${n} ${n===1?CRAFT_GOAL[t][2]:CRAFT_GOAL[t][0]} (hantverk, H)` : t.startsWith('silver_') ? `Döda ${n} ${RARE_DEFS[t.slice(7)].name}` : `Döda ${n} ${MOBS[t].name}`;
-const goalShort = t => t==='jump_bark' ? 'Hoppa över bark' : t==='roll_stock' ? 'Rulla genom stockar' : t.startsWith('abil_') ? MOBS[t.slice(5)].name+' (förmåga)' : t==='roll_thorn' ? 'Rulla genom törnet' : t==='use_elix' ? 'Drick elixir' : t.startsWith('buy_') ? 'Köp '+CONS[t.slice(4)].name : t==='scroll_wpn' ? 'Scrolla vapnet' : (t.startsWith('item_')||t.startsWith('have_')) ? CONS[t.slice(5)].name : t==='scroll' ? 'Scrolls' : CRAFT_GOAL[t] ? CRAFT_GOAL[t][1] : t.startsWith('silver_') ? RARE_DEFS[t.slice(7)].name : MOBS[t].name;
+const goalName = (t,n) => t==='soul_wpn' ? `Ge ditt vapen själ (${n} nivåer) i väskan` : t==='jump_bark' ? `Hoppa över ${n} barkskott` : t==='roll_stock' ? `Rulla genom ${n} stockar med Kullerbyttan` : t.startsWith('abil_') ? `Döda ${n} ${MOBS[t.slice(5)].name.toLowerCase()} med förmågor (inte basattack)` : t==='roll_thorn' ? `Rulla genom Holgers törnsnår med Kullerbyttan${n>1?` ${n} gånger`:''}` : t==='use_elix' ? `Drick ${n} elixir` : t.startsWith('buy_') ? `Köp ${n} ${CONS[t.slice(4)].name} i butiken (B)` : t==='scroll_wpn' ? `Använd vapenscrolls på ditt vapen ${n} gånger` : t.startsWith('have_') ? `Samla ${n} ${CONS[t.slice(5)].name}` : t.startsWith('item_') ? `Lämna in ${n} ${CONS[t.slice(5)].name}` : t==='scroll' ? `Använd scrolls ${n} gånger` : CRAFT_GOAL[t] ? `Tillverka ${n} ${n===1?CRAFT_GOAL[t][2]:CRAFT_GOAL[t][0]} (hantverk, H)` : t.startsWith('silver_') ? `Döda ${n} ${RARE_DEFS[t.slice(7)].name}` : `Döda ${n} ${MOBS[t].name}`;
+const goalShort = t => t==='soul_wpn' ? 'Själ i vapnet' : t==='jump_bark' ? 'Hoppa över bark' : t==='roll_stock' ? 'Rulla genom stockar' : t.startsWith('abil_') ? MOBS[t.slice(5)].name+' (förmåga)' : t==='roll_thorn' ? 'Rulla genom törnet' : t==='use_elix' ? 'Drick elixir' : t.startsWith('buy_') ? 'Köp '+CONS[t.slice(4)].name : t==='scroll_wpn' ? 'Scrolla vapnet' : (t.startsWith('item_')||t.startsWith('have_')) ? CONS[t.slice(5)].name : t==='scroll' ? 'Scrolls' : CRAFT_GOAL[t] ? CRAFT_GOAL[t][1] : t.startsWith('silver_') ? RARE_DEFS[t.slice(7)].name : MOBS[t].name;
 function questState(id, ch=G.ch){
   const q=(ch.quests||{})[id], Q=QUESTS[id];
   if(q) return q.state;
@@ -9102,6 +9121,9 @@ function acceptQuest(id){
   if(questState(id)!=='offer') return;
   if(!npcHere(id)){ renderQuest(); return; }
   G.ch.quests[id]={state:'active', prog:{}}; SFX.accept();
+  { const Q=QUESTS[id], ch=G.ch; ch.qGiven=ch.qGiven||{}; if((Q.startCons||Q.startGold) && !ch.qGiven[id]){ ch.qGiven[id]=1;   // material till uppdraget (bara första gången)
+    for(const [b,n] of Q.startCons||[]){ addStack(b,n); log(`🎁 Du fick ${n} × <b>${CONS[b].name}</b> av ${NPCS[Q.npc].name}.`,'#c9a0ff'); }
+    if(Q.startGold){ ch.gold+=Q.startGold; log(`🎁 Du fick ${Q.startGold} guld.`,'#ffd23f'); } } }
   if(Object.keys(QUESTS[id].goals).some(t=>t.startsWith('craft_'))){ G.ui.hiCraft=true; updateBagHi(); }   // highlighta Hantverk-knappen
   questItemsSync(); updateBagHi();
   log(`📜 Nytt uppdrag: <b>${QUESTS[id].name}</b>`,'#ffe066'); markDirty(true); questLogKey=null; renderQuest();
@@ -9190,6 +9212,7 @@ function renderQuest(){
   h+=`<div style="font-size:17px;font-weight:900">${Q.name}</div><div style="color:var(--muted);font-size:12px;margin-bottom:6px">${MAPS[npc.map].name}${Q.lvl>1?` · kräver level ${Q.lvl}`:''}</div>`;
   if(st==='locked' && Q.lvl && G.ch.level<Q.lvl) h+=`<div class="qlow">🔒 Kräver level ${Q.lvl} – du är level ${G.ch.level}.</div>`;
   h+=`<div class="qshort">“${qShort(id)}”</div>`;
+  if(Q.info) h+=`<div class="qinfo">${Q.info.replace(/SJ([123])/g,(_,n)=>iconURL({base:'sjal'+n}))}</div>`;
   if(Q.how) h+=`<div class="qhow"><b>💡 Så gör du</b><ol>${Q.how.map(x=>`<li>${x}</li>`).join('')}</ol></div>`;
   const rewards=[...(Q.choose?[`valfritt vapen (${Q.choose.map(b=>BASES[b].name).join(' / ')}, <span style="color:${RAR[Q.rarity].color}">${RAR[Q.rarity].name}</span>)`]:[]), ...questGive(Q).map(([b,r])=>{ const B=BASES[b]; return `<img src="${iconURL({base:b,rarity:r})}" alt="" style="width:22px;height:22px;vertical-align:middle;margin:0 2px"><span style="color:${RAR[r].color}">${B.name}</span>${B.fixed?` (${[...(Object.values(B.fixed).some(v=>v)?[fixedTxt(B.fixed)]:[]), ...(B.atk&&B.slot!=='vapen'?[`+${B.atk} attack`]:[]), ...(B.cdmg?[`+${B.cdmg}% kritisk skada`]:[]), ...(B.dodge?[`+${B.dodge}% undvikande`]:[])].join(', ')})`:B.slot==='vapen'?` (${WTYPE[B.wtype]}, attack ${B.atk[0]}–${B.atk[1]})`:''}`; }),
     ...(Q.cons||[]).map(([b,n])=>`<img src="${iconURL({base:b})}" alt="" style="width:22px;height:22px;vertical-align:middle;margin:0 2px">${n} ${CONS[b].name}`), ...(Q.gold?[`🪙 ${Q.gold} guld`]:[]), ...(Q.ability==='roll'?['<b style="color:#9fe0ff">🤸 Ny förmåga: Kullerbytta</b>']:[]), `${Q.exp} EXP`];
@@ -9901,7 +9924,7 @@ function guestOnWelcome(msg){
 function guestEnterMap(to, x, y, announce){
   if(!MAPS[to] || !G.p) return;
   G.mapId=to; G.ch.map=to; setTerrain(terrainOf(to));
-  const keep={cds:G.p.cds, cdMax:G.p.cdMax, buffT:G.p.buffT, buffMax:G.p.buffMax, regenT:G.p.regenT, regenMax:G.p.regenMax, wisps:G.p.wisps||[], dead:G.p.dead};
+  const keep={cds:G.p.cds, cdMax:G.p.cdMax, buffT:G.p.buffT, buffMax:G.p.buffMax, regenT:G.p.regenT, regenMax:G.p.regenMax, wisps:[], dead:G.p.dead};   // irrblossen stannar på den gamla kartan
   G.p=makePlayer(x,y); Object.assign(G.p,keep); G.p.portalCd=0.8;
   G.monsters=[]; G.monById={}; G.spawns=[]; G.drops=[]; G.projs=[]; G.mprojs=[]; G.nums=[];
   $('#mapName').textContent=curMap().name; snapCam(); if(isOpen('quest')) renderQuest();
