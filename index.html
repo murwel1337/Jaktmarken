@@ -1221,7 +1221,17 @@ TREES.kast = {name:'Jag kan ju kasta den', talents:[
   {id:'k_fler',  tier:3, max:3, icon:'🗡️', name:'Fler knivar',   v:[2,4,6],     d:v=>`Knivig sits kastar ${v} knivar till.`},
   {id:'k_snabb', tier:3, max:1, icon:'🌀', name:'Ingen tid att sikta', v:[1],   d:()=>`All din kritiska chans blir attackhastighet i stället, och kritisk skada från utrustning blir kortare nedkylning.`},
 ]};
-for(const k of ['skog_c','hippie_b','hippie_c','visk_b','visk_c']) TREES[k] = {name:k.endsWith('_b')?'Träd 2':'Träd 3', locked:true, talents:[]};
+/* Viskare träd 2: Baktalare – rykten är en DoT (50 % av träffens skada över 8 s, högst 3 rykten per fiende) */
+const RUMOR_T = 8, RUMOR_P = 0.5, RUMOR_MAX = 3, RUMOR_R = 260, LURE_R = [160,240,320];
+TREES.visk_b = {name:'Baktalare', talents:[
+  {id:'v_rykte',    tier:1, max:3, icon:'🗣️', name:'Ryktesspridning', v:[1,2,3], d:v=>`Dina viskningar (basattacken) ger fienden ett rykte som hoppar vidare till ${v} fiende${v>1?'r':''} till. Ett rykte gör ${RUMOR_P*100}% av träffens skada över ${RUMOR_T} sekunder (högst ${RUMOR_MAX} rykten per fiende).`},
+  {id:'v_rotext',   tier:1, max:3, icon:'🌿', name:'Seglivade rötter', v:[2,4,6], d:v=>`Snärjande rötter håller fienderna ${v} sekunder längre.`},
+  {id:'v_irrrykte', tier:2, max:3, icon:'✨', name:'Skvallrande irrbloss', v:[33,67,100], d:v=>`Irrblossets skott har ${v}% chans att sprida ett rykte (hoppar lika långt som Ryktesspridning).`},
+  {id:'v_rotrykte', tier:2, max:3, icon:'🪢', name:'Fast i skvallret', v:[30,60,90], d:v=>`Rykten gör ${v}% mer skada på fiender som sitter fast i rötter.`},
+  {id:'v_ekorykte', tier:3, max:3, icon:'📣', name:'Viskande skvaller', v:[1,2,3], d:v=>`Ekande viskning ger ${v} rykte${v>1?'n':''} till varje fiende den träffar.`},
+  {id:'v_irrlock',  tier:3, max:3, icon:'🧲', name:'Lockande sken', v:LURE_R, d:v=>`Irrblosset lockar till sig fiender inom ${v} px. De går mot irrblosset i stället för mot dig.`},
+]};
+for(const k of ['skog_c','hippie_b','hippie_c','visk_c']) TREES[k] = {name:k.endsWith('_b')?'Träd 2':'Träd 3', locked:true, talents:[]};
 // Gatuslagskämpens tre träd
 Object.assign(TREES, {
   gata_a:{name:'Tungviktaren', talents:[
@@ -2833,12 +2843,20 @@ function healPlayer(v){
   const p=G.p, ch=G.ch; if(!p || p.dead || !(v>0)) return;
   ch.hp=Math.min(G.stats.maxHp, ch.hp+v); p.healShow=(p.healShow||0)+v;
 }
+function wispLure(w, R){   // fiender inom R går mot irrblosset (värden styr monstren)
+  const ids=[];
+  for(const m of G.monsters){ if(m.dead||m.pend||m.spawnT>0||m.d.fly||m.d.arena) continue;
+    if(Math.abs(m.x-w.x)<R && Math.abs(m.y-(w.y+88))<170){ ids.push(m.id); if(!isGuestNet()){ m.lureX=w.x; m.lureT=G.time+0.8; } } }
+  if(isGuestNet() && ids.length) netToHost({t:'lure', x:Math.round(w.x), ids});
+  w.lv=(w.lv||0)+1; if(w.lv%3===1) for(let i=0;i<18;i++){ const a=i/18*Math.PI*2; particle(w.x+Math.cos(a)*R*.5, w.y+Math.sin(a)*24, pick(['#bff7ff','#7fe0ff']), -Math.cos(a)*R*.9, -Math.sin(a)*30, .55, 2, 0); }
+}
 function updateWisps(dt){   // varje irrbloss stannar där det frammanades och skjuter tills tiden tar slut
   const p=G.p;
   for(let i=p.wisps.length-1;i>=0;i--){ const w=p.wisps[i]; w.t-=dt;
     if(w.t<=0){ p.wisps.splice(i,1); log('✨ Ett irrbloss försvann.','#bff7ff'); continue; }
     w.y=w.by+Math.sin(G.time*3+w.ph)*6;
     if(Math.random()<dt*12) particle(w.x+rand(-5,5), w.y+rand(-5,5), pick(['#bff7ff','#7fe0ff','#e8ffff']), rand(-15,15), rand(-25,5), .5, 2.2, -20);
+    if(rank('v_irrlock')){ w.lc=(w.lc||0)-dt; if(w.lc<=0){ w.lc=0.5; wispLure(w, tv('v_irrlock')); } }   // Lockande sken
     w.cd-=dt; if(w.cd>0) continue;
     const t=nearestMonster(w.x, w.y+50, 340);
     if(!t){ w.cd=0.2; continue; }
@@ -2974,7 +2992,7 @@ const ABIL_USE = {
   rotter(){
     const p=G.p; startSkillAnim('cast');
     const heal=!!rank('v_rothel');
-    for(const m of rootTargets()) applyRoot(m, 6+tv('v_rotlang'), Math.max(0.1, rollAtk()*0.3), heal);
+    for(const m of rootTargets()) applyRoot(m, 6+tv('v_rotlang')+tv('v_rotext'), Math.max(0.1, rollAtk()*0.3), heal);
     G.fx.push({type:'roots', x:p.x, y:p.y, dir:p.face, t:0, dur:.7}); netFx(p.face>0?'rootsR':'rootsL', p.x, p.y);
   },
   kraftslag(){
@@ -3173,13 +3191,22 @@ function slowMonster(m, pct, dur){
 function addBleed(m, dmg, o){   // Blödning (10 % i 10 s) – eller Blodiga knivar (100 % över 6 s), var för sig med egna staplar
   const src=o?o.src:'p', max=o?o.max:tv('p_blod'); if(!max) return;
   const mine=G.bleeds.filter(b=>b.m===m && b.src===src); if(mine.length>=max) G.bleeds.splice(G.bleeds.indexOf(mine[0]),1);
-  G.bleeds.push({m, src, dps:o?o.dps:dmg*0.1, t:o?o.t:10, tick:1, pois:!!(o&&o.pois), fire:!!(o&&o.fire)});
+  G.bleeds.push({m, src, dps:o?o.dps:dmg*0.1, t:o?o.t:10, tick:1, pois:!!(o&&o.pois), fire:!!(o&&o.fire), rumor:!!(o&&o.rumor)});
 }
+function isRooted(m){ return m.rootT>0 || !!m.rooted || (m.rootVisT||0)>G.time; }
+function addRumor(m, dmg, n=1){ for(let i=0;i<n;i++) addBleed(m, dmg, {dps:dmg*RUMOR_P/RUMOR_T, t:RUMOR_T, max:RUMOR_MAX, src:'r', rumor:true}); }
+function spreadRumor(m, dmg, hops, n=1){   // Ryktesspridning: rykte på målet som hoppar vidare till närmaste fiender
+  addRumor(m, dmg, n); const hit=new Set([m]); let from=m;
+  for(let i=0;i<hops;i++){ const t=nearestMonster(from.x, from.y-from.d.h/2, RUMOR_R, hit); if(!t) break; hit.add(t); rumorFx(from,t); addRumor(t, dmg, n); from=t; }
+}
+function rumorFx(a,b){ const ax=a.x, ay=a.y-a.d.h*.6, bx=b.x, by=b.y-b.d.h*.6;
+  for(let i=0;i<=10;i++){ const k=i/10; particle(ax+(bx-ax)*k, ay+(by-ay)*k-Math.sin(k*Math.PI)*30, pick(['#c9a2ff','#8f6bff','#f0e6ff']), rand(-10,10), rand(-20,5), .55, 2.4, 0); }
+  G.fx.push({type:'text', x:bx, y:by-22, text:'🗣️', color:'#e8dcff', t:0, dur:.7, size:13}); }
 function updateBleeds(dt){
   for(let i=G.bleeds.length-1;i>=0;i--){ const b=G.bleeds[i];
     if(b.m.dead || b.m.pend || !G.monsters.includes(b.m)){ G.bleeds.splice(i,1); continue; }
     b.t-=dt; b.tick-=dt;
-    if(b.tick<=0){ b.tick+=1; hitMonster(b.m, Math.max(1,Math.round(b.dps)), {kind:'bleed', pois:b.pois, noKb:true, noBurn:true}); for(let k=0;k<3;k++) particle(b.m.x+rand(-8,8),b.m.y-b.m.d.h*.5,pick(b.fire?['#ff9a3a','#ffd23f']:b.pois?['#5ad83a','#a8f05a']:['#c81818','#ff3a3a']),rand(-20,20),rand(-10,40),.5,2,300); }
+    if(b.tick<=0){ b.tick+=1; const rm=b.rumor&&isRooted(b.m)?1+tv('v_rotrykte')/100:1; hitMonster(b.m, Math.max(1,Math.round(b.dps*rm)), {kind:'bleed', pois:b.pois, rumor:b.rumor, noKb:true, noBurn:true}); for(let k=0;k<3;k++) particle(b.m.x+rand(-8,8),b.m.y-b.m.d.h*.5,pick(b.rumor?['#c9a2ff','#8f6bff']:b.fire?['#ff9a3a','#ffd23f']:b.pois?['#5ad83a','#a8f05a']:['#c81818','#ff3a3a']),rand(-20,20),rand(-10,40),.5,2,300); }
     if(b.t<=0) G.bleeds.splice(i,1); }
 }   // sätts medan basattacken körs
 function hitMonster(m, dmg, o={}){
@@ -3207,7 +3234,7 @@ function hitMonster(m, dmg, o={}){
     // Gäst: visa direkt, låt värden avgöra (värden äger monstren)
     m.hp -= dmg; m.showHp=4; m.predT=G.time+0.7; if(o.kind!=='burn' && o.kind!=='root') SFX.hit(o.kind==='crit'); if(m.type==='kissekatt' && o.kind!=='bleed') SFX.meow(m.x);
     if(!o.noKb){ m.hurtT=0.4; m.dir=-(o.dir||1); }
-    addNum(m.x, m.y-m.d.h-6, dmg, o.pois?'poison':o.kind||'dmg', m);
+    addNum(m.x, m.y-m.d.h-6, dmg, o.rumor?'rumor':o.pois?'poison':o.kind||'dmg', m);
     sparks(m.x, m.y-m.d.h/2, '#fff3b0', 6);
     const burn=null;
     netToHost({t:'hit', id:m.id, d:Math.round(dmg*100)/100, dir:o.dir||0, k:o.kind||'', nk:o.noKb?1:0, b:burn, bs:o.basic?1:0});
@@ -3225,7 +3252,7 @@ function hitMonster(m, dmg, o={}){
     if(m.hardT>0) reflectTo(by, 30 + dmg*0.2, m);   // 30 skada + 20 % av den inkommande skadan
     else if(!(m.hardCd>0)){ m.hardT=2; m.hardCd=6; m.kbT=0; m.state='idle'; }   // hårdnar i 2 s (6 s nedkylning)
   }
-  addNum(m.x, m.y-m.d.h-6, dmg, o.pois?'poison':o.kind||'dmg', m);
+  addNum(m.x, m.y-m.d.h-6, dmg, o.rumor?'rumor':o.pois?'poison':o.kind||'dmg', m);
   sparks(m.x, m.y-m.d.h/2, o.kind==='burn' ? '#ff9a3a' : '#fff3b0', o.kind==='burn'?2:6);
   if(o.burn) m.burn={left:o.burn.left||5, tick:1, per:o.burn.per, by};
   if(isHostNet()) netToGuests({t:'dmg', id:m.id, v:Math.round(dmg*100)/100, k:o.kind||'', by});
@@ -3681,6 +3708,11 @@ function updateMonsters(dt){
     else if(m.chargeT>0 || m.hardT>0){ m.kbT=0; if(m.hurtT>0) m.hurtT-=dt; m.state='idle'; }
     else if(m.kbT>0){ m.kbT-=dt; m.x+=m.kb*dt; }
     else if(m.hurtT>0){ m.hurtT-=dt; }
+    else if((m.lureT||0)>G.time){   // Lockande sken: går mot irrblosset
+      const dx=m.lureX-m.x; m.state=Math.abs(dx)>14?'walk':'idle'; if(Math.abs(dx)>14) m.dir=Math.sign(dx);
+      const slw=(m.slowT||0)>G.time?1-(m.slowP||0):1;
+      if(m.state==='walk'){ const nx=m.x+m.dir*m.d.speed*AGGRO_SPEED*slw*dt; if(nx>=m.plat.x1+mg && nx<=m.plat.x2-mg) m.x=nx; else m.state='idle'; }
+    }
     else if(tgt){
       // jaga den som anföll – längs den egna plattformen, stannar vid kanten
       // Står aldrig still: under spelaren pendlar den fram och tillbaka, vid kanten vänder den en kort stund och går sedan tillbaka mot spelaren
@@ -3763,10 +3795,12 @@ function projHit(pr, m){
   pr.hit.add(m);
   if(pr.type==='whisper' || pr.type==='echo'){
     for(let i=0;i<8;i++) particle(m.x,m.y-m.d.h/2,pick(['#c9a2ff','#fff']),rand(-90,90),rand(-90,90),.4,2.5,0);
+    if(pr.type==='whisper' && rank('v_rykte')) spreadRumor(m, pr.dmg, tv('v_rykte'));   // Ryktesspridning
+    if(pr.type==='echo' && rank('v_ekorykte')) addRumor(m, pr.dmg, tv('v_ekorykte'));   // Viskande skvaller
     if(pr.type==='echo' && pr.chain>0) echoBounce(m, pr);
     return;
   }
-  if(pr.type==='wispshot'){ sparks(m.x, m.y-m.d.h/2, '#bff7ff', 4); return; }
+  if(pr.type==='wispshot'){ sparks(m.x, m.y-m.d.h/2, '#bff7ff', 4); if(rank('v_irrrykte') && Math.random()*100<tv('v_irrrykte')) spreadRumor(m, pr.dmg, tv('v_rykte')); return; }
   if(pr.type==='kniv'||pr.type==='kastkniv'){ sparks(m.x, m.y-m.d.h/2, '#e8eef6', 5); return; }
   if(pr.type==='arrow'){
     if(pr.canBounce){ const c=tv('h_studs'); if(c && Math.random()<c/100) bounceArrow(m, 1, pr.dmg, pr.hit); }
@@ -6759,13 +6793,14 @@ function drawNums(){
     const k=n.t, y=n.y-k*34, sc=k<0.1?1+(0.1-k)*4:1;
     let txt = n.v<9.95 && !Number.isInteger(Math.round(n.v*10)/10) ? fmt1(n.v) : String(Math.round(n.v)); if(n.kind==='crit') txt+='!';
     ctx.globalAlpha=k>0.7?(1-k)/0.3:1;
-    const size = (n.kind==='burn'||n.kind==='root'||n.kind==='bleed'||n.kind==='thorn'||n.kind==='poison')?15:n.kind==='hurt'?18:n.kind==='crit'?27:21;
+    const size = (n.kind==='burn'||n.kind==='root'||n.kind==='bleed'||n.kind==='thorn'||n.kind==='poison'||n.kind==='rumor')?15:n.kind==='hurt'?18:n.kind==='crit'?27:21;
     ctx.font=`900 ${Math.round(size*sc)}px "Trebuchet MS",system-ui`;
     ctx.lineWidth=4;
     ctx.strokeStyle = n.kind==='hurt'?'#2a0a4a':n.kind==='bleed'?'#3a0000':n.kind==='burn'?'#4a1500':n.kind==='root'?'#123a0e':n.kind==='crit'?'#4a0400':'#5a2a00';
     if(n.kind==='thorn'){ ctx.strokeStyle='#2a1a08'; }
     if(n.kind==='poison') ctx.strokeStyle='#0e3a06';
-    ctx.fillStyle   = n.kind==='poison'?'#8ae84a':n.kind==='thorn'?'#d8a868':n.kind==='hurt'?'#d08bff':n.kind==='bleed'?'#ff4a4a':n.kind==='burn'?'#ff8a3a':n.kind==='root'?'#8fe36a':n.kind==='crit'?'#ff4a2a':'#ffb12b';
+    if(n.kind==='rumor') ctx.strokeStyle='#2a0a4a';
+    ctx.fillStyle   = n.kind==='rumor'?'#c9a2ff':n.kind==='poison'?'#8ae84a':n.kind==='thorn'?'#d8a868':n.kind==='hurt'?'#d08bff':n.kind==='bleed'?'#ff4a4a':n.kind==='burn'?'#ff8a3a':n.kind==='root'?'#8fe36a':n.kind==='crit'?'#ff4a2a':'#ffb12b';
     ctx.strokeText(txt,n.x,y); ctx.fillText(txt,n.x,y);
   }
   ctx.globalAlpha=1;
@@ -9919,6 +9954,7 @@ function netOnData(peer, msg){
       case 'look':  msg.id=from; applyLook(msg); return netToGuests({...msg, t:'look'}, from);
       case 'slow':  { const m=G.monById[msg.id]; if(m && !m.dead){ m.slowT=G.time+(+msg.d||8); m.slowP=clamp(+msg.p||.3,0,.8); } return; }
       case 'vuln':  { const m=G.monById[msg.id]; if(m && !m.dead) m.vulnT=G.time+(+msg.d||5); return; }
+      case 'lure': { for(const id of (msg.ids||[]).slice(0,40)){ const m=G.monById[id]; if(m && !m.dead){ m.lureX=+msg.x||m.x; m.lureT=G.time+0.8; } } return; }   // Lockande sken (gästens irrbloss)
       case 'taunt': { for(const id of (msg.ids||[]).slice(0,40)){ const m=G.monById[id]; if(m && !m.dead){ m.aggro=from; m.aggroT=10; } } return; }   // Hundvisslan
       case 'deaggro': { for(const m of G.monsters) if(m.aggro===from){ m.aggro=null; m.aggroT=0; } return; }   // Kattens bjällra
       case 'lift':  { const m=G.monById[msg.id]; if(m && !m.dead) m.liftAt=G.time; return netToGuests(msg, from); }
