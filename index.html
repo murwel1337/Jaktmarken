@@ -323,6 +323,25 @@ body.touch #win-trade .slot{width:34px;height:34px}body.touch #win-trade .slot i
 body.touch #win-trade .trgrid{grid-template-columns:repeat(9,34px);gap:3px}body.touch #win-trade .trinv{grid-template-columns:repeat(auto-fill,34px);gap:3px;max-height:74px;margin:2px 0 6px}
 body.touch #win-trade .trgold{margin-top:4px}body.touch #win-trade .trstat{margin-bottom:4px;font-size:12px}
 body.touch #win-trade .trcols{flex-wrap:nowrap}body.touch #win-trade .trside{min-width:0;padding:5px}
+.gearpop{position:absolute;inset:0;z-index:5;background:rgba(8,6,4,.55);display:flex;align-items:center;justify-content:center;border-radius:inherit}
+.gearpop.hidden{display:none}
+.gp-card{position:relative;width:min(640px,calc(100% - 16px));max-height:calc(100% - 16px);overflow:auto;background:linear-gradient(#2c2016,#17110b);border:1px solid #c9a0ff;border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,.7);padding:12px 14px;font-size:13px}
+.gp-x{position:absolute;right:8px;top:8px;width:30px;height:28px;border-radius:7px;background:#4a2018;border:1px solid #a0503a;color:#fff;cursor:pointer}
+.gp-body{display:grid;grid-template-columns:1fr 1.15fr;gap:12px;align-items:start}
+.gp-item{padding-right:4px}.gp-item .tt-name{font-size:16px}
+.gp-soul{background:rgba(120,70,190,.18);border:1px solid rgba(201,160,255,.4);border-radius:9px;padding:8px 10px;color:#ecdfff}
+.sp-h{font-weight:800;font-size:14px;margin-bottom:6px}
+.sp-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:6px}
+.sp-c{display:flex;flex-direction:column;align-items:center;padding:5px 3px;border-radius:8px;background:rgba(0,0,0,.25);border:1px solid rgba(201,160,255,.2);opacity:.72;line-height:1.15;text-align:center}
+.sp-c.cur{opacity:1;border-color:#c9a0ff;box-shadow:0 0 10px rgba(201,160,255,.45)}
+.sp-c img{width:30px;height:30px}.sp-c b{font-size:17px;color:#fff}.sp-c span{font-size:11px}.sp-c small{font-size:10px;color:#c9b6e6}
+.sp-t{margin:7px 0 3px;font-weight:800;font-size:12px;color:#d8b0ff;border-top:1px solid rgba(201,160,255,.2);padding-top:5px}
+.sp-r{display:flex;justify-content:space-between;gap:8px;font-size:12.5px;padding:1px 0}.sp-r em{color:#7dff8a;font-style:normal;font-weight:800}
+.sp-g{color:#7dff8a;font-weight:700;text-align:right}.gp-soul .bad{color:#ff9b9b}
+.gp-card .acts{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px}.gp-card .gp-close{margin-left:auto}
+body.touch .gp-card{padding:8px 10px;font-size:12px;width:calc(100% - 10px);max-height:calc(100% - 10px)}
+body.touch .gp-body{gap:8px}body.touch .sp-c img{width:24px;height:24px}body.touch .sp-c b{font-size:14px}body.touch .sp-r{font-size:11.5px}body.touch .gp-card .btn.sm{padding:5px 9px;font-size:12px}
+@media (max-width:560px){ .gp-body{grid-template-columns:1fr} }
 .soulbox{margin:6px 0 2px;padding:5px 7px;border-radius:7px;background:rgba(120,70,190,.18);border:1px solid rgba(201,160,255,.35);font-size:11.5px;color:#e6d6ff;line-height:1.45}
 .soulbox .sbal{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.soulbox .sbal span{display:inline-flex;align-items:center;gap:2px;font-weight:800;opacity:.7}.soulbox .sbal span.cur{opacity:1;color:#fff;text-shadow:0 0 6px #c9a0ff}
 .soulbox img{width:18px;height:18px}.soulbox .bad{color:#ff9b9b}
@@ -663,6 +682,7 @@ body.touch .dk{display:none}
       <div class="detail" id="bagDetail"></div>
     </div>
   </div>
+  <div class="gearpop hidden" id="gearPop"></div>
 </div>
 <div id="win-tal" class="win hidden" data-w="tal">
   <div class="whead"><span>✨ Talanger</span><button class="x" data-close="tal">✕</button></div>
@@ -857,10 +877,10 @@ BASES.hjalm8 = {id:'hjalm8', slot:'hjalm', name:'Varghuva',       req:8, armor:5
 BASES.byxor8 = {id:'byxor8', slot:'byxor', name:'Vargpälsbyxor',  req:8, armor:5, smin:2, smax:3};
 BASES.brost8 = {id:'brost8', slot:'brost', name:'Vargpälsväst',   req:8, armor:5, smin:2, smax:3};
 // Mjuk Mossa: epic byxor från mossabollar (0,2 %) – en kjol av mossa runt midjan
-BASES.byxorMossa = {id:'byxorMossa', slot:'byxor', name:'Mjuk Mossa', req:2, armor:15, fixed:{str:4,int:4,agi:4}, atk:3, xp:4};
+BASES.byxorMossa = {id:'byxorMossa', slot:'byxor', name:'Mjuk Mossa', req:2, armor:15, fixed:{str:1,int:1,agi:1}, atk:1, xp:4};   // nerfad
 // Uppdragsbelöning på Jaktmarken II: fasta stats
 BASES.ringJakt = {id:'ringJakt', slot:'ring', name:'Jägarringen', req:4, armor:1, fixed:{str:2,int:2,agi:2}};
-BASES.ringBar  = {id:'ringBar',  slot:'ring', name:'Blåbärsringen', req:1, armor:0, roll:'bar'};   // 1–5 i en slumpad stat + 0–3 attack
+BASES.ringBar  = {id:'ringBar',  slot:'ring', name:'Blåbärsringen', req:1, armor:0, fixed:{str:1,int:1,agi:1}, atk:1};   // nerfad: 1 i alla stats + 1 attack
 // Uppdragsbelöningar på Jaktmarken III
 BASES.halsSilver  = {id:'halsSilver',  slot:'halsband', name:'Silverhalsband', req:15, armor:2, fixed:{str:0,int:0,agi:0}, atk:2, dodge:2, cdmg:5};   // Silverjägare (epic)
 BASES.halsVarg    = {id:'halsVarg',    slot:'halsband', name:'Vargtandshalsband', req:8, armor:2, fixed:{str:3,int:3,agi:3}};
@@ -976,7 +996,8 @@ function wpnTier(b){
 
 /* Förbrukningsvaror (köps i butiken, staplas upp till 20 per plats i väskan) */
 const STACK_MAX = 20, POT_STACK = 100, SCROLL_SLOTS = 6, SCROLL_CHANCE = 0.6;
-const stackMax = base => CONS[base] && CONS[base].kind==='pot' ? POT_STACK : STACK_MAX;   // drycker (även elixir och bomber) 100 per plats
+const SOUL_STACK = 1000;   // själar: 1000 per plats
+const stackMax = base => CONS[base] && CONS[base].soul ? SOUL_STACK : CONS[base] && CONS[base].kind==='pot' ? POT_STACK : STACK_MAX;   // drycker (även elixir och bomber) 100 per plats
 const CONS = {
   hpPot: {kind:'pot',    name:'HP-dryck',    price:10, sell:2, hp:75, desc:'Återställer 75 HP.'},
   mpPot: {kind:'pot',    name:'Mana-dryck',  price:10, sell:2, mp:50, desc:'Återställer 50 mana.'},
@@ -1894,6 +1915,11 @@ const LS_PREFIX = 'jaktmarken_konto_';
 function localLoad(id){ try{ return JSON.parse(localStorage.getItem(LS_PREFIX+id)||'null'); }catch(e){ return null; } }
 function localSave(a){ try{ localStorage.setItem(LS_PREFIX+a.id, JSON.stringify(a)); }catch(e){} }
 function newAccount(name){ return {v:1, id:name.trim().toLowerCase(), name:name.trim(), savedAt:0, talents:{}, chars:[]}; }
+/* Blåbärsringen och Mjuk Mossa nerfades: gamla exemplar får 1 Str/Int/Agi + 1 attack (scroll- och själsbonusar behålls) */
+function nerfFix(it){
+  if(!it || (it.base!=='ringBar' && it.base!=='byxorMossa')) return;
+  for(const k of ['str','int','agi','atk']){ const v=1+((it.sb&&it.sb[k])||0); if(it.sbase) it.sbase[k]=v; it[k]=v+((it.soulAdd&&it.soulAdd[k])||0); }
+}
 function fixAccount(a){
   a.talents = a.talents||{}; a.chars = a.chars||[];
   a.bank = a.bank||{gold:0, items:[]}; a.bank.gold=Math.max(0,Math.floor(a.bank.gold||0)); a.bank.items=(a.bank.items||[]).filter(it=>it && (BASES[it.base]||CONS[it.base]));
@@ -1923,7 +1949,10 @@ function fixAccount(a){
     if((c.qv||0)<2){ if(c.quests.jakt3 && c.quests.jakt3.state==='claimed') c.quests.jakt4={state:'claimed',prog:{}}; c.qv=2; }
     if(c.qv<3){ for(const [a,b] of [['skr0','skr1'],['vildlw','vild4'],['saga0','saga1'],['gunnar0','gunnar1']]) if(c.quests[b] && !c.quests[a]) c.quests[a]={state:'claimed',prog:{}}; c.qv=3; }
     for(const it of [...c.inv,...Object.values(c.eq)]) if(it && BASES[it.base] && !isCons(it) && !BASES[it.base].fixed) it.name=BASES[it.base].name;
+    for(const it of [...c.inv,...Object.values(c.eq)]) nerfFix(it);
+    for(const t of ['sjal1','sjal2','sjal3']){ const st=c.inv.filter(x=>x&&x.base===t); if(st.length>1){ let tot=st.reduce((n,x)=>n+(x.count||0),0); const keep=[]; for(const x of st){ if(tot<=0) break; x.count=Math.min(SOUL_STACK,tot); tot-=x.count; keep.push(x); } c.inv=c.inv.filter(x=>!(x&&x.base===t)||keep.includes(x)); } }   // själar: 1000 per plats
   }
+  if(a.bank && Array.isArray(a.bank.items)) for(const it of a.bank.items) nerfFix(it);
   return a;
 }
 let saveTimer=null, saving=false;
@@ -1978,7 +2007,7 @@ const ACCT_BONUS = {
   hippie:   {icon:'⚡', v:2,  d:v=>`+${v}% attackhastighet`},
   viskare:  {icon:'⏳', v:1,  d:v=>`${v}% kortare nedkylning`},
   psykopat: {icon:'💥', v:2,  d:v=>`+${v}% kritisk skada`},
-  gata:     {icon:'👊', v:1,  d:v=>`+${v}% skada`},
+  gata:     {icon:'👊', v:1,  d:v=>`+${v} attack`},
 };
 const acctSteps = lvl => lvl>=ACCT_BONUS_LVL ? Math.floor((lvl-ACCT_BONUS_LVL)/5)+1 : 0;
 function acctBest(a, cls){ let b=0; for(const c of (a&&a.chars)||[]) if(c.cls===cls) b=Math.max(b, c.level||0); return b; }
@@ -2021,7 +2050,7 @@ function calcStats(ch){
   s.wMin = w ? w.atkMin : 1; s.wMax = w ? w.atkMax : 1;
   s.oMin = s.dual ? w2.atkMin : 0; s.oMax = s.dual ? w2.atkMax : 0;
   s.bookAtk = bookAtkOf(bb);
-  s.statAtk = s[C.main]*STAT_DMG + s.eqAtk + s.bookAtk + (ch.cls==='skog' ? s.str*tv('s_karn') : 0);   // Kärnved   // klassens huvudstat ger 0,2 skada per poäng
+  s.statAtk = s[C.main]*STAT_DMG + acctB('gata') + s.eqAtk + s.bookAtk + (ch.cls==='skog' ? s.str*tv('s_karn') : 0);   // Kärnved   // klassens huvudstat ger 0,2 skada per poäng
   s.atkMin = s.wMin + s.statAtk; s.atkMax = s.wMax + s.statAtk;
   s.mode = (ch.cls==='hippie' && w && w.wtype==='bage') ? 'bow' : (ch.cls==='viskare' && w && w.wtype==='stav') ? 'whisper' : 'melee';
   s.manaCost = s.mode==='whisper' ? w.req*0.5*(1-tv('v_tyst')/100) : 0;   // 0,5 mana per stavens level
@@ -2533,7 +2562,7 @@ function hurtPlayer(dmg, dir, o={}){
 /* ---------- Trinkets ---------- */
 const HURT_INV = 1.44;   // skyddstid efter en träff (var 1,2 s)
 function trHit(m, dmg, o){   // skademodifierare på dina egna träffar
-  const T=TRS(), id=trk(), p=G.p; let k=(1+cbtV('dmg')/100)*(1+acctB('gata')/100);   // Vredesbrygd · kontobonus från Gatuslagskämpe
+  const T=TRS(), id=trk(), p=G.p; let k=1+cbtV('dmg')/100;   // Vredesbrygd
   if(id==='spjutspets' && m.hp>=m.maxHp-0.01 && G.time>=(T.spCd||0)){ k*=1.2; T.spCd=G.time+3; G.fx.push({type:'text', x:m.x, y:m.y-m.d.h-26, text:'🔺 Första stöten!', color:'#ffd27a', t:0, dur:.8, size:13}); }
   if(id==='tarningar'){ const w=Math.random()<.5; k*=w?1.6:.7; if(Math.random()<.35) G.fx.push({type:'text', x:m.x+rand(-10,10), y:m.y-m.d.h-24, text:w?'🎲 6!':'🎲 1…', color:w?'#7dff8a':'#ff9b9b', t:0, dur:.7, size:12}); }
   if(id==='vargtand' && o.kind==='crit'){ T.vt={n:Math.min(5,((T.vt&&T.vt.t>0)?T.vt.n:0)+1), t:6}; }
@@ -7799,7 +7828,7 @@ function itemHtml(it, where){
   if(isCons(it)){
     const c=CONS[it.base];
     const cr=RAR[c.rarity||'common'];
-    if(c.kind==='mat') return `<div class="tt-name">${c.name}</div><div class="tt-sub">Material</div><div>${c.desc}</div><div style="margin-top:3px">Antal: <b>${it.count}</b> / ${STACK_MAX}</div><div class="tt-sell">Säljvärde: ${c.sell} 🪙 styck</div>`;
+    if(c.kind==='mat') return `<div class="tt-name">${c.name}</div><div class="tt-sub">Material</div><div>${c.desc}</div><div style="margin-top:3px">Antal: <b>${it.count}</b> / ${stackMax(it.base)}</div><div class="tt-sell">Säljvärde: ${c.sell} 🪙 styck</div>`;
     return `<div class="tt-name" style="color:${c.kind==='scroll'?cr.color:''}">${c.name}</div><div class="tt-sub">${c.kind==='pot'?(c.buff?'Elixir (30 minuter)':c.cbt?'Stridsdryck (20 s · delad nedkylning 2 min)':'Dryck'):`Uppgraderingsscroll (${cr.name})`}</div><div>${c.desc}</div>`
       + (c.kind==='scroll'?`<div class="hintx" style="color:#9fb1cb;font-size:11.5px;margin-top:3px">${c.reset?'Fungerar på all utrustning och alla vapen som har scrollats.':'Förbrukar en uppgraderingsplats även om den misslyckas.'} Dra scrollen till ett föremål för att använda den.</div>`:'')
       + `<div style="margin-top:3px">Antal: <b>${it.count}</b> / ${stackMax(it.base)}</div>${c.price?`<div class="tt-sell">Köppris: ${c.price} 🪙</div>`:''}`;
@@ -8061,7 +8090,7 @@ function renderBag(){
   renderBagDetail();
 }
 function renderBagDetail(){
-  const box=$('#bagDetail');
+  const box=$('#bagDetail'); $('#gearPop').classList.add('hidden');
   if(G.ui.scrollMode){
     const sc=G.ch.inv.find(x=>x.uid===G.ui.scrollMode);
     if(sc){ box.innerHTML=`<b>📜 ${CONS[sc.base].name}</b> (${sc.count} st)<div style="margin:4px 0">${G.touch?'Tryck':'Klicka'} på det föremål du vill uppgradera – i väskan eller bland det du har på dig. Föremål som passar lyser grönt. (Du kan också dra scrollen direkt till föremålet.)</div><div class="acts"><button class="btn sm sec" data-act="cancelScroll">Avbryt</button></div>`; return; }
@@ -8085,12 +8114,29 @@ function renderBagDetail(){
     acts+=`<button class="btn sm" data-act="drop">⬇ Släpp på marken</button>`;
     acts+=`<button class="btn sm red" data-act="trash">${G.ui.trash===it.uid?'Säker? Tryck igen':'Släng'}</button>`;
   } else acts+=`<button class="btn sm" data-act="unequip">Ta av</button>`;
-  let soulBox='';
-  if(it.slot!=='trinket'){ const c=soulCost(it), have=consCount(c.type), ok=have>=c.cnt && G.ch.gold>=c.gold, gain=soulGain(it);
-    acts+=`<button class="btn sm purple ${soulTut()&&it.slot==='vapen'?'hl':''}" data-act="soul" ${ok?'':'disabled'}>🔮 ${it.soul?`Uppgradera själ → nivå ${c.n}`:'Ge själ'}</button>`;
-    const sal=['sjal1','sjal2','sjal3'].map(t=>`<span class="${t===c.type?'cur':''}"><img src="${iconURL({base:t})}" alt="">${consCount(t)}</span>`).join('');
-    soulBox=`<div class="soulbox"><div class="sbal">Dina själar: ${sal}</div><div>Nästa nivå (${c.n}) kostar <b class="${have<c.cnt?'bad':''}">${c.cnt} × ${CONS[c.type].name}</b> – du har ${have}${have>=c.cnt?`, <b>${have-c.cnt}</b> kvar efteråt`:''} · <b class="${G.ch.gold<c.gold?'bad':''}">${c.gold} 🪙</b> · chans <b>${soulTut()&&it.slot==='vapen'?'100 % (garanterat i Ylvas uppdrag)':fmtSv(Math.round(c.chance*1000)/10)+'%'}</b></div>${gain.length?`<div>Lyckas den ger den: <b style="color:#7dff8a">${gain.join(', ')}</b></div>`:''}</div>`; }
-  box.innerHTML=`<div class="dinfo">${itemHtml(it,f.where)}${f.where==='inv'&&G.ch.level<it.req?`<div class="hintx" style="margin-top:4px">Du behöver level ${it.req} för att använda detta.</div>`:''}${soulBox}</div><div class="acts">${acts}</div>`;
+  if(it.slot!=='trinket'){ const c=soulCost(it), ok=consCount(c.type)>=c.cnt && G.ch.gold>=c.gold;
+    acts+=`<button class="btn sm purple ${soulTut()&&it.slot==='vapen'?'hl':''}" data-act="soul" ${ok?'':'disabled'}>🔮 ${it.soul?`Uppgradera själ → nivå ${c.n}`:'Ge själ'}</button>`; }
+  const gp=$('#gearPop');
+  gp.innerHTML=`<div class="gp-card"><div class="gp-body"><div class="gp-item">${itemHtml(it,f.where)}${f.where==='inv'&&G.ch.level<it.req?`<div class="hintx" style="margin-top:4px">Du behöver level ${it.req} för att använda detta.</div>`:''}</div>${soulPanelHtml(it)}</div><div class="acts">${acts}<button class="btn sm sec gp-close" data-gpclose="1">✕ Stäng</button></div></div>`;
+  gp.classList.remove('hidden');
+  box.innerHTML=`<div class="hintx">${G.touch?'Tryck':'Klicka'} på ett föremål för att se det.</div>`;
+}
+/* Själspanelen i den stora föremålsrutan: saldo per själstyp, bonusar från själar och vad nästa nivå kostar/ger */
+function soulPanelHtml(it){
+  if(it.slot==='trinket') return '';
+  const c=soulCost(it), have=consCount(c.type), gain=soulGain(it), tut=soulTut()&&it.slot==='vapen';
+  const RNG={sjal1:'Lv 1–5', sjal2:'Lv 6–15', sjal3:'Lv 16+'}, L={atkMin:'Min-attack', atkMax:'Max-attack', armor:'Armor', atk:'Attack', ...STATN};
+  const cards=['sjal1','sjal2','sjal3'].map(t=>`<div class="sp-c ${t===c.type?'cur':''}"><img src="${iconURL({base:t})}" alt=""><b>${consCount(t)}</b><span>${CONS[t].name}</span><small>${t===c.type?'⬅ används här':'för '+RNG[t]}</small></div>`).join('');
+  const add=Object.entries(it.soulAdd||{}).filter(([k,v])=>v>0);
+  const bon=add.length ? add.map(([k,v])=>`<div class="sp-r"><span>${L[k]||k}</span><span>${(it[k]||0)-v} → <b>${it[k]||0}</b> <em>+${v}</em></span></div>`).join('') : `<div class="hintx">Inga bonusar än – ge föremålet en själ.</div>`;
+  return `<div class="gp-soul"><div class="sp-h">🔮 Själar${it.soul?` · nivå <b>${it.soul}</b>`:''}</div>
+    <div class="sp-cards">${cards}</div>
+    <div class="sp-t">Bonus från själar</div>${bon}
+    <div class="sp-t">Nästa nivå (${c.n})</div>
+    <div class="sp-r"><span>Kostar</span><span class="${have<c.cnt?'bad':''}"><b>${c.cnt}</b> × ${CONS[c.type].name} <small>(du har ${have})</small></span></div>
+    <div class="sp-r"><span>Guld</span><span class="${G.ch.gold<c.gold?'bad':''}"><b>${c.gold}</b> 🪙</span></div>
+    <div class="sp-r"><span>Chans</span><span><b>${tut?'100 % (Ylvas uppdrag)':fmtSv(Math.round(c.chance*1000)/10)+' %'}</b></span></div>
+    <div class="sp-r"><span>Ger</span><span class="sp-g">${gain.join(', ')||'–'}</span></div></div>`;
 }
 /* Dra i väskan (som i World of Warcraft):
    scroll → föremål · utrustning → rätt plats på gubben · utrustat föremål → väskan · föremål → annan ruta i väskan */
@@ -8143,6 +8189,8 @@ function endScrDrag(e){
 window.addEventListener('pointerup',endScrDrag); window.addEventListener('pointercancel',endScrDrag);
 $('#win-bag').addEventListener('click',e=>{
   if(eatClick){ eatClick=false; return; }
+  if(e.target.closest('#gearPop')){ if(performance.now()-(G.ui.popT||0)<350) return;
+    if(e.target.closest('[data-gpclose]') || e.target.id==='gearPop'){ G.ui.sel=null; G.ui.trash=null; renderBag(); return; } }
   const bt=e.target.closest('[data-btab]'); if(bt){ G.ui.bagTab=bt.dataset.btab; renderBag(); return; }
   const a=e.target.closest('[data-act]');
   if(a && a.dataset.act==='cancelScroll'){ closeScrollMode(); return; }
@@ -8166,11 +8214,12 @@ $('#win-bag').addEventListener('click',e=>{
 
   const el=e.target.closest('[data-uid]'); if(!el) return;
   if(G.ui.scrollMode){ if(el.dataset.uid===G.ui.scrollMode){ closeScrollMode(); return; } applyScroll(G.ui.scrollMode, el.dataset.uid); return; }
-  G.ui.sel=el.dataset.uid; G.ui.trash=null;
+  G.ui.sel=el.dataset.uid; G.ui.trash=null; G.ui.popT=performance.now();
   $$('#win-bag .slot.sel').forEach(x=>x.classList.remove('sel')); el.classList.add('sel'); renderBagDetail();
 });
 $('#win-bag').addEventListener('dblclick',e=>{
   if(G.ui.scrollMode) return;
+  if(e.target.closest('#gearPop')){ if(performance.now()-(G.ui.popT||0)<700){ const f=findItem(G.ui.sel); if(f && !isCons(f.it)){ if(f.where==='inv') equip(f.it.uid); else unequip(f.slot); G.ui.sel=null; renderBag(); } } return; }   /* dubbelklick utrustar som förut */
   const el=e.target.closest('[data-uid]'); if(!el) return; const f=findItem(el.dataset.uid); if(!f) return;
   if(isCons(f.it)){ if(CONS[f.it.base].kind==='pot') usePot(f.it.base); else { G.ui.scrollMode=f.it.uid; renderBag(); } return; }
   if(f.where==='inv') equip(f.it.uid); else unequip(f.slot);
