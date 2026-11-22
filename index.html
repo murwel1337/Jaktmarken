@@ -51,6 +51,10 @@ label{display:block;font-size:12px;color:var(--muted);margin:10px 0 4px}
 .rowb{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .pill{background:#22324d;border:1px solid #3e5680;border-radius:999px;padding:4px 10px;font-size:12px}
+.abon{display:flex;gap:10px;align-items:center;background:#1a2538;border:1px solid #33476a;border-radius:8px;padding:6px 10px;margin:6px 0;font-size:13px;opacity:.75}
+.abon.on{opacity:1;border-color:#5f8fd0;background:#1e2f4a}
+.abon .ic{font-size:22px}
+.abon small{color:var(--muted)}
 .chars{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin:12px 0}
 .ccard{background:#141d2d;border:2px solid #33456a;border-radius:12px;padding:8px;text-align:center;cursor:pointer;position:relative}
 .ccard:hover{border-color:#6d9be0}
@@ -974,7 +978,7 @@ function wpnTier(b){
 const STACK_MAX = 20, POT_STACK = 100, SCROLL_SLOTS = 6, SCROLL_CHANCE = 0.6;
 const stackMax = base => CONS[base] && CONS[base].kind==='pot' ? POT_STACK : STACK_MAX;   // drycker (även elixir och bomber) 100 per plats
 const CONS = {
-  hpPot: {kind:'pot',    name:'HP-dryck',    price:10, sell:2, hp:100, desc:'Återställer 100 HP.'},
+  hpPot: {kind:'pot',    name:'HP-dryck',    price:10, sell:2, hp:75, desc:'Återställer 75 HP.'},
   mpPot: {kind:'pot',    name:'Mana-dryck',  price:10, sell:2, mp:50, desc:'Återställer 50 mana.'},
   scrStr:{kind:'scroll', name:'Scroll: Str +1',        price:100, target:'gear',   stat:'str', amt:1, desc:'Utrustning (ej vapen): 60% chans till +1 Str.'},
   scrInt:{kind:'scroll', name:'Scroll: Int +1',        price:100, target:'gear',   stat:'int', amt:1, desc:'Utrustning (ej vapen): 60% chans till +1 Int.'},
@@ -995,7 +999,7 @@ Object.assign(CONS, {
   bomb1:    {kind:'pot', bomb:{dmg:90, r:85},  name:'Bärbomb',  sell:6,  desc:'Kastas mot närmaste fiende och exploderar: 90 skada på alla fiender i området.'},
   bomb2:    {kind:'pot', bomb:{dmg:300, r:110, fire:true}, name:'Drakbomb', sell:20, desc:'Kastas mot närmaste fiende och exploderar i eld: 300 skada på alla fiender i ett stort område.'},
   mpPot2:   {kind:'pot', name:'Stor mana-dryck', mp:150, big:true, price:50, sell:6, desc:'Återställer 150 mana. Köps i butiken eller bryggs av Potionärer.'},
-  hpPot3:   {kind:'pot', name:'Jätte-HP-dryck', hp:1000, big:true, sell:12, desc:'Återställer 1000 HP. Bryggs av Potionärer. 1,5 s nedkylning på drycker efteråt.'},
+  hpPot3:   {kind:'pot', name:'Jätte-HP-dryck', hp:500, big:true, sell:12, desc:'Återställer 500 HP. Bryggs av Potionärer. 1,5 s nedkylning på drycker efteråt.'},
   mpPot3:   {kind:'pot', name:'Jätte-mana-dryck', mp:400, big:true, sell:12, desc:'Återställer 400 mana. Bryggs av Potionärer.'},
   elxExp:   {kind:'pot', buff:'exp',  v:10, name:'Jägarelixir',        sell:15, desc:'+10 % EXP från monster i 30 minuter.'},
   elxExp2:  {kind:'pot', buff:'exp',  v:20, name:'Stort jägarelixir',  sell:40, desc:'+20 % EXP från monster i 30 minuter.'},
@@ -1007,7 +1011,7 @@ Object.assign(CONS, {
   cbDef:    {kind:'pot', cbt:'def', v:25, name:'Barkhudsbrygd', sell:20, desc:'Stridsdryck: du tar 25 % mindre skada i 20 sekunder. Alla stridsdrycker delar 2 minuters nedkylning.'},
   cbSpd:    {kind:'pot', cbt:'spd', v:30, name:'Vindbrygd',     sell:20, desc:'Stridsdryck: +30 % rörelsehastighet i 20 sekunder. Alla stridsdrycker delar 2 minuters nedkylning.'},
   cbCdr:    {kind:'pot', cbt:'cdr', v:30, name:'Tidsbrygd',     sell:80, desc:'Stridsdryck: förmågor du använder får 30 % kortare nedkylning i 20 sekunder. Alla stridsdrycker delar 2 minuters nedkylning. Dyr att brygga.'},
-  hpPot2:   {kind:'pot', name:'Stor HP-dryck', hp:400, big:true, price:50, sell:8, desc:'Återställer 400 HP. Köps i butiken, droppas av vargar och starkare monster och ges av senare uppdrag.'},
+  hpPot2:   {kind:'pot', name:'Stor HP-dryck', hp:200, big:true, price:50, sell:8, desc:'Återställer 200 HP. Köps i butiken, droppas av vargar och starkare monster och ges av senare uppdrag.'},
   scrReset:{kind:'scroll', reset:true, rarity:'rare', target:'any', price:500, name:'Scroll reset', desc:'Nollställer alla scrollplatser på ett föremål och tar bort alla scrolleffekter (själar påverkas inte). Lyckas alltid.'},
   drakfjall:{kind:'mat', name:'Drakfjäll',  sell:15, desc:'Glänsande blå fjäll från drakar. Används av Crafting.'},
   fosfor:   {kind:'mat', name:'Vit fosfor', sell:15, desc:'Glödande vit fosfor från drakarnas eldsvalg. Används av Potionärer till de finaste elixiren.'},
@@ -1172,16 +1176,6 @@ const TREES = {
     {id:'v_rotlang',  tier:2, max:3, icon:'🌳', name:'Djupa rötter', v:[1,2,3], d:v=>`Snärjande rötter håller fienderna ${v} sekund${v>1?'er':''} längre.`},
     {id:'v_ekoskada', tier:3, max:3, icon:'📢', name:'Mäktigt eko', v:[15,30,45], d:v=>`Ekande viskning gör ${v}% mer skada.`},
     {id:'v_irrdans',  tier:3, max:3, icon:'💫', name:'Irrblossdans', v:[25,50,75], d:v=>`Irrblossets skott gör ${v}% mer skada.`},
-  ]},
-  // Kontoträdet delas av alla gubbar på kontot
-  konto:{name:'Konto', account:true, talents:[
-    {id:'k_exp',   tier:1, max:3, icon:'📚', name:'Vishet',        v:[5,10,15], d:v=>`+${v}% EXP från monster.`},
-    {id:'k_atk',   tier:1, max:3, icon:'⚔️', name:'Slagkraft',     v:[2,4,6],   d:v=>`+${v} attack.`},
-    {id:'k_stats', tier:1, max:3, icon:'💪', name:'Allround',      v:[1,2,3],   d:v=>`+${v} Str, Int och Agi.`},
-    {id:'k_move',  tier:2, max:3, icon:'🏃', name:'Lätta steg',    v:[2,4,6],   d:v=>`+${v}% rörelsehastighet.`},
-    {id:'k_drop',  tier:2, max:3, icon:'🍀', name:'Skattjägare',   v:[2,4,6],   d:v=>`+${v}% större chans att vapen och utrustning droppar.`},
-    {id:'k_aspd',  tier:2, max:3, icon:'⚡', name:'Snabba händer', v:[2,4,6],   d:v=>`+${v}% attackhastighet.`},
-    {id:'k_cdr',   tier:3, max:3, icon:'⏳', name:'Tålamod',       v:[5,10,15], d:v=>`${v}% kortare nedkylning på förmågor.`},
   ]},
 };
 TREES.psyko = {name:'Psyko', talents:[
@@ -1459,7 +1453,7 @@ for(const ev of ['pointerdown','keydown','touchstart']) window.addEventListener(
 const expReqOld = l => Math.round(15*Math.pow(1.5, l-1));
 const expReqV2 = l => l<10 ? expReqOld(l) : Math.round(expReqOld(9)*Math.pow(1.15, l-9));
 const expReq = l => l<15 ? expReqV2(l) : Math.round(expReqV2(14)*Math.pow(1.2, l-14));   // +50 % per level upp till 10, +15 % per level 10–14, +20 % per level från 15
-const TALENT_LVL = 10;   // klassernas talangträd låses upp i level 10 (kontoträdet som förut: 1 poäng per 5 levlar)
+const TALENT_LVL = 10;   // klassernas talangträd låses upp i level 10
 
 /* =====================================================================
    VÄRLD: Jaktmarken I (inspirerad av Henesys Hunting Ground I)
@@ -1976,7 +1970,20 @@ function tv(id){ const r=rank(id); return r ? TAL[id].v[r-1] : 0; }
 function charSpent(ch){ return Object.values(ch.talents).reduce((a,b)=>a+b,0); }
 function charAvail(){ return Math.max(0, G.ch.level-(TALENT_LVL-1)) - charSpent(G.ch); }
 function acctPoints(a){ const best={}; for(const c of a.chars) best[c.cls]=Math.max(best[c.cls]||0, c.level); return Object.values(best).reduce((s,l)=>s+Math.floor(l/5),0); }
-function acctAvail(){ return acctPoints(G.acct) - Object.values(G.acct.talents).reduce((a,b)=>a+b,0); }
+/* Kontobonusar (ersätter kontoträdet): kontots högsta gubbe i varje klass ger en bonus till ALLA gubbar på kontot.
+   Steg 1 i level 10, +1 steg var 5:e level (15, 20, 25 …). Gamla kontotalanger (acct.talents) ligger kvar i sparfilen men används inte. */
+const ACCT_BONUS_LVL = 10;
+const ACCT_BONUS = {
+  skog:     {icon:'❤️', v:50, d:v=>`+${v} max-HP`},
+  hippie:   {icon:'⚡', v:2,  d:v=>`+${v}% attackhastighet`},
+  viskare:  {icon:'⏳', v:1,  d:v=>`${v}% kortare nedkylning`},
+  psykopat: {icon:'💥', v:2,  d:v=>`+${v}% kritisk skada`},
+  gata:     {icon:'👊', v:1,  d:v=>`+${v}% skada`},
+};
+const acctSteps = lvl => lvl>=ACCT_BONUS_LVL ? Math.floor((lvl-ACCT_BONUS_LVL)/5)+1 : 0;
+function acctBest(a, cls){ let b=0; for(const c of (a&&a.chars)||[]) if(c.cls===cls) b=Math.max(b, c.level||0); return b; }
+function acctB(cls){ return G.acct && ACCT_BONUS[cls] ? acctSteps(acctBest(G.acct,cls))*ACCT_BONUS[cls].v : 0; }
+function acctBonusShort(a){ return Object.keys(ACCT_BONUS).map(k=>{ const n=acctSteps(acctBest(a,k)); return n ? ACCT_BONUS[k].icon+' '+ACCT_BONUS[k].d(n*ACCT_BONUS[k].v) : ''; }).filter(Boolean); }
 
 /* Agi ger kritisk chans och undvikande, Int ger kortare nedkylning. 1 % per poäng, men varje nytt poäng
    ger 0,01 procentenheter mindre än det förra (5 → 4,9 %, 50 → 37,75 %, 100 → 50,5 %, sedan inget mer). */
@@ -1991,30 +1998,30 @@ const CDR_CAP = 50;   // Int → kortare nedkylning: samma skalning som Agi (1 %
 const agiPct = (agi,lvl) => Math.min(AGI_CAP, Math.max(0,agi)*AGI_PCT(lvl));
 function calcStats(ch){
   const C = CLASSES[ch.cls], L = ch.level-1;
-  const bb = bookStatBonus(ch), ka = tv('k_stats');
+  const bb = bookStatBonus(ch), ka = 0;
   const ex = (ch===G.ch) ? elixV('stat') : 0;
   const s = {str:5+L+bb+ka+ex, int:5+L+bb+ka+ex, agi:5+L+bb+ka+ex, armor:0, book:bb};
   s[C.main] += L;   // varje level: +2 i klassens huvudstat, +1 i övriga
   s.eqAtk=0; s.eqMove=0;
   for(const k in ch.eq){ const it=ch.eq[k]; if(!it) continue; s.armor+=it.armor||0; for(const st of STATS) s[st]+=it[st]||0; if(it.slot!=='vapen') s.eqAtk+=it.atk||0; s.eqMove+=it.move||0; s.xpPct=(s.xpPct||0)+(it.xp||0); s.cdmg=(s.cdmg||0)+(it.cdmg||0); s.eqCdmg=(s.eqCdmg||0)+(it.cdmg||0); s.eqDodge=(s.eqDodge||0)+(it.dodge||0); s.eqAspd=(s.eqAspd||0)+(it.aspd||0); s.eqHpreg=(s.eqHpreg||0)+(it.hpreg||0); s.eqCdr=(s.eqCdr||0)+(it.cdr||0); }
-  s.crit = agiPct(s.agi,ch.level)*STAT_SCALE; s.dodge = Math.min(AGI_CAP, agiPct(s.agi,ch.level)*STAT_SCALE + (s.eqDodge||0)); s.cdr = Math.min(CDR_CAP, Math.max(0,s.int)*AGI_PCT(ch.level)*STAT_SCALE + (s.eqCdr||0));   // Agi→crit/undvikande och Int→nedkylning: 70 %
-  s.maxHp = Math.round(50 + s.str*10);
+  s.crit = agiPct(s.agi,ch.level)*STAT_SCALE; s.dodge = Math.min(AGI_CAP, agiPct(s.agi,ch.level)*STAT_SCALE + (s.eqDodge||0)); s.cdr = Math.min(CDR_CAP, Math.max(0,s.int)*AGI_PCT(ch.level)*STAT_SCALE + (s.eqCdr||0) + acctB('viskare'));   // Agi→crit/undvikande och Int→nedkylning: 70 % · kontobonus från Viskare
+  s.maxHp = Math.round(50 + s.str*10 + acctB('skog'));   // kontobonus från Skogshuggare
   s.maxMp = C.noMana ? 0 : Math.round((20 + s.int*10)*(1+tv('v_klok')/100));
   s.crit = Math.min(100, s.crit + tv('h_skarp') + (G.p && G.ch===ch && G.p.ssT>0 ? tv('p_skugga') : 0));   // Ur skuggorna: efter Shadowstep
-  s.cdmg = (s.cdmg||0) + tv('h_vass') + tv('t_cdmg');   // Vass spets
+  s.cdmg = (s.cdmg||0) + tv('h_vass') + tv('t_cdmg') + acctB('psykopat');   /* kontobonus från Psykopat */   // Vass spets
   s.hpReg = s.str*0.1 + (s.eqHpreg||0);
   if(G.p && G.ch===ch && G.p.regenT>0) s.hpReg *= 1 + tv('s_kada')/100;   // Kådläkning: +300%
   s.mpReg = C.noMana ? 0 : s.int*0.1;
   const w2 = ch.eq.vapen2;
   s.dual = ch.cls==='psykopat' && !!ch.eq.vapen && ch.eq.vapen.wtype==='kniv' && !!w2 && w2.wtype==='kniv';   // två knivar
-  s.aspd = 1 + C.aspd + tv('k_aspd')/100 + tv('h_snabb')/100 + tv('p_snabb')/100 + (s.dual ? DUAL_ASPD : 0) + (G.p && G.ch===ch && G.p.ssT>0 ? tv('t_ssaspd')/100 : 0) + (G.p && G.ch===ch && G.p.buffT>0 ? 1 : 0) + (s.eqAspd||0)/100 - (rank('g_tung')?0.05:0);   // Flower power: +100% (Agi ger inte längre attackhastighet)
-  s.move = 1 + tv('k_move')/100 + s.eqMove/100;
+  s.aspd = 1 + C.aspd + acctB('hippie')/100 + tv('h_snabb')/100 + tv('p_snabb')/100 + (s.dual ? DUAL_ASPD : 0) + (G.p && G.ch===ch && G.p.ssT>0 ? tv('t_ssaspd')/100 : 0) + (G.p && G.ch===ch && G.p.buffT>0 ? 1 : 0) + (s.eqAspd||0)/100 - (rank('g_tung')?0.05:0);   // Flower power: +100% (Agi ger inte längre attackhastighet)
+  s.move = 1 + s.eqMove/100;
   s.range = 1 + tv('h_range')/100;
   const w = ch.eq.vapen;
   s.wMin = w ? w.atkMin : 1; s.wMax = w ? w.atkMax : 1;
   s.oMin = s.dual ? w2.atkMin : 0; s.oMax = s.dual ? w2.atkMax : 0;
   s.bookAtk = bookAtkOf(bb);
-  s.statAtk = s[C.main]*STAT_DMG + tv('k_atk') + s.eqAtk + s.bookAtk + (ch.cls==='skog' ? s.str*tv('s_karn') : 0);   // Kärnved   // klassens huvudstat ger 0,2 skada per poäng
+  s.statAtk = s[C.main]*STAT_DMG + s.eqAtk + s.bookAtk + (ch.cls==='skog' ? s.str*tv('s_karn') : 0);   // Kärnved   // klassens huvudstat ger 0,2 skada per poäng
   s.atkMin = s.wMin + s.statAtk; s.atkMax = s.wMax + s.statAtk;
   s.mode = (ch.cls==='hippie' && w && w.wtype==='bage') ? 'bow' : (ch.cls==='viskare' && w && w.wtype==='stav') ? 'whisper' : 'melee';
   s.manaCost = s.mode==='whisper' ? w.req*0.5*(1-tv('v_tyst')/100) : 0;   // 0,5 mana per stavens level
@@ -2526,7 +2533,7 @@ function hurtPlayer(dmg, dir, o={}){
 /* ---------- Trinkets ---------- */
 const HURT_INV = 1.44;   // skyddstid efter en träff (var 1,2 s)
 function trHit(m, dmg, o){   // skademodifierare på dina egna träffar
-  const T=TRS(), id=trk(), p=G.p; let k=1+cbtV('dmg')/100;   // Vredesbrygd
+  const T=TRS(), id=trk(), p=G.p; let k=(1+cbtV('dmg')/100)*(1+acctB('gata')/100);   // Vredesbrygd · kontobonus från Gatuslagskämpe
   if(id==='spjutspets' && m.hp>=m.maxHp-0.01 && G.time>=(T.spCd||0)){ k*=1.2; T.spCd=G.time+3; G.fx.push({type:'text', x:m.x, y:m.y-m.d.h-26, text:'🔺 Första stöten!', color:'#ffd27a', t:0, dur:.8, size:13}); }
   if(id==='tarningar'){ const w=Math.random()<.5; k*=w?1.6:.7; if(Math.random()<.35) G.fx.push({type:'text', x:m.x+rand(-10,10), y:m.y-m.d.h-24, text:w?'🎲 6!':'🎲 1…', color:w?'#7dff8a':'#ff9b9b', t:0, dur:.7, size:12}); }
   if(id==='vargtand' && o.kind==='crit'){ T.vt={n:Math.min(5,((T.vt&&T.vt.t>0)?T.vt.n:0)+1), t:6}; }
@@ -2990,7 +2997,7 @@ function useAbility(id){
   if(c.mp && G.ch.mp<c.mp){ throttleMsg('mana2','Inte tillräckligt med mana!','#9cc6ff'); return false; }
   if(c.hp && G.ch.hp<=c.hp+1){ throttleMsg('hp2','Inte tillräckligt med HP!','#ff9b9b'); return false; }
   if(a.can && !a.can()) return false;
-  const cd=a.fixedCd ? a.cd(r) : a.cd(r)*(1-tv('k_cdr')/100)*(1-G.stats.cdr/100)*(1-cbtV('cdr')/100);   // Tidsbrygd
+  const cd=a.fixedCd ? a.cd(r) : a.cd(r)*(1-G.stats.cdr/100)*(1-cbtV('cdr')/100);   // Tidsbrygd
   G.ch.mp-=c.mp; G.ch.hp-=c.hp; p.cds[id]=cd; p.cdMax=p.cdMax||{}; p.cdMax[id]=cd;
   if(G.ui.newSp && G.ui.newSp.id===id){ G.ui.newSp=null; buildHotbar(); renderTouchSkills(); }
   ABIL_USE[id](r); SFX.skill(id);
@@ -3280,7 +3287,7 @@ function onLevelUp(){
   for(let i=0;i<30;i++) particle(p.x+rand(-20,20), p.y-rand(0,60), pick(['#ffe066','#fff','#ffb341']), rand(-60,60), rand(-260,-80), 1.1, 3, 120);
   log(`⭐ Level ${ch.level}! +2 ${({str:'Str',int:'Int',agi:'Agi'})[CLASSES[ch.cls].main]}, +1 i övriga stats${ch.level>=TALENT_LVL?' samt +1 talangpoäng':''}.`, '#ffe066');
   if(ch.level===TALENT_LVL) log('✨ Talangträden är nu upplåsta! Öppna dem med T.','#ffe066');
-  if(ch.level%5===0) log('🌍 Du fick ett kontopoäng till det gemensamma kontoträdet!', '#9fe0ff');
+  if(ch.level>=ACCT_BONUS_LVL && (ch.level-ACCT_BONUS_LVL)%5===0 && acctBest(G.acct,ch.cls)===ch.level){ const B=ACCT_BONUS[ch.cls]; log(`🌍 Kontobonus: din ${CLASSES[ch.cls].name} ger nu ${B.icon} ${B.d(acctB(ch.cls))} till alla gubbar på kontot!`, '#9fe0ff'); }
   toast(`<b style="font-size:20px;color:#ffe066">LEVEL UP!</b><br>Du är nu level ${ch.level}`);
   const lvlQ=QUEST_ORDER.filter(id=>(QUESTS[id].lvl||1)===ch.level && questState(id)==='offer');
   if(lvlQ.some(id=>NPCS[QUESTS[id].npc].map===G.mapId)) log('❗ Nytt uppdrag tillgängligt här – se uppdragsrutan uppe till höger.','#ffe066');
@@ -7695,7 +7702,7 @@ function qPressEnd(e){
   qUse(q.f); if(q.inPanel){ G.ui.qOpen=false; qKey=''; }
 }
 window.addEventListener('pointerup', qPressEnd); window.addEventListener('pointercancel', qPressEnd);
-function updateTalDot(){ if(!G.ch) return; $('#talDot').classList.toggle('hidden', !(charAvail()>0 || acctAvail()>0)); }
+function updateTalDot(){ if(!G.ch) return; $('#talDot').classList.toggle('hidden', !(charAvail()>0)); }
 const mmc=$('#minimap').getContext('2d');
 function drawMinimap(){
   const mm=$('#minimap'), W=mm.width, H=mm.height; if(!W) return;
@@ -8266,7 +8273,7 @@ function drawPortrait(cnv, cls, eq, sc, app){
 function treeSpent(talents,tk){ return TREES[tk].talents.reduce((s,t)=>s+(talents[t.id]||0),0); }
 const tierReq = tier => 3*(tier-1);   // T2 kräver 3 poäng i trädet, T3 kräver 6
 function canLearn(t){
-  const tree=TREES[t.tree], acc=!!tree.account, tl=acc?G.acct.talents:G.ch.talents, av=acc?acctAvail():charAvail();
+  const tree=TREES[t.tree], acc=!!tree.account, tl=acc?G.acct.talents:G.ch.talents, av=charAvail();
   if(av<=0 || (tl[t.id]||0)>=t.max) return false;
   if(treeSpent(tl,t.tree) < tierReq(t.tier)) return false;
   return true;
@@ -8285,16 +8292,24 @@ function resetTree(tk){
   if(tk==='bark') G.p.regenT=0;
   recalc(); buildHotbar(); renderTouchSkills(); updateTalDot(); renderTal(); markDirty(true);
 }
+function acctBonusHtml(){
+  let h=`<div class="shopinfo">Din <b>högsta gubbe i varje klass</b> ger en bonus till <b>alla</b> gubbar på kontot <b>${esc(G.acct.name)}</b>. Bonusen börjar i level ${ACCT_BONUS_LVL} och ökar var 5:e level (15, 20, 25 …).</div>`;
+  for(const k of Object.keys(ACCT_BONUS)){
+    const B=ACCT_BONUS[k], L=acctBest(G.acct,k), n=acctSteps(L), nx=n ? ACCT_BONUS_LVL+n*5 : ACCT_BONUS_LVL;
+    h+=`<div class="abon ${n?'on':''}"><span class="ic">${B.icon}</span><div><b>${CLASSES[k].name}</b> <small>${L?'högst Lv. '+L:'ingen gubbe än'}</small><br>${n?`Ger nu: <b>${B.d(n*B.v)}</b>`:'<span class="hintx">Ingen bonus än</span>'} <small class="nx">· Nästa: ${B.d((n+1)*B.v)} i level ${nx}</small></div></div>`;
+  }
+  return h;
+}
 function renderTal(){
   const ch=G.ch, C=CLASSES[ch.cls], tabs=[...C.trees,'konto'];
   if(!tabs.includes(G.ui.talTab)) G.ui.talTab=C.trees[0];
   const tk=G.ui.talTab, tree=TREES[tk];
-  let h=`<div class="tabs">${tabs.map(k=>`<button class="tab ${k===tk?'on':''} ${TREES[k].locked?'lock':''}" data-tab="${k}">${TREES[k].locked?'🔒 ':''}${k==='konto'?'🌍 ':''}${TREES[k].name}</button>`).join('')}</div>`;
+  let h=`<div class="tabs">${tabs.map(k=>`<button class="tab ${k===tk?'on':''} ${TREES[k]&&TREES[k].locked?'lock':''}" data-tab="${k}">${TREES[k]&&TREES[k].locked?'🔒 ':''}${k==='konto'?'🌍 Kontobonus':TREES[k].name}</button>`).join('')}</div>`;
+  if(tk==='konto'){ $('#talBody').innerHTML=h+acctBonusHtml(); return; }
   if(tree.locked){ $('#talBody').innerHTML=h+`<div class="lockedtree">🔒 ${tree.name} för ${C.name} kommer i en senare uppdatering.</div>`; return; }
-  const acc=!!tree.account, tl=acc?G.acct.talents:ch.talents, av=acc?acctAvail():charAvail(), spent=treeSpent(tl,tk);
+  const acc=!!tree.account, tl=acc?G.acct.talents:ch.talents, av=charAvail(), spent=treeSpent(tl,tk);
   h+=`<div class="tinfo"><span>${acc?'Kontopoäng':'Talangpoäng'} kvar: <b>${av}</b></span><span>Spenderat i ${tree.name}: <b>${spent}</b></span></div>`;
-  if(!acc && ch.level<TALENT_LVL) h+=`<div class="pstat" style="color:#ffe08a">🔒 Talangträden låses upp i level ${TALENT_LVL}. Från level ${TALENT_LVL} får du 1 talangpoäng per level. (Kontoträdet fungerar redan – 1 poäng per 5 levlar.)</div>`;
-  if(acc) h+=`<div class="shopinfo">Du får 1 kontopoäng per 5 levlar i varje klass (din högsta gubbe i varje klass räknas). Trädet delas av alla gubbar på kontot <b>${esc(G.acct.name)}</b>.</div>`;
+  if(!acc && ch.level<TALENT_LVL) h+=`<div class="pstat" style="color:#ffe08a">🔒 Talangträden låses upp i level ${TALENT_LVL}. Från level ${TALENT_LVL} får du 1 talangpoäng per level. (Kontobonusen hittar du under fliken 🌍 Kontobonus.)</div>`;
   for(const tier of [...new Set(tree.talents.map(x=>x.tier))].sort()){
     const need=tierReq(tier), locked = spent<need;
     h+=`<div class="tier ${locked?'locked':''}"><div class="tlabel">T${tier}${tier>1?`<small>${locked?`kräver ${need} poäng i trädet (${spent}/${need})`:'upplåst'}</small>`:''}</div>`;
@@ -9540,7 +9555,7 @@ function showSelect(){
   $('#hud').classList.add('hidden'); $('#touchUI').classList.add('hidden'); $$('.win').forEach(w=>w.classList.add('hidden'));
   const a=G.acct;
   showScreen(`<div class="card">
-    <div class="rowb"><h2>Hej, ${esc(a.name)}!</h2><span class="pill">🌍 Kontopoäng: ${acctPoints(a)}</span></div>
+    <div class="rowb"><h2>Hej, ${esc(a.name)}!</h2><span class="pill" title="Kontobonus: din högsta gubbe i varje klass ger en bonus till alla gubbar från level 10 (ökar var 5:e level).">🌍 ${acctBonusShort(a).join(' · ')||'Kontobonus från level 10'}</span></div>
     <div style="color:var(--muted);font-size:13px">${a.chars.length?'Välj en gubbe att spela med.':'Du har inga gubbar än – skapa din första!'}</div>
     <div class="chars">${a.chars.map((c,i)=>`<div class="ccard" data-ci="${i}"><button class="del" data-del="${i}" title="Ta bort">🗑</button><button class="edit" data-edit="${i}" title="Ändra utseende">✏️</button><canvas width="200" height="220"></canvas><div class="cn">${esc(c.name)}</div><div class="cl">${CLASSES[c.cls].name} · Lv. ${c.level}</div></div>`).join('')}</div>
     <div class="row"><button class="btn gold" id="btnNew">+ Ny gubbe</button><button class="btn sec" id="btnDb">📚 Databas</button><button class="btn sec" id="btnTop">🏆 Topplista</button><button class="btn sec" id="btnOut">Byt konto</button></div>
