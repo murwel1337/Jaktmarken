@@ -861,7 +861,7 @@ const TRINK = {
   tarningar:   {name:'Banditens tärningar',   req:18, rar:'epic', d:'Varje träff kastar tärning: 50 % chans till +60 % skada, annars −30 %. Lite bättre i snitt – men aldrig att lita på.', mobs:['bandit']},
   glod:        {name:'Askdrakens glöd',       req:20, rar:'legendary', d:'Dina träffar sätter eld på fienden: 25 % av din basattack per sekund i 4 sekunder.', mobs:['askdrake']},
   solkrona:    {name:'Solkronan',             req:21, rar:'legendary', d:'Samlar solljus. Var 10:e sekund, när en fiende är nära, flammar den upp: 80 % av din basattack till alla fiender runt dig och du helas 3 % av ditt max-HP.', mobs:['solros']},
-  mosstuss:    {name:'Mosstuss',              req:2,  rar:'rare', d:'Hoppa på fienderna! Landar du ovanpå ett monster studsar du upp igen och gör 150 % av din basattack. Studsa vidare från monster till monster.', mobs:['mossa']},
+  mosstuss:    {name:'Mosstuss',              req:2,  rar:'rare', d:'Hoppa på fienderna! Landar du ovanpå ett monster studsar du upp igen och gör 150 % av din basattack. Studsa vidare från monster till monster. Bedövar fienden i 1 sekund (5 sekunders nedkylning).', mobs:['mossa']},
   jattekarna:  {name:'Jättebärets kärna',     req:15, rar:'epic', use:true, cd:60, d:'Använd: svälla upp som ett jättebär i 8 sekunder – du tar 40 % mindre skada men går 30 % långsammare.', mobs:['jattebar']},
   rotfaste:    {name:'Rotfäste',              req:16, rar:'epic', d:'Står du still en halv sekund slår du rot: 20 % mindre skada och +15 % skada så länge du står kvar. Värdelös om du springer runt.', mobs:[]},
   stennave:    {name:'Stenpappans näve',      req:18, rar:'epic', use:true, cd:40, d:'Använd: slå näven i marken – alla fiender runt dig tar 200 % av din basattack och bedövas i 1 sekund.', mobs:['stenappa']},
@@ -2353,9 +2353,11 @@ function useInputs(I){
 
 const CONTACT_H = 34;
 const EDGE = 13;   // man kan stå en bit ut över kanten innan man trillar   // höjden på spelarens träffyta mot monster vid beröring (huvudet räknas inte)
+const MOSS_STUN = 1, MOSS_STUN_CD = 5;
 function mossStomp(m){   // Mosstuss: hoppa på monstret och studsa upp igen
   const p=G.p, T=TRS(); T.stompT=.25; T.stompN=(T.stompN||0)+1;
   hitMonster(m, Math.max(1,Math.round(rollAtk()*1.5)), {dir:p.face, noKb:true});
+  if(G.time>=(T.stunCd||0) && !m.dead){ T.stunCd=G.time+MOSS_STUN_CD; stunMonster(m, MOSS_STUN); }   // bedövar 1 s, 5 s nedkylning
   p.y=m.y-m.d.h-2; p.vy=-PHY.jump*.85; p.dj=false; p.knockT=0; SFX.jump();
   for(let i=0;i<12;i++) particle(p.x+rand(-14,14), p.y, pick(['#6aa83a','#9fe08a','#3e7a2a','#d8f0a0']), rand(-120,120), rand(-160,-20), .5, rand(2,4), 500);
   if(T.stompN>=3) G.fx.push({type:'text', x:p.x, y:p.y-p.h-18, text:`🌿 Studs ×${T.stompN}!`, color:'#9fe08a', t:0, dur:.7, size:13});
@@ -8149,12 +8151,14 @@ function renderBagDetail(){
     acts+=`<button class="btn sm" data-act="drop">⬇ Släpp på marken</button>`;
     acts+=`<button class="btn sm red" data-act="trash">${G.ui.trash===it.uid?'Säker? Tryck igen':'Släng'}</button>`;
   } else acts+=`<button class="btn sm" data-act="unequip">Ta av</button>`;
-  if(it.slot!=='trinket'){ const c=soulCost(it), ok=consCount(c.type)>=c.cnt && G.ch.gold>=c.gold;
-    acts+=`<button class="btn sm purple ${soulTut()&&it.slot==='vapen'?'hl':''}" data-act="soul" ${ok?'':'disabled'}>🔮 ${it.soul?`Uppgradera själ → nivå ${c.n}`:'Ge själ'}</button>`; }
-  const gp=$('#gearPop');
-  gp.innerHTML=`<div class="gp-card"><div class="gp-body"><div class="gp-item">${itemHtml(it,f.where)}${f.where==='inv'&&G.ch.level<it.req?`<div class="hintx" style="margin-top:4px">Du behöver level ${it.req} för att använda detta.</div>`:''}</div>${soulPanelHtml(it)}</div><div class="acts">${acts}<button class="btn sm sec gp-close" data-gpclose="1">✕ Stäng</button></div></div>`;
-  gp.classList.remove('hidden');
-  box.innerHTML=`<div class="hintx">${G.touch?'Tryck':'Klicka'} på ett föremål för att se det.</div>`;
+  if(it.slot!=='trinket') acts+=`<button class="btn sm purple ${soulTut()&&it.slot==='vapen'?'hl':''}" data-act="soulpop">🔮 Själ${it.soul?` (nivå ${it.soul})`:''}</button>`;
+  box.innerHTML=`<div class="dinfo">${itemHtml(it,f.where)}</div><div class="acts">${acts}</div>`;
+  if(G.ui.soulPop===it.uid && it.slot!=='trinket'){   // stora själsrutan (öppnas med 🔮 Själ)
+    const c=soulCost(it), ok=consCount(c.type)>=c.cnt && G.ch.gold>=c.gold;
+    const gp=$('#gearPop');
+    gp.innerHTML=`<div class="gp-card"><div class="gp-body"><div class="gp-item">${itemHtml(it,f.where)}</div>${soulPanelHtml(it)}</div><div class="acts"><button class="btn sm purple ${soulTut()&&it.slot==='vapen'?'hl':''}" data-act="soul" ${ok?'':'disabled'}>🔮 ${it.soul?`Uppgradera själ → nivå ${c.n}`:'Ge själ'}</button><button class="btn sm sec gp-close" data-gpclose="1">✕ Stäng</button></div></div>`;
+    gp.classList.remove('hidden');
+  }
 }
 /* Själspanelen i den stora föremålsrutan: saldo per själstyp, bonusar från själar och vad nästa nivå kostar/ger */
 function soulPanelHtml(it){
@@ -8225,11 +8229,12 @@ window.addEventListener('pointerup',endScrDrag); window.addEventListener('pointe
 $('#win-bag').addEventListener('click',e=>{
   if(eatClick){ eatClick=false; return; }
   if(e.target.closest('#gearPop')){ if(performance.now()-(G.ui.popT||0)<350) return;
-    if(e.target.closest('[data-gpclose]') || e.target.id==='gearPop'){ G.ui.sel=null; G.ui.trash=null; renderBag(); return; } }
+    if(e.target.closest('[data-gpclose]') || e.target.id==='gearPop'){ G.ui.soulPop=null; renderBag(); return; } }
   const bt=e.target.closest('[data-btab]'); if(bt){ G.ui.bagTab=bt.dataset.btab; renderBag(); return; }
   const a=e.target.closest('[data-act]');
   if(a && a.dataset.act==='cancelScroll'){ closeScrollMode(); return; }
   if(a){ const f=findItem(G.ui.sel); if(!f) return;
+    if(a.dataset.act==='soulpop'){ G.ui.soulPop=f.it.uid; G.ui.popT=performance.now(); renderBag(); return; }
     if(a.dataset.act==='soul') soulUp(f.it.uid);
     else if(a.dataset.act==='equip') equip(f.it.uid);
     else if(a.dataset.act==='unequip') unequip(f.slot);
@@ -8249,12 +8254,12 @@ $('#win-bag').addEventListener('click',e=>{
 
   const el=e.target.closest('[data-uid]'); if(!el) return;
   if(G.ui.scrollMode){ if(el.dataset.uid===G.ui.scrollMode){ closeScrollMode(); return; } applyScroll(G.ui.scrollMode, el.dataset.uid); return; }
-  G.ui.sel=el.dataset.uid; G.ui.trash=null; G.ui.popT=performance.now();
+  G.ui.sel=el.dataset.uid; G.ui.trash=null; G.ui.soulPop=null;
   $$('#win-bag .slot.sel').forEach(x=>x.classList.remove('sel')); el.classList.add('sel'); renderBagDetail();
 });
 $('#win-bag').addEventListener('dblclick',e=>{
   if(G.ui.scrollMode) return;
-  if(e.target.closest('#gearPop')){ if(performance.now()-(G.ui.popT||0)<700){ const f=findItem(G.ui.sel); if(f && !isCons(f.it)){ if(f.where==='inv') equip(f.it.uid); else unequip(f.slot); G.ui.sel=null; renderBag(); } } return; }   /* dubbelklick utrustar som förut */
+  if(e.target.closest('#gearPop')) return;   /* inget dubbelklick i själsrutan */
   const el=e.target.closest('[data-uid]'); if(!el) return; const f=findItem(el.dataset.uid); if(!f) return;
   if(isCons(f.it)){ if(CONS[f.it.base].kind==='pot') usePot(f.it.base); else { G.ui.scrollMode=f.it.uid; renderBag(); } return; }
   if(f.where==='inv') equip(f.it.uid); else unequip(f.slot);
@@ -9225,7 +9230,7 @@ function acceptQuest(id){
     if(Q.startGold){ ch.gold+=Q.startGold; log(`🎁 Du fick ${Q.startGold} guld.`,'#ffd23f'); } } }
   if(Object.keys(QUESTS[id].goals).some(t=>t.startsWith('craft_'))){ G.ui.hiCraft=true; updateBagHi(); }   // highlighta Hantverk-knappen
   questItemsSync(); updateBagHi();
-  log(`📜 Nytt uppdrag: <b>${QUESTS[id].name}</b>`,'#ffe066'); markDirty(true); questLogKey=null; renderQuest();
+  log(`📜 Nytt uppdrag: <b>${QUESTS[id].name}</b>`,'#ffe066'); markDirty(true); questLogKey=null; closeWin('quest');   // samtalet stängs när man accepterat
 }
 function questEvent(type){
   const ch=G.ch; if(!ch || !ch.quests) return;
