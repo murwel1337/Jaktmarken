@@ -47,6 +47,8 @@ label{display:block;font-size:12px;color:var(--muted);margin:10px 0 4px}
 .inp{width:100%;padding:10px 12px;border-radius:8px;border:1px solid #4a5f85;background:#0e1522;color:#fff;font-size:16px;outline:none}
 .inp:focus{border-color:#8fb8ff}
 .bigplay{font-size:20px;padding:12px 10px;margin-top:6px}
+.orline{display:flex;align-items:center;gap:8px;margin:10px 0 0;color:var(--muted);font-size:12px}.orline::before,.orline::after{content:'';flex:1;height:1px;background:#4a3a28}
+.gbtn.hl{outline:3px solid #ffd36b;animation:tutFlash .8s ease-in-out infinite alternate}
 .gbtn{background:#fff!important;color:#222!important;border-color:#dadce0!important;box-shadow:0 2px 0 #9aa0a6!important;margin-top:8px;display:inline-flex;align-items:center;justify-content:center;gap:8px}
 .gbtn:disabled{opacity:.5}
 .gG{font-weight:900;font-size:16px;background:conic-gradient(#ea4335 0 25%,#fbbc05 0 50%,#34a853 0 75%,#4285f4 0);-webkit-background-clip:text;background-clip:text;color:transparent}
@@ -1942,11 +1944,12 @@ const Auth = {
 const Cloud = {
   url:'', key:'', lastBoard:'',
   init(){ this.url=String(SUPABASE_URL).replace(/\/+$/,''); this.key=String(SUPABASE_KEY); },
-  get on(){ return !!(this.url && this.key && Auth.user && Auth.token); },
+  get on(){ return !!(this.url && this.key && (G.acctMode==='name' || (Auth.user && Auth.token))); },
   hdr(){ return {apikey:this.key, Authorization:'Bearer '+(Auth.token||this.key), 'Content-Type':'application/json'}; },
   async req(path, o={}){ const r=await fetch(`${this.url}/rest/v1/${path}`, {headers:this.hdr(), ...o, headers:{...this.hdr(), ...(o.headers||{})}}); if(!r.ok) throw new Error('HTTP '+r.status+' '+(await r.text()).slice(0,160)); return r; },
   async load(){ const j=await (await this.req(`${SAVE_TABLE}?user_id=eq.${Auth.user.id}&select=data`)).json(); return j.length ? j[0].data : null; },
   async save(id, data, keepalive=false){
+    if(G.acctMode==='name') return this.saveOld(id, data, keepalive);   // namnkonto: sparas under namnet som förut
     if(!Auth.user) throw new Error('Inte inloggad');
     await this.req(`${SAVE_TABLE}?on_conflict=user_id`, {method:'POST', keepalive, headers:{Prefer:'resolution=merge-duplicates,return=minimal'}, body:JSON.stringify({user_id:Auth.user.id, data, updated_at:new Date().toISOString()})});
     this.syncBoard(data, keepalive).catch(e=>console.warn('Topplistan', e));
@@ -1959,11 +1962,14 @@ const Cloud = {
     await this.req(`${BOARD_TABLE}?user_id=eq.${me}`+(rows.length?`&char_id=not.in.(${encodeURIComponent(ids)})`:''), {method:'DELETE', keepalive});
     this.lastBoard=sig;
   },
+  async boardAll(){ const [a,b]=await Promise.all([this.board().catch(e=>{ console.warn(e); return []; }), this.boardOld().catch(e=>{ console.warn(e); return []; })]); return [...a, ...b]; },
   async board(){   // grupperas per konto i samma form som förut: {uid, acc, chars:[{name,cls,level}]}
     const rows=await (await this.req(`${BOARD_TABLE}?select=user_id,name,cls,level&order=level.desc&limit=3000`)).json(), by={};
     for(const x of rows){ (by[x.user_id]=by[x.user_id]||{uid:x.user_id, chars:[]}).chars.push({name:x.name, cls:x.cls, level:x.level}); }
     return Object.values(by).map(a=>({...a, acc:a.chars[0]?a.chars[0].name:'?'}));
   },
+  async saveOld(id, data, keepalive=false){ await this.req(`${SUPABASE_TABLE}?on_conflict=name`, {method:'POST', keepalive, headers:{Prefer:'resolution=merge-duplicates,return=minimal'}, body:JSON.stringify({name:id, data, updated_at:new Date().toISOString()})}); },
+  async boardOld(){ const r=await this.req(`${SUPABASE_TABLE}?select=name,acc:data->>name,chars:data->chars,prot:data->>protected,moved:data->>movedTo&limit=2000`); return (await r.json()).filter(x=>!x.prot && !x.moved).map(x=>({acc:x.acc||x.name, nid:x.name, chars:x.chars||[]})); },
   async loadOld(id){ const j=await (await this.req(`${SUPABASE_TABLE}?name=eq.${encodeURIComponent(id)}&select=data`)).json(); return j.length ? j[0].data : null; },
   async markOld(id, data){ await this.req(`${SUPABASE_TABLE}?on_conflict=name`, {method:'POST', headers:{Prefer:'resolution=merge-duplicates,return=minimal'}, body:JSON.stringify({name:id, data, updated_at:new Date().toISOString()})}); },
 };
@@ -3392,7 +3398,7 @@ function onLevelUp(){
   for(let i=0;i<30;i++) particle(p.x+rand(-20,20), p.y-rand(0,60), pick(['#ffe066','#fff','#ffb341']), rand(-60,60), rand(-260,-80), 1.1, 3, 120);
   log(`⭐ Level ${ch.level}! +2 ${({str:'Str',int:'Int',agi:'Agi'})[CLASSES[ch.cls].main]}, +1 i övriga stats${ch.level>=TALENT_LVL?' samt +1 talangpoäng':''}.`, '#ffe066');
   if(ch.level===TALENT_LVL) log('✨ Talangträden är nu upplåsta! Öppna dem med T.','#ffe066');
-  if(Auth.anon && (ch.level===5 || ch.level===10)){ log('🔒 Du spelar som gäst. Spara kontot med Google i menyn (Esc / ☰) så tappar du aldrig dina gubbar.','#9fe0ff'); toast('🔒 Spara ditt konto med Google i menyn (☰) så tappar du det aldrig.',5000); }
+  if((G.acctMode==='name' || Auth.anon) && Auth.sb && (ch.level===5 || ch.level===10)) log('🔒 Tips: skydda ditt konto med Google i menyn (Esc / ☰) så kan ingen annan logga in på det.','#9fe0ff');
   if(ch.level>=ACCT_BONUS_LVL && (ch.level-ACCT_BONUS_LVL)%5===0 && acctBest(G.acct,ch.cls)===ch.level){ const B=ACCT_BONUS[ch.cls]; log(`🌍 Kontobonus: din ${CLASSES[ch.cls].name} ger nu ${B.icon} ${B.d(acctB(ch.cls))} till alla gubbar på kontot!`, '#9fe0ff'); }
   toast(`<b style="font-size:20px;color:#ffe066">LEVEL UP!</b><br>Du är nu level ${ch.level}`);
   const lvlQ=QUEST_ORDER.filter(id=>(QUESTS[id].lvl||1)===ch.level && questState(id)==='offer');
@@ -9573,14 +9579,14 @@ function controlsHtml(){
   <b>Mobil</b><br>Liggande läge. Styrspak till vänster (uppåt vid rep = klättra, uppåt vid portal = gå in), hopp- och anfallsknapp till höger, förmågor ovanför och drycker till vänster om dem. Tryck på föremål för att plocka upp dem – eller gå över dem.`;
 }
 function renderMenu(){
-  $('#menuBody').innerHTML=`<div class="rowb"><b>${esc(G.ch.name)}</b><span class="pill">Konto: ${esc(G.acct.name)}${Auth.anon?' (gäst)':''}</span></div>
+  $('#menuBody').innerHTML=`<div class="rowb"><b>${esc(G.ch.name)}</b><span class="pill">Konto: ${esc(G.acct.name)}${G.acctMode==='name'?' 🔓':Auth.anon?' (gäst)':' 🔒'}</span></div>
     <button class="btn green" data-m="save">💾 Spara nu</button><div id="saveTxt" class="hintx" style="color:var(--muted);font-size:12px">${saveStateTxt|| (Cloud.on?'☁️ Molnsparning via Supabase':'💾 Lokalt läge – sparas i den här webbläsaren')}</div>
     <button class="btn" data-m="settings">⚙️ Inställningar</button>
     <button class="btn" data-m="fs">⛶ Fullskärm</button>
     <button class="btn sec" data-m="gfx">🎨 Grafik: ${gfxLabel()}</button>
     <button class="btn sec" data-m="db">📚 Databas</button>
     <button class="btn sec" data-m="switch">👥 Byt gubbe</button>
-    ${Auth.anon?'<button class="btn gbtn" data-m="link"><span class="gG">G</span> Spara konto med Google</button>':''}
+    ${Auth.anon&&G.acctMode==='auth'?'<button class="btn gbtn" data-m="link"><span class="gG">G</span> Spara konto med Google</button>':''}${G.acctMode==='name'&&Auth.sb?'<button class="btn gbtn" data-m="protect"><span class="gG">G</span> Skydda kontot med Google</button>':''}
     <button class="btn sec" data-m="logout">🚪 Logga ut</button>
     <button class="btn sec ${canInstall()?'':'hidden'}" data-m="install" data-install="1">📲 Installera som app</button>
     <details ${G.ch.level<=2?'open':''}><summary>Kontroller</summary>${controlsHtml()}</details>`;
@@ -9595,7 +9601,8 @@ $('#menuBody').addEventListener('click',async e=>{
   else if(m==='gfx'){ setGfx(PERF.mode==='auto'?'high':PERF.mode==='high'?'low':'auto'); renderMenu(); toast(`🎨 Grafik: <b>${gfxLabel()}</b>`); }
   else if(m==='switch'){ if(G.leaving) return; G.leaving=true; try{ await leaveGame(); }catch(e){ console.warn(e); } finally{ G.leaving=false; G.mode='title'; showSelect(); } }
   else if(m==='link'){ await linkGoogle(); }
-  else if(m==='logout'){ if(G.leaving) return; if(Auth.anon && G.acct.chars.length && !confirm('Du spelar som gäst. Loggar du ut kommer du inte åt dina gubbar igen, om du inte först sparar kontot med Google. Logga ut ändå?')) return; G.leaving=true; try{ await leaveGame(); }catch(e){ console.warn(e); } finally{ G.leaving=false; G.mode='title'; G.acct=null; await Auth.out(); showLogin(); } }
+  else if(m==='protect'){ await protectGoogle(); }
+  else if(m==='logout'){ if(G.leaving) return; if(G.acctMode==='auth' && Auth.anon && G.acct.chars.length && !confirm('Du spelar som gäst. Loggar du ut kommer du inte åt dina gubbar igen, om du inte först sparar kontot med Google. Logga ut ändå?')) return; G.leaving=true; try{ await leaveGame(); }catch(e){ console.warn(e); } finally{ G.leaving=false; G.mode='title'; const wasName=G.acctMode==='name'; G.acct=null; if(!wasName) await Auth.out(); showLogin(); } }
   else if(m==='install') doInstall();
 });
 const isStandalone = () => (window.matchMedia && matchMedia('(display-mode: standalone), (display-mode: fullscreen)').matches && !document.fullscreenElement && !document.webkitFullscreenElement) || navigator.standalone===true;
@@ -9641,8 +9648,8 @@ function buildBoard(rows){
   for(const r of rows||[]){ const acc=r.acc||r.name, chars=Array.isArray(r.chars)?r.chars:[], top={};
     for(const c of chars){ if(!c || !CLASSES[c.cls]) continue; const L=c.level|0;
       if(!top[c.cls] || L>top[c.cls].level || (L===top[c.cls].level && (c.exp||0)>(top[c.cls].exp||0))) top[c.cls]={name:c.name, level:L, exp:c.exp||0, cls:c.cls};
-      (best[c.cls]=best[c.cls]||[]).push({name:c.name, level:L, exp:c.exp||0, acc, uid:r.uid}); }
-    const tot=Object.values(top).reduce((s,c)=>s+c.level,0); if(tot) accs.push({acc, tot, top, uid:r.uid}); }
+      (best[c.cls]=best[c.cls]||[]).push({name:c.name, level:L, exp:c.exp||0, acc, uid:r.uid||('n:'+r.nid)}); }
+    const tot=Object.values(top).reduce((s,c)=>s+c.level,0); if(tot) accs.push({acc, tot, top, uid:r.uid||('n:'+r.nid)}); }
   for(const k in best) best[k].sort((a,b)=>b.level-a.level||b.exp-a.exp);
   accs.sort((a,b)=>b.tot-a.tot);
   return {best, accs};
@@ -9651,7 +9658,7 @@ async function openLeaderboard(){
   let el=$('#lbx'); if(!el){ el=document.createElement('div'); el.id='lbx'; document.body.appendChild(el); }
   el.innerHTML=`<div class="dbcard lbcard"><div class="dbhead"><b>🏆 Topplista</b><div class="tabs"><button class="tab on" data-lbt="cls">🏅 Bästa per klass</button><button class="tab" data-lbt="acc">👑 Konton</button></div><span style="flex:1"></span><button class="x" id="lbClose">✕</button></div><div class="dbbody" id="lbBody"><div class="hintx" style="padding:14px">Hämtar topplistan…</div></div></div>`;
   let tab='cls', data=null;
-  const me=Auth.user&&Auth.user.id;
+  const me=G.acct ? (G.acctMode==='name' ? 'n:'+G.acct.id : Auth.user&&Auth.user.id) : null;
   const draw=()=>{ const B=$('#lbBody'); if(!data){ return; }
     if(tab==='cls'){ B.innerHTML=Object.keys(CLASSES).map(k=>{ const L=(data.best[k]||[]).slice(0,10);
         return `<h3>${CLASSES[k].icon||''} ${CLASSES[k].name}</h3>`+(L.length?`<table class="lbt">${L.map((c,i)=>`<tr class="${me&&c.uid===me?'me':''}"><td class="lbr">${['🥇','🥈','🥉'][i]||i+1}</td><td><b>${esc(c.name)}</b></td><td>Level <b>${c.level}</b></td><td class="lba">${esc(c.acc)}</td></tr>`).join('')}</table>`:'<div class="hintx">Inga gubbar ännu.</div>'); }).join(''); }
@@ -9659,37 +9666,48 @@ async function openLeaderboard(){
   };
   el.onclick=e=>{ const t=e.target.closest('[data-lbt]'); if(t){ tab=t.dataset.lbt; $$('#lbx [data-lbt]').forEach(b=>b.classList.toggle('on',b===t)); draw(); } if(e.target.id==='lbClose'||e.target===el) el.remove(); };
   try{
-    if(!Auth.sb) throw new Error('Molnet är inte anslutet');
-    data=buildBoard(await Cloud.board()); draw();
+    data=buildBoard(await Cloud.boardAll()); draw();
   }catch(err){ const B=$('#lbBody'); if(B) B.innerHTML=`<div class="hintx" style="padding:14px">Kunde inte hämta topplistan (${esc(String(err.message||err))}). Kontrollera nätet och försök igen.</div>`; }
 }
 function showScreen(html){ $('#hint').classList.add('hidden'); $('#toast').innerHTML=''; const s=$('#screen'); s.innerHTML=html; s.classList.remove('hidden'); }
 function hideScreen(){ $('#screen').classList.add('hidden'); }
-function showLogin(msg){
+function showLogin(msg, hiG){
   G.mode='title';
   $('#hud').classList.add('hidden'); $('#touchUI').classList.add('hidden'); $$('.win').forEach(w=>w.classList.add('hidden'));
   const last=localStorage.getItem('jaktmarken_senaste')||'';
   showScreen(`<div class="card narrow">
     <div class="logo">Jaktmarken</div>
     <div class="sub">Blåbär, mossbollar och äventyr · speltestversion</div>
+    <label for="inName">Ditt användarnamn</label>
+    <input id="inName" class="inp" maxlength="20" placeholder="Skriv ett namn" autocomplete="off" value="${esc(last)}">
     <button class="btn gold wide bigplay" id="btnPlay">▶ Spela</button>
-    <button class="btn wide gbtn" id="btnGoogle" ${Auth.sb?'':'disabled'}><span class="gG">G</span> Logga in med Google</button>
-    <div class="hintx" style="font-size:12px;margin-top:4px">Ny spelare? Tryck bara på <b>Spela</b>. Du kan spara kontot med Google senare.</div>
+    <div class="hintx" style="font-size:12px;margin-top:4px">Ny spelare? Hitta på ett namn och tryck <b>Spela</b>. Samma namn nästa gång.</div>
+    <div class="orline"><span>eller</span></div>
+    <button class="btn wide gbtn ${hiG?'hl':''}" id="btnGoogle" ${Auth.sb?'':'disabled'}><span class="gG">G</span> Logga in med Google</button>
+    <div class="hintx" style="font-size:12px;margin-top:4px">För konton som är skyddade med Google.</div>
     <div class="row" style="margin-top:8px"><button class="btn sec" id="btnDb">📚 Databas</button><button class="btn sec" id="btnTop">🏆 Topplista</button></div>
-    <details class="oldacc" ${last?'open':''}><summary>📦 Har du ett gammalt konto (där du skrev ditt namn)?</summary>
-      <input id="inOld" class="inp" maxlength="20" placeholder="Ditt gamla kontonamn" autocomplete="off" value="${esc(last)}">
-      <button class="btn sec wide" id="btnOld">Hämta mitt gamla konto</button>
-    </details>
-    <div class="savemode" id="saveMode">${Auth.sb?'☁️ Ditt konto sparas i molnet.':'💾 <b>Lokalt läge</b> – kunde inte ansluta till servern. Allt sparas i den här webbläsaren.'}</div>
-    <div class="msg" id="loginMsg">${msg?esc(msg):''}</div>
+    <div class="msg" id="loginMsg">${msg||''}</div>
     <button class="btn sec wide ${canInstall()?'':'hidden'}" id="btnInstall" data-install="1" style="margin-top:10px">📲 Installera som app</button>
   </div>`);
   $('#btnInstall').onclick=doInstall;
-  const busy=(t)=>{ $('#loginMsg').textContent=t||''; ['#btnPlay','#btnGoogle','#btnOld'].forEach(k=>{ const b=$(k); if(b) b.disabled=!!t || (k==='#btnGoogle'&&!Auth.sb); }); };
-  $('#btnPlay').onclick=async()=>{ busy('Startar…'); try{ if(Auth.sb && !Auth.user) await Auth.guest(); await enterAccount(); }catch(e){ console.warn(e); busy(); $('#loginMsg').textContent='Kunde inte starta: '+(e.message||e); } };
+  const busy=(t)=>{ $('#loginMsg').textContent=t||''; ['#btnPlay','#btnGoogle'].forEach(k=>{ const b=$(k); if(b) b.disabled=!!t || (k==='#btnGoogle'&&!Auth.sb); }); };
+  const go=async()=>{ busy('Laddar…'); try{ await nameLogin($('#inName').value); }catch(e){ console.warn(e); busy(); $('#loginMsg').textContent='Det gick inte: '+(e.message||e); } };
+  $('#btnPlay').onclick=go; $('#inName').addEventListener('keydown',e=>{ if(e.key==='Enter') go(); });
   $('#btnGoogle').onclick=async()=>{ busy('Öppnar Google…'); try{ await Auth.google(); }catch(e){ busy(); $('#loginMsg').textContent='Google-inloggningen misslyckades: '+(e.message||e); } };
-  $('#btnOld').onclick=async()=>{ const n=$('#inOld').value.trim(); if(n.length<2){ $('#loginMsg').textContent='Skriv ditt gamla kontonamn.'; return; }
-    busy('Hämtar…'); try{ if(Auth.sb && !Auth.user) await Auth.guest(); await enterAccount(false); await importOld(n); }catch(e){ console.warn(e); busy(); $('#loginMsg').textContent='Det gick inte: '+(e.message||e); } };
+  if(!G.touch && !hiG) setTimeout(()=>$('#inName').focus(),50);
+}
+async function nameLogin(name){   // namnkonto som förut – om det inte är skyddat med Google
+  name=String(name||'').trim();
+  if(name.length<2){ $('#loginMsg').textContent='Skriv ett namn med minst 2 tecken.'; $('#btnPlay').disabled=false; $('#btnGoogle').disabled=!Auth.sb; return; }
+  const id=name.toLowerCase(); const local=localLoad(id); let cloud=null, err=null;
+  if(Cloud.url){ try{ cloud=await Cloud.loadOld(id); }catch(e){ err=e; } }
+  if(cloud && (cloud.protected || cloud.movedTo)){ showLogin(`🔒 Kontot <b>${esc(cloud.name||name)}</b> är skyddat med Google. Tryck på <b>Logga in med Google</b>.`, true); return; }
+  if(Auth.user) await Auth.out();   // namnkonton körs utan inloggning
+  let acct=newestAcct(local&&!local.protected?local:null, cloud) || newAccount(name);
+  fixAccount(acct); acct.id=id; G.acct=acct; G.acctMode='name'; Cloud.lastBoard='';
+  localStorage.setItem('jaktmarken_senaste', name);
+  if(err){ toast(`⚠️ Kunde inte nå servern – sparar lokalt tills vidare.<br><small>${esc(String(err.message||err).slice(0,140))}</small>`,6000); console.warn(err); }
+  showSelect();
 }
 function newestAcct(a,b){ return (a&&b) ? ((a.savedAt||0)>(b.savedAt||0)?a:b) : (a||b); }
 async function enterAccount(show=true){   // laddar kontot för den inloggade användaren (eller lokalt läge)
@@ -9698,7 +9716,7 @@ async function enterAccount(show=true){   // laddar kontot för den inloggade an
   if(Cloud.on){ try{ cloud=await Cloud.load(); }catch(e){ err=e; } }
   let acct=newestAcct(local, cloud) || newAccount(Auth.firstName()||'Gäst');
   fixAccount(acct); acct.id=id; if(acct.name==='Gäst' && Auth.firstName()) acct.name=Auth.firstName();
-  G.acct=acct; Cloud.lastBoard='';
+  G.acct=acct; G.acctMode=Auth.user?'auth':'local'; Cloud.lastBoard='';
   if(err){ toast(`⚠️ Kunde inte nå servern – sparar lokalt tills vidare.<br><small>${esc(String(err.message||err).slice(0,140))}</small>`,6000); console.warn(err); }
   if(!cloud && Cloud.on) markDirty(true);
   if(show) showSelect();
@@ -9715,17 +9733,37 @@ async function importOld(name){   // flytta ett gammalt namnkonto till den inlog
   if(cloud) Cloud.markOld(id, {...cloud, movedTo:G.acct.id}).catch(e=>console.warn(e));
   toast(`📦 Kontot <b>${esc(a.name)}</b> är flyttat hit!${Auth.anon?' Spara det med Google så du aldrig tappar det.':''}`,6000); showSelect();
 }
+async function protectGoogle(){   // namnkonto → flyttas till Google-inloggning (namnet låses)
+  if(!Auth.sb){ toast('Kan inte nå servern just nu.'); return; }
+  await saveNow(); localStorage.setItem('jaktmarken_protect', G.acct.id);
+  try{ await Auth.google(); }catch(e){ localStorage.removeItem('jaktmarken_protect'); toast('Google-inloggningen misslyckades: '+esc(e.message||String(e)),6000); }
+}
+async function finishProtect(id){   // efter Google: flytta namnkontot hit och lås namnet
+  let old=null; try{ old=await Cloud.loadOld(id); }catch(e){ console.warn(e); }
+  const loc=localLoad(id); old=newestAcct(old&&!old.protected&&!old.movedTo?old:null, loc&&!loc.protected?loc:null);
+  if(!old){ await enterAccount(); return; }
+  let cur=null; try{ cur=await Cloud.load(); }catch(e){}
+  if(cur && (cur.chars||[]).length && !confirm(`Ditt Google-konto har redan ${cur.chars.length} gubbar. Ersätta dem med kontot ${old.name}?`)){ await enterAccount(); return; }
+  const a=JSON.parse(JSON.stringify(old)); fixAccount(a); a.id=Auth.user.id; G.acct=a; G.acctMode='auth'; Cloud.lastBoard='';
+  await saveNow();
+  try{ await Cloud.saveOld(id, {v:1, name:a.name, protected:true, owner:Auth.user.id, chars:[]}); }catch(e){ console.warn(e); }
+  try{ localStorage.removeItem(LS_PREFIX+id); }catch(e){}
+  localStorage.removeItem('jaktmarken_senaste');
+  showSelect(); toast(`🔒 Kontot <b>${esc(a.name)}</b> är nu skyddat med Google. Logga in med Google nästa gång – ingen annan kan längre använda namnet.`,8000);
+}
 async function linkGoogle(){
   if(!Auth.sb){ toast('Kan inte nå servern just nu.'); return; }
   await saveNow(); localStorage.setItem('jaktmarken_linking','1');
   try{ await Auth.link(); }catch(e){ localStorage.removeItem('jaktmarken_linking'); toast('Kunde inte koppla till Google: '+esc(e.message||String(e)),6000); }
 }
 async function logoutAll(){
+  if(G.acctMode==='name'){ try{ await saveNow(); }catch(e){} G.acct=null; showLogin(); return true; }
   if(Auth.anon && G.acct && G.acct.chars.length && !confirm('Du spelar som gäst. Loggar du ut kommer du inte åt dina gubbar igen, om du inte först sparar kontot med Google. Logga ut ändå?')) return false;
   if(G.acct){ try{ await saveNow(); }catch(e){} }
   G.acct=null; await Auth.out(); showLogin(); return true;
 }
 function acctStatusHtml(){
+  if(G.acctMode==='name') return `<div class="acst warn">🔓 <b>Oskyddat konto.</b> Den som skriver namnet <b>${esc(G.acct.name)}</b> kan logga in. Skydda det med Google så kan bara du logga in. ${Auth.sb?'<button class="btn sm gbtn" id="btnProtect"><span class="gG">G</span> Skydda med Google</button>':''}</div>`;
   if(!Auth.sb) return `<div class="acst">💾 Lokalt läge – sparas bara i den här webbläsaren.</div>`;
   if(Auth.anon) return `<div class="acst warn">⚠️ <b>Gästkonto.</b> Spara det med Google så tappar du aldrig dina gubbar och kan spela på andra enheter. <button class="btn sm gbtn" id="btnLink"><span class="gG">G</span> Spara med Google</button></div>`;
   return `<div class="acst ok">✅ Inloggad med Google${Auth.email()?` (${esc(Auth.email())})`:''}</div>`;
@@ -9738,7 +9776,7 @@ function showSelect(){
     <div class="rowb"><h2>Hej${a.name&&a.name!=='Gäst'?', '+esc(a.name):''}!</h2><span class="pill" title="Kontobonus: din högsta gubbe i varje klass ger en bonus till alla gubbar från level 10 (ökar var 5:e level).">🌍 ${acctBonusShort(a).join(' · ')||'Kontobonus från level 10'}</span></div>
     <div style="color:var(--muted);font-size:13px">${a.chars.length?'Välj en gubbe att spela med.':'Du har inga gubbar än – skapa din första!'}</div>
     <div class="chars">${a.chars.map((c,i)=>`<div class="ccard" data-ci="${i}"><button class="del" data-del="${i}" title="Ta bort">🗑</button><button class="edit" data-edit="${i}" title="Ändra utseende">✏️</button><canvas width="200" height="220"></canvas><div class="cn">${esc(c.name)}</div><div class="cl">${CLASSES[c.cls].name} · Lv. ${c.level}</div></div>`).join('')}</div>
-    <div class="row"><button class="btn gold" id="btnNew">+ Ny gubbe</button><button class="btn sec" id="btnDb">📚 Databas</button><button class="btn sec" id="btnTop">🏆 Topplista</button><button class="btn sec" id="btnOldAcc">📦 Hämta gammalt konto</button><button class="btn sec" id="btnOut">🚪 Logga ut</button></div>
+    <div class="row"><button class="btn gold" id="btnNew">+ Ny gubbe</button><button class="btn sec" id="btnDb">📚 Databas</button><button class="btn sec" id="btnTop">🏆 Topplista</button><button class="btn sec" id="btnOut">🚪 Logga ut</button></div>
     ${acctStatusHtml()}
   </div>`);
   $$('.ccard').forEach(el=>{ const c=a.chars[+el.dataset.ci]; drawPortrait(el.querySelector('canvas'),c.cls,c.eq,2.6,c.app); });
@@ -9750,6 +9788,7 @@ function showSelect(){
     if(e.target.id==='btnNew') showCreate();
     if(e.target.id==='btnOut') logoutAll();
     if(e.target.closest('#btnLink')) linkGoogle();
+    if(e.target.closest('#btnProtect')) protectGoogle();
     if(e.target.id==='btnOldAcc'){ const n=prompt('Skriv ditt gamla kontonamn (det du skrev in förut):', localStorage.getItem('jaktmarken_senaste')||''); if(n && n.trim().length>=2) importOld(n); }
   };
 }
@@ -10324,6 +10363,8 @@ resize(); initSpawns(); snapCam();
   if(Auth.urlErr && Auth.user && !Auth.anon && linking){ await enterAccount(); toast('✅ Ditt konto är sparat med Google!',7000); return; }
   if(Auth.urlErr){ const t=/already|exists|linked/i.test(Auth.urlErr) ? 'Det Google-kontot har redan ett eget Jaktmarken-konto. Logga ut och välj "Logga in med Google" för att spela på det.' : 'Inloggningen avbröts: '+Auth.urlErr;
     if(Auth.user){ await enterAccount(); toast(esc(t),8000); } else showLogin(t); return; }
+  const prot=localStorage.getItem('jaktmarken_protect'); localStorage.removeItem('jaktmarken_protect');
+  if(prot && Auth.user && !Auth.anon){ await finishProtect(prot); return; }
   if(Auth.user){ await enterAccount(); if(linking && !Auth.anon) toast('✅ Ditt konto är nu sparat med Google! Logga in med Google på andra enheter.',7000); }
   else showLogin();
 })();
