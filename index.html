@@ -47,6 +47,7 @@ label{display:block;font-size:12px;color:var(--muted);margin:10px 0 4px}
 .inp{width:100%;padding:10px 12px;border-radius:8px;border:1px solid #4a5f85;background:#0e1522;color:#fff;font-size:16px;outline:none}
 .inp:focus{border-color:#8fb8ff}
 .bigplay{font-size:20px;padding:12px 10px;margin-top:6px}
+.autotog{display:flex;gap:8px;align-items:center;margin:8px 0;font-size:13.5px;font-weight:700;cursor:pointer}.autotog input{width:18px;height:18px}
 .orline{display:flex;align-items:center;gap:8px;margin:10px 0 0;color:var(--muted);font-size:12px}.orline::before,.orline::after{content:'';flex:1;height:1px;background:#4a3a28}
 .gbtn.hl{outline:3px solid #ffd36b;animation:tutFlash .8s ease-in-out infinite alternate}
 .gbtn{background:#fff!important;color:#222!important;border-color:#dadce0!important;box-shadow:0 2px 0 #9aa0a6!important;margin-top:8px;display:inline-flex;align-items:center;justify-content:center;gap:8px}
@@ -2342,7 +2343,7 @@ function updatePlayer(dt){
   if(portal && p.portalCd<=0 && (I.upEdge || I.touchUpEdge || G.portalTap)){
     G.portalTap=false;
     if(portal.closed) throttleMsg('ptlc','🔒 Den här vägen är inte öppen än – kom tillbaka senare!','#cfe0ff');
-    else if(isGuestNet()) throttleMsg('ptl','Bara party-ledaren kan byta karta – du följer med automatiskt.','#cfe0ff');
+    else if(isGuestNet() && !Net.auto) throttleMsg('ptl','Bara party-ledaren kan byta karta – du följer med automatiskt.','#cfe0ff');
     else { changeMap(portal.to, portal.toX, portal.toY); return; }
   }
   G.portalTap=false;
@@ -2460,6 +2461,7 @@ function buyArenaKey(){
    (en dragning per spelare, ägd av den spelaren). Alla får EXP som om de dödat bossen ensamma. */
 let arenaAsk=null;
 function enterArena(){
+  if(Net.auto && Net.role) netLeave(true);   // arenan körs inte med främlingar från kartans kanal
   if(isGuestNet()){ throttleMsg('arena','Bara party-ledaren kan starta arenan – ni följer med in tillsammans.','#ffb86b'); return; }
   if(!consCount('silvernyckel')){ throttleMsg('arena','Du behöver en silvernyckel.','#ff9b9b'); return; }
   const guests = isHostNet() ? netMemberIds().filter(id=>id!==Net.myId) : [];
@@ -3217,6 +3219,7 @@ function usePot(base){
 /* ---------- Byta karta via portal ---------- */
 function changeMap(to, x, y){
   if(!MAPS[to]) return;
+  if(Net.auto && Net.role) netLeave(true);   // automatisk kanal: man lämnar kartans kanal och letar upp en på nya kartan
   G.mapId=to; G.ch.map=to; setTerrain(terrainOf(to));
   const keep={cds:G.p.cds, cdMax:G.p.cdMax, buffT:G.p.buffT, buffMax:G.p.buffMax, regenT:G.p.regenT, regenMax:G.p.regenMax, wisps:[]};   // irrblossen stannar på den gamla kartan
   G.p=makePlayer(x,y); Object.assign(G.p,keep); G.p.portalCd=0.8;
@@ -3228,6 +3231,7 @@ function changeMap(to, x, y){
   hostUpdatePresence();
   markDirty(true);
   arenaOnEnter(to);
+  if(!Net.role) setTimeout(autoEnter, 400);
 }
 
 let HIT_BASIC=false;
@@ -3320,12 +3324,12 @@ function killMonster(m){
   if(party) netToGuests({t:'kill', id:m.id});
   if(m.minion) return;   // bossens småmonster ger varken EXP eller drops
   // EXP: ensam 100 %. I party: den som dödar får 75 %, övriga 30 % var (+5 % party-bonus på allt)
-  const ids = party ? netMemberIds() : [Net.myId];
+  const ids = party ? (Net.auto ? [killer] : netMemberIds()) : [Net.myId];   // automatisk kanal: bara den som dödar får EXP
   for(const id of ids){
     const share = d.arena ? 1 : ids.length>1 ? (id===killer?0.75:0.30) : 1;   // arenabossar: alla får full EXP
     const mult = m.rare ? 3 : 1, book = !!d.boss;   // bossar räknas i allas monsterbok
     if(id===Net.myId) gainKillExp(m.type, share, ids.length>1, id===killer, mult, book, !!m.rare, !m.lastBasic);
-    else netTo(id, {t:'exp', ty:m.type, s:share, kill:id===killer?1:0, x:mult, bk:book?1:0, r:m.rare?1:0, ab:m.lastBasic?0:1});
+    else netTo(id, {t:'exp', ty:m.type, s:share, p:ids.length>1?1:0, kill:id===killer?1:0, x:mult, bk:book?1:0, r:m.rare?1:0, ab:m.lastBasic?0:1});
   }
   spawnDrop(m, {kind:'gold', amount:d.gold});
   if(d.arena){ const L=(m.arenaN>1 && party) ? netMemberIds().slice(0,m.arenaN) : [killer]; for(const id of L) arenaLoot(m, id); arenaCleared(m); return; }   // en loot-dragning per spelare
@@ -4002,7 +4006,8 @@ function receiveItem(item, d){
   log(`Du plockade upp <b style="color:${r.color}">${esc(itemName(item))}</b> (${r.name}, Lv ${item.req})`, '#e9eef7');
   refreshOpen(); markDirty();
 }
-function splitGold(amount){
+function splitGold(amount, picker=Net.myId){
+  if(Net.auto){ if(picker===Net.myId) addGold(amount,false); else netTo(picker,{t:'gold', a:amount}); return; }   // automatisk kanal: den som plockar får guldet
   const ids=netMemberIds(), share=amount/ids.length, party=ids.length>1;
   for(const id of ids){ if(id===Net.myId) addGold(share, party); else netTo(id, {t:'gold', a:share}); }
 }
@@ -9860,6 +9865,7 @@ function showCreate(){
    START / AVSLUTA SPEL
    ===================================================================== */
 function startGame(ch, isNew){
+  AUTO.t=1.5; AUTO.fail=0;
   { const k=G.acct&&G.acct.keys; if(Array.isArray(k) && k.length===9 && k.every(x=>typeof x==='string')){ KEYB=k.slice(); try{ localStorage.setItem('jaktmarken_keys', JSON.stringify(KEYB)); }catch(e){} } else if(G.acct && KEYB.join()!==KEY_DEF.join()) G.acct.keys=KEYB.slice(); }
   ch.kills=ch.kills||{}; ch.map=MAPS[ch.map]?ch.map:1; if(MAPS[ch.map].arenaStage) ch.map=10;   // man börjar aldrig mitt i arenan ch.quests=ch.quests||{}; questLogKey=null; G.ui.questId=null; G.ui.questNpc=null; ch.prof=ch.prof||{}; for(const k in PROFS) ch.prof[k]=ch.prof[k]||{skill:1};
   while(ch.exp>=expReq(ch.level)){ ch.exp-=expReq(ch.level); ch.level++; }   // ny EXP-kurva
@@ -9928,7 +9934,13 @@ async function rtcConf(){
 }
 
 const SigSupa = {
-  client:null, lobby:null, lobbyReady:null, inbox:null, onMsg:null, onHosts:null, hosts:{},
+  client:null, lobby:null, lobbyReady:null, inbox:null, onMsg:null, onHosts:null, hosts:{}, lobbyName:'jaktmarken-lobby',
+  async setLobby(name){   // byt lobbykanal (global för manuella partyn, en per karta för automatiska kanaler)
+    if(this.lobbyName===name) return; const c=this.client, old=this.lobby;
+    this.lobby=null; this.lobbyReady=null; this.hosts={}; this.lobbyName=name;
+    if(old && c){ try{ await old.untrack(); }catch(e){} try{ c.removeChannel(old); }catch(e){} }
+  },
+  async peek(ms=1300){ await this.ensureLobby(); await new Promise(r=>setTimeout(r,ms)); return {...this.hosts}; },
   async sb(){
     if(this.client) return this.client;
     if(!Cloud.on) throw new Error('Supabase är inte inställt.');
@@ -9940,7 +9952,7 @@ const SigSupa = {
     ch.subscribe((st,err)=>{ if(st==='SUBSCRIBED'){ clearTimeout(to); res(ch); } else if(st==='CHANNEL_ERROR'||st==='TIMED_OUT'){ clearTimeout(to); rej(new Error('Realtime: '+st+(err&&err.message?' – '+err.message:''))); } }); }); },
   async ensureLobby(){
     if(!this.lobbyReady) this.lobbyReady=(async()=>{
-      const c=await this.sb(), ch=c.channel('jaktmarken-lobby',{config:{presence:{key:Net.myId}}});
+      const c=await this.sb(), ch=c.channel(this.lobbyName,{config:{presence:{key:Net.myId}}});
       ch.on('presence',{event:'sync'},()=>{ const st=ch.presenceState(), hosts={}; for(const k in st){ const e=st[k]&&st[k][0]; if(e&&e.host&&k!==Net.myId) hosts[k]=e; } this.hosts=hosts; this.onHosts&&this.onHosts({...hosts}); });
       await this.sub(ch); this.lobby=ch; return ch;
     })();
@@ -9981,13 +9993,15 @@ const SigTest = {
   async host(info){ this.init(); this.info=info; this.bc.postMessage({k:'host',id:Net.myId,info}); },
   async unhost(){ this.init(); this.info=null; this.bc.postMessage({k:'unhost',id:Net.myId}); },
   async browse(cb){ this.init(); this.onHosts=cb; cb({...this.hosts}); },
+  async setLobby(){},
+  async peek(ms=1300){ this.init(); await new Promise(r=>setTimeout(r,ms)); return {...this.hosts}; },
   stopBrowse(){ this.onHosts=null; },
   async closeAll(){},
 };
 const Sig = TESTNET ? SigTest : SigSupa;
 
 const Net = {
-  myId: uid()+uid(), role:null, open:false, hostId:null, peers:{}, joining:false,
+  myId: uid()+uid(), role:null, open:false, auto:false, hostId:null, peers:{}, joining:false,
   hosts:{}, browsing:false, status:'', waiters:{}, pendingItems:0,
   sendT:0, monT:0, lookDirty:true, lookT:0,
 };
@@ -10067,7 +10081,7 @@ function hostOnPick(from, id){
   if(!canPick(d, from)){ netTo(from,{t:'deny', id, owner:d.owner, left:Math.ceil(d.ownerT-G.time)}); return; }
   d.picking=true; d.pickT=0; d.by=from; d.applied=true;
   netToGuests({t:'gone', id, by:from});
-  if(d.kind==='gold') splitGold(d.amount); else netTo(from,{t:'item', item:d.item});
+  if(d.kind==='gold') splitGold(d.amount, from); else netTo(from,{t:'item', item:d.item});
 }
 
 // --- Kosmetiska skott & effekter från andra ---
@@ -10114,7 +10128,7 @@ function netOnData(peer, msg){
       case 'welcome': return guestOnWelcome(msg);
       case 'p':     return applyState(msg);
       case 'look':  return applyLook(msg);
-      case 'left':  { const n=nameOf(msg.id); delete G.others[msg.id]; log(`👥 ${esc(n)} lämnade partyt.`,'#9fe0ff'); return refreshParty(); }
+      case 'left':  { const n=nameOf(msg.id); delete G.others[msg.id]; log(Net.auto?`🌍 ${esc(n)} lämnade kartan.`:`👥 ${esc(n)} lämnade partyt.`,'#9fe0ff'); return refreshParty(); }
       case 'mon':   return applyMonSnap(msg.m);
       case 'heal':  return healPlayer(+msg.v||0);
       case 'lift':  { const m=G.monById[msg.id]; if(m && !m.dead) m.liftAt=G.time; return; }
@@ -10127,7 +10141,7 @@ function netOnData(peer, msg){
       case 'gone':  return guestOnGone(msg.id, msg.by);
       case 'akq':   { const ok=consCount('silvernyckel')>0; if(!ok) toast('🗝️ Party-ledaren vill starta arenan, men du har ingen silvernyckel.',3200); return netToHost({t:'akr', ok:ok?1:0}); }
       case 'akt':   { takeOne('silvernyckel'); markDirty(true); log('🗝️ Din silvernyckel används – ni går in i arenan tillsammans!','#ffe08a'); return refreshOpen(); }
-      case 'exp':   return gainKillExp(msg.ty, msg.s, true, !!msg.kill, msg.x||1, !!msg.bk, !!msg.r, !!msg.ab);
+      case 'exp':   return gainKillExp(msg.ty, msg.s, msg.p!==0, !!msg.kill, msg.x||1, !!msg.bk, !!msg.r, !!msg.ab);
       case 'tr':    return tradeOnMsg(msg.from||from, msg);
       case 'gold':  return addGold(msg.a, true);
       case 'item':  Net.pendingItems=Math.max(0,Net.pendingItems-1); return receiveItem(msg.item);
@@ -10149,14 +10163,15 @@ function hostOnHello(peer, msg){
   netSend(peer,{t:'welcome', host:Net.myId, map:G.mapId, x:Math.round(pl?G.p.x:st.x), y:pl?G.p.y:st.y, looks, drops:G.drops.filter(d=>!d.picking).map(dropMsg)});
   netSend(peer, monSnap());
   netToGuests({...msg.look, t:'look', id:peer.id}, peer.id);
-  log(`👥 <b>${esc(peer.name)}</b> gick med i partyt!`,'#9fe0ff'); toast(`👥 ${esc(peer.name)} gick med i partyt`);
+  if(Net.auto) log(`🌍 <b>${esc(peer.name)}</b> kom till kartan.`,'#9fe0ff'); else { log(`👥 <b>${esc(peer.name)}</b> gick med i partyt!`,'#9fe0ff'); toast(`👥 ${esc(peer.name)} gick med i partyt`); }
   hostUpdatePresence(); refreshParty();
 }
 function guestOnWelcome(msg){
   for(const L of msg.looks||[]) applyLook(L);
-  guestEnterMap(msg.map, msg.x, msg.y, false);
+  if(Net.auto && msg.map===G.mapId && G.p) guestEnterMap(msg.map, Math.round(G.p.x), G.p.y, false); else guestEnterMap(msg.map, msg.x, msg.y, false);
   for(const dm of msg.drops||[]) guestOnDrop(dm);
   const hn=nameOf(msg.host);
+  if(Net.auto){ const n=(msg.looks||[]).length; log(`🌍 Du ser nu ${n} ${n===1?'annan spelare':'andra spelare'} på <b>${curMap().name}</b>.`,'#9fe0ff'); refreshParty(); return; }
   toast(`👥 Du är med i <b>${esc(hn)}</b>s party!`); log(`👥 Du gick med i ${esc(hn)}s party. +5% EXP i party.`,'#9fe0ff');
   refreshParty();
 }
@@ -10203,23 +10218,23 @@ async function onSignal(msg){
     setTimeout(()=>{ const p=Net.peers[msg.from]; if(p && !p.ready) netRemovePeer(msg.from,'timeout',true); },25000);
   }catch(e){ console.warn(e); netRemovePeer(msg.from,'fail',true); }
 }
-function hostInfo(){ return {host:1, v:NET_VER, name:G.ch.name, cls:G.ch.cls, lvl:G.ch.level, map:curMap().name, n:1+readyPeers().length}; }
+function hostInfo(){ return {host:1, v:NET_VER, name:G.ch.name, cls:G.ch.cls, lvl:G.ch.level, map:curMap().name, mid:G.mapId, auto:Net.auto?1:0, n:1+readyPeers().length}; }
 function hostUpdatePresence(){
   if(Net.role!=='host' || !G.ch) return;
   if(Net.open && 1+readyPeers().length<PARTY_MAX) Sig.host(hostInfo()).catch(e=>console.warn(e));
   else Sig.unhost().catch(()=>{});
 }
-async function netHost(){
-  if(Net.role) return;
-  if(!Cloud.on && !TESTNET){ toast('Multiplayer kräver Supabase-inställningarna.'); return; }
-  Net.role='host'; Net.open=true; Net.peers={}; G.others={}; Net.status='Öppnar…'; refreshParty();
-  try{ await Sig.host(hostInfo()); Net.status=''; log('🌐 Din karta är nu öppen – andra kan gå med via 👥.','#9fe0ff'); }
-  catch(e){ Net.role=null; Net.open=false; Net.status=''; toast('⚠️ Kunde inte öppna: '+esc(e.message||String(e)),5000); }
-  refreshParty();
+async function netHost(auto=false){
+  if(Net.role) return false;
+  if(!Cloud.on && !TESTNET){ if(!auto) toast('Multiplayer kräver Supabase-inställningarna.'); return false; }
+  Net.auto=!!auto; Net.role='host'; Net.open=true; Net.peers={}; G.others={}; Net.status='Öppnar…'; refreshParty();
+  try{ await Sig.setLobby(auto?autoLobby(G.mapId):'jaktmarken-lobby'); await Sig.host(hostInfo()); Net.status=''; if(!auto) log('🌐 Din karta är nu öppen – andra kan gå med via 👥.','#9fe0ff'); }
+  catch(e){ Net.role=null; Net.open=false; Net.auto=false; Net.status=''; if(!auto) toast('⚠️ Kunde inte öppna: '+esc(e.message||String(e)),5000); else console.warn('Kanal',e); refreshParty(); return false; }
+  refreshParty(); return true;
 }
-async function netJoin(hostId){
-  if(Net.role) return;
-  Net.role='guest'; Net.joining=true; Net.hostId=hostId; G.others={}; refreshParty();
+async function netJoin(hostId, auto=false){
+  if(Net.role) return false;
+  Net.auto=!!auto; Net.role='guest'; Net.joining=true; Net.hostId=hostId; G.others={}; refreshParty();
   try{
     await Sig.ensureInbox();
     const pc=new RTCPeerConnection(await rtcConf()), dc=pc.createDataChannel('jm',{ordered:true});
@@ -10235,10 +10250,39 @@ async function netJoin(hostId){
   }catch(e){
     Net.joining=false;
     if(Net.peers[hostId]) netRemovePeer(hostId,'fail',true);
-    Net.role=null; Net.hostId=null;
-    toast('⚠️ Kunde inte ansluta: '+esc(e.message||String(e)),6000);
+    Net.role=null; Net.hostId=null; Net.auto=false;
+    if(!auto) toast('⚠️ Kunde inte ansluta: '+esc(e.message||String(e)),6000); else console.warn('Kanal',e);
+    refreshParty(); return false;
   }
-  refreshParty();
+  refreshParty(); return true;
+}
+/* ---------- Automatiska kanaler: alla på samma karta ser varandra (högst PARTY_MAX per kanal) ----------
+   Supabase används bara för att hitta en kanal (en lobby per karta). Själva spelet går direkt mellan spelarna (P2P). */
+const AUTO = {busy:false, t:3, fail:0};
+const autoWorldOn = () => localStorage.getItem('jaktmarken_auto')!=='0' && (Cloud.on || TESTNET);
+const autoLobby = map => 'jaktmarken-lobby-m'+map;
+const autoMapOk = () => G.mode==='game' && !curMap().arenaStage;
+async function autoEnter(){
+  if(!autoWorldOn() || !autoMapOk() || Net.role || AUTO.busy) return;
+  AUTO.busy=true; const map=G.mapId;
+  try{
+    await Sig.setLobby(autoLobby(map));
+    const H=await Sig.peek();
+    if(G.mapId!==map || Net.role || G.mode!=='game') return;
+    const c=Object.entries(H).filter(([id,x])=>id!==Net.myId && x.auto && x.mid===map && x.v===NET_VER && x.n<PARTY_MAX).sort((a,b)=>b[1].n-a[1].n || (a[0]<b[0]?-1:1));
+    for(const [id] of c.slice(0,3)){ if(G.mapId!==map || Net.role) return; if(await netJoin(id, true)){ AUTO.fail=0; return; } }
+    if(G.mapId===map && !Net.role){ if(await netHost(true)) AUTO.fail=0; else AUTO.fail++; }
+  }catch(e){ console.warn('Kanal', e); AUTO.fail++; }
+  finally{ AUTO.busy=false; AUTO.t=Math.min(60, 5+AUTO.fail*10); }
+}
+function autoTick(dt){   // försök igen om man blev ensam, och slå ihop kanaler där båda är ensamma
+  AUTO.t-=dt; if(AUTO.t>0) return; AUTO.t=5+Math.random()*2+AUTO.fail*10;
+  if(!autoWorldOn() || !autoMapOk() || AUTO.busy || Net.joining) return;
+  if(!Net.role){ autoEnter(); return; }
+  if(Net.role==='host' && Net.auto && !readyPeers().length && !Object.keys(Net.peers).length){
+    const c=Object.entries(Sig.hosts||{}).filter(([id,x])=>id!==Net.myId && x.auto && x.mid===G.mapId && x.v===NET_VER && x.n<PARTY_MAX && (x.n>1 || id<Net.myId)).sort((a,b)=>b[1].n-a[1].n || (a[0]<b[0]?-1:1));
+    if(c.length){ AUTO.busy=true; netLeave(true); netJoin(c[0][0], true).then(ok=>{ AUTO.busy=false; if(!ok && !Net.role) autoEnter(); }); }
+  }
 }
 function netRemovePeer(id, why, silent){
   const p=Net.peers[id]; if(!p) return;
@@ -10247,13 +10291,15 @@ function netRemovePeer(id, why, silent){
   const name=(G.others[id]&&G.others[id].name)||p.name||'En spelare';
   delete G.others[id];
   if(Net.role==='host'){
-    if(p.ready && !silent){ log(`👥 ${esc(name)} lämnade partyt.`,'#9fe0ff'); netToGuests({t:'left', id}); }
+    if(p.ready && !silent){ log(Net.auto?`🌍 ${esc(name)} lämnade kartan.`:`👥 ${esc(name)} lämnade partyt.`,'#9fe0ff'); netToGuests({t:'left', id}); }
     hostUpdatePresence();
   } else if(Net.role==='guest' && id===Net.hostId){
-    const was=p.ready;
-    Net.role=null; Net.hostId=null; G.others={};
+    const was=p.ready, auto=Net.auto, rest=Object.keys(G.others).filter(k=>k!==id);
+    Net.role=null; Net.hostId=null; Net.auto=false; G.others={};
     for(const k of Object.keys(Net.peers)) netRemovePeer(k,'x',true);
-    if(was && !silent && G.mode==='game'){ toast('👥 Partyt upplöstes – du spelar vidare själv.'); log('👥 Partyt upplöstes.','#9fe0ff'); initSpawns(); G.drops=[]; G.projs=[]; }
+    if(auto){ if(G.mode==='game' && why!=='leave'){ initSpawns(); G.drops=[]; G.projs=[];
+        if([Net.myId,...rest].sort()[0]===Net.myId) setTimeout(()=>{ if(!Net.role) netHost(true); },150); else { AUTO.t=99; setTimeout(()=>{ AUTO.t=3; autoEnter(); },1800+Math.random()*900); } } }
+    else if(was && !silent && G.mode==='game'){ toast('👥 Partyt upplöstes – du spelar vidare själv.'); log('👥 Partyt upplöstes.','#9fe0ff'); initSpawns(); G.drops=[]; G.projs=[]; }
   }
   refreshParty();
 }
@@ -10262,13 +10308,14 @@ function netLeave(quiet){
   const wasGuest = Net.role==='guest';
   if(Net.role==='host') netToGuests({t:'bye'}); else netToHost({t:'bye'});
   for(const id of Object.keys(Net.peers)) netRemovePeer(id,'leave',true);
-  Net.role=null; Net.open=false; Net.hostId=null; Net.joining=false; G.others={};
+  Net.role=null; Net.open=false; Net.auto=false; Net.hostId=null; Net.joining=false; G.others={};
   Sig.unhost().catch(()=>{}); Sig.stopBrowse(); Sig.closeAll().catch(()=>{});
   if(wasGuest && !quiet && G.mode==='game'){ initSpawns(); G.drops=[]; G.projs=[]; }
   if(!quiet) log('👥 Du lämnade partyt.','#9fe0ff');
   refreshParty();
 }
 function netTick(dt){
+  if(G.mode==='game') autoTick(dt);
   if(G.trade && G.mode==='game' && !(Net.role && G.others[G.trade.with])) tradeCancel(false, '🤝 Bytet avbröts – den andra spelaren är inte kvar i partyt.');
   if(!Net.role || G.mode!=='game' || !G.p) return;
   for(const o of Object.values(G.others)){ const k=Math.min(1,dt*12); o.x+=(o.tx-o.x)*k; o.y+=(o.ty-o.y)*k; }
@@ -10279,10 +10326,11 @@ function netTick(dt){
 }
 
 // --- Party-fönster & HUD ---
-function partyWindowOpened(){ if(!Net.role) startBrowse(); }
-function partyWindowClosed(){ if(!Net.role){ Sig.stopBrowse(); Net.browsing=false; setTimeout(()=>{ if(!Net.role && !isOpen('party')) Sig.closeAll().catch(()=>{}); },1500); } }
+function partyWindowOpened(){ if(!Net.role && !autoWorldOn()) startBrowse(); }
+function partyWindowClosed(){ if(!Net.role && !autoWorldOn()){ Sig.stopBrowse(); Net.browsing=false; setTimeout(()=>{ if(!Net.role && !isOpen('party')) Sig.closeAll().catch(()=>{}); },1500); } }
 function startBrowse(){
   if(!Cloud.on && !TESTNET) return;
+  Sig.setLobby('jaktmarken-lobby').catch(()=>{});
   Net.status='Letar efter öppna spel…'; Net.browsing=false;
   Sig.browse(h=>{ Net.hosts=h; Net.browsing=true; Net.status=''; if(isOpen('party')) renderParty(); })
      .catch(e=>{ Net.status='Kunde inte nå lobbyn: '+(e.message||e); if(isOpen('party')) renderParty(); });
@@ -10297,6 +10345,14 @@ function renderParty(){
   if(!G.ch) return;
   let h=`<div class="shopinfo" style="max-width:none">Spela tillsammans med upp till ${PARTY_MAX} personer. I party får alla <b>+5% EXP</b>. Den som dödar ett monster får <b>75%</b> av dess EXP och övriga i partyt <b>30%</b> var. Guld som plockas upp delas lika. Föremål som droppas tillhör den som dödade monstret i 1 minut. Partyt följer ledaren genom portaler.</div>`;
   if(!Cloud.on && !TESTNET){ h+=`<div class="warn" style="font-size:13px">Multiplayer behöver Supabase-inställningarna för att ni ska hitta varandra. Själva spelandet går sedan direkt mellan er (P2P).</div>`; $('#partyBody').innerHTML=h; return; }
+  h+=`<label class="autotog"><input type="checkbox" id="autoTog" ${localStorage.getItem('jaktmarken_auto')!=='0'?'checked':''}> 🌍 Se andra spelare på samma karta automatiskt</label>`;
+  if(Net.auto && Net.role){
+    const n=1+Object.keys(G.others).length;
+    h=h.replace(/^<div class="shopinfo"[\s\S]*?<\/div>/,'');
+    h+=`<div class="pstat">🌍 ${esc(curMap().name)} · ${n}/${PARTY_MAX} spelare i din kanal</div>`+memberListHtml().replace(/👑 /g,'');
+    h+=`<div class="hintx" style="font-size:12px;margin-top:6px">Alla på samma karta hamnar i samma kanal (högst ${PARTY_MAX}). Var och en får EXP och guld för det de själva dödar och plockar. Vill du spela i party och dela EXP: stäng av rutan ovan och öppna ett eget party.</div>`;
+    $('#partyBody').innerHTML=h; return;
+  }
   if(Net.role==='host'){
     const n=1+readyPeers().length;
     h+=`<div class="pstat">👑 Du är party-ledare · ${n}/${PARTY_MAX} spelare · ${!Net.open?'Stängd för nya spelare':n>=PARTY_MAX?'Partyt är fullt':'Öppen – andra kan gå med'}</div>`+memberListHtml();
@@ -10314,6 +10370,12 @@ function renderParty(){
   }
   $('#partyBody').innerHTML=h;
 }
+$('#partyBody').addEventListener('change',e=>{
+  if(e.target.id!=='autoTog') return;
+  localStorage.setItem('jaktmarken_auto', e.target.checked?'1':'0');
+  if(!e.target.checked){ if(Net.auto) netLeave(true); startBrowse(); } else { if(!Net.role){ Sig.stopBrowse(); autoEnter(); } }
+  refreshParty();
+});
 $('#partyBody').addEventListener('click',e=>{
   const j=e.target.closest('[data-join]'); if(j){ netJoin(j.dataset.join); return; }
   const a=e.target.closest('[data-pa]'); if(!a) return;
