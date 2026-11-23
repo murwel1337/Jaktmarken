@@ -1923,6 +1923,9 @@ const Auth = {
       this.sb = mod.createClient(SUPABASE_URL, SUPABASE_KEY, {auth:{persistSession:true, autoRefreshToken:true, detectSessionInUrl:true, flowType:'pkce', storageKey:'jaktmarken-auth'}});
       this.sb.auth.onAuthStateChange((ev, ses)=>this.set(ses));
       const {data} = await this.sb.auth.getSession(); this.set(data && data.session);
+      if(this.user && this.user.is_anonymous){ try{   // kopplingen till Google kan ha gått igenom fast man hamnade fel efteråt – hämta färsk användare
+        const {data:u}=await this.sb.auth.getUser(); if(u && u.user && !u.user.is_anonymous){ const r=await this.sb.auth.refreshSession(); this.set((r.data&&r.data.session)||this.session); if(this.user) this.user=u.user; }
+      }catch(e){ console.warn(e); } }
     }catch(e){ console.warn('Inloggningen kunde inte startas – lokalt läge', e); this.sb=null; }
     if(this.urlErr || this.urlCode){ const u=new URL(location.href); for(const k of ['code','error','error_code','error_description','state']) u.searchParams.delete(k); history.replaceState(null,'',u.pathname+u.search); }
   },
@@ -10318,6 +10321,7 @@ resize(); initSpawns(); snapCam();
   showScreen(`<div class="card narrow"><div class="logo">Jaktmarken</div><div class="sub">Laddar…</div></div>`);
   await Auth.init(); Cloud.init();
   const linking=localStorage.getItem('jaktmarken_linking'); localStorage.removeItem('jaktmarken_linking');
+  if(Auth.urlErr && Auth.user && !Auth.anon && linking){ await enterAccount(); toast('✅ Ditt konto är sparat med Google!',7000); return; }
   if(Auth.urlErr){ const t=/already|exists|linked/i.test(Auth.urlErr) ? 'Det Google-kontot har redan ett eget Jaktmarken-konto. Logga ut och välj "Logga in med Google" för att spela på det.' : 'Inloggningen avbröts: '+Auth.urlErr;
     if(Auth.user){ await enterAccount(); toast(esc(t),8000); } else showLogin(t); return; }
   if(Auth.user){ await enterAccount(); if(linking && !Auth.anon) toast('✅ Ditt konto är nu sparat med Google! Logga in med Google på andra enheter.',7000); }
