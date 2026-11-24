@@ -3607,7 +3607,7 @@ function drawMProj(f){
   if(f.k==='berry'){
     const k=clamp((f.t||0)/1.1,0,1); ctx.strokeStyle=`rgba(80,90,255,${.5+Math.sin((f.t||0)*14)*.3})`; ctx.lineWidth=3; ctx.beginPath(); ctx.ellipse(f.tx,f.gy,f.r,f.r*.22,0,0,7); ctx.stroke();
     ctx.fillStyle=`rgba(30,30,120,${.15+k*.3})`; ell(ctx,f.tx,f.gy,f.r*(.4+k*.6),f.r*.2*(.4+k*.6));
-    ctx.save(); ctx.translate(f.x,f.y); ctx.scale(1.6,1.6); drawBlabar(ctx,{x:0,y:12,t:(f.t||0)*3,dir:1,state:'idle',kbT:0,hurtT:0,dead:false,dieT:0,d:MOBS.blabar,ns:true}); ctx.restore(); return;
+    ctx.save(); ctx.translate(f.x,f.y); ctx.scale(1.6,1.6); MOB_DRAW.blabar(ctx,{ns:true,x:0,y:12,t:(f.t||0)*3,dir:1,state:'idle',kbT:0,hurtT:0,dead:false,dieT:0,d:MOBS.blabar,ns:true}); ctx.restore(); return;
   }
   if(f.k==='rock'){
     if(f.su){ const k=clamp(f.t/f.delay,0,1);   // solrosens laddning: en växande gul ring
@@ -3851,6 +3851,7 @@ function projHit(pr, m){
   if(pr.cos){ if(boom) explode(pr); else sparks(m.x, m.y-m.d.h/2, (pr.type==='whisper'||pr.type==='echo')?'#c9a2ff':pr.type==='wispshot'?'#bff7ff':'#fff3b0', 4); return; }
   if(boom){ explode(pr); return; }
   hitMonster(m, pr.dmg, {dir, noKb:pr.type==='wispshot', basic:pr.type==='arrow'||pr.type==='whisper'||!!pr.basic, critAdd:pr.critAdd||0});
+  if(pr.type==='whisper'||pr.type==='echo'||pr.type==='wispshot') lightBurst(m.x, m.y-m.d.h/2, pr.type==='whisper'?'#c9a2ff':'#9fe8ff', pr.type==='echo'?34:22);
   if(pr.type==='kastkniv' && !pr.cos && Math.random()*100<tv('k_blod')) addBleed(m, pr.dmg, {dps:pr.dmg/6, t:6, max:3, src:'k'});
   pr.hit.add(m);
   if(pr.type==='whisper' || pr.type==='echo'){
@@ -3883,7 +3884,7 @@ function bounceArrow(from, count, dmg, hitSet){
 }
 function explode(pr){
   const R=pr.r||85, bomb=pr.type==='bomb'; SFX.boom(pr.x);
-  G.fx.push({type:'ring', x:pr.x, y:pr.y, t:0, dur:bomb?.42:.35, r:R});
+  G.fx.push({type:'ring', x:pr.x, y:pr.y, t:0, dur:bomb?.42:.35, r:R}); G.fx.push({type:'burst', x:pr.x, y:pr.y, c:'#ffb45a', r:R*.75, t:0, dur:.5});
   for(let i=0;i<(bomb?30:22);i++) particle(pr.x,pr.y,pick(['#ff7a1a','#ffd23f','#ff4a1a','#fff1b0']),rand(-220,220)*R/85,rand(-220,120)*R/85,.55,4,200);
   if(bomb) for(let i=0;i<8;i++) particle(pr.x,pr.y,pick(['#55504a','#77706a']),rand(-80,80),rand(-120,-20),.9,5,-30);
   if(pr.cos) return;
@@ -4016,6 +4017,7 @@ function splitGold(amount, picker=Net.myId){
    EFFEKTER & SKADESIFFROR
    ===================================================================== */
 function particle(x,y,c,vx,vy,life,s,g){ G.fx.push({type:'p',x,y,vx,vy,t:0,dur:life,c,s,g}); }
+function lightBurst(x,y,c,r){ G.fx.push({type:'burst',x,y,c,r,t:0,dur:.4}); if(!PERF.low) for(let i=0;i<6;i++) particle(x,y,c,rand(-90,90),rand(-120,-20),.6,2.6,260); }
 function sparks(x,y,c,n){ for(let i=0;i<n;i++) particle(x,y,c,rand(-140,140),rand(-160,40),.35,2.5,300); }
 function fxPetal(p,burst){ G.fx.push({type:'petal', x:p.x+rand(-24,24), y:p.y-rand(0,60), vx:rand(-30,30)*(burst?3:1), vy:rand(-40,-10)*(burst?3:1), t:0, dur:1.1, rot:rand(0,6), c:pick(['#ff8fd0','#ffd1ec','#fff27a'])}); }
 function addNum(x,y,v,kind,m){
@@ -4986,6 +4988,21 @@ function drawAtmos(){
   }
   ctx.drawImage(VIGN,0,0,VW,VH);
 }
+/* Ori-känsla i världen: ljuskant på marken mot ljuskällan och svävande eldflugor nära plattformarna */
+let FLIES=[], FLYK=-1;
+function drawRimLight(){
+  if(PERF.low) return; const A=art(), V=G.view, M=curMap(); if(!M.plats) return;
+  ctx.save(); ctx.globalCompositeOperation='lighter'; ctx.lineCap='round';
+  for(const pl of M.plats){ if(pl.x2<V.x1-10||pl.x1>V.x2+10||pl.y<V.y1-40||pl.y>V.y2+60||pl.wall) continue;
+    const x1=Math.max(pl.x1,V.x1-10), x2=Math.min(pl.x2,V.x2+10), st=pl.prof?14:Math.max(20,x2-x1);
+    const path=()=>{ ctx.beginPath(); for(let x=x1;x<=x2+.1;x+=st){ const y=yAt(pl,Math.min(x,x2)); x===x1?ctx.moveTo(x,y):ctx.lineTo(Math.min(x,x2),y); } };
+    path(); ctx.strokeStyle=`rgba(${A.sun},.16)`; ctx.lineWidth=7; ctx.stroke(); path(); ctx.strokeStyle=`rgba(${A.sun},.34)`; ctx.lineWidth=2; ctx.stroke(); }
+  if(FLYK!==G.mapId){ FLYK=G.mapId; FLIES=[]; const R=seeded(919+G.mapId), P=M.plats.filter(p=>!p.wall && p.x2-p.x1>60); for(let i=0;i<Math.min(26,P.length*3);i++){ const p=P[(R()*P.length)|0]; FLIES.push({p, x:p.x1+R()*(p.x2-p.x1), h:14+R()*80, ph:R()*6.28, f:.5+R()*.9}); } }
+  const t=G.time;
+  for(const f of FLIES){ const x=f.x+Math.sin(t*f.f+f.ph)*22, y=yAt(f.p,f.x)-f.h+Math.cos(t*f.f*1.3+f.ph)*10; if(x<V.x1-20||x>V.x2+20||y<V.y1-20||y>V.y2+20) continue;
+    const a=.35+.65*Math.max(0,Math.sin(t*f.f*2.2+f.ph*3)); ctx.globalAlpha=a*.85; ctx.drawImage(glowFor('#e8ffb8'),x-9,y-9,18,18); ctx.globalAlpha=a; ctx.fillStyle='#fffde0'; ctx.fillRect(x-.8,y-.8,1.6,1.6); }
+  ctx.restore(); ctx.globalAlpha=1;
+}
 function drawTerrain(){
   const V=G.view;
   for(const p of TERR){ if(p.x>V.x2+4||p.x+p.w<V.x1-4||p.y>V.y2+4||p.y+p.h<V.y1-4) continue; ctx.drawImage(p.cv,p.x,p.y,p.w,p.h); }
@@ -5148,6 +5165,7 @@ function spriteFx(x,y,bw,bh,oy,paint,o={}){
   let g=a.createLinearGradient(0,yt,0,yb); g.addColorStop(0,A.sprTop); g.addColorStop(.5,'rgba(0,0,0,0)'); g.addColorStop(1,A.sprBot); a.fillStyle=g; a.fillRect(0,0,W,H);
   const sd=A.sunPos[0]>.5?1:-1, cx=bw/2*k, hw=(o.hw||26)*k;
   g=a.createLinearGradient(cx-hw*sd,0,cx+hw*sd,0); g.addColorStop(0,'rgba(0,0,0,0)'); g.addColorStop(.62,'rgba(0,0,0,0)'); g.addColorStop(1,A.sprRim); a.fillStyle=g; a.fillRect(0,0,W,H);
+  if(o.rim2){ g=a.createLinearGradient(cx+hw*sd,0,cx-hw*sd*1.05,0); g.addColorStop(0,'rgba(0,0,0,0)'); g.addColorStop(.7,'rgba(0,0,0,0)'); g.addColorStop(1,o.rim2); a.fillStyle=g; a.fillRect(0,0,W,H); }
   if(o.tint) o.tint(a,W,H,k);
   if(o.flash>0){ a.fillStyle=`rgba(255,255,255,${o.flash})`; a.fillRect(0,0,W,H); }
   a.globalCompositeOperation='source-over';
@@ -5227,6 +5245,7 @@ const NPC_LOOK = {
   dagny: {style:'ylva', skin:['#eec39c','#c48a62'], hair:['#d8d8e0','#9a9aa8'], eye:'#3a7aa8',
           top:['#2e4a7a','#1a2a4a'], pants:['#3a3040','#201a28'], shoe:['#3a2a20','#1e140c'], sleeve:'long', eq:{brost:{req:8,rarity:'common'}, vapen:{wtype:'spjut',req:15,rarity:'common'}}},
 };
+const CLS_RIM={skog:'rgba(255,190,120,.42)',hippie:'rgba(255,230,140,.45)',viskare:'rgba(140,225,255,.55)',psykopat:'rgba(255,80,110,.45)',gata:'rgba(255,205,140,.42)'};
 const shadeC=(h,t)=>t>0?mixHex(h,'#ffffff',t):mixHex(h,'#000000',-t);
 
 /* ---------- Utseende för spelargubbar (väljs när man skapar gubben, kan ändras i gubbvalet) ----------
@@ -5396,12 +5415,15 @@ function tube(c,x1,y1,x2,y2,w,col,dark,hi){
   c.strokeStyle=col; c.lineWidth=w*.68; line(c,x1-w*.08,y1-w*.1,x2-w*.08,y2-w*.1);
   if(hi){ c.strokeStyle=hi; c.lineWidth=w*.2; line(c,x1-w*.18,y1-w*.24,x2-w*.18,y2-w*.24); }
 }
+let EYE_BL=false;   // sätts per gubbe i drawHeadP: blinkar några gånger i minuten
 function eyeP(c,x,y,iris,sx){
-  c.fillStyle='#fffaf2'; ell(c,x,y,2.4*sx,3.3);
-  c.fillStyle=iris; ell(c,x+.45*sx,y+.45,1.75*sx,2.55);
-  c.fillStyle='#120a06'; ell(c,x+.55*sx,y+.7,1.05*sx,1.55);
-  c.fillStyle='#ffffff'; circ(c,x-.25,y-.9,.8); circ(c,x+1*sx,y+1.4,.35);
-  c.strokeStyle='#2a1608'; c.lineWidth=1; c.beginPath(); c.ellipse(x,y,2.5*sx,3.4,0,Math.PI*1.1,Math.PI*1.9); c.stroke();
+  if(EYE_BL){ c.strokeStyle='#2a1608'; c.lineWidth=1.25; c.beginPath(); c.moveTo(x-2.5*sx,y+.5); c.quadraticCurveTo(x,y+2,x+2.5*sx,y+.5); c.stroke(); return; }
+  const g0=c.createLinearGradient(0,y-3.7,0,y+3.7); g0.addColorStop(0,'#ded6cc'); g0.addColorStop(.35,'#fffdf8'); g0.addColorStop(1,'#fff8ee'); c.fillStyle=g0; ell(c,x,y,2.65*sx,3.65);
+  const g=c.createLinearGradient(0,y-2.4,0,y+3.4); g.addColorStop(0,shadeC(iris,-.5)); g.addColorStop(.55,iris); g.addColorStop(1,shadeC(iris,.4)); c.fillStyle=g; ell(c,x+.45*sx,y+.5,1.95*sx,2.85);
+  c.fillStyle='#0b0604'; ell(c,x+.55*sx,y+.85,1.1*sx,1.7);
+  c.fillStyle='#ffffff'; ell(c,x-.3*sx,y-1.15,.95*sx,1.1); circ(c,x+1.1*sx,y+1.7,.42);
+  c.strokeStyle='#1e0f06'; c.lineWidth=1.3; c.beginPath(); c.ellipse(x,y,2.75*sx,3.75,0,Math.PI*1.08,Math.PI*1.92); c.stroke();
+  c.lineWidth=.7; c.beginPath(); c.moveTo(x+2.3*sx,y-2.3); c.lineTo(x+3.3*sx,y-3.2); c.stroke();
 }
 /* ---------- Anfallsanimationer (nyckelbilder) ----------
    a = överarmens vinkel (0 upp, PI/2 fram, PI ned), b = armbågsböj, ba/bb = bakre armen,
@@ -5693,6 +5715,7 @@ function drawHelm(c,it,hx,hy,face){
   }
 }
 function drawHeadP(c,L,by,eq,o){
+  EYE_BL=((G.time+((o.cls||L.style||'').length)*.83+(o.face<0?.4:0))%3.7)<.13;
   if(L.app) return drawHeadPl(c,L,by,eq,o);
   const hx=1, hy=-52+by, cov=!!eq.hjalm;
   hairBack(c,L,hx,hy,cov);
@@ -7384,7 +7407,7 @@ function drawOthers(){
     if(o.pose!=='jump' && o.pose!=='climb'){ ctx.fillStyle=art().shadowCol; ell(ctx,o.x,o.y,16,4.5); }
     if(o.pose==='dead') ctx.globalAlpha=0.35;
     const co={cls:o.cls, app:o.app, face:o.face, pose:o.pose==='dead'?'stand':o.pose, t:o.t, walkT:o.walkT, climbT:o.climbT, eq:o.eq||{}, av:o.av||0};
-    spriteFx(o.x,o.y,172,170,20,c=>drawRolling(c,co,o.rl||0),{h:78,hw:18});
+    spriteFx(o.x,o.y,172,170,20,c=>drawRolling(c,co,o.rl||0),{h:78,hw:18,rim2:CLS_RIM[o.cls]});
     ctx.globalAlpha=1;
     if(o.buff && Math.random()<0.2) fxPetal(o);
     if(o.rg && Math.random()<0.2) particle(o.x+rand(-14,14), o.y-rand(5,60), '#7dff8a', rand(-10,10), rand(-70,-30), .7, 2.5, -20);
@@ -7417,9 +7440,9 @@ function drawPlayer(){
   if(p.kickT>0) pose=p.kickPose;
   const co={cls:ch.cls, app:ch.app, face:p.face, pose, t, walkT:p.walkT, climbT:p.climbT, eq:ch.eq, av:p.atkVar||0, hurt:p.knockT>0};
   const rp=p.rollT>0?1-p.rollT/ROLL_T:0;
-  spriteFx(p.x,p.y,172,170,20,c=>drawRolling(c,co,rp),{h:78,hw:18});
+  spriteFx(p.x,p.y,172,170,20,c=>drawRolling(c,co,rp),{h:78,hw:18,rim2:CLS_RIM[ch.cls]});
   ctx.globalAlpha=1;
-  for(const w of p.wisps||[]) drawWispOrb(w.x,w.y);
+  for(const w of p.wisps||[]){ if(!PERF.low){ if(!w.tr) w.tr=[]; w.tr.push([w.x,w.y]); if(w.tr.length>18) w.tr.shift(); oriTrail(w.tr,'#9ff3ff',9,.8); } drawWispOrb(w.x,w.y); }
   if(G.tr && G.tr.sh && G.tr.sh.v>0 && !p.dead){ const a=.35+Math.sin(G.time*5)*.08; ctx.save(); ctx.strokeStyle=`rgba(232,192,138,${a+.25})`; ctx.fillStyle=`rgba(200,148,90,${a*.35})`; ctx.lineWidth=2.5; ctx.beginPath(); ctx.ellipse(p.x,p.y-38,32,46,0,0,7); ctx.fill(); ctx.stroke(); ctx.restore(); }   // sköld
   if(G.tr && G.tr.big>0 && !p.dead){ ctx.save(); const g=ctx.createRadialGradient(p.x-8,p.y-50,4,p.x,p.y-38,48); g.addColorStop(0,'rgba(200,210,255,.35)'); g.addColorStop(1,'rgba(40,60,200,.22)'); ctx.fillStyle=g; ctx.strokeStyle='rgba(120,140,255,.6)'; ctx.lineWidth=2; ctx.beginPath(); ctx.ellipse(p.x,p.y-38,38,48,0,0,7); ctx.fill(); ctx.stroke(); ctx.restore(); }   // Jättebärets kärna
   if(trk()==='rotfaste' && G.tr && G.tr.still>=.5 && !p.dead){ ctx.save(); ctx.strokeStyle='rgba(90,58,28,.85)'; ctx.lineWidth=3; ctx.lineCap='round'; for(const k of [-1,1]){ ctx.beginPath(); ctx.moveTo(p.x+k*6,p.y); ctx.quadraticCurveTo(p.x+k*16,p.y+2,p.x+k*26,p.y+5); ctx.stroke(); ctx.beginPath(); ctx.moveTo(p.x+k*10,p.y); ctx.quadraticCurveTo(p.x+k*14,p.y+4,p.x+k*18,p.y+9); ctx.stroke(); } ctx.restore(); }   // Rotfäste
@@ -7456,7 +7479,16 @@ function drawDrop(d){
   }
   ctx.globalAlpha=1;
 }
+/* Ljusspår i Ori-stil: ett band som smalnar av och lyser additivt */
+function oriTrail(pts,col,w,a=1){ if(pts.length<2) return; ctx.save(); ctx.globalCompositeOperation='lighter'; ctx.lineCap='round';
+  const [r,g,b]=hx2rgb(col); for(let i=1;i<pts.length;i++){ const k=i/pts.length; ctx.strokeStyle=`rgba(${r},${g},${b},${k*k*.8*a})`; ctx.lineWidth=Math.max(.5,w*k); ctx.beginPath(); ctx.moveTo(pts[i-1][0],pts[i-1][1]); ctx.lineTo(pts[i][0],pts[i][1]); ctx.stroke(); }
+  ctx.strokeStyle=`rgba(255,255,255,${.5*a})`; ctx.lineWidth=Math.max(.5,w*.25); ctx.beginPath(); const n=pts.length; ctx.moveTo(pts[Math.max(0,n-5)][0],pts[Math.max(0,n-5)][1]); for(let i=Math.max(0,n-4);i<n;i++) ctx.lineTo(pts[i][0],pts[i][1]); ctx.stroke(); ctx.restore(); }
+const TRAIL={whisper:['#b48cff',8,12],echo:['#8fe6ff',13,16],wispshot:['#9ff3ff',6,10],bomb:['#ffb45a',7,12],arrow:['#fff3d8',3,8],fire:['#ff8a2a',11,12],kniv:['#e8f0ff',3,6],kastkniv:['#e8f0ff',3,6]};
 function drawProj(pr){
+  const TR=TRAIL[pr.type];
+  if(TR && !PERF.low){ if(!pr.tr) pr.tr=[]; pr.tr.push([pr.x,pr.y]); if(pr.tr.length>TR[2]) pr.tr.shift(); oriTrail(pr.tr,TR[0],TR[1]);
+    if(pr.type==='echo'){ ctx.save(); ctx.globalCompositeOperation='lighter'; ctx.globalAlpha=.85; ctx.drawImage(glowFor('#8fe6ff'),pr.x-34,pr.y-34,68,68); for(let i=0;i<3;i++){ const a=G.time*9+i*2.1; ctx.drawImage(glowFor('#e8fbff'),pr.x+Math.cos(a)*13-6,pr.y+Math.sin(a)*13-6,12,12); } ctx.restore(); }
+    if(pr.type==='whisper'||pr.type==='wispshot'){ ctx.save(); ctx.globalCompositeOperation='lighter'; ctx.globalAlpha=.7; const r=pr.type==='whisper'?22:16; ctx.drawImage(glowFor(TR[0]),pr.x-r,pr.y-r,r*2,r*2); ctx.restore(); } }
   if(pr.type==='kniv'||pr.type==='kastkniv'){   // snurrande kniv
     ctx.save(); ctx.translate(pr.x,pr.y); ctx.rotate(pr.t*14*Math.sign(pr.vx||1));
     ctx.fillStyle='#3a2414'; rr(ctx,-2,2,4,9,1.5); ctx.fill(); ctx.fillStyle='#8a8f98'; ctx.fillRect(-4,1,8,2);
@@ -7533,10 +7565,20 @@ function drawFx(f){
       ctx.strokeStyle=i?'#ffd27a':'#ffffff'; ctx.lineWidth=(5-i)*(1-k)+1; ctx.beginPath(); ctx.ellipse(f.x,f.y,r,r*.38,0,a0,a0+3.4); ctx.stroke(); }
     ctx.globalCompositeOperation='source-over'; ctx.globalAlpha=1;
   }
+  else if(f.type==='burst'){   // ljusutbrott vid träff (Ori-stil)
+    const e=easeOut(k); ctx.save(); ctx.globalCompositeOperation='lighter';
+    ctx.globalAlpha=(1-k)*.9; const r=f.r*(.6+e*1.4); ctx.drawImage(glowFor(f.c),f.x-r,f.y-r,r*2,r*2);
+    ctx.globalAlpha=(1-k); ctx.strokeStyle=f.c; ctx.lineWidth=3*(1-k)+.6; ctx.beginPath(); ctx.arc(f.x,f.y,f.r*e,0,7); ctx.stroke();
+    if(k<.3){ ctx.globalAlpha=1-k/.3; ctx.drawImage(glowFor('#ffffff'),f.x-f.r*.5,f.y-f.r*.5,f.r,f.r); }
+    ctx.restore(); ctx.globalAlpha=1; }
   else if(f.type==='quake'){
     const e=easeOut(k), Rq=f.r*e, c=f.c||'#e0a050';
     ctx.globalAlpha=(1-k)*.9; ctx.strokeStyle=c; ctx.lineWidth=7*(1-k)+1.5;
     ctx.beginPath(); ctx.ellipse(f.x,f.y-2,Rq,Rq*.22,0,0,7); ctx.stroke();
+    if(!PERF.low){ if(f.seed===undefined) f.seed=(Math.random()*1e6)|0; const rs=seeded(f.seed); ctx.save(); ctx.globalCompositeOperation='lighter'; ctx.lineCap='round';
+      for(let i=0;i<8;i++){ const dir=i<4?-1:1; let x=f.x, y=f.y-1; ctx.beginPath(); ctx.moveTo(x,y); for(let s2=0;s2<6;s2++){ x+=dir*(8+rs()*16)*(f.r/200); y+=(rs()-.5)*5; if(Math.abs(x-f.x)>Rq) break; ctx.lineTo(x,y); }
+        ctx.globalAlpha=(1-k)*.85; ctx.strokeStyle=c; ctx.lineWidth=3; ctx.stroke(); ctx.globalAlpha=(1-k); ctx.strokeStyle='#fff6dc'; ctx.lineWidth=1; ctx.stroke(); }
+      ctx.globalAlpha=(1-k)*.6; ctx.drawImage(glowFor(c),f.x-Rq*.6,f.y-Rq*.3,Rq*1.2,Rq*.6); ctx.restore(); }
     ctx.globalAlpha=(1-k)*.5; ctx.lineWidth=3; ctx.beginPath(); ctx.ellipse(f.x,f.y-2,Rq*.6,Rq*.6*.22,0,0,7); ctx.stroke();
     ctx.globalAlpha=(1-k)*.25; ctx.fillStyle=c; ctx.beginPath(); ctx.ellipse(f.x,f.y-2,Rq,Rq*.22,0,0,7); ctx.fill();
     ctx.globalAlpha=1;
@@ -7591,7 +7633,7 @@ function render(){
   const cx=Math.round((G.cam.x+shx)*s)/s, cy=Math.round((G.cam.y+shy)*s)/s;
   ctx.setTransform(s,0,0,s,-cx*s,-cy*s);
   G.view={x1:cx,y1:cy,x2:cx+VW/Z,y2:cy+VH/Z};
-  drawDecoBack(); drawTorches(); drawSign(); drawWaySigns(); drawTerrain(); drawCamp(); drawRopes(); drawPortals(); drawHazards(); drawDecoFront(); drawShelter(false); drawNpcs();
+  drawDecoBack(); drawTorches(); drawSign(); drawWaySigns(); drawTerrain(); drawRimLight(); drawCamp(); drawRopes(); drawPortals(); drawHazards(); drawDecoFront(); drawShelter(false); drawNpcs();
   for(const d of G.drops) drawDrop(d);
   for(const m of G.monsters) if(m.x>G.view.x1-60 && m.x<G.view.x2+60) drawMonster(m);
   if(G.mode==='game') drawOthers();
