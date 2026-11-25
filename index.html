@@ -73,6 +73,14 @@ label{display:block;font-size:12px;color:var(--muted);margin:10px 0 4px}
 .ccard .cl{font-size:12px;color:var(--muted)}
 .ccard .del{position:absolute;right:6px;top:6px;background:#2a1820;border:1px solid #6a3040;border-radius:6px;font-size:12px;padding:2px 6px}
 .classes{display:grid;grid-template-columns:repeat(auto-fit,minmax(138px,1fr));gap:10px;margin:12px 0}
+.card.scrolly{max-height:calc(100vh - 24px);overflow-y:auto}
+.cltag{font-size:12.5px;color:#e8dcc0;margin-top:4px;font-weight:700}.clstar{color:#ffd25a;font-size:14px;margin-top:3px;letter-spacing:1px}.clstar span{color:#bfae8e;font-size:11px;letter-spacing:0;font-weight:700}
+.cldesc{background:rgba(0,0,0,.28);border:1px solid rgba(214,170,98,.35);border-radius:9px;padding:8px 11px;margin:8px 0 4px;font-size:13px;line-height:1.45;color:#e8dcc0;min-height:56px}
+#tutBox.tip{left:50%;top:auto;bottom:92px;transform:translateX(-50%);min-width:0;padding:6px 8px 6px 12px;display:flex;align-items:center;gap:10px;font-size:14px;animation:tipIn .35s ease-out;white-space:nowrap}
+#tutBox.tip .tl{font-weight:800;color:#ffe9a8}#tutBox.tip button{background:none;border:0;color:#bfae8e;cursor:pointer;font-size:13px;padding:2px 4px}
+#tutBox.tip.done{background:rgba(30,70,20,.92);border-color:#7ee787}
+@keyframes tipIn{from{opacity:0;transform:translate(-50%,10px)}to{opacity:1;transform:translate(-50%,0)}}
+.inp.pin{letter-spacing:8px;font-weight:800;text-align:center}
 .clcard{background:#141d2d;border:2px solid #33456a;border-radius:12px;padding:10px;text-align:center;cursor:pointer}
 .clcard.on{border-color:#ffd25a;box-shadow:0 0 14px rgba(255,210,90,.3)}
 .clcard canvas{width:90px;height:100px}
@@ -420,7 +428,10 @@ body.touch.isfs #fsBtn{opacity:.55}
 #qProg{position:fixed;left:50%;top:max(132px,22vh);transform:translateX(-50%);z-index:2147482000;display:flex;flex-direction:column;gap:4px;align-items:center;pointer-events:none}
 #qProg .qp{font-weight:800;font-size:21px;color:#ffe9a8;background:rgba(10,14,22,.62);border:1px solid rgba(255,224,102,.35);border-radius:999px;padding:4px 14px;text-shadow:0 1px 2px #000,0 0 3px #000;white-space:nowrap}
 #qProg .qp b{color:#ffe066;font-weight:900}
- #tutBox{position:fixed;left:12px;top:132px;z-index:11;background:rgba(20,14,6,.88);border:2px solid #c8963a;border-radius:12px;padding:8px 12px 10px;min-width:250px;font-size:13px;color:#f0e2c0;box-shadow:0 6px 20px rgba(0,0,0,.5)}
+ #signBox{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.35);cursor:pointer}#signBox.hidden{display:none}
+.sbBoard{background:linear-gradient(#c8965a,#a87440);border:6px solid #5a3a1a;border-radius:6px;box-shadow:0 10px 30px rgba(0,0,0,.6),inset 0 0 0 2px rgba(255,220,160,.3);padding:16px 26px;min-width:260px;max-width:90vw;text-align:center;font:700 16px/1.45 Georgia,serif;color:#1e1208;background-image:repeating-linear-gradient(0deg,rgba(90,56,24,.18) 0 2px,transparent 2px 26px),linear-gradient(#c8965a,#a87440)}
+.sbTitle{font-size:19px;margin-bottom:8px;color:#3a1e08;text-decoration:underline}.sbHint{font:600 11px system-ui;color:#4a2e14;margin-top:10px;opacity:.8}
+#tutBox{position:fixed;left:12px;top:132px;z-index:11;background:rgba(20,14,6,.88);border:2px solid #c8963a;border-radius:12px;padding:8px 12px 10px;min-width:250px;font-size:13px;color:#f0e2c0;box-shadow:0 6px 20px rgba(0,0,0,.5)}
 #tutBox h4{margin:0 0 6px;font:900 15px Georgia,serif;color:#ffe08a;display:flex;justify-content:space-between;align-items:center}
 #tutBox h4 button{background:none;border:0;color:#d6c8ae;font-size:14px;cursor:pointer}
 #tutBox .tr{display:flex;align-items:center;gap:8px;margin:4px 0}#tutBox .tr.ok{opacity:.55}#tutBox .tr.ok .tl::after{content:' ✔';color:#7ee787;font-weight:900}
@@ -459,6 +470,9 @@ body.touch.isfs #fsBtn{opacity:.55}
 .slot.tutwpn::after{content:'👆';position:absolute;right:-4px;bottom:-6px;font-size:18px;animation:tutBob .5s ease-in-out infinite alternate;pointer-events:none;filter:drop-shadow(0 1px 2px #000)}
 @keyframes tutGlow{from{transform:scale(1)}to{transform:scale(1.1)}}
 @keyframes tutBob{from{transform:translateY(0)}to{transform:translateY(-5px)}}
+.tutbar.eq{background:linear-gradient(90deg,#2a6a1e,#1a4a12);border-color:#9fe870}
+#topBtns button.hl{position:relative}#topBtns button.hl::after{content:'⬆';position:absolute;left:50%;top:100%;transform:translateX(-50%);font-size:22px;color:#ffe066;text-shadow:0 2px 4px #000;animation:arrowBob .5s ease-in-out infinite alternate;pointer-events:none}
+@keyframes arrowBob{from{margin-top:2px}to{margin-top:12px}}
 .tutbar{background:linear-gradient(90deg,#5a2fa0,#3a1d6a);border:2px solid #c9a0ff;border-radius:8px;padding:5px 9px;margin-bottom:6px;color:#fff;font-size:13px;line-height:1.3;animation:tutFlash .8s ease-in-out infinite alternate}
 @keyframes tutFlash{from{box-shadow:0 0 0 rgba(201,160,255,0)}to{box-shadow:0 0 14px rgba(201,160,255,.95)}}
 .btn.tutbtn{box-shadow:0 0 14px 4px #c9a0ff;outline:3px solid #fff}
@@ -1333,6 +1347,7 @@ function knownAbils(){
 const mobCurve = L => { const e=Math.max(1,Math.round(Math.pow(L,.85))); return {hp:Math.round(10*Math.pow(L,1.16)), exp:e, gold:e, touch:Math.round(10*Math.pow(L,.72)), itemLvl:Math.round(.9*L+1.5)}; };
 const mobDefine = o => ({...mobCurve(o.lvl), ...o});
 const MOBS = {
+  flugsvamp:{...mobDefine({lvl:1, name:'Flugsvamp', speed:38, w:30, h:32, drop:0, pool:[], map:21}), hp:5, exp:1, gold:1, touch:5, goldOnly:true},
   blabar:   mobDefine({lvl:1,  name:'Blåbär',    speed:52,  w:34, h:34, drop:0,    pool:[], mat:'bar',       matP:.10, map:1, ring:'ringBar', ringP:.001}),
   mossa:    mobDefine({lvl:2,  name:'Mossaboll', speed:68,  w:44, h:44, drop:0,    pool:[], mat:'mossa',     matP:.20, map:1, loot:[['byxorMossa',.002,'epic']]}),
   kissekatt:mobDefine({lvl:4,  name:'Kissekatt', speed:78,  w:42, h:36, drop:0.02, pool:['handskar5','mantel5','skor5'], maxRar:'uncommon', mat:'kattsvans', matP:.10, map:2}),
@@ -1394,7 +1409,7 @@ MOBS.eldtunga = (()=>{ const b=mobDefine({lvl:20, name:'Eldtunga', speed:70, w:1
 MOBS.stockholm = (()=>{ const b=mobDefine({lvl:16, name:'Stockholmaren', speed:26, w:92, h:150, drop:0, pool:[], map:18, boss:true, mini:true, fountain:true,
   miniMsg:'🪵 <b style="color:#e8c08a">Stockholmaren</b> har vaknat i skogen!'}); b.hp*=12; b.touch=Math.round(b.touch*1.5); b.exp*=8; b.gold*=6; b.book=[1,5,15,40];
   b.loot=[['wMagiskPinne',.03,'epic'], ['tr_rotfaste',.03,'epic']]; b.extra=[['scrReset',.05]]; return b; })();
-const MOB_ORDER = ['blabar','mossa','kissekatt','vildhund','varg','bjorn','skata','hok','pinne','stock','drake','sten','bandit','banditboss','stenappa','jattebar','mossjatte','askdrake','solros','eldtunga','stockholm'];
+const MOB_ORDER = ['flugsvamp','blabar','mossa','kissekatt','vildhund','varg','bjorn','skata','hok','pinne','stock','drake','sten','bandit','banditboss','stenappa','jattebar','mossjatte','askdrake','solros','eldtunga','stockholm'];
 /* Silvermonster: 1% chans vid varje spawn. Dubbelt så stort, 5x HP och skada, 3x EXP, droppar alltid ett föremål. */
 const RARE_CHANCE = 0.01;
 const RARE_DEFS = {};
@@ -1494,6 +1509,8 @@ const SFX = (()=>{
     quest(){ if(!ok('quest',400)) return; arp([523,659,784,1047],{type:'triangle',d:.32,v:.15,step:.09}); tone(1319,{d:.6,v:.08,t0:.36}); noise({f:5000,q:2,d:.5,v:.04,t0:.36}); },
     level(){ if(!ok('level',1400)) return; const t0=.15; arp([392,523,659,784,1047],{type:'triangle',d:.35,v:.16,step:.1,t0}); tone(1568,{d:.9,v:.1,t0:t0+.52}); tone(784,{type:'square',d:.9,v:.04,t0:t0+.52}); tone(1047,{type:'triangle',d:.9,v:.08,t0:t0+.52}); noise({f:6000,q:1.5,d:.8,v:.05,t0:t0+.5}); },
     newSpell(){ if(!ok('newsp',500)) return; arp([784,988,1175,1568],{type:'sine',d:.4,v:.1,step:.07}); noise({f:7000,q:2,d:.6,v:.035,t0:.2}); },
+    bigDrop(lv){ if(!ok('bigdrop',300)) return; const b=lv>=4?523:lv>=3?466:392; arp([b,b*1.25,b*1.5,b*2],{type:'triangle',d:.4,v:.13,step:.08}); tone(b*3,{d:.8,v:.07,t0:.34}); tone(b*2,{type:'square',d:.6,v:.03,t0:.34}); noise({f:8000,q:2,d:.9,v:.05,t0:.3}); },
+    silver(){ if(!ok('silver',1500)) return; arp([1568,1976,2349,3136],{type:'sine',d:.5,v:.09,step:.06}); tone(784,{type:'triangle',d:1,v:.06,t0:.05}); noise({f:9000,q:3,d:1.1,v:.05}); },
     drop(rar,x){ if(!near(x) || !ok('drop',140)) return; const lv={common:0,uncommon:1,rare:2,epic:3,legendary:4}[rar]||0;
       const base=[1046,1175,1319,1568,1760][lv]; tone(base,{d:.18,v:.1}); tone(base*1.5,{d:.22,v:.07,t0:.07});
       if(lv>=1) tone(base*2,{type:'triangle',d:.3,v:.06,t0:.14}); if(lv>=2) arp([base*2.5,base*3],{d:.3,v:.05,step:.07,t0:.21}); if(lv>=3) noise({f:7000,q:2,d:.7,v:.05,t0:.2}); },
@@ -1655,7 +1672,7 @@ const MAPS = {
       ['blabar','p3a',[520]], ['blabar','p3b',[1820]], ['blabar','p4a',[1380]],
       ['mossa','p3a',[820,980]], ['mossa','p3b',[2000,2130,2260]], ['mossa','p4a',[920,1050,1180]], ['mossa','p4b',[2450,2700]],
     ],
-    portals:[{x:3110, y:900, to:2, toX:70, toY:900}],
+    portals:[{x:3110, y:900, to:2, toX:70, toY:900}, {x:150, y:900, to:21, toX:1480, toY:900}],
     theme:{sky:['#57aef0','#a7dcfb','#e8f8ff'], mount:'#a6cfe3', hill:'#97d38a', hillTree:'#82c477', trees:'#6cb866', sun:'rgba(255,250,220,'}},
   2:{name:'Jaktmarken II', start:SAFE_START, sign:{x:200,y:900}, wm:{x:.27,y:.44},
     // 30 spawnpoints: 15 Kissekatt, 15 Vildhund
@@ -1715,6 +1732,9 @@ MAPS[7] = {name:'Bandittornet', terrain:'tower', start:{x:200,y:2000}, sign:{x:4
     ['bandit','f5',[800,1100]], ['bandit','f6a',[300]], ['bandit','f6b',[950]], ['bandit','f7',[550,800]], ['bandit','f8a',[250]], ['bandit','f8b',[1000,1200]], ['bandit','f9',[700,1000]],
     ['bandit','f10a',[400]], ['bandit','f10b',[1100]], ['banditboss','top',[650]]],
   portals:[{x:70, y:2000, to:5, toX:2690, toY:600}, {x:150, y:1100, to:20, toX:130, toY:900, door:true, hidden:true}]};   // dörren på våning 6 leder till en dold karta
+// Nybörjargläntan: här vaknar nya gubbar. Fem flugsvampar och Tilda med de allra första uppdragen
+MAPS[21] = {name:'Nybörjargläntan', terrain:'glade', start:{x:200,y:812}, sign:{x:620,y:900}, wm:{x:.15,y:.91},
+  spawns:[['flugsvamp','g1',[780,950,1120,1290,1450]]], portals:[{x:1545, y:900, to:1, toX:240, toY:900}]};
 // Hidden Bandit lair (dold karta bakom den trasiga källardörren i Bandittornet): två breda plan och ovanligt många banditer
 MAPS[20] = {name:'Hidden Bandit lair', terrain:'lair', hidden:true, hiddenOf:7, start:{x:130,y:900}, sign:{x:520,y:900},
   spawns:[['bandit','g1',[440,580,720,860,1000,1140,1280,1420,1560,1700,1840]], ['bandit','top',[460,600,740,880,1020,1160,1300,1440,1580]], ['bandit','sL',[240]], ['bandit','sR',[1760]]],
@@ -1794,6 +1814,13 @@ function genHuntDeco(){
     for(const p of PLATS){ if(p.solid) continue; const w=p.x2-p.x1; for(let i=0;i<Math.max(1,w/260);i++){ const x=p.x1+30+R()*(w-60); DECO.back.push({t:R()<.7?'sunfl':'bush',x,y:p.y,s:.5+R()*.35}); } }
     DECO.back.push({t:'fence',x1:60,x2:380,y:900});
     DECO.back.sort((a,b)=>(a.t==='tree'?0:1)-(b.t==='tree'?0:1)); return;
+  }
+  if(TERRAIN==='glade'){   // Nybörjargläntan: ljus och vänlig, blommor överallt
+    for(const [x,s] of [[40,1.1],[700,.9],[1500,1.15]]) DECO.back.push({t:'tree',x,y:900,s});
+    for(let x=600;x<1560;x+=90+R()*80) DECO.back.push({t:R()<.45?'mush':'bush',x,y:900,s:.55+R()*.4});
+    for(let i=0;i<40;i++) DECO.front.push({t:'flower', x:20+R()*1560, y:900, c:pc(['#ff5c8a','#ffd93d','#ffffff','#ff8c42','#c77dff','#6ec6ff']), s:.8+R()*.5});
+    DECO.back.push({t:'tent',x:470,y:812,s:.75},{t:'lamp',x:110,y:812,s:.8},{t:'fence',x1:560,x2:640,y:900});
+    return;
   }
   if(TERRAIN!=='hunt'){   // Pinnskogen/Stockskogen: träd på marken, svampar och stenar ovanpå plattformarna (inte svävande)
     for(const [x,s] of [[260,1.1],[1000,.95],[1500,1.25],[2050,1.05],[2760,1.15]]) DECO.back.push({t:'tree',x,y:900,s});
@@ -2107,7 +2134,7 @@ function calcStats(ch){
   s.eqAtk=0; s.eqMove=0;
   for(const k in ch.eq){ const it=ch.eq[k]; if(!it) continue; s.armor+=it.armor||0; for(const st of STATS) s[st]+=it[st]||0; if(it.slot!=='vapen') s.eqAtk+=it.atk||0; s.eqMove+=it.move||0; s.xpPct=(s.xpPct||0)+(it.xp||0); s.cdmg=(s.cdmg||0)+(it.cdmg||0); s.eqCdmg=(s.eqCdmg||0)+(it.cdmg||0); s.eqDodge=(s.eqDodge||0)+(it.dodge||0); s.eqAspd=(s.eqAspd||0)+(it.aspd||0); s.eqHpreg=(s.eqHpreg||0)+(it.hpreg||0); s.eqCdr=(s.eqCdr||0)+(it.cdr||0); }
   s.crit = agiPct(s.agi,ch.level)*STAT_SCALE; s.dodge = Math.min(AGI_CAP, agiPct(s.agi,ch.level)*STAT_SCALE + (s.eqDodge||0)); s.cdr = Math.min(CDR_CAP, Math.max(0,s.int)*AGI_PCT(ch.level)*STAT_SCALE + (s.eqCdr||0) + acctB('viskare'));   // Agi→crit/undvikande och Int→nedkylning: 70 % · kontobonus från Viskare
-  s.maxHp = Math.round(50 + s.str*10 + acctB('skog'));   // kontobonus från Skogshuggare
+  s.maxHp = Math.round(100 + s.str*5 + acctB('skog'));   // bas 100 HP, varje Str ger 5 HP   // kontobonus från Skogshuggare
   s.maxMp = C.noMana ? 0 : Math.round((20 + s.int*10)*(1+tv('v_klok')/100));
   s.crit = Math.min(100, s.crit + tv('h_skarp') + (G.p && G.ch===ch && G.p.ssT>0 ? tv('p_skugga') : 0));   // Ur skuggorna: efter Shadowstep
   s.cdmg = (s.cdmg||0) + tv('h_vass') + tv('t_cdmg') + acctB('psykopat');   /* kontobonus från Psykopat */   // Vass spets
@@ -2267,13 +2294,43 @@ holdBtn($('#tJump'), ()=>{ Touch.jump=true; Touch.jumpEdge=true; }, ()=>Touch.ju
 // Mus: håll pekaren över föremål för att plocka upp
 cv.addEventListener('pointermove', e=>{ if(e.pointerType==='mouse'){ G.mouse.x=e.clientX; G.mouse.y=e.clientY; G.mouse.in=true; } });
 cv.addEventListener('pointerleave', ()=>{ G.mouse.in=false; });
-cv.addEventListener('pointermove', e=>{ if(G.mode!=='game'||e.pointerType!=='mouse') return; const w=screenToWorld(e.clientX,e.clientY); cv.style.cursor = npcAt(w.x,w.y) ? 'pointer' : ''; });
+cv.addEventListener('pointermove', e=>{ if(G.mode!=='game'||e.pointerType!=='mouse') return; const w=screenToWorld(e.clientX,e.clientY); cv.style.cursor = (npcAt(w.x,w.y)||signAt(w.x,w.y)) ? 'pointer' : ''; });
 cv.addEventListener('pointerdown', e=>{ if(G.mode==='game') tapPick(e.clientX, e.clientY, e.pointerType==='mouse'?26:44); });
+/* ---------- Läsbara skyltar (klicka för att läsa, som i Minecraft) ---------- */
+const READ_SIGNS = {
+  5:[{x:2330, y:900, title:'En ristad skylt',
+      lines:['Banditerna i tornet','är inte så fattiga','som de ser ut…','','Högt upp, längst till vänster,','finns en trasig källardörr','som ingen ska känna till.','Gå fram och tryck uppåt.','','– en före detta bandit']}],
+};
+const signsHere = () => READ_SIGNS[G.mapId] || [];
+function signAt(x,y){ for(const s of signsHere()) if(Math.abs(x-s.x)<30 && y>s.y-74 && y<s.y+6) return s; return null; }
+function drawReadSigns(){
+  const t=G.time;
+  for(const s of signsHere()){
+    const x=s.x, y=s.y, pulse=.5+.5*Math.sin(t*2.6);
+    ctx.save(); ctx.globalCompositeOperation='lighter';
+    const g=ctx.createRadialGradient(x,y-48,4,x,y-48,80); g.addColorStop(0,`rgba(255,225,130,${.55+.3*pulse})`); g.addColorStop(.5,`rgba(255,200,90,${.22+.12*pulse})`); g.addColorStop(1,'rgba(255,200,90,0)'); ctx.fillStyle=g; ctx.beginPath(); ctx.arc(x,y-48,80,0,7); ctx.fill();
+    const pg=ctx.createLinearGradient(0,y-150,0,y); pg.addColorStop(0,'rgba(255,230,140,0)'); pg.addColorStop(1,`rgba(255,230,140,${.25+.15*pulse})`); ctx.fillStyle=pg; ctx.fillRect(x-22,y-150,44,150);
+    for(let i=0;i<6;i++){ const a=t*.9+i*1.05, rr=30+8*Math.sin(t*1.7+i), py=y-44+Math.sin(a)*rr*.5-((t*14+i*9)%22); ctx.globalAlpha=.55+.45*Math.sin(t*3+i); ctx.fillStyle='#fff3b0'; ctx.beginPath(); ctx.arc(x+Math.cos(a)*rr,py,2.6,0,7); ctx.fill(); }
+    ctx.restore();
+    ctx.fillStyle='rgba(0,0,0,.3)'; ell(ctx,x,y+1,16,4);
+    const wg=ctx.createLinearGradient(x-4,0,x+4,0); wg.addColorStop(0,'#5a3a1c'); wg.addColorStop(1,'#3a2410'); ctx.fillStyle=wg; ctx.fillRect(x-3.5,y-36,7,36); ctx.strokeStyle='#2a1808'; ctx.lineWidth=1.2; ctx.strokeRect(x-3.5,y-36,7,36);
+    const bg=ctx.createLinearGradient(0,y-72,0,y-34); bg.addColorStop(0,'#c8965a'); bg.addColorStop(1,'#9a6a36'); ctx.fillStyle=bg; rr(ctx,x-27,y-72,54,36,4); ctx.fill(); ctx.strokeStyle='#4a2c12'; ctx.lineWidth=2; ctx.stroke();
+    ctx.strokeStyle='rgba(90,56,24,.5)'; ctx.lineWidth=1; for(const yy of [y-63,y-54,y-45]){ ctx.beginPath(); ctx.moveTo(x-25,yy); ctx.lineTo(x+25,yy); ctx.stroke(); }
+    ctx.fillStyle='#2a1808'; for(let i=0;i<3;i++){ const yy=y-65+i*9; ctx.fillRect(x-18,yy,10+((i*7)%9),1.6); ctx.fillRect(x-4,yy,14-((i*5)%7),1.6); }
+    ctx.font='bold 13px system-ui'; ctx.textAlign='center'; ctx.globalAlpha=.6+.4*pulse; ctx.fillStyle='#ffe066'; ctx.fillText('📜',x,y-80-pulse*3); ctx.globalAlpha=1;
+  }
+}
+function readSign(s){
+  let el=$('#signBox'); if(!el){ el=document.createElement('div'); el.id='signBox'; document.body.appendChild(el); el.addEventListener('click',()=>el.classList.add('hidden')); }
+  el.innerHTML=`<div class="sbBoard"><div class="sbTitle">${esc(s.title)}</div>${s.lines.map(l=>`<div class="sbLine">${l?esc(l):'&nbsp;'}</div>`).join('')}<div class="sbHint">${G.touch?'Tryck':'Klicka'} för att stänga</div></div>`;
+  el.classList.remove('hidden'); SFX.click&&SFX.click();
+}
 function screenToWorld(x,y){ return {x:G.cam.x + x/G.zoom, y:G.cam.y + y/G.zoom}; }
 function tapPick(sx,sy,r=44){
   if(G.mode!=='game' || !G.p || G.p.dead) return;
   const w = screenToWorld(sx,sy); let best=null, bd=r/G.zoom+6;
   const npc=npcAt(w.x,w.y); if(npc){ talkTo(npc); return; }
+  const sg=signAt(w.x,w.y); if(sg){ readSign(sg); return; }
   const op=otherAt(w.x,w.y); if(op){ inspect(op); return; }
   for(const o of curMap().portals){ if(Math.abs(w.x-o.x)<45 && w.y>o.y-110 && w.y<o.y+10){ if(portalNear(G.p)) { G.portalTap=true; return; } else throttleMsg('portal','Gå fram till portalen först.','#cfe0ff'); } }
   for(const d of G.drops){ if(d.picking) continue; const dd=Math.hypot(d.x-w.x, d.y-14-w.y); if(dd<bd){ bd=dd; best=d; } }
@@ -2613,6 +2670,7 @@ function paintThorns(c,w,R){   // ett taggigt törnsnår med tydliga svarta kont
 }
 function hurtPlayer(dmg, dir, o={}){
   const p=G.p, s=G.stats; if(!p || p.dead) return false;
+  { const src=o.src||(o.sid&&G.monById[o.sid]); if(src && src.d && src.d.name) G.lastFoe=src.d.name; }
   if(p.rollT>0){ if(!p.rollHit){ p.rollHit=true; G.fx.push({type:'text',x:p.x,y:p.y-p.h-16,text:'Undvek!',color:'#bfe8ff',t:0,dur:.8,size:14}); } return false; }   // kullerbytta
   if(Math.random()<s.dodge/100){   // undvikande (Agi)
     G.fx.push({type:'text',x:p.x,y:p.y-p.h-16,text:'Undvek!',color:'#bfe8ff',t:0,dur:.8,size:14}); SFX.dodge();
@@ -2741,7 +2799,7 @@ const arenaAllies = () => Object.values(G.others).filter(o=>o.seen && (o.map===u
 const arenaPartyFight = () => !!(curMap().arenaStage && inParty() && G.arena && G.arena.ph!=='clear' && arenaAllies().length);
 function setDeathWait(on){
   $('#deathBox').classList.toggle('wait', !!on);
-  $('#deathTxt').textContent = on ? 'Ditt party slåss vidare. Besegrar de bossen blir du återupplivad här i arenan.' : 'Blåbären vann den här gången. Du vaknar vid kartans början.';
+  $('#deathTxt').textContent = on ? 'Ditt party slåss vidare. Besegrar de bossen blir du återupplivad här i arenan.' : `${G.lastFoe||'Monstren'} vann den här gången. Du vaknar vid kartans början.`;
 }
 function arenaRevive(){
   const p=G.p; if(!p || !p.dead) return;
@@ -3343,6 +3401,7 @@ function killMonster(m){
     else netTo(id, {t:'exp', ty:m.type, s:share, p:ids.length>1?1:0, kill:id===killer?1:0, x:mult, bk:book?1:0, r:m.rare?1:0, ab:m.lastBasic?0:1});
   }
   spawnDrop(m, {kind:'gold', amount:d.gold});
+  if(d.goldOnly) return;   // flugsvampar droppar bara guld
   if(d.arena){ const L=(m.arenaN>1 && party) ? netMemberIds().slice(0,m.arenaN) : [killer]; for(const id of L) arenaLoot(m, id); arenaCleared(m); return; }   // en loot-dragning per spelare
   const db = killer===Net.myId ? tv('k_drop') : ((G.others[killer]&&G.others[killer].db)||0);
   if(d.pool.length && (m.rare || Math.random() < d.drop*(1+db/100))){
@@ -3411,9 +3470,44 @@ function feed(text, cls){
   box.appendChild(d); while(box.children.length>7) box.firstChild.remove();
   setTimeout(()=>d.classList.add('fade'),3200); setTimeout(()=>d.remove(),4100);
 }
+/* ---------- Effekter: level up och fina föremål ---------- */
+function bigDropFx(d){   // Rare eller bättre: ljuspelare, gnistor och fanfar
+  const rc=RAR[d.item.rarity].color, lv={rare:2,epic:3,legendary:4}[d.item.rarity]||0; if(lv<2) return;
+  d.bigFx=lv;
+  for(let i=0;i<14+lv*8;i++) particle(d.x+rand(-10,10),d.y-rand(0,30),pick([rc,'#ffffff',rc]),rand(-120,120),rand(-320,-80),.9,rand(2,4),260);
+  if(Math.abs(d.x-G.p.x)<700) { SFX.bigDrop&&SFX.bigDrop(lv); if(lv>=3){ G.shakeT=.18; G.shakeMag=2; } }
+}
+function drawBigDropFx(d,a,bob){
+  const rc=RAR[d.item.rarity].color, t=G.time, lv=d.bigFx, H=150+lv*40, w=16+lv*5, p=.7+.3*Math.sin(t*4+d.x);
+  ctx.save(); ctx.globalCompositeOperation='lighter'; ctx.globalAlpha=a*p;
+  const g=ctx.createLinearGradient(0,d.y-H,0,d.y); g.addColorStop(0,hexA(rc,0)); g.addColorStop(.6,hexA(rc,.35)); g.addColorStop(1,hexA(rc,.75)); ctx.fillStyle=g; ctx.fillRect(d.x-w/2,d.y-H,w,H);
+  const g2=ctx.createLinearGradient(0,d.y-H*.8,0,d.y); g2.addColorStop(0,'rgba(255,255,255,0)'); g2.addColorStop(1,'rgba(255,255,255,.55)'); ctx.fillStyle=g2; ctx.fillRect(d.x-w/6,d.y-H*.8,w/3,H*.8);
+  ctx.translate(d.x,d.y-16+bob); ctx.rotate(t*.8); ctx.fillStyle=hexA(rc,.22); for(let i=0;i<6;i++){ ctx.rotate(Math.PI/3); ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-5,-30-lv*6); ctx.lineTo(5,-30-lv*6); ctx.closePath(); ctx.fill(); }
+  ctx.restore();
+  if(Math.random()<.25) particle(d.x+rand(-w/2,w/2),d.y-rand(0,40),pick([rc,'#ffffff']),0,rand(-90,-40),.8,2,0);
+}
+function levelUpFx(p){
+  G.fx.push({type:'lvlup', x:p.x, y:p.y, t:0, dur:2.4, lvl:G.ch.level});
+  G.shakeT=.25; G.shakeMag=3;
+  for(let i=0;i<46;i++){ const a=rand(0,6.283), s=rand(120,340); particle(p.x,p.y-40,pick(['#ffe066','#ffffff','#ffb341','#7dff8a','#6ec6ff','#ff7aa8']),Math.cos(a)*s,Math.sin(a)*s-120,1.4,rand(2.5,4.5),300); }
+}
+function drawLvlUpFx(f,k){
+  const a=k<.12?k/.12:k>.7?1-(k-.7)/.3:1, x=f.x, y=f.y;
+  ctx.save(); ctx.globalCompositeOperation='lighter';
+  const R=40+k*260; ctx.strokeStyle=`rgba(255,230,120,${(1-k)*.8})`; ctx.lineWidth=6*(1-k)+1; ctx.beginPath(); ctx.ellipse(x,y-4,R,R*.3,0,0,7); ctx.stroke();
+  ctx.globalAlpha=a*.55; ctx.translate(x,y-60); ctx.rotate(G.time*.6);
+  for(let i=0;i<12;i++){ ctx.rotate(Math.PI/6); const g=ctx.createLinearGradient(0,0,0,-170); g.addColorStop(0,'rgba(255,240,170,.9)'); g.addColorStop(1,'rgba(255,200,80,0)'); ctx.fillStyle=g; ctx.beginPath(); ctx.moveTo(-5,0); ctx.lineTo(-16,-170); ctx.lineTo(16,-170); ctx.lineTo(5,0); ctx.closePath(); ctx.fill(); }
+  ctx.restore();
+  const sc=k<.15?.4+k/.15*.75:k<.25?1.15-(k-.15)/.1*.15:1, ty=y-120-k*20;
+  ctx.save(); ctx.globalAlpha=a; ctx.translate(x,ty); ctx.scale(sc,sc); ctx.textAlign='center';
+  ctx.font='900 34px Georgia,"Palatino Linotype",serif'; ctx.lineWidth=7; ctx.strokeStyle='#5a2a00'; ctx.strokeText('LEVEL UP!',0,0);
+  const g=ctx.createLinearGradient(0,-28,0,4); g.addColorStop(0,'#fff8c0'); g.addColorStop(.5,'#ffd23a'); g.addColorStop(1,'#ff9a1a'); ctx.fillStyle=g; ctx.fillText('LEVEL UP!',0,0);
+  ctx.font='800 17px system-ui'; ctx.lineWidth=4; ctx.strokeStyle='rgba(0,0,0,.7)'; ctx.strokeText('Level '+f.lvl,0,24); ctx.fillStyle='#ffffff'; ctx.fillText('Level '+f.lvl,0,24);
+  ctx.restore();
+}
 function onLevelUp(){
   const ch=G.ch; recalc(); ch.hp=G.stats.maxHp; ch.mp=G.stats.maxMp;
-  const p=G.p; G.fx.push({type:'beam', x:p.x, y:p.y, t:0, dur:1.6}); netFx('beam', p.x, p.y); hostUpdatePresence(); SFX.level();
+  const p=G.p; G.fx.push({type:'beam', x:p.x, y:p.y, t:0, dur:1.6, noText:true}); netFx('beam', p.x, p.y); hostUpdatePresence(); SFX.level(); levelUpFx(p);
   for(let i=0;i<30;i++) particle(p.x+rand(-20,20), p.y-rand(0,60), pick(['#ffe066','#fff','#ffb341']), rand(-60,60), rand(-260,-80), 1.1, 3, 120);
   log(`⭐ Level ${ch.level}! +2 ${({str:'Str',int:'Int',agi:'Agi'})[CLASSES[ch.cls].main]}, +1 i övriga stats${ch.level>=TALENT_LVL?' samt +1 talangpoäng':''}.`, '#ffe066');
   if(ch.level===TALENT_LVL) log('✨ Talangträden är nu upplåsta! Öppna dem med T.','#ffe066');
@@ -3480,7 +3574,7 @@ function initSpawns(){
 }
 function spawnMonster(sp, instant){
   const rare=!MOBS[sp.type].boss && Math.random()<RARE_CHANCE*(MAPS[G.mapId]&&MAPS[G.mapId].hidden?2:1), d=mobDef(sp.type, rare);
-  if(rare && G.mode==='game') log(`✦ En <b style="color:#e8eef6">${d.name}</b> har dykt upp!`,'#cfd8e6');
+  if(rare && G.mode==='game'){ log(`✦ En <b style="color:#e8eef6">${d.name}</b> har dykt upp!`,'#cfd8e6'); SFX.silver&&SFX.silver(); }
   const m={type:sp.type, d, sp, plat:sp.plat, x:sp.x, y:yAt(sp.plat,sp.x), hp:d.hp, maxHp:d.hp, dir:Math.random()<.5?-1:1, state:'idle', timer:rand(.3,2),
     t:rand(0,10), rot:0, kb:0, kbT:0, hurtT:0, showHp:0, dead:false, dieT:0, spawnT:instant?0:0.5, burn:null, stack:0, stackT:-9, id:++G.monSeq, rare};
   sp.monster=m; G.monsters.push(m); G.monById[m.id]=m;
@@ -3516,7 +3610,8 @@ function dragonFire(m, tgt){
   G.mprojs.push(f); if(isHostNet()) netToGuests({t:'mfire', x:Math.round(x), y:Math.round(y), vx:Math.round(f.vx), vy:Math.round(f.vy), d:f.d});
 }
 function sendMProj(f){ if(f.src) f.sid=f.src.id; if(isHostNet()) netToGuests({t:'mfire', sid:f.sid, su:f.su, x:Math.round(f.x), y:Math.round(f.y), vx:Math.round(f.vx||0), vy:Math.round(f.vy||0), d:f.d, k:f.k, g:f.g, gy:f.gy, dl:f.delay, r:f.r, life:f.life, tx:f.tx, nr:f.nr, fi:f.fi, hr:f.hr, sv:f.sv, ring:f.ring}); }
-function throwAxe(m, tgt){   // banditernas yxa: flyger i en båge mot spelaren och snurrar
+function throwAxe(m, tgt){   // banditbossens yxa flyger i en båge; vanliga banditer kastar en kniv rakt fram (vågrätt)
+  if(!m.d.boss){ const x=m.x+m.dir*18, y=m.y-30, dir=Math.sign(tgt.x-m.x)||m.dir, f={k:'knife', src:m, x, y, vx:dir*460, vy:0, d:Math.max(1,Math.round(m.d.touch*0.4)), life:1.35}; G.mprojs.push(f); sendMProj(f); SFX.swing&&SFX.swing(); return; }
   const x=m.x+m.dir*20, y=m.y-(m.d.boss?50:34), tx=tgt.x, ty=tgt.y-30, g=700, T=clamp(Math.hypot(tx-x,ty-y)/330,.45,1.2);
   const f={k:'axe', src:m, x, y, vx:(tx-x)/T, vy:(ty-y)/T-.5*g*T, g, d:Math.max(1,Math.round(m.d.touch*0.4)), life:T+1.2};
   G.mprojs.push(f); sendMProj(f); SFX.swing && SFX.swing();
@@ -3586,7 +3681,7 @@ function updateMProjs(dt){
       continue;
     }
     f.life-=dt; if(f.g) f.vy+=f.g*dt; f.x+=f.vx*dt; f.y+=f.vy*dt;
-    if(f.k==='axe'){ if(Math.random()<.3) particle(f.x,f.y,'rgba(200,200,210,.6)',0,0,.2,2,0); }
+    if(f.k==='axe'||f.k==='knife'){ if(Math.random()<.3) particle(f.x,f.y,'rgba(200,200,210,.6)',0,0,.2,2,0); }
     else if(f.k==='flame'){ if(Math.random()<.35) particle(f.x,f.y,pick(['#ff7a1a','#ffd23f','#ff4a1a','#5a2a1a']),rand(-30,30),rand(-60,-10),.35,rand(2,4),-60); }
     else if(f.k==='barkf'){ if(f.vy>0 && f.y>=groundY(f.x)-3){ for(let k=0;k<6;k++) particle(f.x,f.y,pick(['#5a3a1c','#8a6038','#d8b07a']),rand(-80,80),rand(-120,-20),.4,2.5,400); G.mprojs.splice(i,1); continue; } }
     else if(f.k==='shard'){ if(Math.random()<.7) particle(f.x-f.vx*.02,f.y,pick(['#ffffff','#bff4ff','#9fdcff']),rand(-15,15),rand(-15,15),.3,2.4,0); }
@@ -3596,7 +3691,7 @@ function updateMProjs(dt){
     if(f.k==='bark' && !f.jumped && G.mode==='game' && p && !p.dead && !p.onGround && !p.climb && Math.abs(f.x-p.x)<16 && p.y<f.y-3 && f.y-p.y<110){ f.jumped=true; G.fx.push({type:'text',x:p.x,y:p.y-p.h-18,text:'🦘 Över!',color:'#7dff8a',t:0,dur:1,size:14}); questEvent('jump_bark'); }
     if(G.mode==='game' && p && !p.dead && p.inv<=0 && Math.abs(f.x-p.x)<p.w/2+9+(f.hr||0) && f.y>p.y-p.h-(f.hr||0) && f.y<p.y+4+(f.hr||0)){ hurtPlayer(f.d, Math.sign(f.vx)||1, {src:f.src||G.monById[f.sid]}); hit=true; }
     if(hit || f.life<=0 || f.y>WORLD.h || f.x<0 || f.x>WORLD.w){
-      if(hit) for(let k=0;k<14;k++) particle(f.x,f.y,f.k==='shard'?pick(['#ffffff','#bff4ff','#6ac4ff']):f.k==='bark'?pick(['#5a3a1c','#8a6038','#d8b07a']):f.k==='axe'?pick(['#d8d8e0','#8a8a96','#ff6b6b']):pick(['#ff7a1a','#ffd23f','#fff1b0']),rand(-140,140),rand(-140,60),.4,3.5,200);
+      if(hit) for(let k=0;k<14;k++) particle(f.x,f.y,f.k==='shard'?pick(['#ffffff','#bff4ff','#6ac4ff']):f.k==='bark'?pick(['#5a3a1c','#8a6038','#d8b07a']):(f.k==='axe'||f.k==='knife')?pick(['#d8d8e0','#8a8a96','#ff6b6b']):pick(['#ff7a1a','#ffd23f','#fff1b0']),rand(-140,140),rand(-140,60),.4,3.5,200);
       G.mprojs.splice(i,1);
     }
   }
@@ -3613,6 +3708,13 @@ function drawMProj(f){
     ctx.beginPath(); ctx.moveTo(-11,-4); ctx.quadraticCurveTo(0,-9,12,-3); ctx.lineTo(10,4); ctx.quadraticCurveTo(0,0,-10,5); ctx.closePath(); ctx.fill(); ctx.stroke();
     ctx.strokeStyle='#8a6038'; ctx.lineWidth=1.2; line(ctx,-7,-2,7,-3); line(ctx,-6,2,6,1);
     ctx.fillStyle='#d8b07a'; ctx.beginPath(); ctx.moveTo(-10,5); ctx.quadraticCurveTo(0,1,10,4); ctx.lineTo(9,6); ctx.quadraticCurveTo(0,3,-9,7); ctx.closePath(); ctx.fill();
+    ctx.restore(); return;
+  }
+  if(f.k==='knife'){   // kastkniv som flyger rakt fram
+    ctx.save(); ctx.translate(f.x,f.y); ctx.scale(Math.sign(f.vx||1),1);
+    ctx.strokeStyle='rgba(220,230,255,.35)'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(-34,0); ctx.lineTo(-12,0); ctx.stroke();
+    ctx.fillStyle='#3a2414'; ctx.fillRect(-12,-2.2,9,4.4); ctx.fillStyle='#8a8a96'; ctx.fillRect(-4,-4,2.4,8);
+    const g=ctx.createLinearGradient(0,-3,0,3); g.addColorStop(0,'#ffffff'); g.addColorStop(1,'#9a9aa8'); ctx.fillStyle=g; ctx.beginPath(); ctx.moveTo(-1.5,-3); ctx.lineTo(13,-1); ctx.lineTo(16,0); ctx.lineTo(13,1.5); ctx.lineTo(-1.5,3); ctx.closePath(); ctx.fill(); ctx.strokeStyle='#4a4a56'; ctx.lineWidth=1; ctx.stroke();
     ctx.restore(); return;
   }
   if(f.k==='axe'){
@@ -3806,7 +3908,7 @@ function drawSilverProj(f){
       ctx.fillStyle='rgba(255,255,255,.8)'; ctx.beginPath(); ctx.moveTo(-1,-4); ctx.lineTo(-5,-17); ctx.lineTo(-3,-44); ctx.lineTo(-1,-20); ctx.closePath(); ctx.fill();
       ctx.restore(); } }
 }
-const SILV_OWN=new Set(['kissekatt','vildhund','varg','bjorn','skata','hok','pinne','stock','drake','solros']);   // har egen silverdesign med kristaller
+const SILV_OWN=new Set(['flugsvamp','kissekatt','vildhund','varg','bjorn','skata','hok','pinne','stock','drake','solros']);   // har egen silverdesign med kristaller
 function silverAura(m,base){
   const t=G.time, fly=base.fly, cx=m.x, cy=fly?m.y-base.h*.9:m.y, R=base.w*1.2+16, Ry=fly?R*.55:R*.28, chg=m.svT>0||m.svC;
   ctx.save(); ctx.globalCompositeOperation='lighter';
@@ -3856,7 +3958,9 @@ function updateMonsters(dt){
       else if(tgt && m.fireCd<=0 && !(m.rootT>0) && Math.abs(tgt.x-m.x)>50 && Math.abs(tgt.x-m.x)<560 && Math.abs(tgt.y-m.y)<220){ m.chargeT=1; m.fireCd=5; m.dir=Math.sign(tgt.x-m.x)||m.dir; }
     }
     if(m.d.axe){ m.axeCd=Math.max(0,(m.axeCd||0)-dt);
-      if(tgt && m.axeCd<=0 && !(m.rootT>0) && Math.abs(tgt.x-m.x)<560 && Math.abs(tgt.y-m.y)<320){ m.axeCd=(m.d.axeEvery||2)*(m.d.boss?1:rand(.85,1.15)); m.dir=Math.sign(tgt.x-m.x)||m.dir; m.throwT=.3; throwAxe(m,tgt); } }
+      if(!tgt) m.fightAt=null; else if(m.fightAt==null) m.fightAt=G.time;   // när den gick in i strid
+      const knife=!m.d.boss, fresh=m.fightAt!=null && G.time-m.fightAt<1;   // vanliga banditer: knivar rakt fram, aldrig första sekunden
+      if(tgt && m.axeCd<=0 && !(m.rootT>0) && !fresh && Math.abs(tgt.x-m.x)<560 && (knife ? Math.abs((tgt.y-26)-(m.y-30))<30 : Math.abs(tgt.y-m.y)<320)){ m.axeCd=(m.d.axeEvery||2)*(m.d.boss?1:rand(.85,1.15)); m.dir=Math.sign(tgt.x-m.x)||m.dir; m.throwT=.3; throwAxe(m,tgt); } }
     if(m.throwT>0) m.throwT-=dt;
     if(m.d.rocks){ m.rockCd=(m.rockCd===undefined?2:m.rockCd)-dt;
       if(tgt && m.rockCd<=0 && Math.abs(tgt.x-m.x)<800){ m.rockCd=rand(5,7); m.throwT=.6; rockRain(m,tgt); } }
@@ -4040,7 +4144,7 @@ function spawnDrop(m, data, tossDir){
   const d={...data, id:data.id||('d'+(++G.dropSeq)+'_'+Net.myId.slice(0,4)), x:m.x, y:m.y-m.d.h/2, vx, vy:tossDir?-300:-380, plat:m.plat, landed:false, born:G.time, life:120, t:rand(0,6), picking:false, pickT:0,
     owner:data.owner||null, ownerT:data.owner?G.time+LOOT_LOCK:0, blockBy:data.block||null, blockT:data.block?G.time+3:0};
   G.drops.push(d);
-  if(d.kind==='item' && d.item && !isCons(d.item) && !d.blockBy) SFX.drop(d.item.rarity, d.x);
+  if(d.kind==='item' && d.item && !isCons(d.item) && !d.blockBy){ SFX.drop(d.item.rarity, d.x); bigDropFx(d); }
   if(isHostNet()) netToGuests({t:'drop', d:dropMsg(d)});
   return d;
 }
@@ -4257,6 +4361,7 @@ ART[15] = {...ART[1], sky:['#2e5a4a','#7aa88a','#d8ecc8'], sunPos:[0.3,0.12], su
   gradeTop:'rgba(200,255,180,.24)', gradeBot:'rgba(10,30,20,.4)'};   // Stockskogen: djup, mossig urskog
 ART[20] = {...ART[7], sky:['#0a0706','#160f0b','#24180f'], glow:false, mote:'255,190,110', moteN:22, moteA:.5, rayA:0, leaves:0,
   soil:['#4a3a2c','#2a2018','#120c08'], grass:['#2a2616','#3e3820','#5a522e','#a89a68'], gradeTop:'rgba(40,20,5,.45)', gradeBot:'rgba(0,0,0,.5)'};   // Hidden Bandit lair: mörk källare
+ART[21] = {...ART[1], sky:['#5cb8f4','#a8dffb','#f4fcff']};   // Nybörjargläntan: extra ljus
 ART[18] = {...ART[15], sky:['#3a4a2e','#9a9a6a','#f0d8a0'], sunPos:[0.7,0.18], sun:'255,220,160', mote:'255,230,170', gradeTop:'rgba(255,220,160,.22)'};   // Stockskogen II: sen eftermiddag
 const art = () => ART[G.mapId] || ART[1];
 function mkCv(w,h){ const c=document.createElement('canvas'); c.width=Math.max(1,Math.ceil(w)); c.height=Math.max(1,Math.ceil(h)); return c; }
@@ -4768,6 +4873,11 @@ function drawDoor(o){   // mörk, trasig källardörr (dold väg)
   if(!o.hidden){ const name=MAPS[o.to].name; ctx.font='bold 12px Georgia,"Palatino Linotype",serif'; ctx.textAlign='center'; const tw=ctx.measureText(name).width+20; ctx.fillStyle='rgba(24,16,10,.82)'; rr(ctx,x-tw/2,y-112,tw,19,6); ctx.fill(); ctx.strokeStyle='rgba(214,170,98,.7)'; ctx.lineWidth=1; ctx.stroke(); ctx.fillStyle='#ffe2a0'; ctx.fillText('✦ '+name,x,y-98); }
   ctx.restore();
 }
+/* ---------- Nybörjargläntan: liten, ljus glänta där nya gubbar börjar ---------- */
+const GLADE_PLATS = [
+  {id:'g1',   x1:0,  x2:1600, y:900, solid:true, floor:1},
+  {id:'home', x1:60, x2:540,  y:812, floor:2, safe:true},   // här vaknar man – inga monster
+];
 const TERRAINS = {
   hunt: {w:3200, gy:900,  pit:true, plats:HUNT_PLATS,  ropes:HUNT_ROPES,  walls:HUNT_WALLS},
   town: {w:2800, gy:900,  plats:TOWN_PLATS,  ropes:TOWN_ROPES,  walls:[]},
@@ -4783,6 +4893,7 @@ const TERRAINS = {
   plaza:{w:1600, gy:900,  plats:ARENA_PLATS, ropes:ARENA_ROPES, walls:[]},
   arena:{w:1600, gy:900,  plats:ARENA_PLATS, ropes:ARENA_ROPES, walls:[]},
   lair: {w:2000, gy:900,  plats:LAIR_PLATS, ropes:[], walls:[]},
+  glade:{w:1600, gy:900,  plats:GLADE_PLATS, ropes:[], walls:[]},
 };
 function setTerrain(kind){
   kind=TERRAINS[kind]?kind:'hunt'; if(kind===TERRAIN) return;
@@ -7556,6 +7667,7 @@ const LOOKS={
   solve:{top:'#5a6474',apron:'#3a2a1a',pants:'#3a3a44',shoe:'#2e2a28',hair:'#e0e2ea',mous:'#e0e2ea',item:'hammer',eye:'#4a5a7a',rim:'rgba(220,235,255,.6)'},
   dagny:{top:'#8a2a1a',mail:1,pants:'#3a2a2a',shoe:'#2a1a14',hair:'#2a1a1a',hs:'braid',hat:'helmet',item:'shield',cape:'#5a1a10',eye:'#b05a2a'},
   sunniva:{top:'#f2c43a',dress:1,pants:'#4a7a2a',shoe:'#5a3a1c',hair:'#f2cb6a',hs:'long',hat:'sunhat',hatC:'#e8d08a',item:'can',eye:'#3d6b3a',rim:'rgba(255,240,170,.6)'},
+  tilda:{top:'#e86a8a',pants:'#5a7a3a',shoe:'#6a4a2a',hair:'#f2c84a',hs:'braid',hat:'sunhat',hatC:'#e8d088',item:'basket',belt:'#8a5a32',eye:'#3a8a4a'},
   siri:{top:'#4a7ac8',apron:'#9a6a3a',pants:'#5a4a3a',shoe:'#4a3020',hair:'#cf5a2a',hs:'bun',item:'hammer',belt:'#5a3a1a',sleeve:'#3a62a8',eye:'#2f6a9a',fur:'#e8d8b0'},
   bengt:{top:'#eeeae0',vest:'#2a3a5a',belt:'#1a1a2a',pants:'#2a2a3a',shoe:'#1a1410',hair:'#8a8a8a',glasses:1,mous:'#8a8a8a',item:'book',eye:'#4a5a7a'},
   gosta:{top:'#f0f0f0',stripes:'rgba(232,74,106,.5)',apron:'#ffffff',pants:'#3a3a4a',shoe:'#2a2a2a',hair:'#3a2e2e',mous:'#3a2e2e',hat:'striped',item:'cone',eye:'#2f6a9a'},
@@ -8038,13 +8150,33 @@ Object.assign(MOB,{
 
 /* ---------- Banditer: ritas med spelarmodellen så att de går, springer och kastar som spelare ---------- */
 const BANDIT_LOOK={...lookFor('psykopat',{skin:2,hc:2,hs:0,eye:3,ec:1,mouth:2,beard:0,hat:0,glas:0}), top:['#5a4632','#2e2216'], pants:['#2e2e36','#18181e'], shoe:['#2a1e14','#120c08'], sleeve:'long',
-  mask:'#3a2a3a', bandana:['#7a2a34','#4a1420'], eq:{vapen:{wtype:'yxa',req:8,rarity:'common'}, balte:{req:5,rarity:'common'}}};
+  mask:'#3a2a3a', bandana:['#7a2a34','#4a1420'], eq:{vapen:{wtype:'kniv',req:8,rarity:'common'}, vapen2:{wtype:'kniv',req:8,rarity:'common'}, balte:{req:5,rarity:'common'}}};
 const BOSS_LOOK={...lookFor('skog',{skin:2,hc:2,hs:0,eye:3,ec:1,mouth:1,beard:3,hat:0,glas:0}), torso:'psykopat', top:['#8a1e22','#4a0e12'], pants:['#2e2e36','#18181e'], shoe:['#2a1e14','#120c08'], sleeve:'long',
   patch:1, tricorn:['#2a1a1a','#e8c25a'], eq:{vapen:{wtype:'yxa',req:20,rarity:'epic'}, balte:{req:5,rarity:'common'}, axel:{req:12,rarity:'rare'}, mantel:{req:12,rarity:'rare'}}};
 function banditN(c,t,o,L){ const m=o.m||{}, thr=(m.throwT||0)>0;
   drawChar(c,{look:L, face:1, pose:thr?'swing':o.walk?'walk':'stand', t:thr?Math.min(.95,1-m.throwT/.3):0, walkT:t*.9, hurt:o.hurt, av:0}); }
 MOB.bandit=wrap((c,t,o)=>banditN(c,t,o,BANDIT_LOOK),1.08);
 MOB.banditboss=wrap((c,t,o)=>banditN(c,t,o,BOSS_LOOK),1.35);
+/* ---------- Flugsvamp (Nybörjargläntan) ---------- */
+function shroomN(c,t,o){
+  const R=!!(o.m&&o.m.rare), P=R?{cap:'#dfe7f2',cap2:'#8a9ab4',dot:'#bff4ff',st:'#ffffff',st2:'#c8d4e4',ink:SVP.ink,eye:SVP.eye,gill:'#e8eef6'}:{cap:'#e8402e',cap2:'#a81e14',dot:'#fff8ec',st:'#fff4dc',st2:'#e6caa0',ink:'#4a1a0e',eye:'#4a2a1a',gill:'#f2dcb0'};
+  const walk=o.walk, hop=walk?Math.abs(Math.sin(t*7)):0, j=-hop*7, sq=walk?1-Math.max(0,.4-hop)*.25:1+Math.sin(t*3)*.03, bl=blinkM(t,.7);
+  shadow(c,16,4,.25);
+  c.save(); c.translate(0,j); c.scale(1/sq*.98+.02,sq);
+  for(const s of [-1,1]) pp(c,()=>{ c.ellipse(s*6,-2.5,4.6,3.2,0,0,TAU); },P.st2,P.ink,{box:[s*6-5,-6,10,6],lw:1.8});
+  pp(c,()=>{ c.moveTo(-10,-4); c.quadraticCurveTo(-13,-16,-9,-26); c.lineTo(9,-26); c.quadraticCurveTo(13,-16,10,-4); c.quadraticCurveTo(0,0,-10,-4); c.closePath(); },P.st,P.ink,{box:[-13,-27,26,27]});
+  eyeM(c,-4,-14,3,3.9,P.eye,{blink:bl,ink:P.ink,look:.2,glow:R?SVP.eye:null}); eyeM(c,4.5,-14.2,3.2,4.1,P.eye,{blink:bl,ink:P.ink,look:.2,glow:R?SVP.eye:null});
+  blush(c,[[-7.5,-9.5],[8,-9.5]],2.2);
+  c.strokeStyle=P.ink; c.lineWidth=1.4; c.lineCap='round'; c.beginPath(); c.arc(.4,-9.5,1.8,.15*Math.PI,.85*Math.PI); c.stroke();
+  const tilt=Math.sin(t*2.2)*.05+(walk?(hop-.5)*.08:0);
+  c.save(); c.translate(0,-25); c.rotate(tilt);
+  pp(c,()=>{ c.moveTo(-20,2); c.bezierCurveTo(-21,-20,21,-20,20,2); c.quadraticCurveTo(0,-3,-20,2); c.closePath(); },P.cap,P.ink,{box:[-21,-17,42,19],ly:.1},x=>{
+    x.fillStyle=P.dot; for(const [a,b,r] of [[-11,-6,3],[0,-12,3.6],[11,-5,2.8],[-4,-3,1.8],[6,-1.5,1.6],[-15,-1,1.6],[15,-1,1.5]]){ x.beginPath(); x.ellipse(a,b,r,r*.85,0,0,TAU); x.fill(); } });
+  pp(c,()=>{ c.moveTo(-18,1.5); c.quadraticCurveTo(0,-2.5,18,1.5); c.quadraticCurveTo(0,6,-18,1.5); c.closePath(); },P.gill,P.ink,{box:[-18,-2,36,8],lw:1.6},x=>{ x.strokeStyle='rgba(120,70,30,.3)'; x.lineWidth=.8; for(let i=-14;i<=14;i+=3.5){ x.beginPath(); x.moveTo(i,0); x.lineTo(i*.6,3.5); x.stroke(); } });
+  if(R) crysRow(c,[[-7,-12,-.35,7],[0,-15,0,8],[7,-12,.35,7]]);
+  c.restore(); c.restore();
+}
+MOB.flugsvamp=wrap((c,t,o)=>shroomN(c,t,o),.78);
 function npc(c,id,t){ setDef(c,false); NOSH=true; LWM=.62; c.save(); c.scale(NPC_K,NPC_K); try{ drawPerson(c,t,{...LOOKS[id],ph:id.length}); } finally{ c.restore(); DEF.on=false; NOSH=false; LWM=1; } }
 const NPC_K=.68;   // samma storlek som NPC:erna hade före grafikuppdateringen
 function begin(){ DEF.active=true; DEF.list=[]; }
@@ -8191,6 +8323,7 @@ function drawDrop(d){
     ctx.restore();
   } else {
     const rc=RAR[d.item.rarity||'common'].color;
+    if(d.bigFx && !d.picking) drawBigDropFx(d,a,bob);
     if(d.item.rarity && d.item.rarity!=='common'){ const g=ctx.createLinearGradient(0,d.y-90,0,d.y); g.addColorStop(0,hexA(rc,0)); g.addColorStop(1,hexA(rc,.35)); ctx.fillStyle=g; ctx.fillRect(d.x-7,d.y-90,14,90); }
     ctx.globalCompositeOperation='lighter'; ctx.globalAlpha=a*.45; ctx.drawImage(glowFor(rc),d.x-30,d.y-48+bob,60,60); ctx.globalCompositeOperation='source-over'; ctx.globalAlpha=a;
     ctx.fillStyle=hexA(rc,.45); ell(ctx,d.x,d.y-1,14,4);
@@ -8311,11 +8444,12 @@ function drawFx(f){
       ctx.fillStyle='#7fcf55'; ell(ctx,x-f.dir*4,f.y-hh,3.6,2); }
     ctx.globalAlpha=1;
   }
+  else if(f.type==='lvlup') drawLvlUpFx(f,k);
   else if(f.type==='beam'){
     const a=k<0.2?k/0.2:1-(k-0.2)/0.8;
     const g=ctx.createLinearGradient(f.x-30,0,f.x+30,0); g.addColorStop(0,'rgba(255,230,100,0)'); g.addColorStop(.5,`rgba(255,240,160,${0.7*a})`); g.addColorStop(1,'rgba(255,230,100,0)');
     ctx.fillStyle=g; ctx.fillRect(f.x-30,f.y-420,60,420);
-    ctx.globalAlpha=a; ctx.font='900 22px system-ui'; ctx.textAlign='center'; ctx.lineWidth=5; ctx.strokeStyle='#6b3a00'; ctx.strokeText('LEVEL UP!',f.x,f.y-90-k*40); ctx.fillStyle='#ffe066'; ctx.fillText('LEVEL UP!',f.x,f.y-90-k*40); ctx.globalAlpha=1;
+    if(!f.noText){ ctx.globalAlpha=a; ctx.font='900 22px system-ui'; ctx.textAlign='center'; ctx.lineWidth=5; ctx.strokeStyle='#6b3a00'; ctx.strokeText('LEVEL UP!',f.x,f.y-90-k*40); ctx.fillStyle='#ffe066'; ctx.fillText('LEVEL UP!',f.x,f.y-90-k*40); } ctx.globalAlpha=1;
   }
   else if(f.type==='rumor'){   // Ryktesspridning: lila båge med en pratbubbla som flyger till nästa fiende
     const pr=Math.min(1,k*2.2), cx=(f.ax+f.bx)/2, cy=Math.min(f.ay,f.by)-60-Math.abs(f.bx-f.ax)*.15;
@@ -8355,7 +8489,7 @@ function render(){
   ctx.setTransform(s,0,0,s,-cx*s,-cy*s);
   G.view={x1:cx,y1:cy,x2:cx+VW/Z,y2:cy+VH/Z};
   if(TERRAIN==='lair') drawLairWall();
-  drawDecoBack(); drawTorches(); drawSign(); drawWaySigns(); drawTerrain(); drawRimLight(); drawCamp(); drawRopes(); drawPortals(); drawHazards(); drawDecoFront(); drawShelter(false); drawNpcs();
+  drawDecoBack(); drawTorches(); drawSign(); drawReadSigns(); drawWaySigns(); drawTerrain(); drawRimLight(); drawCamp(); drawRopes(); drawPortals(); drawHazards(); drawDecoFront(); drawShelter(false); drawNpcs();
   for(const d of G.drops) drawDrop(d);
   for(const m of G.monsters) if(m.x>G.view.x1-60 && m.x<G.view.x2+60) drawMonster(m);
   if(G.mode==='game') drawOthers();
@@ -9677,7 +9811,7 @@ function renderBagDetail(){
     G.ui.scrollMode=null;
   }
   const f=G.ui.sel&&findItem(G.ui.sel);
-  if(!f){ box.innerHTML=soulTutBar(null)+`<div class="hintx">${G.touch?'Tryck':'Klicka'} på ett föremål för att se det. ${G.touch?'':'Dubbelklicka för att utrusta / ta av / använda.'} Föremål med röd ton kräver högre level.</div>`; return; }
+  if(!f){ box.innerHTML=equipTutBar(null)+soulTutBar(null)+`<div class="hintx">${G.touch?'Tryck':'Klicka'} på ett föremål för att se det. ${G.touch?'':'Dubbelklicka för att utrusta / ta av / använda.'} Föremål med röd ton kräver högre level.</div>`; return; }
   const it=f.it; let acts='';
   if(isCons(it)){
     const c=CONS[it.base];
@@ -9686,16 +9820,16 @@ function renderBagDetail(){
     else acts+=`<button class="btn sm green" data-act="scroll">Använd på föremål…</button>`;
     acts+=`<button class="btn sm" data-act="drop">⬇ Släpp på marken</button>`;
     acts+=`<button class="btn sm red" data-act="trash">${G.ui.trash===it.uid?'Säker? Tryck igen':'Släng'}</button>`;
-    box.innerHTML=soulTutBar(it)+`<div class="dinfo">${itemHtml(it,'inv')}</div><div class="acts">${acts}</div>`; return;
+    box.innerHTML=equipTutBar(it)+soulTutBar(it)+`<div class="dinfo">${itemHtml(it,'inv')}</div><div class="acts">${acts}</div>`; return;
   }
   if(f.where==='inv'){
-    acts+=`<button class="btn sm green" data-act="equip" ${G.ch.level<it.req?'disabled':''}>Utrusta</button>`;
+    acts+=`<button class="btn sm green ${G.ui.hiItems&&G.ui.hiItems.has(it.uid)?'hl':''}" data-act="equip" ${G.ch.level<it.req?'disabled':''}>Utrusta</button>`;
     if(isOpen('shop')) acts+=`<button class="btn sm gold" data-act="sell">Sälj ${sellPrice(it)} 🪙</button>`;
     acts+=`<button class="btn sm" data-act="drop">⬇ Släpp på marken</button>`;
     acts+=`<button class="btn sm red" data-act="trash">${G.ui.trash===it.uid?'Säker? Tryck igen':'Släng'}</button>`;
   } else acts+=`<button class="btn sm" data-act="unequip">Ta av</button>`;
   if(it.slot!=='trinket') acts+=`<button class="btn sm purple ${tutWpn()===it?'hl tutbtn':''}" data-act="soulpop">🔮 Själ${it.soul?` (nivå ${it.soul})`:''}</button>`;
-  box.innerHTML=soulTutBar(it)+`<div class="dinfo">${itemHtml(it,f.where)}</div><div class="acts">${acts}</div>`;
+  box.innerHTML=equipTutBar(it)+soulTutBar(it)+`<div class="dinfo">${itemHtml(it,f.where)}</div><div class="acts">${acts}</div>`;
   if(G.ui.soulPop===it.uid && it.slot!=='trinket'){   // stora själsrutan (öppnas med 🔮 Själ)
     const c=soulCost(it), ok=consCount(c.type)>=c.cnt && G.ch.gold>=c.gold;
     const gp=$('#gearPop');
@@ -10182,13 +10316,20 @@ function tutWpn(){   // vapnet som Själ i vapnet handlar om: det från Ylvas up
   if(!soulTut()) return null; const ch=G.ch, all=[...ch.inv, ...Object.values(ch.eq)].filter(x=>x && !isCons(x));
   return all.find(x=>x.uid===ch.qWpn) || all.find(x=>x.base===CLASSES[ch.cls].wtype+'8') || ch.eq.vapen || null;
 }
+function equipTutBar(it){   // ny utrustning från ett uppdrag: visa tydligt hur man tar på den
+  const H=G.ui.hiItems; if(!H || !H.size) return ''; const ch=G.ch, first=ch.inv.find(x=>H.has(x.uid)); if(!first) return '';
+  const t = it && H.has(it.uid) ? `Tryck på den gröna knappen <b>Utrusta</b> här nedanför 👇` : (G.touch ? `Tryck på <b>${esc(first.name)}</b> – det blinkar gult 👆` : `Dubbelklicka på <b>${esc(first.name)}</b> (det blinkar gult) – eller dra det till den lysande platsen på din gubbe`);
+  return `<div class="tutbar eq">🎒 <b>Ny utrustning!</b> ${t}</div>`;
+}
 function soulTutBar(it){
-  const tw=tutWpn(); if(!tw) return ''; const n=G.ch.quests.vildsj.prog.soul_wpn||0;
+  const tw=tutWpn(); if(!tw) return ''; const qid=soulTutQ(), n=G.ch.quests[qid].prog.soul_wpn||0, N=QUESTS[qid].goals.soul_wpn;
   const t = it && it.uid===tw.uid ? (G.ui.soulPop===tw.uid ? `Tryck på den lila knappen <b>🔮 ${tw.soul?'Uppgradera själ':'Ge själ'}</b> här nedanför.` : `Bra! Tryck nu på den lila knappen <b>🔮 Själ</b>.`)
     : `Klicka på ditt nya vapen <b>${esc(tw.name)}</b> – det blinkar lila 👆`;
-  return `<div class="tutbar">🔮 <b>Själ i vapnet (${n}/2):</b> ${t}</div>`;
+  return `<div class="tutbar">🔮 <b>Själ i vapnet (${n}/${N}):</b> ${t}</div>`;
 }
-function soulTut(){ const q=G.ch&&G.ch.quests&&G.ch.quests.vildsj; return !!q && q.state==='active' && (q.prog.soul_wpn||0)<2; }   // Ylvas själsuppdrag pågår
+const SOUL_TQ=['gl3','vildsj'];   // uppdrag som guidar en genom själar (lyckas garanterat)
+function soulTutQ(){ const ch=G.ch; if(!ch||!ch.quests) return null; for(const id of SOUL_TQ){ const q=ch.quests[id]; if(q && q.state==='active' && (q.prog.soul_wpn||0)<QUESTS[id].goals.soul_wpn) return id; } return null; }
+function soulTut(){ return !!soulTutQ(); }
 function soulUp(uid){
   const f=findGear(uid), ch=G.ch; if(!f || isCons(f.it) || f.it.slot==='trinket') return; const it=f.it, c=soulCost(it);
   if(consCount(c.type)<c.cnt){ throttleMsg('soul',`Du behöver ${c.cnt} × ${CONS[c.type].name}.`,'#ff9b9b'); return; }
@@ -10487,8 +10628,9 @@ function openDatabase(){
 
 /* ---------- NPC:er & uppdrag ---------- */
 const NPCS = {
-  berit: {name:'Jägaren Berit',   map:1, x:1625, y:780},
-  sigvard:{name:'Skrivaren Sigvard', map:1, x:1508, y:780},
+  tilda: {name:'Gläntvakterskan Tilda', map:21, x:420, y:812},
+  berit: {name:'Jägaren Berit',   map:1, x:1700, y:780},
+  sigvard:{name:'Skrivaren Sigvard', map:1, x:1840, y:780},
   holger:{name:'Vaktaren Holger', map:2, x:1615, y:780},
   vera:  {name:'Örtkvinnan Vera', map:2, x:1775, y:780},
   fritiof:{name:'Fågelskådaren Fritiof', map:9, x:300, y:900},
@@ -10507,9 +10649,19 @@ const NPCS = {
 };
 // goals: monstertyp -> antal, eller 'scroll' -> antal använda scrolls. choose = välj ett av; give = får alla; classWpn = common-vapen (den levelns) för din klass.
 const QUESTS = {
+  // Gläntvakterskan Tilda (Nybörjargläntan) – de allra första stegen
+  gl1:{npc:'tilda', name:'Små svampar, stora drömmar', lvl:1,
+    text:'Välkommen till Nybörjargläntan! Här är det lugnt – bara några små flugsvampar som hoppar omkring därnere på marken. Döda 3 av dem, så får du ett riktigt vapen av mig.',
+    goals:{flugsvamp:3}, exp:6, classWpn:2, cons:[['hpPot',2]]},   // ger level 2 så att vapnet går att ta på direkt
+  gl2:{npc:'tilda', name:'Svampjakten', prev:'gl1',
+    text:'Snyggt! Med ett riktigt vapen går det mycket fortare. Döda 8 flugsvampar till, så får du något fint av mig – en liten själ.',
+    goals:{flugsvamp:8}, exp:6, gold:20, cons:[['sjal1',1]]},
+  gl3:{npc:'tilda', name:'En själ i vapnet', prev:'gl2',
+    text:'Själar gör din utrustning starkare. Öppna väskan, klicka på ditt nya vapen och tryck på den lila knappen 🔮 Ge själ. Första gången lyckas det alltid! Sedan är du redo för Jaktmarken I – gå höger och prata med Jägaren Berit.',
+    goals:{soul_wpn:1}, exp:6, cons:[['hpPot',3]]},
   bar1:{npc:'berit', name:'Bärplockarens besvär', lvl:1,
     text:'Hej där, nykomling! Blåbären studsar omkring överallt här i jaktmarken. Visa vad du går för – döda 5 av dem, så får du ett riktigt vapen av mig.',
-    goals:{blabar:5}, exp:10, classWpn:2, cons:[['hpPot',3]]},
+    goals:{blabar:5}, exp:10, classWpn:5, cons:[['hpPot',3]]},
   bar2:{npc:'berit', name:'Kall om öronen', prev:'bar1',
     text:'Bra jobbat! Nu har mossabollarna också börjat rulla runt. Rensa upp lite till, så får du en mössa av mig.',
     goals:{blabar:10, mossa:5}, exp:5, give:[['hjalm2','common']], cons:[['hpPot',3]]},
@@ -10706,6 +10858,7 @@ Object.assign(QUESTS, {
 function questGive(Q){ return [...(Q.classWpn?[[CLASSES[G.ch.cls].wtype+Q.classWpn,Q.classRar||'common']]:[]), ...(Q.give||[])]; }
 const fixedTxt = f => { const v=Object.values(f); return v.every(x=>x===v[0]) ? `+${v[0]} Str, Int och Agi` : Object.entries(f).filter(e=>e[1]).map(([k,v])=>`+${v} ${STATN[k]}`).join(', '); };
 const QUEST_SHORT = {   // det NPC:n säger – kort och tydligt vad som ska göras
+  gl1:'Döda 3 flugsvampar nere på marken, så får du ett riktigt vapen.', gl2:'Döda 8 flugsvampar till.', gl3:'Ge ditt nya vapen en själ – i väskan.',
   bar1:'Döda 5 blåbär här i jaktmarken.', bar2:'Döda blåbär och mossabollar.', bar3:'Döda fler blåbär och mossabollar.', bar4:'Döda blåbär och mossabollar en sista gång.',
   bar5:'Köp 2 vapenscrolls i butiken (B) och dra dem till ditt vapen i väskan (I). De lyckas garanterat.',
   vildsj:'Öppna väskan (I), klicka på vapnet och tryck 🔮 Ge själ – två gånger. Det lyckas garanterat.',
@@ -10725,14 +10878,29 @@ const QUEST_SHORT = {   // det NPC:n säger – kort och tydligt vad som ska gö
 };
 const qShort = id => QUEST_SHORT[id] || (QUESTS[id].text.split(/(?<=[.!?])\s/)[0]);
 for(const id in QUESTS) QUESTS[id].exp=Math.round(QUESTS[id].exp*1.2*2);   // uppdrag ger 20 % mer EXP – och sedan dubbelt
+/* EXP-kurva för uppdrag från level 8: ungefär lika mycket som 16–60 vanliga monster på uppdragets level (mer jobb = mer EXP),
+   precis som de tidiga uppdragen. Uppdragen under level 8 är orörda. */
+(()=>{
+  const mobs=Object.values(MOBS).filter(d=>!d.boss && !d.arena && d.lvl).sort((a,b)=>a.lvl-b.lvl);
+  const monExp=L=>{ let lo=mobs[0], hi=mobs[mobs.length-1]; for(const d of mobs){ if(d.lvl<=L) lo=d; if(d.lvl>=L){ hi=d; break; } } return hi.lvl===lo.lvl ? lo.exp : lo.exp+(hi.exp-lo.exp)*(L-lo.lvl)/(hi.lvl-lo.lvl); };
+  const chainLvl=id=>{ let q=QUESTS[id]; while(q && q.lvl==null && q.prev) q=QUESTS[q.prev]; return q&&q.lvl!=null ? q.lvl : Math.min(...Object.values(QUESTS).filter(x=>x.npc===QUESTS[id].npc && x.lvl!=null).map(x=>x.lvl).concat([99])); };
+  for(const [id,Q] of Object.entries(QUESTS)){
+    let L=chainLvl(id), k=0;
+    for(const [g,n] of Object.entries(Q.goals||{})){ const t=g.startsWith('silver_')?g.slice(7):g.startsWith('abil_')?g.slice(5):g, d=MOBS[t];
+      if(d){ L=Math.max(L,d.lvl); k+= g.startsWith('silver_') ? n*15 : d.boss ? n*10 : n; } else k+= g.startsWith('item_') ? n*2 : 3; }
+    if(L<8 || L>=99) continue;
+    const N=Math.max(16,Math.min(60,14+k*.22));
+    Q.exp=Math.round(monExp(L)*N/5)*5;
+  }
+})();
 for(const id in QUESTS){ const Q=QUESTS[id]; if(Q.lvl && NPCS[Q.npc] && NPCS[Q.npc].map===5) Q.lvl=Math.max(1,Q.lvl-2); }   // uppdragen i Lövbyn kräver 2 level lägre
-const QUEST_ORDER = ['bar1','bar2','bar3','bar4','bar5','skr0','skr1','skr2','skr3','jakt1','jakt2','jakt3','jakt4','jakt5','pot1','pot2','pot3','pot4','pot5','vild1','vild2','vild3','vildsj','vildlw','vild4','bo1','bo2','bo3','fag1','fag2','fag3','saga0','saga1','saga2','saga3','gunnar0','gunnar1','gunnar2','gunnar3','sten1','sten2','drak1','drak2','drak3','band1','band2','band3','silver1','silver2','pinn1','stock1','stock2','stock3','sol1','sol2','sol3','gos1','gos2'];
+const QUEST_ORDER = ['gl1','gl2','gl3','bar1','bar2','bar3','bar4','bar5','skr0','skr1','skr2','skr3','jakt1','jakt2','jakt3','jakt4','jakt5','pot1','pot2','pot3','pot4','pot5','vild1','vild2','vild3','vildsj','vildlw','vild4','bo1','bo2','bo3','fag1','fag2','fag3','saga0','saga1','saga2','saga3','gunnar0','gunnar1','gunnar2','gunnar3','sten1','sten2','drak1','drak2','drak3','band1','band2','band3','silver1','silver2','pinn1','stock1','stock2','stock3','sol1','sol2','sol3','gos1','gos2'];
 const QUEST_CHAINS = [ {npc:'berit', name:'Bärplockarens besvär'}, {npc:'sigvard', name:'Skrivarkonsten'}, {npc:'holger', name:'Vaktarens jakt'}, {npc:'vera', name:'Örtkvinnans brygder'}, {npc:'ylva', name:'Vargarnas spår'}, {npc:'bo', name:'Björnjakten'}, {npc:'fritiof', name:'Fågelplågan'}, {npc:'saga', name:'Skrivarmästarens prov'}, {npc:'gunnar', name:'Garvarens lära'}, {npc:'dagny', name:'Drakvaktens prov'}, {npc:'kerstin', name:'Bandittornet'}, {npc:'solve', name:'Silverjägaren'}, {npc:'ruben', name:'Pinnskogen'}, {npc:'stina', name:'Stockskogen'}, {npc:'sunniva', name:'Solrosornas uppror'}, {npc:'gosta', name:'Glassbaren'} ];
 // Yrkesuppdragen och yrkes-NPC:erna är borttagna – Hantverkaren Siri på Jaktmarken I lär ut Crafting
 for(const id of ['skr0','skr1','skr2','skr3','saga0','saga1','saga2','saga3','gunnar0','gunnar1','gunnar2','gunnar3','vildlw','vild4','pot1','pot2','pot3','pot4','pot5']) delete QUESTS[id];
 for(const k of ['sigvard','saga','gunnar','vera']) delete NPCS[k];
 NPCS.bengt = {name:'Bankiren Bengt', map:5, x:1290, y:900, bank:true};   // banken: delas av alla gubbar på kontot
-NPCS.siri = {name:'Hantverkaren Siri', map:1, x:1508, y:780};
+NPCS.siri = {name:'Hantverkaren Siri', map:1, x:1560, y:780};   // NPC:erna i lägret står isär så att namnen inte krockar
 Object.assign(QUESTS, {
   cr1:{npc:'siri', name:'Blåbärsmossamössan', lvl:3, text:'Gör en Blåbärsmossamössa.', goals:{craft_hjalm:1}, exp:48, gold:40, cons:[['hpPot',5]]},
   cr2:{npc:'siri', name:'Varma tofflor', prev:'cr1', text:'Gör ett par Mossatofflor.', goals:{craft_skor:1}, exp:60, gold:60, cons:[['mpPot',5],['bomb1',3]]},
@@ -10745,7 +10913,7 @@ QUEST_CHAINS.splice(1, 0, {npc:'siri', name:'Hantverkarens lärling'});
 const chainQuests = npc => QUEST_ORDER.filter(id=>QUESTS[id].npc===npc);
 const npcsOn = mapId => Object.keys(NPCS).filter(k=>NPCS[k].map===mapId);
 const CRAFT_GOAL = {craft_handskar:['par handskar','Gör handskar','par handskar'], craft_hjalm:['mössor','Gör en mössa','mössa'], craft_skor:['par skor','Gör skor','par skor'], craft_vapen:['vapen','Gör ett vapen','vapen'], craft_pot:['drycker eller elixir','Brygg drycker','dryck'], craft_elix:['elixir','Brygg elixir','elixir']};
-const goalName = (t,n) => t==='soul_wpn' ? `Ge ditt vapen själ (${n} nivåer) i väskan` : t==='jump_bark' ? `Hoppa över ${n} barkskott` : t==='roll_stock' ? `Rulla genom ${n} stockar med Kullerbyttan` : t.startsWith('abil_') ? `Döda ${n} ${MOBS[t.slice(5)].name.toLowerCase()} med förmågor (inte basattack)` : t==='roll_thorn' ? `Rulla genom Holgers törnsnår med Kullerbyttan${n>1?` ${n} gånger`:''}` : t==='use_elix' ? `Drick ${n} elixir` : t.startsWith('buy_') ? `Köp ${n} ${CONS[t.slice(4)].name} i butiken (B)` : t==='scroll_wpn' ? `Använd vapenscrolls på ditt vapen ${n} gånger` : t.startsWith('have_') ? `Samla ${n} ${CONS[t.slice(5)].name}` : t.startsWith('item_') ? `Lämna in ${n} ${CONS[t.slice(5)].name}` : t==='scroll' ? `Använd scrolls ${n} gånger` : CRAFT_GOAL[t] ? `Tillverka ${n} ${n===1?CRAFT_GOAL[t][2]:CRAFT_GOAL[t][0]} (hantverk, H)` : t.startsWith('silver_') ? `Döda ${n} ${RARE_DEFS[t.slice(7)].name}` : `Döda ${n} ${MOBS[t].name}`;
+const goalName = (t,n) => t==='soul_wpn' ? `Ge ditt vapen själ (${n} ${n===1?'nivå':'nivåer'}) i väskan` : t==='jump_bark' ? `Hoppa över ${n} barkskott` : t==='roll_stock' ? `Rulla genom ${n} stockar med Kullerbyttan` : t.startsWith('abil_') ? `Döda ${n} ${MOBS[t.slice(5)].name.toLowerCase()} med förmågor (inte basattack)` : t==='roll_thorn' ? `Rulla genom Holgers törnsnår med Kullerbyttan${n>1?` ${n} gånger`:''}` : t==='use_elix' ? `Drick ${n} elixir` : t.startsWith('buy_') ? `Köp ${n} ${CONS[t.slice(4)].name} i butiken (B)` : t==='scroll_wpn' ? `Använd vapenscrolls på ditt vapen ${n} gånger` : t.startsWith('have_') ? `Samla ${n} ${CONS[t.slice(5)].name}` : t.startsWith('item_') ? `Lämna in ${n} ${CONS[t.slice(5)].name}` : t==='scroll' ? `Använd scrolls ${n} gånger` : CRAFT_GOAL[t] ? `Tillverka ${n} ${n===1?CRAFT_GOAL[t][2]:CRAFT_GOAL[t][0]} (hantverk, H)` : t.startsWith('silver_') ? `Döda ${n} ${RARE_DEFS[t.slice(7)].name}` : `Döda ${n} ${MOBS[t].name}`;
 const goalShort = t => t==='soul_wpn' ? 'Själ i vapnet' : t==='jump_bark' ? 'Hoppa över bark' : t==='roll_stock' ? 'Rulla genom stockar' : t.startsWith('abil_') ? MOBS[t.slice(5)].name+' (förmåga)' : t==='roll_thorn' ? 'Rulla genom törnet' : t==='use_elix' ? 'Drick elixir' : t.startsWith('buy_') ? 'Köp '+CONS[t.slice(4)].name : t==='scroll_wpn' ? 'Scrolla vapnet' : (t.startsWith('item_')||t.startsWith('have_')) ? CONS[t.slice(5)].name : t==='scroll' ? 'Scrolls' : CRAFT_GOAL[t] ? CRAFT_GOAL[t][1] : t.startsWith('silver_') ? RARE_DEFS[t.slice(7)].name : MOBS[t].name;
 function questState(id, ch=G.ch){
   const q=(ch.quests||{})[id], Q=QUESTS[id];
@@ -10836,7 +11004,7 @@ function claimQuest(id, chosen){
   log(`🎁 Belöning för <b>${Q.name}</b>: ${txt?txt+' och ':''}${Q.exp} EXP!`,'#7ee787');
   toast(`🎁 ${txt?txt+' + ':''}${Q.exp} EXP`);
   const gear=got.filter(it=>!isCons(it));
-  if(gear.length && NPCS[Q.npc].map===1){
+  if(gear.length && (NPCS[Q.npc].map===1 || NPCS[Q.npc].map===21)){
     G.ui.hiItems=new Set(gear.map(it=>it.uid)); G.ui.hiBag=true; updateBagHi();
     log(G.touch?'🎒 Ny utrustning! Tryck på väskan och sedan på föremålet → Utrusta.':'🎒 Ny utrustning! Öppna väskan (I) och dra föremålet till din gubbe – eller dubbelklicka på det.','#ffe066');
   }
@@ -10929,15 +11097,15 @@ function drawNpcs(){
 }
 const TUT_STEPS = [['move','<kbd>A</kbd> <kbd>D</kbd> / <kbd>←</kbd> <kbd>→</kbd>','Gå'], ['jump','<kbd>Mellanslag</kbd>','Hoppa'],
   ['atk','<kbd>Ctrl</kbd>','Attackera'], ['talk','<kbd>Mellanslag</kbd> vid NPC','Prata och ta uppdrag']];
-function tutDone(k){ const ch=G.ch; if(!ch || !ch.tut || ch.tut[k] || ch.tut.done) return; ch.tut[k]=1; markDirty(); renderTut();
+function tutDone(k){ const ch=G.ch; if(!ch || !ch.tut || ch.tut[k] || ch.tut.done) return; ch.tut[k]=1; markDirty();
+  const el=$('#tutBox'); if(!el.classList.contains('hidden') && el.dataset.k===k){ el.classList.add('done'); el.querySelector('.tl').textContent+=' ✔'; setTimeout(renderTut,800); } else renderTut();
   if(TUT_STEPS.every(([s])=>ch.tut[s])){ ch.tut.done=1; setTimeout(()=>{ $('#tutBox').classList.add('hidden'); log('🎓 Bra! Nu kan du grunderna. Fler tangenter finns i Meny → Inställningar.','#ffe08a'); },2500); } }
 function renderTut(){
   const el=$('#tutBox'), ch=G.ch;
   if(!ch || !ch.tut || G.touch || (ch.tut.done && !TUT_STEPS.some(([k])=>!ch.tut[k]))){ el.classList.add('hidden'); return; }
-  const next=TUT_STEPS.find(([k])=>!ch.tut[k]);
-  el.innerHTML=`<h4>🎓 Så spelar du <button data-tut="x" title="Dölj">✕</button></h4>`+TUT_STEPS.map(([k,key,txt])=>`<div class="tr ${ch.tut[k]?'ok':''} ${next&&next[0]===k?'next':''}"><span class="tk">${key}</span><span class="tl">${txt}</span></div>`).join('')
-    +`<div class="ti"><kbd>W</kbd> klättra / portal · <kbd>S</kbd>+hopp ner · <kbd>1</kbd>–<kbd>9</kbd> förmågor<br><kbd>I</kbd> väska · <kbd>Q</kbd> uppdrag · <kbd>M</kbd> karta · <kbd>Esc</kbd> meny</div>`;
-  el.classList.remove('hidden');
+  const next=TUT_STEPS.find(([k])=>!ch.tut[k]); if(!next){ el.classList.add('hidden'); return; }   // ett kort tips i taget, precis när det behövs
+  el.className='tip'; el.dataset.k=next[0];
+  el.innerHTML=`<span>💡</span><span class="tk">${next[1]}</span><span class="tl">${next[2]}</span><button data-tut="x" title="Dölj tipsen">✕</button>`;
 }
 document.addEventListener('click',e=>{ if(e.target.closest && e.target.closest('[data-tut]')){ if(G.ch&&G.ch.tut){ G.ch.tut.done=1; for(const [k] of TUT_STEPS) G.ch.tut[k]=1; markDirty(); } $('#tutBox').classList.add('hidden'); } });
 function questArrowTarget(){   // lämna in först, annars ta ett nytt uppdrag om man inte har något aktivt
@@ -11164,8 +11332,10 @@ function showLogin(msg, hiG){
     <div class="sub">Blåbär, mossbollar och äventyr · speltestversion</div>
     <label for="inName">Ditt användarnamn</label>
     <input id="inName" class="inp" maxlength="20" placeholder="Skriv ett namn" autocomplete="off" value="${esc(last)}">
+    <label for="inPin">Pinkod (4 siffror)</label>
+    <input id="inPin" class="inp pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="••••" autocomplete="off">
     <button class="btn gold wide bigplay" id="btnPlay">▶ Spela</button>
-    <div class="hintx" style="font-size:12px;margin-top:4px">Ny spelare? Hitta på ett namn och tryck <b>Spela</b>. Samma namn nästa gång.</div>
+    <div class="hintx" style="font-size:12px;margin-top:4px">Ny spelare? Hitta på ett namn och en 4-siffrig pinkod och tryck <b>Spela</b>. Samma namn och pinkod nästa gång.</div>
     <div class="orline"><span>eller</span></div>
     <button class="btn wide gbtn ${hiG?'hl':''}" id="btnGoogle" ${Auth.sb?'':'disabled'}><span class="gG">G</span> Logga in med Google</button>
     <div class="hintx" style="font-size:12px;margin-top:4px">För konton som är skyddade med Google.</div>
@@ -11175,21 +11345,32 @@ function showLogin(msg, hiG){
   </div>`);
   $('#btnInstall').onclick=doInstall;
   const busy=(t)=>{ $('#loginMsg').textContent=t||''; ['#btnPlay','#btnGoogle'].forEach(k=>{ const b=$(k); if(b) b.disabled=!!t || (k==='#btnGoogle'&&!Auth.sb); }); };
-  const go=async()=>{ busy('Laddar…'); try{ await nameLogin($('#inName').value); }catch(e){ console.warn(e); busy(); $('#loginMsg').textContent='Det gick inte: '+(e.message||e); } };
-  $('#btnPlay').onclick=go; $('#inName').addEventListener('keydown',e=>{ if(e.key==='Enter') go(); });
+  const go=async()=>{ busy('Laddar…'); try{ await nameLogin($('#inName').value, $('#inPin').value); }catch(e){ console.warn(e); busy(); $('#loginMsg').textContent='Det gick inte: '+(e.message||e); } };
+  $('#btnPlay').onclick=go; $('#inName').addEventListener('keydown',e=>{ if(e.key==='Enter') $('#inPin').focus(); }); $('#inPin').addEventListener('keydown',e=>{ if(e.key==='Enter') go(); }); $('#inPin').addEventListener('input',e=>{ e.target.value=e.target.value.replace(/\D/g,'').slice(0,4); });
   $('#btnGoogle').onclick=async()=>{ busy('Öppnar Google…'); try{ await Auth.google(); }catch(e){ busy(); $('#loginMsg').textContent='Google-inloggningen misslyckades: '+(e.message||e); } };
   if(!G.touch && !hiG) setTimeout(()=>$('#inName').focus(),50);
 }
-async function nameLogin(name){   // namnkonto som förut – om det inte är skyddat med Google
-  name=String(name||'').trim();
-  if(name.length<2){ $('#loginMsg').textContent='Skriv ett namn med minst 2 tecken.'; $('#btnPlay').disabled=false; $('#btnGoogle').disabled=!Auth.sb; return; }
+async function pinHash(id,pin){   // pinkoden sparas aldrig i klartext
+  const txt=`jaktmarken:${id}:${pin}`;
+  try{ const b=await crypto.subtle.digest('SHA-256', new TextEncoder().encode(txt)); return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join(''); }
+  catch(e){ let h=2166136261; for(const ch of txt){ h^=ch.charCodeAt(0); h=Math.imul(h,16777619)>>>0; } return 'f'+h.toString(16); }
+}
+async function nameLogin(name, pin){   // namnkonto med obligatorisk 4-siffrig pinkod – om det inte är skyddat med Google
+  name=String(name||'').trim(); pin=String(pin||'').trim();
+  const fail=t=>{ $('#loginMsg').innerHTML=t; $('#btnPlay').disabled=false; $('#btnGoogle').disabled=!Auth.sb; };
+  if(name.length<2){ fail('Skriv ett namn med minst 2 tecken.'); return; }
+  if(!/^\d{4}$/.test(pin)){ fail('Skriv en pinkod med exakt 4 siffror.'); $('#inPin').focus(); return; }
   const id=name.toLowerCase(); const local=localLoad(id); let cloud=null, err=null;
   if(Cloud.url){ try{ cloud=await Cloud.loadOld(id); }catch(e){ err=e; } }
   if(cloud && (cloud.protected || cloud.movedTo)){ try{ localStorage.removeItem(LS_PREFIX+id); }catch(e){} showLogin(`🔒 Kontot <b>${esc(cloud.name||name)}</b> är skyddat med Google. Tryck på <b>Logga in med Google</b>.`, true); return; }
+  let acct=newestAcct(local&&!local.protected?local:null, cloud) || newAccount(name);
+  const ph=await pinHash(id,pin), first=!acct.pinH, isNew=!(acct.chars||[]).length && !acct.savedAt;
+  if(acct.pinH && acct.pinH!==ph){ fail(`🔒 Fel pinkod för kontot <b>${esc(acct.name||name)}</b>.`); $('#inPin').value=''; $('#inPin').focus(); return; }
+  acct.pinH=ph;
   if(Auth.user) await Auth.out();   // namnkonton körs utan inloggning
   Cloud.lockedName=null; Cloud.chkT=Date.now();
-  let acct=newestAcct(local&&!local.protected?local:null, cloud) || newAccount(name);
   fixAccount(acct); acct.id=id; G.acct=acct; G.acctMode='name'; Cloud.lastBoard='';
+  if(first){ markDirty(true); toast(isNew?'🔒 Kontot är skapat. Kom ihåg din pinkod – den behövs nästa gång!':'🔒 Pinkoden är nu kopplad till ditt konto. Använd den nästa gång du loggar in.',5000); }
   localStorage.setItem('jaktmarken_senaste', name);
   if(err){ toast(`⚠️ Kunde inte nå servern – sparar lokalt tills vidare.<br><small>${esc(String(err.message||err).slice(0,140))}</small>`,6000); console.warn(err); }
   showSelect();
@@ -11263,7 +11444,7 @@ async function logoutAll(){
   G.acct=null; await Auth.out(); showLogin(); return true;
 }
 function acctStatusHtml(){
-  if(G.acctMode==='name') return `<div class="acst warn">🔓 <b>Oskyddat konto.</b> Den som skriver namnet <b>${esc(G.acct.name)}</b> kan logga in. Skydda det med Google så kan bara du logga in. ${Auth.sb?'<button class="btn sm gbtn" id="btnProtect"><span class="gG">G</span> Skydda med Google</button>':''}</div>`;
+  if(G.acctMode==='name') return `<div class="acst warn">🔑 <b>Skyddat med pinkod.</b> Bara den som kan namnet <b>${esc(G.acct.name)}</b> och pinkoden kan logga in. Koppla till Google för det säkraste skyddet. ${Auth.sb?'<button class="btn sm gbtn" id="btnProtect"><span class="gG">G</span> Skydda med Google</button>':''}</div>`;
   if(!Auth.sb) return `<div class="acst">💾 Lokalt läge – sparas bara i den här webbläsaren.</div>`;
   if(Auth.anon) return `<div class="acst warn">⚠️ <b>Gästkonto.</b> Spara det med Google så tappar du aldrig dina gubbar och kan spela på andra enheter. <button class="btn sm gbtn" id="btnLink"><span class="gG">G</span> Spara med Google</button></div>`;
   return `<div class="acst ok">✅ Inloggad med Google${Auth.email()?` (${esc(Auth.email())})`:''}</div>`;
@@ -11327,11 +11508,13 @@ function showAppearance(ch){
 }
 function showCreate(){
   let cls='skog';
-  showScreen(`<div class="card">
+  const TAG={skog:['🪓','Tålig närstridare',1,'Lätt'], hippie:['🏹','Skjuter på avstånd',2,'Medel'], viskare:['🔮','Magi med lång räckvidd',2,'Medel'], psykopat:['🗡️','Snabb med två knivar',3,'Svår'], gata:['👊','Snabba nävar på nära håll',2,'Medel']};
+  showScreen(`<div class="card scrolly">
     <h2>Skapa ny gubbe</h2>
     <label for="inChar">Namn på gubben</label>
     <input id="inChar" class="inp" maxlength="14" placeholder="2–14 tecken" autocomplete="off" value="${G.acct.chars.length||G.acct.name==='Gäst'?'':esc(G.acct.name.slice(0,14))}">
-    <div class="classes">${Object.values(CLASSES).map(C=>`<div class="clcard ${C.id===cls?'on':''}" data-cls="${C.id}"><canvas width="180" height="200"></canvas><div><b>${C.name}</b><p>${C.desc}</p></div></div>`).join('')}</div>
+    <div class="classes">${Object.values(CLASSES).map(C=>{ const T=TAG[C.id]||['','',1,'']; return `<div class="clcard ${C.id===cls?'on':''}" data-cls="${C.id}"><canvas width="180" height="200"></canvas><div><b>${C.name}</b><div class="cltag">${T[0]} ${T[1]}</div><div class="clstar" title="Svårighetsgrad">${'★'.repeat(T[2])}${'☆'.repeat(3-T[2])} <span>${T[3]}</span></div></div></div>`; }).join('')}</div>
+    <div class="cldesc" id="clDesc"><b>${CLASSES[cls].name}:</b> ${CLASSES[cls].desc}</div>
     <label>Utseende</label>
     ${appEditorHTML()}
     <div class="row"><button class="btn sec" id="btnBack">Tillbaka</button><button class="btn gold" id="btnCreate">Skapa &amp; spela</button></div>
@@ -11340,16 +11523,18 @@ function showCreate(){
   const apps={skog:{},hippie:{},viskare:{},psykopat:{},gata:{}};   // eget utseende per klass medan man bläddrar
   let app=apps[cls];
   const redrawApp=appEditorBind(()=>cls, ()=>app);
-  $$('.clcard').forEach(el=>{ const C=CLASSES[el.dataset.cls]; drawPortrait(el.querySelector('canvas'),C.id,{vapen:{wtype:C.wtype,rarity:'common',req:1}},2.4); });
+  $$('.clcard').forEach(el=>{ const C=CLASSES[el.dataset.cls]; drawPortrait(el.querySelector('canvas'),C.id,{vapen:{wtype:C.wtype,rarity:'common',req:1}},2.4);
+    el.addEventListener('mouseenter',()=>showDesc(C.id)); el.addEventListener('mouseleave',()=>showDesc(cls)); });
+  const showDesc=id=>{ const d=$('#clDesc'); if(d) d.innerHTML=`<b>${CLASSES[id].name}:</b> ${CLASSES[id].desc}`; };
   $('#screen').onclick=e=>{
-    const c=e.target.closest('[data-cls]'); if(c){ cls=c.dataset.cls; app=apps[cls]; redrawApp(); $$('.clcard').forEach(x=>x.classList.toggle('on',x.dataset.cls===cls)); return; }
+    const c=e.target.closest('[data-cls]'); if(c){ cls=c.dataset.cls; app=apps[cls]; redrawApp(); showDesc(cls); $$('.clcard').forEach(x=>x.classList.toggle('on',x.dataset.cls===cls)); return; }
     if(e.target.id==='btnBack') showSelect();
     if(e.target.id==='btnCreate'){
       const n=$('#inChar').value.trim();
       if(n.length<2){ $('#createMsg').textContent='Namnet måste vara minst 2 tecken.'; return; }
       if(G.acct.chars.some(x=>x.name.toLowerCase()===n.toLowerCase())){ $('#createMsg').textContent='Du har redan en gubbe med det namnet.'; return; }
       const C=CLASSES[cls];
-      const ch={id:uid(), name:n, cls, level:1, exp:0, gold:0, talents:{}, inv:[], eq:{vapen:makeItem(C.starter,'common'), ...(cls==='psykopat'?{vapen2:makeItem('kniv1','common')}:{})}, app:appOf(cls,app), tut:{}, hotbar:Array(9).fill(null), hp:9999, mp:9999, kills:{}, map:1, quests:{}, qv:3, prof:{scroll:{skill:1},leather:{skill:1}}, created:Date.now()};
+      const ch={id:uid(), name:n, cls, level:1, exp:0, gold:0, talents:{}, inv:[], eq:{vapen:makeItem(C.starter,'common'), ...(cls==='psykopat'?{vapen2:makeItem('kniv1','common')}:{})}, app:appOf(cls,app), tut:{}, hotbar:Array(9).fill(null), hp:9999, mp:9999, kills:{}, map:21, quests:{}, qv:3, prof:{scroll:{skill:1},leather:{skill:1}}, created:Date.now()};
       if(G.acct.name==='Gäst') G.acct.name=n;   // gästkontot får namn efter första gubben
       G.acct.chars.push(ch); markDirty(true); startGame(ch, true);
     }
@@ -11544,7 +11729,7 @@ function applyMonSnap(arr){
   for(const [id,ti,pi,x,hp,dir,st,fl,yy,mh] of arr){
     seen.add(id); let m=G.monById[id];
     if(!m){ const type=MOB_ORDER[ti], rare=!!(fl&4), d=mobDef(type,rare), plat=PLATS[pi]; if(!d||!plat) continue;
-      if(rare && (fl&2)) log(`✦ En <b style="color:#e8eef6">${d.name}</b> har dykt upp!`,'#cfd8e6');
+      if(rare && (fl&2)){ log(`✦ En <b style="color:#e8eef6">${d.name}</b> har dykt upp!`,'#cfd8e6'); SFX.silver&&SFX.silver(); }
       if(MOBS[type].mini && (fl&2)) log(MOBS[type].miniMsg,'#ffb36b');
       if(type==='stenappa' && (fl&2)) log('⚠️ <b style="color:#ffb36b">Stenpappa</b> har vaknat på den översta platån!','#ffb36b');
       m={id, type, d, sp:null, plat, x, tx:x, y:(d.fly||d.arena||d.spear)&&yy!==undefined?yy:yAt(plat,x), hp, maxHp:mh||d.hp, dir, state:'idle', timer:0, t:rand(0,10), rot:0, kb:0, kbT:0, hurtT:0, showHp:0, dead:false, dieT:0, spawnT:(fl&2)?0.5:0, burn:null, stack:0, stackT:-9, rare};
