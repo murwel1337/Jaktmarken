@@ -432,6 +432,11 @@ body.touch.isfs #fsBtn{opacity:.55}
 .msec{font-weight:900;color:#ffe9a8;margin:10px 0 4px;text-transform:uppercase;font-size:12px;letter-spacing:1px}
 .mrow{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.04);border:1px solid rgba(214,170,98,.18);border-radius:9px;padding:5px 8px;margin-bottom:4px}.mrow img{width:34px;height:34px}.mnm{flex:1;font-weight:800;font-size:13px}.mnm small{display:block;font-weight:600;color:var(--muted);font-size:11px}.mpr{color:#ffd23f;white-space:nowrap;font-size:13px}
 .minfo{background:rgba(0,0,0,.25);border-radius:9px;padding:6px 10px;margin-top:6px}
+#ptyAsk{position:fixed;left:50%;top:70px;transform:translateX(-50%);z-index:300;background:rgba(20,30,48,.97);border:2px solid #6fb8ff;border-radius:12px;padding:10px 14px;font-size:14px;box-shadow:0 8px 26px rgba(0,0,0,.5);text-align:center;max-width:92vw}#ptyAsk.hidden{display:none}#ptyAsk .trbtns{display:flex;gap:8px;justify-content:center;margin-top:8px}
+.psec{font-weight:900;color:#ffe9a8;margin:10px 0 4px;font-size:13px;letter-spacing:.5px}.psec:first-child{margin-top:0}
+.pmem{display:flex;flex-wrap:wrap;align-items:center;gap:6px}.pmem .ph{flex-basis:100%;height:5px;background:rgba(0,0,0,.45);border-radius:3px;overflow:hidden}.pmem .ph i{display:block;height:100%;background:#e8433b}
+.pmap{margin-left:auto;font-size:11.5px;color:#9fb1cb}.pmap.here{color:#7dff8a}
+#partyHud .pm.pty{border-color:#6fb8ff}#partyHud .pm.away{opacity:.8}.pmw{font-size:10.5px;color:#9fe0ff}
 #mergeBox{position:fixed;inset:0;z-index:400;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.55)}#mergeBox.hidden{display:none}.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}.mopt{background:rgba(0,0,0,.25);border:1px solid rgba(214,170,98,.35);border-radius:10px;padding:8px;display:flex;flex-direction:column;gap:6px;font-size:13px}
 .crow.hl{outline:2px solid #ffe066;box-shadow:0 0 12px #ffd23a;animation:hlPulse .8s ease-in-out infinite alternate}@keyframes hlPulse{from{background:rgba(255,220,90,.08)}to{background:rgba(255,220,90,.3)}}
 #signBox{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.35);cursor:pointer}#signBox.hidden{display:none}
@@ -784,6 +789,7 @@ body.touch .dk{display:none}
 
 <div id="screen"></div>
 <div id="tip" class="hidden"></div>
+<div id="ptyAsk" class="hidden"></div>
 <div id="toast"></div>
 <div id="qProg"></div>
 <div id="tutBox" class="hidden"></div>
@@ -1185,7 +1191,7 @@ const SKALLA_MULT = 1.6, SKALLA_DAZE = 1.5, SKALLA_VT = 5, SKALLA_VULN = 30;   /
 const BOMB_R = 85, KNIV_N = 10, KNIV_G = 820;
 const knivN = () => KNIV_N + tv('k_fler');
 const SPELLS = {
-  bombpil:  {cls:'hippie',  lvl:4, icon:'💣', name:'Bombpil',          cd:8,  mp:8,  atk:true, d:()=>`Skjuter en pil som exploderar och gör 100% skada på alla fiender i närheten (radie ${Math.round(BOMB_R*(1+tv('h_radie')/100))}).`},
+  bombpil:  {cls:'hippie',  lvl:4, icon:'💣', name:'Bombpil',          cd:12, mp:8,  atk:true, d:()=>`Skjuter en pil som exploderar och gör ${BOMB_MULT*100}% skada på alla fiender i närheten (radie ${Math.round(BOMB_R*(1+tv('h_radie')/100))}). Fienderna blir bedövade i ${fmtSv(BOMB_STUN)} s (inte bossar).${rank('b_brand')?` Lämnar en brinnande yta i ${FIRE_T} s (${tv('b_brand')}% basskada per sekund).`:''}`},
   flower:   {cls:'hippie',  lvl:8, icon:'🌸', name:'Flower power',     cd:20, mp:15, d:()=>`+100% attackhastighet i ${4+tv('h_blomma')} sekunder.`},
   pilregn:  {cls:'hippie',  lvl:12, icon:'🌧️', name:'Pilregn',         cd:14, mp:18, atk:true, d:()=>`Skjuter upp en skur pilar som regnar ner över fienden framför dig: ${PILREGN_N+tv('h_regn')} pilar under drygt 1,5 s. Varje pil gör 45% skada på alla fiender där den slår ner.`},
   eko:      {cls:'viskare', lvl:4, icon:'🌬️', name:'Ekande viskning',  cd:10, mp:10, atk:true, d:()=>{ const h=3+tv('v_ekohopp'), f=20-tv('v_ekoklar'); return `En viskning som gör ${ECHO_BASE}% skada och studsar vidare till ${h} fiender till. Tappar ${f}% skada per träff (${Array.from({length:h+1},(_,i)=>Math.max(0,ECHO_BASE-i*f)+'%').join(' → ')}).`; }},
@@ -1221,7 +1227,7 @@ const TREES = {
     {id:'s_kada',   tier:1, max:3, icon:'🌳', name:'Kådläkning', active:true, v:[100,200,300], d:v=>`Förmåga: +${v}% HP-regenerering i 5 sekunder. Nedkylning 20 s, kostar inget.`},
     {id:'s_bark',   tier:1, max:3, icon:'🛡️', name:'Barkhud', v:[4,8,12], d:v=>`Du tar ${v}% mindre skada.`},
     {id:'s_sav',    tier:2, max:3, icon:'💚', name:'Sav i ådrorna', v:[4,8,12], d:v=>`Du helas ${v} HP varje gång du träffar en fiende.`},
-    {id:'s_karn',   tier:2, max:3, icon:'🪵', name:'Kärnved', v:[.1,.2,.3], d:v=>`+${fmtSv(v)} basskada per Str.`},
+    {id:'s_karn',   tier:2, max:3, icon:'🪵', name:'Kärnved', v:[10,20,30], d:v=>`Attacken du får av Str ökar med ${v}%.`},
     {id:'s_bomb',   tier:3, max:3, icon:'💥', name:'Barkbomb', v:[20,40,60], d:v=>`När du har tagit skada motsvarande 10% av ditt max-HP inom 30 sekunder exploderar barken: alla fiender runt dig tar ${v}% av din basattack.`},
   ]},
   hippie:{name:'Hippie-ki-yay', talents:[
@@ -1277,7 +1283,20 @@ TREES.visk_b = {name:'Baktalare', talents:[
   {id:'v_ekorykte', tier:3, max:3, icon:'📣', name:'Viskande skvaller', v:[1,2,3], d:v=>`Ekande viskning ger ${v} rykte${v>1?'n':''} till varje fiende den träffar.`},
   {id:'v_irrlock',  tier:3, max:3, icon:'🧲', name:'Lockande sken', v:LURE_R, d:v=>`Irrblosset lockar till sig fiender inom ${v} px. De går mot irrblosset i stället för mot dig.`},
 ]};
-for(const k of ['skog_c','hippie_b','hippie_c','visk_c']) TREES[k] = {name:k.endsWith('_b')?'Träd 2':'Träd 3', locked:true, talents:[]};
+const WFI_T = 5, BOMB_MULT = 1.5, BOMB_STUN = 1.5, FIRE_T = 5;   // Wait for it: en laddning var 5:e s · Bombpil: 150 % skada, bedövar 1,5 s · brinnande mark 5 s
+TREES.hippie_b = {name:'Snajp', talents:[
+  {id:'n_slow',  tier:1, max:3, icon:'🐢', name:'Tålamod',     v:[10,20,30], d:v=>`Du skjuter ${v}% långsammare, men alla dina attacker och förmågor gör ${v}% mer skada.`},
+  {id:'n_range', tier:1, max:3, icon:'🔭', name:'Långt håll',  v:[10,20,30], d:v=>`+${v}% räckvidd.`},
+  {id:'n_glas',  tier:2, max:1, icon:'🍷', name:'Glaskanon', need:['n_slow',3], v:[1], d:()=>`−30 Str (mindre HP), men varje Str ger även +0,1 attack (räknat på din Str före avdraget).`},
+  {id:'n_wait',  tier:3, max:3, icon:'⏳', name:'Wait for it', v:[20,30,40], d:(v,r)=>`Var ${WFI_T}:e sekund laddar du upp en pil. Nästa basattack gör +${v}% skada. Du kan ha upp till ${r} laddning${r>1?'ar':''}.`},
+  {id:'n_kill',  tier:4, max:3, icon:'💀', name:'Jaktlycka',   v:[33,67,100], d:v=>`När du dödar ett monster har du ${v}% chans att få en laddning av Wait for it.`},
+]};
+TREES.hippie_c = {name:'Boomer', talents:[
+  {id:'b_brand', tier:1, max:3, icon:'🔥', name:'Brinnande mark',  v:[40,80,120], d:v=>`Bombpilen lämnar en brinnande yta i ${FIRE_T} sekunder. Fiender i den tar ${v}% av din basskada per sekund.`},
+  {id:'b_extra', tier:2, max:3, icon:'🎆', name:'Extra smällare',  v:[10,20,30],  d:v=>`Dina basattacker har ${v}% chans att även skjuta en bombpil (utan nedkylning).`},
+  {id:'b_kedja', tier:3, max:3, icon:'💥', name:'Kedjereaktion',   v:[10,20,30],  d:v=>`När du dödar en fiende har den ${v}% chans att explodera som en bombpil.`},
+]};
+for(const k of ['skog_c','visk_c']) TREES[k] = {name:k.endsWith('_b')?'Träd 2':'Träd 3', locked:true, talents:[]};
 // Gatuslagskämpens tre träd
 Object.assign(TREES, {
   gata_a:{name:'Tungviktaren', talents:[
@@ -2095,6 +2114,7 @@ function setSaveState(s, extra){
   const el = $('#saveTxt'); if(el) el.textContent = saveStateTxt;
 }
 setInterval(()=>{ if(G.dirty && G.mode==='game') saveNow(); }, 30000);
+window.addEventListener('pagehide', ()=>{ if(G.party) Sig.partySend({t:'bye', id:Net.myId}).catch(()=>{}); });
 window.addEventListener('beforeunload', e=>{
   if(G.mode==='game' && G.acct){
     localSave(stamp());
@@ -2147,24 +2167,25 @@ function calcStats(ch){
   s[C.main] += L;   // varje level: +2 i klassens huvudstat, +1 i övriga
   s.eqAtk=0; s.eqMove=0;
   for(const k in ch.eq){ const it=ch.eq[k]; if(!it) continue; s.armor+=it.armor||0; for(const st of STATS) s[st]+=it[st]||0; if(it.slot!=='vapen') s.eqAtk+=it.atk||0; s.eqMove+=it.move||0; s.xpPct=(s.xpPct||0)+(it.xp||0); s.cdmg=(s.cdmg||0)+(it.cdmg||0); s.eqCdmg=(s.eqCdmg||0)+(it.cdmg||0); s.eqDodge=(s.eqDodge||0)+(it.dodge||0); s.eqAspd=(s.eqAspd||0)+(it.aspd||0); s.eqHpreg=(s.eqHpreg||0)+(it.hpreg||0); s.eqCdr=(s.eqCdr||0)+(it.cdr||0); }
+  if(ch.cls==='hippie' && rank('n_glas')){ s.glasAtk=s.str*0.1; s.str=Math.max(0,s.str-30); }   // Glaskanon: −30 Str, +0,1 attack per Str (räknat före avdraget)
   s.crit = agiPct(s.agi,ch.level)*STAT_SCALE; s.dodge = Math.min(AGI_CAP, agiPct(s.agi,ch.level)*STAT_SCALE + (s.eqDodge||0)); s.cdr = Math.min(CDR_CAP, Math.max(0,s.int)*AGI_PCT(ch.level)*STAT_SCALE + (s.eqCdr||0) + acctB('viskare'));   // Agi→crit/undvikande och Int→nedkylning: 70 % · kontobonus från Viskare
   s.maxHp = Math.round(100 + s.str*5 + acctB('skog'));   // bas 100 HP, varje Str ger 5 HP   // kontobonus från Skogshuggare
   s.maxMp = C.noMana ? 0 : Math.round((20 + s.int*10)*(1+tv('v_klok')/100));
   s.crit = Math.min(100, s.crit + tv('h_skarp') + (G.p && G.ch===ch && G.p.ssT>0 ? tv('p_skugga') : 0));   // Ur skuggorna: efter Shadowstep
   s.cdmg = (s.cdmg||0) + tv('h_vass') + tv('t_cdmg') + acctB('psykopat');   /* kontobonus från Psykopat */   // Vass spets
-  s.hpReg = s.str*0.1 + (s.eqHpreg||0);
+  s.hpReg = s.str*0.05 + (s.eqHpreg||0);   // Str: 0,05 HP-reg per poäng (halverat)
   if(G.p && G.ch===ch && G.p.regenT>0) s.hpReg *= 1 + tv('s_kada')/100;   // Kådläkning: +300%
   s.mpReg = C.noMana ? 0 : s.int*0.1;
   const w2 = ch.eq.vapen2;
   s.dual = ch.cls==='psykopat' && !!ch.eq.vapen && ch.eq.vapen.wtype==='kniv' && !!w2 && w2.wtype==='kniv';   // två knivar
   s.aspd = 1 + C.aspd + acctB('hippie')/100 + tv('h_snabb')/100 + tv('p_snabb')/100 + (s.dual ? DUAL_ASPD : 0) + (G.p && G.ch===ch && G.p.ssT>0 ? tv('t_ssaspd')/100 : 0) + (G.p && G.ch===ch && G.p.buffT>0 ? 1 : 0) + (s.eqAspd||0)/100 - (rank('g_tung')?0.05:0);   // Flower power: +100% (Agi ger inte längre attackhastighet)
   s.move = 1 + s.eqMove/100;
-  s.range = 1 + tv('h_range')/100;
+  s.range = 1 + tv('h_range')/100 + tv('n_range')/100;   // Örnöga · Långt håll
   const w = ch.eq.vapen;
   s.wMin = w ? w.atkMin : 1; s.wMax = w ? w.atkMax : 1;
   s.oMin = s.dual ? w2.atkMin : 0; s.oMax = s.dual ? w2.atkMax : 0;
   s.bookAtk = bookAtkOf(bb);
-  s.statAtk = s[C.main]*STAT_DMG + acctB('gata') + s.eqAtk + s.bookAtk + (ch.cls==='skog' ? s.str*tv('s_karn') : 0);   // Kärnved   // klassens huvudstat ger 0,2 skada per poäng
+  s.statAtk = s[C.main]*STAT_DMG*(ch.cls==='skog' ? 1+tv('s_karn')/100 : 1) + acctB('gata') + s.eqAtk + s.bookAtk + (s.glasAtk||0);   // Kärnved: mer attack från Str · Glaskanon   // klassens huvudstat ger 0,2 skada per poäng
   s.atkMin = s.wMin + s.statAtk; s.atkMax = s.wMax + s.statAtk;
   s.mode = (ch.cls==='hippie' && w && w.wtype==='bage') ? 'bow' : (ch.cls==='viskare' && w && w.wtype==='stav') ? 'whisper' : 'melee';
   s.manaCost = s.mode==='whisper' ? w.req*0.5*(1-tv('v_tyst')/100) : 0;   // 0,5 mana per stavens level
@@ -2182,10 +2203,10 @@ function recalc(){
 const RAGE_CAP = 0.6;   // Bärsärk ger max +60 % attackhastighet
 const rageAspd = () => { const v=tv('s_raseri'); if(!v || !G.ch || !G.stats) return 0; return Math.min(RAGE_CAP, v*clamp(100-G.ch.hp/G.stats.maxHp*100,0,100)/100); };
 const trAspd = () => { const v=G.tr&&G.tr.vt; return (v && v.t>0 && trk()==='vargtand' ? v.n*0.06 : 0) + (G.tr && G.tr.haste>0 ? .5 : 0); };   // Vargtand på snöre · Magisk pinne
-const atkInterval = () => BASE_ATK_T / (G.stats.aspd + rageAspd() + trAspd());
+const atkInterval = () => BASE_ATK_T / ((G.stats.aspd + rageAspd() + trAspd())*(1-tv('n_slow')/100));   // Tålamod: långsammare attacker
 // Vapnets slag + attack från huvudstat. Decimaler (t.ex. 1,2 per Str) avrundas slumpvis så snittet blir rätt.
 const rollOff = () => { const v=(randInt(G.stats.oMin,G.stats.oMax)+G.stats.statAtk)*OFF_MULT*(1+tv('t_off')/100); const f=Math.floor(v); return Math.max(1, f + (Math.random()<v-f?1:0)); };   // andra handens hugg
-const rollAtk = () => { let v=randInt(G.stats.wMin,G.stats.wMax)+G.stats.statAtk; if(rank('s_vrede') && G.ch.hp<G.stats.maxHp*.3) v*=1+tv('s_vrede')/100; const f=Math.floor(v); return f + (Math.random()<v-f?1:0); };
+const rollAtk = () => { let v=randInt(G.stats.wMin,G.stats.wMax)+G.stats.statAtk; if(rank('s_vrede') && G.ch.hp<G.stats.maxHp*.3) v*=1+tv('s_vrede')/100; if(rank('n_slow')) v*=1+tv('n_slow')/100; const f=Math.floor(v); return f + (Math.random()<v-f?1:0); };
 
 /* =====================================================================
    INPUT (tangentbord, mus, touch)
@@ -2542,7 +2563,9 @@ function buyArenaKey(){
    (en dragning per spelare, ägd av den spelaren). Alla får EXP som om de dödat bossen ensamma. */
 let arenaAsk=null;
 function enterArena(){
-  if(Net.auto && Net.role) netLeave(true);   // arenan körs inte med främlingar från kartans kanal
+  const onlyParty = Net.auto && Net.role && myPid() && Object.keys(G.others).length && Object.values(G.others).every(o=>o.pid===myPid());
+  if(onlyParty && isGuestNet()){ throttleMsg('arena',`Låt ${esc(nameOf(Net.hostId))} öppna arenan – då går ni in tillsammans.`,'#ffb86b'); return; }
+  if(Net.auto && Net.role && !onlyParty) netLeave(true);   // arenan körs inte med främlingar från kartans kanal
   if(isGuestNet()){ throttleMsg('arena','Bara party-ledaren kan starta arenan – ni följer med in tillsammans.','#ffb86b'); return; }
   if(!consCount('silvernyckel')){ throttleMsg('arena','Du behöver en silvernyckel.','#ff9b9b'); return; }
   const guests = isHostNet() ? netMemberIds().filter(id=>id!==Net.myId) : [];
@@ -2562,6 +2585,7 @@ function arenaAskDone(timeout){
   arenaGo(1+A.ok.size);
 }
 function arenaGo(n){
+  if(n>1 && Net.auto && isHostNet()){ Net.auto=false; G.arenaParty=true; }   // partyt följer med in i arenan (och ut igen)
   takeOne('silvernyckel'); markDirty(true); G.arenaRun=true; G.arenaN=n; closeWin('quest');
   log(n>1?`🗝️ ${n} silvernycklar vreds om – arenan öppnas för ${n} spelare! Bossarna har ${n}× HP och släpper ${n}× loot.`:'🗝️ Silvernyckeln vreds om – arenan öppnas!','#ffe08a');
   changeMap(11, MAPS[11].start.x, MAPS[11].start.y);
@@ -2725,6 +2749,10 @@ function trHit(m, dmg, o){   // skademodifierare på dina egna träffar
   return k===1 ? dmg : Math.max(1, Math.round(dmg*k));
 }
 function trKill(m){   // du dödade ett monster
+  if(G.ch && G.ch.cls==='hippie' && G.p){
+    if(rank('n_kill') && rank('n_wait') && (G.p.wfi||0)<rank('n_wait') && Math.random()*100<tv('n_kill')){ G.p.wfi=(G.p.wfi||0)+1; sparks(G.p.x, G.p.y-60, '#ffd23f', 8); }   // Jaktlycka
+    if(rank('b_kedja') && Math.random()*100<tv('b_kedja')) (G.chainQ=G.chainQ||[]).push({x:m.x, y:m.y-(m.d.h||40)/2, t:.15});   // Kedjereaktion
+  }
   if(trk()==='mossklump' && G.p && !G.p.dead && G.stats){ const hv=Math.min(G.stats.maxHp*.05, G.stats.maxHp-G.ch.hp); if(hv>0){ G.ch.hp+=hv; G.p.healShow=(G.p.healShow||0)+hv; } }
 }
 function trDeaggro(){   // monstren glömmer bort dig
@@ -2899,8 +2927,11 @@ function basicAttack(){
   if(s.mode==='bow'){
     startAtkAnim('shoot'); SFX.bow();
     const range = BOW_RANGE*s.range, t = rangedTarget(range, 115, 72);   // hippie når lite längre nedåt
-    G.projs.push({type:'arrow', x:p.x+p.face*18, y:p.y-33, vx:p.face*900, vy:0, speed:900, homing:1, target:t, dmg:rollAtk(), dist:0, maxDist:t?99999:range, life:1.6, hit:new Set(), canBounce:true, chain:0});
+    let dmg=rollAtk(), wfi=false;
+    if(p.wfi>0 && rank('n_wait')){ p.wfi--; wfi=true; dmg=Math.round(dmg*(1+tv('n_wait')/100)); G.fx.push({type:'text', x:p.x, y:p.y-p.h-34, text:'⏳ Wait for it!', color:'#ffd23f', t:0, dur:.8, size:13}); }   // Wait for it
+    G.projs.push({type:'arrow', x:p.x+p.face*18, y:p.y-33, vx:p.face*900, vy:0, speed:900, homing:1, target:t, dmg, dist:0, maxDist:t?99999:range, life:1.6, hit:new Set(), canBounce:true, chain:0, wfi});
     netShot(G.projs[G.projs.length-1]);
+    if(rank('b_extra') && Math.random()*100<tv('b_extra')) fireBomb(t, range, true);   // Extra smällare
   } else if(s.mode==='whisper' && G.ch.mp>=s.manaCost){
     G.ch.mp -= s.manaCost; startAtkAnim('cast'); SFX.cast();
     const t = whisperTarget();
@@ -3110,8 +3141,7 @@ const ABIL_USE = {
   bombpil(){
     const p=G.p, s=G.stats; startSkillAnim('shoot');
     const range=BOW_RANGE*s.range, t=rangedTarget(range,115,72);
-    const pr={type:'bomb', x:p.x+p.face*18, y:p.y-33, vx:p.face*820, vy:0, speed:820, homing:1, target:t, dmg:rollAtk(), r:BOMB_R*(1+tv('h_radie')/100), dist:0, maxDist:t?99999:range, life:1.6, hit:new Set()};
-    G.projs.push(pr); netShot(pr);
+    fireBomb(t, range);
   },
   flower(){ const p=G.p, d=4+tv('h_blomma'); p.buffT=d; p.buffMax=d; recalc(); for(let i=0;i<22;i++) fxPetal(p,true); log(`🌸 Flower power! +100% attackhastighet i ${d} sekunder.`,'#ffb3de'); },
   pilregn(){
@@ -3303,13 +3333,14 @@ function changeMap(to, x, y){
   if(!MAPS[to]) return;
   if(Net.auto && Net.role) netLeave(true);   // automatisk kanal: man lämnar kartans kanal och letar upp en på nya kartan
   G.mapId=to; G.ch.map=to; setTerrain(terrainOf(to)); merchantsUpdate();
-  const keep={cds:G.p.cds, cdMax:G.p.cdMax, buffT:G.p.buffT, buffMax:G.p.buffMax, regenT:G.p.regenT, regenMax:G.p.regenMax, wisps:[]};   // irrblossen stannar på den gamla kartan
+  const keep={cds:G.p.cds, cdMax:G.p.cdMax, buffT:G.p.buffT, buffMax:G.p.buffMax, regenT:G.p.regenT, regenMax:G.p.regenMax, wisps:[], wfi:G.p.wfi, wfiT:G.p.wfiT};   // irrblossen stannar på den gamla kartan
   G.p=makePlayer(x,y); Object.assign(G.p,keep); G.p.portalCd=0.8;
-  initSpawns(); G.drops=[]; G.projs=[]; G.mprojs=[]; G.nums=[]; G.fx=[]; G.apeT=0;
+  initSpawns(); G.drops=[]; G.projs=[]; G.mprojs=[]; G.nums=[]; G.fx=[]; G.apeT=0; G.fires=[]; G.chainQ=[];
   $('#mapName').textContent=curMap().name; snapCam(); if(isOpen('quest')) renderQuest();
   for(let i=0;i<24;i++) particle(G.p.x+rand(-20,20),G.p.y-rand(0,70),pick(['#8fd0ff','#c9a2ff','#fff']),rand(-60,60),rand(-120,20),.7,3,0);
   toast(`🌀 <b>${curMap().name}</b>`); log(`Du gick till <b>${curMap().name}</b>.`,'#ffe9a8'); mapArrivalNote();
   if(isHostNet()){ netToGuests({t:'map', to, x:Math.round(G.p.x), y:G.p.y}); Net.monT=0; }
+  if(G.arenaParty && !curMap().arenaStage && Net.role==='host'){ G.arenaParty=false; Net.auto=true; Sig.setLobby(autoLobby(G.mapId)).then(()=>hostUpdatePresence()).catch(()=>{}); }   // tillbaka från arenan: vanlig kanal igen
   hostUpdatePresence();
   markDirty(true);
   arenaOnEnter(to);
@@ -3390,7 +3421,7 @@ function hitMonster(m, dmg, o={}){
   if(m.d.arena){ if(!o.noKb) m.hurtT=Math.max(m.hurtT,0.05); }
   else if(!o.noKb && !(m.hardT>0) && !(m.d.boss && (m.type==='stenappa' || m.d.mini))){ m.kb=(o.dir||Math.sign(m.x-G.p.x)||1)*70; m.kbT=0.15; m.hurtT=0.45; m.dir=-(o.dir||1); }
   else if(!o.noKb) m.hurtT=Math.max(m.hurtT,0.15);
-  if(m.d.harden && m.hp>0 && o.kind!=='root' && o.kind!=='burn'){
+  if(m.d.harden && m.hp>0 && !['root','burn','bleed','thorn'].includes(o.kind) && !o.pois && !o.rumor){   // bara direkta attacker – inte DoTs (rykten, gift, blödning, rötter, eld)
     if(m.hardT>0) reflectTo(by, 30 + dmg*0.2, m);   // 30 skada + 20 % av den inkommande skadan
     else if(!(m.hardCd>0)){ m.hardT=2; m.hardCd=6; m.kbT=0; m.state='idle'; }   // hårdnar i 2 s (6 s nedkylning)
   }
@@ -3407,7 +3438,7 @@ function killMonster(m){
   if(party) netToGuests({t:'kill', id:m.id});
   if(m.minion) return;   // bossens småmonster ger varken EXP eller drops
   // EXP: ensam 100 %. I party: den som dödar får 75 %, övriga 30 % var (+5 % party-bonus på allt)
-  const ids = party ? (Net.auto ? [killer] : netMemberIds()) : [Net.myId];   // automatisk kanal: bara den som dödar får EXP
+  const ids = party ? (Net.auto ? pidGroup(killer) : netMemberIds()) : [Net.myId];   // kartans kanal: den som dödar + hens party på samma karta
   for(const id of ids){
     const share = d.arena ? 1 : ids.length>1 ? (id===killer?0.75:0.30) : 1;   // arenabossar: alla får full EXP
     const mult = m.rare ? 4.5 : 1, book = !!d.boss;   // bossar räknas i allas monsterbok
@@ -3587,7 +3618,7 @@ function initSpawns(){
   G.spawnTimer=0;
 }
 function spawnMonster(sp, instant){
-  const rare=!MOBS[sp.type].boss && Math.random()<RARE_CHANCE*(MAPS[G.mapId]&&MAPS[G.mapId].hidden?2:1), d=mobDef(sp.type, rare);
+  const rare=!MOBS[sp.type].boss && G.mapId!==21 && Math.random()<RARE_CHANCE*(MAPS[G.mapId]&&MAPS[G.mapId].hidden?2:1), d=mobDef(sp.type, rare);
   if(rare && G.mode==='game'){ log(`✦ En <b style="color:#e8eef6">${d.name}</b> har dykt upp!`,'#cfd8e6'); SFX.silver&&SFX.silver(); }
   const m={type:sp.type, d, sp, plat:sp.plat, x:sp.x, y:yAt(sp.plat,sp.x), hp:d.hp, maxHp:d.hp, dir:Math.random()<.5?-1:1, state:'idle', timer:rand(.3,2),
     t:rand(0,10), rot:0, kb:0, kbT:0, hurtT:0, showHp:0, dead:false, dieT:0, spawnT:instant?0:0.5, burn:null, stack:0, stackT:-9, id:++G.monSeq, rare};
@@ -4112,13 +4143,51 @@ function bounceArrow(from, count, dmg, hitSet){
   const pr={type:'arrow', bounce:true, x:from.x, y:from.y-from.d.h/2, vx:0, vy:0, speed:760, homing:1, target:t, dmg, dist:0, maxDist:99999, life:1.2, hit:hitSet, canBounce:false, chain:count-1};
   G.projs.push(pr); netShot(pr);
 }
+function fireBomb(t, range, extra){   // Bombpil (även från Extra smällare)
+  const p=G.p, pr={type:'bomb', x:p.x+p.face*18, y:p.y-(extra?40:33), vx:p.face*820, vy:extra?-30:0, speed:820, homing:1, target:t, dmg:Math.round(rollAtk()*BOMB_MULT), r:BOMB_R*(1+tv('h_radie')/100), dist:0, maxDist:t?99999:range, life:1.6, hit:new Set()};
+  G.projs.push(pr); netShot(pr);
+  if(extra){ SFX.skill&&SFX.skill('bombpil'); G.fx.push({type:'text', x:p.x, y:p.y-p.h-46, text:'🎆 Extra smällare!', color:'#ffb45a', t:0, dur:.8, size:12}); }
+}
+function groundAt(x,y){ const pl=platBelow(x,y-6); return pl ? yAt(pl,x) : y; }
+function addFire(x,y,r,per,cos){   // Brinnande mark (Boomer)
+  const gy=groundAt(x,y); (G.fires=G.fires||[]).push({x, y:gy, r, per, t:FIRE_T, tick:1, cos:!!cos, seed:Math.random()*9});
+  if(!cos) netFx('bfire', x, gy);
+}
+function updateHippie(dt){
+  const p=G.p;
+  if(p && G.ch && G.ch.cls==='hippie' && !p.dead){   // Wait for it: laddar upp en pil var 5:e sekund
+    const mx=rank('n_wait'); if(mx){ if((p.wfi||0)<mx){ p.wfiT=(p.wfiT||0)+dt; if(p.wfiT>=WFI_T){ p.wfiT=0; p.wfi=(p.wfi||0)+1; sparks(p.x, p.y-60, '#ffd23f', 6); } } else p.wfiT=0; } else p.wfi=0;
+  }
+  const F=G.fires; if(F && F.length) for(let i=F.length-1;i>=0;i--){ const f=F[i]; f.t-=dt; f.tick-=dt;
+    if(Math.random()<dt*22) particle(f.x+rand(-f.r,f.r), f.y-2, pick(['#ff7a1a','#ffd23f','#ff4a1a']), rand(-15,15), rand(-90,-40), .55, rand(2,4), -40);
+    if(f.tick<=0 && !f.cos){ f.tick+=1; for(const m of G.monsters){ if(m.dead||m.spawnT>0||m.pend) continue; if(Math.abs(m.x-f.x)<f.r+m.d.w/3 && Math.abs(m.y-f.y)<60) hitMonster(m, Math.max(1,f.per), {kind:'burn', noKb:true, noBurn:true}); } }
+    if(f.t<=0) F.splice(i,1); }
+  const Q=G.chainQ; if(Q && Q.length) for(let i=Q.length-1;i>=0;i--){ const q=Q[i]; q.t-=dt; if(q.t<=0){ Q.splice(i,1); explode({type:'bomb', x:q.x, y:q.y, r:BOMB_R*(1+tv('h_radie')/100), dmg:Math.round(rollAtk()*BOMB_MULT), chain:true}); G.fx.push({type:'text', x:q.x, y:q.y-50, text:'💥 Kedjereaktion!', color:'#ff9a3a', t:0, dur:.9, size:13}); G.shakeT=.2; G.shakeMag=3; } }
+}
+function drawFires(){
+  for(const f of G.fires||[]){ if(f.x<G.view.x1-f.r-40 || f.x>G.view.x2+f.r+40) continue; const a=Math.min(1,f.t/.6, (FIRE_T-f.t)/.25+.2);
+    ctx.save(); ctx.globalAlpha=.55*a; const g=ctx.createRadialGradient(f.x,f.y,4,f.x,f.y,f.r*1.1); g.addColorStop(0,'rgba(255,170,60,.9)'); g.addColorStop(1,'rgba(255,60,20,0)'); ctx.fillStyle=g; ell(ctx,f.x,f.y-2,f.r*1.1,16); ctx.fill();
+    ctx.globalAlpha=.9*a; for(let i=0;i<9;i++){ const x=f.x-f.r+(i+.5)*(2*f.r/9), h=14+Math.sin(G.time*9+i*1.7+f.seed)*6+(i%3)*4;
+      ctx.fillStyle=i%2?'#ff7a1a':'#ffb23a'; ctx.beginPath(); ctx.moveTo(x-7,f.y); ctx.quadraticCurveTo(x-6,f.y-h*.6,x+Math.sin(G.time*7+i)*2,f.y-h); ctx.quadraticCurveTo(x+6,f.y-h*.6,x+7,f.y); ctx.fill();
+      ctx.fillStyle='#ffe27a'; ctx.beginPath(); ctx.moveTo(x-3,f.y); ctx.quadraticCurveTo(x-2,f.y-h*.35,x,f.y-h*.55); ctx.quadraticCurveTo(x+2,f.y-h*.35,x+3,f.y); ctx.fill(); }
+    ctx.restore(); }
+}
+function drawWfi(){   // Wait for it: laddade pilar svävar ovanför Hippien
+  const p=G.p; if(!p || !(p.wfi>0) || p.dead) return; const n=p.wfi;
+  ctx.save(); for(let i=0;i<n;i++){ const x=p.x+(i-(n-1)/2)*16, y=p.y-p.h-50+Math.sin(G.time*4+i)*2.5;
+    ctx.shadowColor='#ffd23f'; ctx.shadowBlur=10; ctx.strokeStyle='#ffd23f'; ctx.lineWidth=2.4; line(ctx,x,y+9,x,y-6);
+    ctx.fillStyle='#fff3b0'; ctx.beginPath(); ctx.moveTo(x,y-11); ctx.lineTo(x-4.5,y-4); ctx.lineTo(x+4.5,y-4); ctx.closePath(); ctx.fill();
+    ctx.fillStyle='#ff8fd0'; ctx.beginPath(); ctx.moveTo(x,y+6); ctx.lineTo(x-4,y+11); ctx.lineTo(x,y+9); ctx.lineTo(x+4,y+11); ctx.closePath(); ctx.fill(); }
+  ctx.restore();
+}
 function explode(pr){
   const R=pr.r||85, bomb=pr.type==='bomb'; SFX.boom(pr.x);
   G.fx.push({type:'ring', x:pr.x, y:pr.y, t:0, dur:bomb?.42:.35, r:R}); G.fx.push({type:'burst', x:pr.x, y:pr.y, c:'#ffb45a', r:R*.75, t:0, dur:.5});
   for(let i=0;i<(bomb?30:22);i++) particle(pr.x,pr.y,pick(['#ff7a1a','#ffd23f','#ff4a1a','#fff1b0']),rand(-220,220)*R/85,rand(-220,120)*R/85,.55,4,200);
   if(bomb) for(let i=0;i<8;i++) particle(pr.x,pr.y,pick(['#55504a','#77706a']),rand(-80,80),rand(-120,-20),.9,5,-30);
   if(pr.cos) return;
-  for(const m of G.monsters){ if(m.dead||m.spawnT>0||m.pend) continue; if(Math.hypot(m.x-pr.x,aimY(m,pr.y)-pr.y)<R+m.d.w/3) hitMonster(m, pr.dmg, {dir:Math.sign(m.x-pr.x)||1}); }
+  for(const m of G.monsters){ if(m.dead||m.spawnT>0||m.pend) continue; if(Math.hypot(m.x-pr.x,aimY(m,pr.y)-pr.y)<R+m.d.w/3){ hitMonster(m, pr.dmg, {dir:Math.sign(m.x-pr.x)||1}); if(bomb && !m.dead && !m.d.boss) stunMonster(m, BOMB_STUN); } }   // Bombpil bedövar (inte bossar)
+  if(bomb && rank('b_brand')) addFire(pr.x, pr.y, R*.8, Math.max(1,Math.round(rollAtk()*tv('b_brand')/100)));   // Brinnande mark
 }
 // Stockrullning: rullar längs plattformen, trillar ner från kanter och stannar vid en vägg
 function updateLog(pr, dt){
@@ -4238,7 +4307,8 @@ function receiveItem(item, d){
   refreshOpen(); markDirty();
 }
 function splitGold(amount, picker=Net.myId){
-  if(Net.auto){ if(picker===Net.myId) addGold(amount,false); else netTo(picker,{t:'gold', a:amount}); return; }   // automatisk kanal: den som plockar får guldet
+  if(Net.auto){ const grp=pidGroup(picker); if(grp.length>1){ const sh=amount/grp.length; for(const id of grp){ if(id===Net.myId) addGold(sh,true); else netTo(id,{t:'gold', a:sh}); } return; }
+    if(picker===Net.myId) addGold(amount,false); else netTo(picker,{t:'gold', a:amount}); return; }   // kartans kanal: den som plockar (och hens party) får guldet
   const ids=netMemberIds(), share=amount/ids.length, party=ids.length>1;
   for(const id of ids){ if(id===Net.myId) addGold(share, party); else netTo(id, {t:'gold', a:share}); }
 }
@@ -8284,8 +8354,9 @@ function drawOthers(){
     else if(o.ws){ const tx=o.x-o.face*30, ty=o.y-88+Math.sin(G.time*3)*6; if(o.wx===undefined){ o.wx=tx; o.wy=ty; } o.wx+=(tx-o.wx)*.08; o.wy+=(ty-o.wy)*.08; drawWispOrb(o.wx,o.wy); } else o.wx=undefined;
     ctx.font='bold 11px system-ui'; ctx.textAlign='center';
     const tw=ctx.measureText(o.name||'').width+12;
-    ctx.fillStyle='rgba(25,60,120,.8)'; rr(ctx,o.x-tw/2,o.y+5,tw,16,4); ctx.fill();
-    ctx.fillStyle='#dff0ff'; ctx.fillText(o.name||'',o.x,o.y+17);
+    const mate=myPid() && o.pid===myPid();   // partymedlemmar får grön namnskylt
+    ctx.fillStyle=mate?'rgba(30,110,50,.88)':'rgba(25,60,120,.8)'; rr(ctx,o.x-tw/2,o.y+5,tw,16,4); ctx.fill();
+    ctx.fillStyle=mate?'#d8ffd0':'#dff0ff'; ctx.fillText(o.name||'',o.x,o.y+17);
     const hpw=36, hk=clamp((o.hp||0)/(o.mhp||1),0,1);
     ctx.fillStyle='rgba(0,0,0,.6)'; ctx.fillRect(o.x-hpw/2-1,o.y+23,hpw+2,5); ctx.fillStyle='#e8433b'; ctx.fillRect(o.x-hpw/2,o.y+24,hpw*hk,3);
   }
@@ -8505,11 +8576,11 @@ function render(){
   ctx.setTransform(s,0,0,s,-cx*s,-cy*s);
   G.view={x1:cx,y1:cy,x2:cx+VW/Z,y2:cy+VH/Z};
   if(TERRAIN==='lair') drawLairWall();
-  drawDecoBack(); drawTorches(); drawSign(); drawReadSigns(); drawWaySigns(); drawTerrain(); drawRimLight(); drawCamp(); drawRopes(); drawPortals(); drawHazards(); drawDecoFront(); drawShelter(false); drawNpcs();
+  drawDecoBack(); drawTorches(); drawSign(); drawReadSigns(); drawWaySigns(); drawTerrain(); drawRimLight(); drawCamp(); drawRopes(); drawPortals(); drawHazards(); drawFires(); drawDecoFront(); drawShelter(false); drawNpcs();
   for(const d of G.drops) drawDrop(d);
   for(const m of G.monsters) if(m.x>G.view.x1-60 && m.x<G.view.x2+60) drawMonster(m);
   if(G.mode==='game') drawOthers();
-  if(G.mode==='game' && G.p) drawPlayer();
+  if(G.mode==='game' && G.p){ drawPlayer(); drawWfi(); }
   drawClones();
   drawShelter(true);
   for(const pr of G.projs) drawProj(pr);
@@ -9320,7 +9391,7 @@ function paintCd(el,id){
 }
 function buildHotbar(){
   const ch=G.ch;
-  $('#hotbar').innerHTML = ch.hotbar.map((id,i)=>`<div class="hs ${G.assigning?'assign':''} ${id&&G.ui.newSp&&G.ui.newSp.id===id?'newsp':''}" data-i="${i}" title="${id?esc(abilName(id)+(CONS[id]?'':' – '+abilDesc(id))):'Tom plats'}"><span class="k">${esc(keyLabel(KEYB[i]))}</span><span class="ic">${id?abilIcon(id):''}</span><i class="cd"></i><span class="cdt"></span><span class="cnt"></span></div>`).join('');
+  $('#hotbar').innerHTML = ch.hotbar.map((id,i)=>`<div class="hs ${G.assigning?'assign':''} ${id&&G.ui.newSp&&G.ui.newSp.id===id?'newsp':''}" data-i="${i}" ${id?`data-hb="${id}"`:''}><span class="k">${esc(keyLabel(KEYB[i]))}</span><span class="ic">${id?abilIcon(id):''}</span><i class="cd"></i><span class="cdt"></span><span class="cnt"></span></div>`).join('');
 }
 $('#hotbar').addEventListener('click', e=>{
   if(eatHb){ eatHb=false; return; }
@@ -9580,11 +9651,25 @@ function itemHtml(it, where){
 const tip=$('#tip');
 function showTip(html,x,y){ tip.dataset.bk=1; tip.innerHTML=html; tip.classList.remove('hidden'); const r=tip.getBoundingClientRect(); tip.style.left=clamp(x+16,4,VW-r.width-4)+'px'; tip.style.top=clamp(y+12,4,VH-r.height-4)+'px'; }
 function hideTip(){ tip.classList.add('hidden'); }
+function abilTipHtml(id){   // informationsruta för förmågor och drycker på snabbfältet
+  if(CONS[id]) return itemHtml({base:id, count:consCount(id)}, 'q');
+  const t=TAL[id], sp=SPELLS[id], cd=ABIL[id]&&ABIL[id].cd?ABIL[id].cd(rank(id)||1):0, left=G.p&&G.p.cds?G.p.cds[id]||0:0;
+  const sub = id==='attack' ? 'Basattack' : sp ? `Klassförmåga · level ${sp.lvl}` : t ? `Talang · ${TREES[t.tree].name}` : id==='roll' ? 'Förmåga' : id==='trinket' ? 'Trinket' : '';
+  let h=`<div class="tt-name">${abilIcon(id)} ${esc(abilName(id))}</div>${sub?`<div class="tt-sub">${sub}</div>`:''}<div>${esc(abilDesc(id))}</div>`;
+  if(id==='attack' && G.stats) h+=`<div class="tt-stat" style="margin-top:3px">Skada ${Math.round(G.stats.atkMin)}–${Math.round(G.stats.atkMax)}</div>`;
+  if(left>0) h+=`<div style="color:#ffb86b;margin-top:3px">⏳ Redo om ${fmtSv(Math.ceil(left*10)/10)} s</div>`;
+  return h;
+}
 document.addEventListener('pointermove',e=>{
   if(e.pointerType!=='mouse' || G.mode!=='game'){ return; }
   if(scrDrag && scrDrag.on){ hideTip(); return; }
   const el=e.target.closest && e.target.closest('[data-uid]');
   if(el){ const f=findItem(el.dataset.uid); if(f){ showTip(itemHtml(f.it,f.where),e.clientX,e.clientY); return; } }
+  const hb=e.target.closest && e.target.closest('#hotbar [data-hb]');
+  if(hb && !abDrag){ const r=hb.getBoundingClientRect(); showTip(abilTipHtml(hb.dataset.hb), r.left, r.top-150); return; }
+  const mt=e.target.closest && e.target.closest('[data-mtip]');
+  if(mt){ const S=G.ch&&G.ch.merch&&G.ch.merch.bob, it=S&&S.items&&S.items[+mt.dataset.mtip]; if(it){ showTip(itemHtml(it,'inv'),e.clientX,e.clientY); return; } }
+  if(e.target.closest && e.target.closest('#qbar [data-qf]')) return;   // drycksfältet sköter sin egen ruta
   const tn=e.target.closest && e.target.closest('.tnode');
   if(tn){ const t=TAL[tn.dataset.t]; const r=rank(t.id); showTip(`<div class="tt-name">${t.icon} ${t.name}</div><div class="tt-sub">Rank ${r}/${t.max}${t.active?' · Förmåga':''}</div>${r?`<div>${t.d(t.v[r-1],r)}</div>`:''}${r<t.max?`<div class="nx" style="color:#9fd0ff;margin-top:4px">Nästa: ${t.d(t.v[r],r+1)}</div>`:''}`,e.clientX,e.clientY); return; }
   hideTip();
@@ -9660,12 +9745,13 @@ function renderInsp(){
     <div class="dcol">${['balte','byxor','skor','ring1','ring2','vapen',...(o.cls==='psykopat'?['vapen2']:[])].map(cell).join('')}</div></div>`;
   if(!n) h+=`<div class="hintx" style="margin-top:6px">${o.gear?'Spelaren har ingen utrustning på sig.':'Spelaren har en äldre version av spelet – utrustningen kan inte visas.'}</div>`;
   const sel=G.ui.inspSel && Object.values(g).find(x=>x&&x.uid===G.ui.inspSel);
-  h+=`<div class="trbtns" style="margin-top:6px"><button class="btn sm gold" data-trade="${G.ui.inspId}" ${G.trade?'disabled':''}>🤝 Byt med ${esc(o.name||'spelaren')}</button></div>`;
+  const inMine=G.party&&G.party.mem[G.ui.inspId];
+  h+=`<div class="trbtns" style="margin-top:6px"><button class="btn sm gold" data-trade="${G.ui.inspId}" ${G.trade?'disabled':''}>🤝 Byt med ${esc(o.name||'spelaren')}</button><button class="btn sm green" data-pinv="${G.ui.inspId}" ${inMine?'disabled':''}>👥 ${inMine?'I ditt party':'Bjud in till party'}</button></div>`;
   h+=`<div class="inspdet">${sel?itemHtml(sel,'insp'):`<span class="hintx">${G.touch?'Tryck':'Håll musen över eller klicka'} på ett föremål för att se dess stats.</span>`}</div>`;
   $('#inspBody').innerHTML=h;
   drawPortrait($('#inspPortrait'), o.cls, o.eq||{}, 2, o.app);
 }
-$('#inspBody').addEventListener('click',e=>{ const tb=e.target.closest('[data-trade]'); if(tb){ tradeRequest(tb.dataset.trade); return; } const el=e.target.closest('[data-isel]'); if(el){ G.ui.inspSel=el.dataset.isel; renderInsp(); } });
+$('#inspBody').addEventListener('click',e=>{ const tb=e.target.closest('[data-trade]'); if(tb){ tradeRequest(tb.dataset.trade); return; } const pi=e.target.closest('[data-pinv]'); if(pi){ partyInvite(pi.dataset.pinv); return; } const el=e.target.closest('[data-isel]'); if(el){ G.ui.inspSel=el.dataset.isel; renderInsp(); } });
 /* ---------- Byteshandel mellan spelare (som i MapleStory/WoW) ----------
    Båda lägger upp föremål och guld. Ändras något tappar båda sitt "Godkänn". När båda har godkänt samma erbjudanden
    genomförs bytet: spelaren med lägst id skickar 'commit', den andra byter och svarar 'done', sedan byter den första.
@@ -9806,7 +9892,7 @@ function renderBag(){
     +row('HP-reg',fmt1(s.hpReg)+'/s')+(s.maxMp>0?row('Mana-reg',fmt1(s.mpReg)+'/s'):'')+row('Attackhastighet',Math.round((s.aspd+rageAspd())*100)+'%')+row('Kritisk chans',fmtSv(Math.round(s.crit*10)/10)+'%','agi')+(s.cdmg?row('Kritisk skada',Math.round((CRIT_MULT*100)+s.cdmg)+'%'):'')+(s.xpPct?row('EXP från monster','+'+s.xpPct+'%'):'')+row('Undvikande',fmtSv(Math.round(s.dodge*10)/10)+'%','agi')+row('Kortare nedkylning',fmtSv(Math.round(s.cdr*10)/10)+'%','int')+row('Rörelse',Math.round(s.move*100)+'%')
     +(ch.cls==='hippie'?row('Räckvidd',Math.round(s.range*100)+'%'):'')+row('Basattack',modeTxt)
     +(s.book?row('📖 Monsterbok',`+${s.book} alla stats${s.bookAtk?`, +${s.bookAtk} attack`:''}`):'')
-    +`<span class="full">★ = klassens huvudstat: varje poäng ger +0,2 skada per anfall. Str: +10 max-HP och +0,1 HP-reg. Agi: kritisk chans (×1,5 skada) och undvikande. Int: kortare nedkylning${CLASSES[ch.cls].noMana?'':' och mer mana'}. Agi- och Int-bonusen per poäng blir mindre ju högre level du har.</span>`;
+    +`<span class="full">★ = klassens huvudstat: varje poäng ger +0,2 skada per anfall. Str: +5 max-HP och +0,05 HP-reg. Agi: kritisk chans (×1,5 skada) och undvikande. Int: kortare nedkylning${CLASSES[ch.cls].noMana?'':' och mer mana'}. Agi- och Int-bonusen per poäng blir mindre ju högre level du har.</span>`;
   const mt=G.ui.bagTab==='mat', idx=[]; ch.inv.forEach((x,i)=>{ if(isMatBase(x.base)===mt) idx.push(i); });
   $('#bagCount').textContent=`(${invCount(false)}/${INV_MAX})`; $('#matCount').textContent=`(${invCount(true)}/${MAT_MAX})`; $('#bagGold').textContent=ch.gold;
   $$('#win-bag [data-btab]').forEach(b=>b.classList.toggle('on', (b.dataset.btab==='mat')===mt));
@@ -10058,6 +10144,7 @@ function canLearn(t){
   const tree=TREES[t.tree], acc=!!tree.account, tl=acc?G.acct.talents:G.ch.talents, av=charAvail();
   if(av<=0 || (tl[t.id]||0)>=t.max) return false;
   if(treeSpent(tl,t.tree) < tierReq(t.tier)) return false;
+  if(t.need && (tl[t.need[0]]||0) < t.need[1]) return false;   // t.ex. Glaskanon: kräver 3 poäng i Tålamod
   return true;
 }
 function learn(id){
@@ -10104,7 +10191,7 @@ function renderTal(){
   const sel=TAL[G.ui.talSel];
   if(sel && sel.tree===tk){
     const r=tl[sel.id]||0;
-    h+=`<div class="tdetail"><b>${sel.icon} ${sel.name}</b> · Rank ${r}/${sel.max}${sel.active?' · Förmåga':''}<div style="margin-top:4px">${r?sel.d(sel.v[r-1],r):'<span class="hintx">Inte inlärd ännu.</span>'}</div>${r<sel.max?`<div class="nx">Nästa rank: ${sel.d(sel.v[r],r+1)}</div>`:''}
+    h+=`<div class="tdetail"><b>${sel.icon} ${sel.name}</b> · Rank ${r}/${sel.max}${sel.active?' · Förmåga':''}${sel.need?`<div style="color:${(tl[sel.need[0]]||0)>=sel.need[1]?'#7dff8a':'#ff9b9b'};font-size:12px">Kräver ${sel.need[1]} poäng i ${TAL[sel.need[0]].name} (${tl[sel.need[0]]||0}/${sel.need[1]})</div>`:''}<div style="margin-top:4px">${r?sel.d(sel.v[r-1],r):'<span class="hintx">Inte inlärd ännu.</span>'}</div>${r<sel.max?`<div class="nx">Nästa rank: ${sel.d(sel.v[r],r+1)}</div>`:''}
       <div class="acts" style="margin-top:8px"><button class="btn sm green" data-learn="${sel.id}" ${canLearn(sel)?'':'disabled'}>+ Lägg poäng</button></div></div>`;
   } else h+=`<div class="tdetail"><span class="hintx">${G.touch?'Tryck':'Klicka'} på en talang för att läsa om den – ${G.touch?'tryck':'klicka'} en gång till (eller på knappen) för att lägga ett poäng.</span></div>`;
   h+=`<div class="row" style="margin-bottom:6px"><button class="btn sm sec" data-reset="${tk}">↺ Återställ trädet (gratis under speltest)</button></div>`;
@@ -10970,11 +11057,12 @@ const SOUL_SHOP = [['sjal1',30],['sjal2',100],['sjal3',300]];
 function renderMerch(){
   const ch=G.ch, id=G.ui.merch, M=MERCH[id]; if(!ch||!M) return; const S=merchState(id);
   let h=`<div class="mgreet"><span class="mic">${id==='bob'?'🛒':'☀️'}</span><div><b>${M.name}</b><div class="chint">${M.greet}</div></div><div class="mgold">🪙 ${ch.gold}</div></div>`;
-  const row=(icon,name,sub,price,act,dis,extra='')=>`<div class="mrow"><img src="${icon}" alt=""><div class="mnm">${name}<small>${sub}</small></div><b class="mpr">${price}</b>${extra}<button class="btn sm green" data-mb="${act}" ${dis?'disabled':''}>Köp</button></div>`;
+  const row=(icon,name,sub,price,act,dis,extra='',attr='')=>`<div class="mrow" ${attr}><img src="${icon}" alt=""><div class="mnm">${name}<small>${sub}</small></div><b class="mpr">${price}</b>${extra}<button class="btn sm green" data-mb="${act}" ${dis?'disabled':''}>Köp</button></div>`;
   h+=`<div class="msec">Säljer</div>`;
   if(id==='bob'){
     h+=row(iconURL({base:'scrAtk5'}),CONS.scrAtk5.name,`${CONS.scrAtk5.desc} · ${S.scr} kvar i lager`,'500 🪙','scr',!S.scr||ch.gold<500);
-    S.items.forEach((it,i)=>{ const p=gearPrice(it); h+=row(iconURL(it),`<span style="color:${RAR[it.rarity].color}">${esc(itemName(it))}</span>`,`${RAR[it.rarity].name} · ${slotLabel(it)} · Kräver level ${it.req}`,p+' 🪙','it'+i,ch.gold<p,`<button class="btn sm" data-mi="${i}">Visa</button>`); });
+    S.items.forEach((it,i)=>{ const p=gearPrice(it), on=G.ui.merchShow===i; h+=row(iconURL(it),`<span style="color:${RAR[it.rarity].color}">${esc(itemName(it))}</span>`,`${RAR[it.rarity].name} · ${slotLabel(it)} · Kräver level ${it.req}`,p+' 🪙','it'+i,ch.gold<p,`<button class="btn sm ${on?'on':''}" data-mi="${i}">${on?'Dölj':'Visa'}</button>`,`data-mtip="${i}"`);
+      if(on) h+=`<div class="minfo">${itemHtml(it,'inv')}</div>`; });
     if(!S.items.length) h+=`<div class="chint">Utrustningen är slutsåld – kom tillbaka när du gått upp en level.</div>`;
     const m=S.mat, have=consCount(m), pr=CONS[m].sell*MERCH_MAT_X, n=Math.min(have,S.matLeft);
     h+=`<div class="msec">Köper</div><div class="mrow"><img src="${iconURL({base:m})}" alt=""><div class="mnm">${CONS[m].name}<small>Betalar ${pr} guld styck (10× butikspriset) · vill ha ${S.matLeft} till · du har ${have}</small></div>
@@ -10983,7 +11071,6 @@ function renderMerch(){
     for(const [b,p] of SOUL_SHOP) h+=row(iconURL({base:b}),CONS[b].name,`${CONS[b].desc||''}`,p+' 🪙','s_'+b,ch.gold<p,`<button class="btn sm" data-mb="s10_${b}" ${ch.gold<p*10?'disabled':''}>Köp 10</button>`);
     h+=row(iconURL({base:'scrJew'}),CONS.scrJew.name,`${CONS.scrJew.desc} · ${S.jew} kvar i lager`,'500 🪙','jew',!S.jew||ch.gold<500);
   }
-  if(G.ui.merchShow!=null && id==='bob' && S.items[G.ui.merchShow]) h+=`<div class="minfo">${itemStatsHtml(S.items[G.ui.merchShow])}</div>`;
   $('#merchBody').innerHTML=h;
 }
 function merchBuy(act){
@@ -11171,7 +11258,7 @@ function renderQuest(){
     ...(Q.cons||[]).map(([b,n])=>`<img src="${iconURL({base:b})}" alt="" style="width:22px;height:22px;vertical-align:middle;margin:0 2px">${n} ${CONS[b].name}`), ...(Q.gold?[`🪙 ${Q.gold} guld`]:[]), ...(Q.ability==='roll'?['<b style="color:#9fe0ff">🤸 Ny förmåga: Kullerbytta</b>']:[]), `${Q.exp} EXP`];
   h+=`<div class="pstat" style="font-weight:600"><div class="qtodo">🎯 Att göra</div>${Object.entries(Q.goals).map(([t,n])=>{ const v=Math.min(n,(q&&q.prog[t])||0); return `<div class="qgoal ${q&&v>=n?'ok':''}"><span>${goalName(t,n)}</span><span>${q?v+'/'+n:''}</span></div>`; }).join('')}
     <div style="margin-top:6px;color:#ffe08a">Belöning: ${rewards.join(' + ')}</div>
-    ${inParty() && Object.keys(Q.goals).some(t=>MOBS[t])?'<div style="color:var(--muted);font-size:11.5px">Monster som ditt party dödar räknas också.</div>':''}</div>`;
+    ${partyMates().length && Object.keys(Q.goals).some(t=>MOBS[t])?'<div style="color:var(--muted);font-size:11.5px">Monster som ditt party dödar räknas också.</div>':''}</div>`;
   const away = `<div style="color:#ffb86b;font-size:12.5px">Prata med ${npc.name} på ${MAPS[npc.map].name} för att ${st==='complete'?'lämna in':'ta'} uppdraget.</div>`;
   if(st==='locked') h+= Q.lvl&&G.ch.level<Q.lvl ? `<div class="row"><button class="btn sec" data-qa="later">Stäng</button></div>` : `<div style="color:var(--muted)">Gör de tidigare uppdragen först.</div>`;
   else if(st==='offer') h+= here ? `<div class="row"><button class="btn green" data-qa="accept">Acceptera</button><button class="btn sec" data-qa="later">Inte nu</button></div>` : away;
@@ -11749,6 +11836,7 @@ function startGame(ch, isNew){
 async function leaveGame(){
   try{ if(G.trade) tradeCancel(true); }catch(e){ console.warn(e); G.trade=null; }
   try{ netLeave(true); }catch(e){ console.warn(e); }
+  try{ partyLeave(true); }catch(e){ console.warn(e); }
   FANF.length=0; fanfOn=false; $$('.spellFan').forEach(x=>x.remove());
   $$('.win').forEach(w=>w.classList.add('hidden')); $('#deathBox').classList.add('hidden'); $('#hint').classList.add('hidden'); $('#tutBox').classList.add('hidden');
   G.assigning=null; Touch.reset(); for(const k in keys) keys[k]=false;
@@ -11820,7 +11908,12 @@ const SigSupa = {
   async unhost(){ if(this.lobby) await this.lobby.untrack(); },
   async browse(cb){ this.onHosts=cb; await this.ensureLobby(); cb({...this.hosts}); },
   stopBrowse(){ this.onHosts=null; },
-  async closeAll(){ const c=this.client; this.lobby=null; this.lobbyReady=null; this.inbox=null; this.hosts={}; if(c) await c.removeAllChannels(); },
+  async closeAll(){ const c=this.client; this.lobby=null; this.lobbyReady=null; this.inbox=null; this.hosts={}; if(c) for(const ch of c.getChannels()) if(ch!==this.party){ try{ await c.removeChannel(ch); }catch(e){} } },   // partykanalen ligger kvar
+  party:null, partyCb:null,
+  async partyJoin(pid, cb){ await this.partyLeave(); const c=await this.sb(), ch=c.channel('jaktmarken-party-'+pid,{config:{broadcast:{self:false}}}); this.partyCb=cb; this.party=ch;
+    ch.on('broadcast',{event:'p'},({payload})=>this.partyCb&&this.partyCb(payload)); await this.sub(ch); },
+  async partySend(p){ if(this.party) await this.party.send({type:'broadcast', event:'p', payload:p}); },
+  async partyLeave(){ const ch=this.party; this.party=null; this.partyCb=null; if(ch && this.client){ try{ await this.client.removeChannel(ch); }catch(e){} } },
 };
 // Lokal testtransport (samma webbläsare, flera flikar) – används bara med ?testnet=1
 const SigTest = {
@@ -11829,7 +11922,8 @@ const SigTest = {
     this.bc.onmessage=e=>{ const m=e.data;
       if(m.k==='host'){ if(m.id!==Net.myId){ this.hosts[m.id]={...m.info, seen:Date.now()}; this.emit(); } }
       else if(m.k==='unhost'){ delete this.hosts[m.id]; this.emit(); }
-      else if(m.k==='sig' && m.to===Net.myId) this.onMsg&&this.onMsg(m.payload); };
+      else if(m.k==='sig' && m.to===Net.myId) this.onMsg&&this.onMsg(m.payload);
+      else if(m.k==='party' && m.pid && m.pid===this.ppid && m.from!==Net.myId) this.partyCb&&this.partyCb(m.payload); };
     setInterval(()=>{ if(this.info) this.bc.postMessage({k:'host',id:Net.myId,info:this.info}); const now=Date.now(); for(const k in this.hosts) if(now-this.hosts[k].seen>3000){ delete this.hosts[k]; this.emit(); } },500); },
   emit(){ this.onHosts&&this.onHosts({...this.hosts}); },
   async ensureInbox(){ this.init(); },
@@ -11841,6 +11935,10 @@ const SigTest = {
   async peek(ms=1300){ this.init(); await new Promise(r=>setTimeout(r,ms)); return {...this.hosts}; },
   stopBrowse(){ this.onHosts=null; },
   async closeAll(){},
+  ppid:null, partyCb:null,
+  async partyJoin(pid, cb){ this.init(); this.ppid=pid; this.partyCb=cb; },
+  async partySend(p){ this.init(); if(this.ppid) this.bc.postMessage({k:'party', pid:this.ppid, from:Net.myId, payload:p}); },
+  async partyLeave(){ this.ppid=null; this.partyCb=null; },
 };
 const Sig = TESTNET ? SigTest : SigSupa;
 
@@ -11866,13 +11964,14 @@ function myLook(){
   const ch=G.ch, eq={};
   for(const k of ['vapen','vapen2','hjalm','mantel','axel','handskar','skor','byxor','brost','balte','halsband']){ const it=ch.eq[k]; if(it) eq[k]={wtype:it.wtype, req:it.req, rarity:it.rarity, base:it.base}; }
   const gear={}; for(const [k] of EQ_SLOTS) if(ch.eq[k]) gear[k]=JSON.parse(JSON.stringify(ch.eq[k]));   // hela föremålen, för inspektion
-  return {id:Net.myId, name:ch.name, cls:ch.cls, app:ch.app||null, lvl:ch.level, eq, gear, db:tv('k_drop')};
+  return {id:Net.myId, name:ch.name, cls:ch.cls, app:ch.app||null, lvl:ch.level, eq, gear, db:tv('k_drop'), pid:myPid()};
 }
-function lookOf(id){ const o=G.others[id]; return o?{id, name:o.name, cls:o.cls, app:o.app||null, lvl:o.lvl, eq:o.eq, gear:o.gear||{}, db:o.db}:null; }
+function lookOf(id){ const o=G.others[id]; return o?{id, name:o.name, cls:o.cls, app:o.app||null, lvl:o.lvl, eq:o.eq, gear:o.gear||{}, db:o.db, pid:o.pid||null}:null; }
 function applyLook(L){
   if(!L || L.id===Net.myId) return;
   const o = G.others[L.id] || (G.others[L.id]={x:0,y:0,tx:0,ty:0,face:1,pose:'stand',t:0,walkT:0,climbT:0,hp:1,mhp:1,seen:false});
-  Object.assign(o,{id:L.id, name:L.name, cls:L.cls, app:L.app||null, lvl:L.lvl, eq:L.eq||{}, gear:L.gear||{}, db:L.db||0});
+  const pidWas=o.pid; Object.assign(o,{id:L.id, name:L.name, cls:L.cls, app:L.app||null, lvl:L.lvl, eq:L.eq||{}, gear:L.gear||{}, db:L.db||0, pid:L.pid||null});
+  if(pidWas!==o.pid){ if(Net.role==='host') hostUpdatePresence(); partyHudKey=''; }
   if(isOpen('insp') && G.ui.inspId===L.id) renderInsp();
 }
 function myState(){
@@ -11937,6 +12036,7 @@ function spawnNetFx(S){ if(S.id===Net.myId) return; if(S.k==='beam') G.fx.push({
   else if(S.k==='quake') G.fx.push({type:'quake', x:S.x, y:S.y, t:0, dur:.45, r:100, c:'#ffcf7a'});
   else if(S.k==='quake2') G.fx.push({type:'quake', x:S.x, y:S.y, t:0, dur:.55, r:210, c:'#ff9a3a'});
   else if(S.k==='smoke') smokePuff(S.x,S.y);
+  else if(S.k==='bfire') addFire(S.x, S.y-40, BOMB_R*.8, 0, true);   // bara utseende
   else if(S.k==='roll'){ for(let i=0;i<10;i++) particle(S.x+rand(-10,10),S.y-rand(0,6),pick(['#d8c8a0','#b8a880','#ffffff']),rand(-80,80),rand(-60,-10),.45,3,120); }
   else if(S.k==='breathR' || S.k==='breathL'){ const f=S.k==='breathR'?1:-1; for(let i=0;i<40;i++){ const a=rand(-.38,.38); particle(S.x+f*14, S.y+rand(-4,4), pick(['#ff5a1a','#ff9a3a','#ffd23f','#fff2a0']), f*Math.cos(a)*rand(260,560), Math.sin(a)*rand(260,560), rand(.35,.6), rand(3,6), -60); } }
   else if(S.k==='rootsR' || S.k==='rootsL') G.fx.push({type:'roots', x:S.x, y:S.y, dir:S.k==='rootsR'?1:-1, t:0, dur:.7}); }
@@ -11965,6 +12065,7 @@ function netOnData(peer, msg){
       case 'fx':    msg.id=from; spawnNetFx(msg); return netToGuests(msg, from);
       case 'akr':   return arenaAskReply(from, !!msg.ok);
       case 'tr':    if(msg.to && msg.to!==Net.myId){ if(Net.peers[msg.to]) netTo(msg.to, {...msg, from}); return; } return tradeOnMsg(from, msg);
+      case 'pty':   if(msg.to && msg.to!==Net.myId){ if(Net.peers[msg.to]) netTo(msg.to, {...msg, from}); return; } return ptyOnMsg(from, msg);
       case 'bye':   return netRemovePeer(from,'left');
     }
   } else if(Net.role==='guest'){
@@ -11987,6 +12088,7 @@ function netOnData(peer, msg){
       case 'akt':   { takeOne('silvernyckel'); markDirty(true); log('🗝️ Din silvernyckel används – ni går in i arenan tillsammans!','#ffe08a'); return refreshOpen(); }
       case 'exp':   return gainKillExp(msg.ty, msg.s, msg.p!==0, !!msg.kill, msg.x||1, !!msg.bk, !!msg.r, !!msg.ab);
       case 'tr':    return tradeOnMsg(msg.from||from, msg);
+      case 'pty':   return ptyOnMsg(msg.from||from, msg);
       case 'gold':  return addGold(msg.a, true);
       case 'item':  Net.pendingItems=Math.max(0,Net.pendingItems-1); return receiveItem(msg.item);
       case 'deny':  Net.pendingItems=Math.max(0,Net.pendingItems-1); return throttleMsg('deny',`Föremålet tillhör ${esc(ownerName(msg.owner))} i ${msg.left} s till.`,'#ff9b9b');
@@ -12024,9 +12126,9 @@ function guestEnterMap(to, x, y, announce){
   G.mapId=to; G.ch.map=to; setTerrain(terrainOf(to)); merchantsUpdate();
   const keep={cds:G.p.cds, cdMax:G.p.cdMax, buffT:G.p.buffT, buffMax:G.p.buffMax, regenT:G.p.regenT, regenMax:G.p.regenMax, wisps:[], dead:G.p.dead};   // irrblossen stannar på den gamla kartan
   G.p=makePlayer(x,y); Object.assign(G.p,keep); G.p.portalCd=0.8;
-  G.monsters=[]; G.monById={}; G.spawns=[]; G.drops=[]; G.projs=[]; G.mprojs=[]; G.nums=[];
+  G.monsters=[]; G.monById={}; G.spawns=[]; G.drops=[]; G.projs=[]; G.mprojs=[]; G.nums=[]; G.fires=[]; G.chainQ=[];
   $('#mapName').textContent=curMap().name; snapCam(); if(isOpen('quest')) renderQuest();
-  if(announce){ toast(`🌀 <b>${curMap().name}</b> – partyt följer ledaren`); log(`Partyt gick till <b>${curMap().name}</b>.`,'#ffe9a8'); }
+  if(announce){ toast(`🌀 <b>${curMap().name}</b> – du följer med ${esc(nameOf(Net.hostId))}`); log(`Partyt gick till <b>${curMap().name}</b>.`,'#ffe9a8'); }
   mapArrivalNote();
   markDirty(true);
 }
@@ -12062,7 +12164,7 @@ async function onSignal(msg){
     setTimeout(()=>{ const p=Net.peers[msg.from]; if(p && !p.ready) netRemovePeer(msg.from,'timeout',true); },25000);
   }catch(e){ console.warn(e); netRemovePeer(msg.from,'fail',true); }
 }
-function hostInfo(){ return {host:1, v:NET_VER, name:G.ch.name, cls:G.ch.cls, lvl:G.ch.level, map:curMap().name, mid:G.mapId, auto:Net.auto?1:0, n:1+readyPeers().length}; }
+function hostInfo(){ return {host:1, v:NET_VER, name:G.ch.name, cls:G.ch.cls, lvl:G.ch.level, map:curMap().name, mid:G.mapId, auto:Net.auto?1:0, n:1+readyPeers().length, priv:autoWorldOn()?0:1, pids:[...new Set([myPid(), ...Object.values(G.others).map(o=>o.pid)].filter(Boolean))]}; }
 function hostUpdatePresence(){
   if(Net.role!=='host' || !G.ch) return;
   if(Net.open && 1+readyPeers().length<PARTY_MAX) Sig.host(hostInfo()).catch(e=>console.warn(e));
@@ -12106,14 +12208,17 @@ const AUTO = {busy:false, t:3, fail:0};
 const autoWorldOn = () => localStorage.getItem('jaktmarken_auto')!=='0' && (Cloud.on || TESTNET);
 const autoLobby = map => 'jaktmarken-lobby-m'+map;
 const autoMapOk = () => G.mode==='game' && !curMap().arenaStage;
+const chanWanted = () => (Cloud.on || TESTNET) && (autoWorldOn() || partyMates().some(([,m])=>m.map===G.mapId));   // av: bara när partyt är på samma karta
+const chanOk = (id,x,map) => id!==Net.myId && x.auto && x.mid===map && x.v===NET_VER && x.n<PARTY_MAX && ((myPid() && (x.pids||[]).includes(myPid())) || (autoWorldOn() && !x.priv));
+const chanSort = (a,b) => ((myPid()&&(b[1].pids||[]).includes(myPid()))?1:0)-((myPid()&&(a[1].pids||[]).includes(myPid()))?1:0) || b[1].n-a[1].n || (a[0]<b[0]?-1:1);
 async function autoEnter(){
-  if(!autoWorldOn() || !autoMapOk() || Net.role || AUTO.busy) return;
+  if(!chanWanted() || !autoMapOk() || Net.role || AUTO.busy) return;
   AUTO.busy=true; const map=G.mapId;
   try{
     await Sig.setLobby(autoLobby(map));
     const H=await Sig.peek();
     if(G.mapId!==map || Net.role || G.mode!=='game') return;
-    const c=Object.entries(H).filter(([id,x])=>id!==Net.myId && x.auto && x.mid===map && x.v===NET_VER && x.n<PARTY_MAX).sort((a,b)=>b[1].n-a[1].n || (a[0]<b[0]?-1:1));
+    const c=Object.entries(H).filter(([id,x])=>chanOk(id,x,map)).sort(chanSort);
     for(const [id] of c.slice(0,3)){ if(G.mapId!==map || Net.role) return; if(await netJoin(id, true)){ AUTO.fail=0; return; } }
     if(G.mapId===map && !Net.role){ if(await netHost(true)) AUTO.fail=0; else AUTO.fail++; }
   }catch(e){ console.warn('Kanal', e); AUTO.fail++; }
@@ -12121,10 +12226,15 @@ async function autoEnter(){
 }
 function autoTick(dt){   // försök igen om man blev ensam, och slå ihop kanaler där båda är ensamma
   AUTO.t-=dt; if(AUTO.t>0) return; AUTO.t=5+Math.random()*2+AUTO.fail*10;
-  if(!autoWorldOn() || !autoMapOk() || AUTO.busy || Net.joining) return;
+  if(!chanWanted() || !autoMapOk() || AUTO.busy || Net.joining) return;
   if(!Net.role){ autoEnter(); return; }
+  if(G.party && Net.auto && Net.role){   // partyt på samma karta men i olika kanaler: flytta ihop
+    const myChan=Net.role==='host'?Net.myId:Net.hostId, mateHere=Object.values(G.others).some(o=>o.pid===myPid());
+    const tgt=!mateHere && partyMates().map(([,m])=>m).find(m=>m.map===G.mapId && m.chan && m.chan!==myChan && Date.now()-m.t<8000);
+    if(tgt && (!Object.keys(G.others).length || tgt.chan<myChan)){ AUTO.busy=true; netLeave(true); netJoin(tgt.chan, true).then(ok=>{ AUTO.busy=false; if(!ok && !Net.role) autoEnter(); }); return; }
+  }
   if(Net.role==='host' && Net.auto && !readyPeers().length && !Object.keys(Net.peers).length){
-    const c=Object.entries(Sig.hosts||{}).filter(([id,x])=>id!==Net.myId && x.auto && x.mid===G.mapId && x.v===NET_VER && x.n<PARTY_MAX && (x.n>1 || id<Net.myId)).sort((a,b)=>b[1].n-a[1].n || (a[0]<b[0]?-1:1));
+    const c=Object.entries(Sig.hosts||{}).filter(([id,x])=>chanOk(id,x,G.mapId) && (x.n>1 || id<Net.myId)).sort(chanSort);
     if(c.length){ AUTO.busy=true; netLeave(true); netJoin(c[0][0], true).then(ok=>{ AUTO.busy=false; if(!ok && !Net.role) autoEnter(); }); }
   }
 }
@@ -12159,7 +12269,7 @@ function netLeave(quiet){
   refreshParty();
 }
 function netTick(dt){
-  if(G.mode==='game') autoTick(dt);
+  if(G.mode==='game'){ autoTick(dt); partyTick(dt); }
   if(G.trade && G.mode==='game' && !(Net.role && G.others[G.trade.with])) tradeCancel(false, '🤝 Bytet avbröts – den andra spelaren är inte kvar i partyt.');
   if(!Net.role || G.mode!=='game' || !G.p) return;
   for(const o of Object.values(G.others)){ const k=Math.min(1,dt*12); o.x+=(o.tx-o.x)*k; o.y+=(o.ty-o.y)*k; }
@@ -12170,8 +12280,8 @@ function netTick(dt){
 }
 
 // --- Party-fönster & HUD ---
-function partyWindowOpened(){ if(!Net.role && !autoWorldOn()) startBrowse(); }
-function partyWindowClosed(){ if(!Net.role && !autoWorldOn()){ Sig.stopBrowse(); Net.browsing=false; setTimeout(()=>{ if(!Net.role && !isOpen('party')) Sig.closeAll().catch(()=>{}); },1500); } }
+function partyWindowOpened(){}
+function partyWindowClosed(){}
 function startBrowse(){
   if(!Cloud.on && !TESTNET) return;
   Sig.setLobby('jaktmarken-lobby').catch(()=>{});
@@ -12181,63 +12291,123 @@ function startBrowse(){
 }
 function refreshParty(){ if(isOpen('party')) renderParty(); }
 function memberListHtml(){
-  const rows=[{name:G.ch.name+' (du)', cls:G.ch.cls, lvl:G.ch.level, lead:Net.role==='host'}];
-  for(const o of Object.values(G.others)) rows.push({name:o.name, cls:o.cls, lvl:o.lvl, lead:o.id===Net.hostId});
-  return `<div class="plist">${rows.map(r=>`<div class="prow">${r.lead?'👑 ':''}<b>${esc(r.name||'?')}</b> <small>Lv ${r.lvl||'?'} ${CLASSES[r.cls]?CLASSES[r.cls].name:''}</small></div>`).join('')}</div>`;
+  const rows=[{name:G.ch.name+' (du)', cls:G.ch.cls, lvl:G.ch.level, mine:true}];
+  for(const o of Object.values(G.others)) rows.push({name:o.name, cls:o.cls, lvl:o.lvl, mine:myPid()&&o.pid===myPid(), id:o.id});
+  return `<div class="plist">${rows.map(r=>`<div class="prow"><b>${esc(r.name||'?')}</b> <small>Lv ${r.lvl||'?'} ${CLASSES[r.cls]?CLASSES[r.cls].name:''}</small>${r.id&&r.mine?' <span class="pmap here">👥 party</span>':''}</div>`).join('')}</div>`;
 }
 function renderParty(){
   if(!G.ch) return;
-  let h=`<div class="shopinfo" style="max-width:none">Spela tillsammans med upp till ${PARTY_MAX} personer. I party får alla <b>+5% EXP</b>. Den som dödar ett monster får <b>75%</b> av dess EXP och övriga i partyt <b>30%</b> var. Guld som plockas upp delas lika. Föremål som droppas tillhör den som dödade monstret i 1 minut. Partyt följer ledaren genom portaler.</div>`;
-  if(!Cloud.on && !TESTNET){ h+=`<div class="warn" style="font-size:13px">Multiplayer behöver Supabase-inställningarna för att ni ska hitta varandra. Själva spelandet går sedan direkt mellan er (P2P).</div>`; $('#partyBody').innerHTML=h; return; }
-  h+=`<label class="autotog"><input type="checkbox" id="autoTog" ${localStorage.getItem('jaktmarken_auto')!=='0'?'checked':''}> 🌍 Se andra spelare på samma karta automatiskt</label>`;
-  if(Net.auto && Net.role){
-    const n=1+Object.keys(G.others).length;
-    h=h.replace(/^<div class="shopinfo"[\s\S]*?<\/div>/,'');
-    h+=`<div class="pstat">🌍 ${esc(curMap().name)} · ${n}/${PARTY_MAX} spelare i din kanal</div>`+memberListHtml().replace(/👑 /g,'');
-    h+=`<div class="hintx" style="font-size:12px;margin-top:6px">Alla på samma karta hamnar i samma kanal (högst ${PARTY_MAX}). Var och en får EXP och guld för det de själva dödar och plockar. Vill du spela i party och dela EXP: stäng av rutan ovan och öppna ett eget party.</div>`;
-    $('#partyBody').innerHTML=h; return;
-  }
-  if(Net.role==='host'){
-    const n=1+readyPeers().length;
-    h+=`<div class="pstat">👑 Du är party-ledare · ${n}/${PARTY_MAX} spelare · ${!Net.open?'Stängd för nya spelare':n>=PARTY_MAX?'Partyt är fullt':'Öppen – andra kan gå med'}</div>`+memberListHtml();
-    h+=`<div class="row" style="margin-top:8px">${Net.open?`<button class="btn sm sec" data-pa="close">Stäng för nya spelare</button>`:`<button class="btn sm" data-pa="open">Öppna för nya spelare</button>`}<button class="btn sm red" data-pa="end">Avsluta party</button></div>`;
-  } else if(Net.role==='guest'){
-    if(Net.joining) h+=`<div class="pstat">⏳ Ansluter till ${esc((Net.hosts[Net.hostId]||{}).name||'värden')}…</div>`;
-    else h+=`<div class="pstat">👥 Du är med i ${esc(nameOf(Net.hostId))}s party</div>`+memberListHtml()+`<div class="row" style="margin-top:8px"><button class="btn sm red" data-pa="leave">Lämna party</button></div>`;
-  } else {
-    h+=`<button class="btn green" data-pa="host">🌐 Öppna min karta för andra</button>`;
-    h+=`<div style="margin-top:12px;font-weight:800">Öppna spel just nu</div>`;
-    if(Net.status) h+=`<div style="color:var(--muted);font-size:12.5px;margin:4px 0">${esc(Net.status)}</div>`;
-    const list=Object.entries(Net.hosts).filter(([,x])=>x.v===NET_VER);
-    if(!list.length && Net.browsing) h+=`<div style="color:var(--muted);font-size:12.5px;padding:6px 0">Inga öppna spel just nu – listan uppdateras av sig själv.</div>`;
-    for(const [id,x] of list) h+=`<div class="srow"><div class="sn"><b>${esc(x.name)}</b><small>Lv ${x.lvl} ${esc(CLASSES[x.cls]?CLASSES[x.cls].name:'')} · ${esc(x.map)} · ${x.n}/${PARTY_MAX} spelare</small></div><button class="btn sm green" data-join="${esc(id)}" ${x.n>=PARTY_MAX?'disabled':''}>Gå med</button></div>`;
-  }
+  let h='';
+  if(!Cloud.on && !TESTNET){ $('#partyBody').innerHTML=`<div class="warn" style="font-size:13px">Multiplayer behöver Supabase-inställningarna för att ni ska hitta varandra. Själva spelandet går sedan direkt mellan er (P2P).</div>`; return; }
+  // Partyt
+  h+=`<div class="psec">👥 Party</div>`;
+  if(G.party){
+    const L=partyLead(), ms=Object.entries(G.party.mem).sort((a,b)=>(a[0]===L?-1:b[0]===L?1:0));
+    h+=`<div class="pstat">${ms.length}/${PARTY_MAX} i partyt · ${ms.length>1?'EXP och guld delas när ni är på samma karta':'väntar på att någon tackar ja…'}</div><div class="plist">`;
+    for(const [id,m] of ms){ const me=id===Net.myId, here=m.map===G.mapId, o=G.others[id], k=clamp(me?G.ch.hp/(G.stats.maxHp||1):o?(o.hp||0)/(o.mhp||1):(m.hp||0)/(m.mhp||1),0,1);
+      h+=`<div class="prow pmem">${id===L?'👑 ':''}<b>${esc(m.name||'?')}${me?' (du)':''}</b> <small>Lv ${m.lvl||'?'} ${CLASSES[m.cls]?CLASSES[m.cls].name:''}</small><span class="pmap ${here?'here':''}">${here?'📍 Här':'🗺️ '+esc((MAPS[m.map]||{}).name||'?')}</span><div class="ph"><i style="width:${k*100}%"></i></div></div>`; }
+    h+=`</div><div class="row" style="margin-top:8px"><button class="btn sm red" data-pa="pleave">Lämna partyt</button></div>`;
+  } else h+=`<div class="hintx" style="font-size:12.5px;margin:4px 0 6px">Du är inte med i något party. ${G.touch?'Tryck':'Klicka'} på en annan spelare och välj <b>👥 Bjud in till party</b>. I party får alla +5% EXP, och EXP och guld delas när ni är på samma karta. Ni kan vara på olika kartor samtidigt.</div>`;
+  // Kartans kanal
+  h+=`<div class="psec">🌍 På den här kartan</div>`;
+  h+=`<label class="autotog"><input type="checkbox" id="autoTog" ${localStorage.getItem('jaktmarken_auto')!=='0'?'checked':''}> Se alla spelare på samma karta</label>`;
+  if(!autoWorldOn()) h+=`<div class="hintx" style="font-size:12px;margin-bottom:4px">Avstängt: du ser bara de i ditt party som är på samma karta.</div>`;
+  if(Net.role && !Net.joining){ const n=1+Object.keys(G.others).length; h+=`<div class="pstat">${esc(curMap().name)} · ${n}/${PARTY_MAX} spelare i din kanal</div>`+memberListHtml(); }
+  else h+=`<div class="hintx" style="font-size:12px">${Net.joining?'⏳ Ansluter…':autoWorldOn()?'Letar efter andra spelare på kartan…':'Ingen annan här just nu.'}</div>`;
   $('#partyBody').innerHTML=h;
 }
 $('#partyBody').addEventListener('change',e=>{
   if(e.target.id!=='autoTog') return;
   localStorage.setItem('jaktmarken_auto', e.target.checked?'1':'0');
-  if(!e.target.checked){ if(Net.auto) netLeave(true); startBrowse(); } else { if(!Net.role){ Sig.stopBrowse(); autoEnter(); } }
-  refreshParty();
+  if(Net.auto && Net.role) netLeave(true);
+  AUTO.t=0.5; refreshParty();
 });
 $('#partyBody').addEventListener('click',e=>{
-  const j=e.target.closest('[data-join]'); if(j){ netJoin(j.dataset.join); return; }
   const a=e.target.closest('[data-pa]'); if(!a) return;
-  const k=a.dataset.pa;
-  if(k==='host') netHost();
-  else if(k==='close'){ Net.open=false; Sig.unhost().catch(()=>{}); refreshParty(); }
-  else if(k==='open'){ Net.open=true; hostUpdatePresence(); refreshParty(); }
-  else if(k==='end' || k==='leave'){ netLeave(); if(isOpen('party')) startBrowse(); }
+  if(a.dataset.pa==='pleave') partyLeave();
 });
 let partyHudKey='';
 function renderPartyHud(){
   const el=$('#partyHud');
-  if(!inParty()){ if(partyHudKey){ el.classList.add('hidden'); el.innerHTML=''; partyHudKey=''; } return; }
-  const rows=Object.values(G.others).map(o=>({n:o.name, l:o.lvl, k:clamp((o.hp||0)/(o.mhp||1),0,1)}));
-  const key=JSON.stringify(rows.map(r=>[r.n,r.l,Math.round(r.k*50)]));
+  const pm=partyMates();
+  if(!pm.length && !inParty()){ if(partyHudKey){ el.classList.add('hidden'); el.innerHTML=''; partyHudKey=''; } return; }
+  const rows = pm.length ? pm.map(([id,m])=>{ const o=G.others[id]; return {n:m.name, l:m.lvl, k:clamp(o?(o.hp||0)/(o.mhp||1):(m.hp||0)/(m.mhp||1),0,1), mp:m.map!==G.mapId?((MAPS[m.map]||{}).name||'?'):'', p:1}; })
+    : Object.values(G.others).map(o=>({n:o.name, l:o.lvl, k:clamp((o.hp||0)/(o.mhp||1),0,1)}));
+  const key=JSON.stringify(rows.map(r=>[r.n,r.l,Math.round(r.k*50),r.mp||'']));
   if(key===partyHudKey) return; partyHudKey=key;
   el.classList.remove('hidden');
-  el.innerHTML=rows.map(r=>`<div class="pm"><b>${esc(r.n||'?')}</b> <small>Lv ${r.l||'?'}</small><div class="ph"><i style="width:${r.k*100}%"></i></div></div>`).join('');
+  el.innerHTML=rows.map(r=>`<div class="pm ${r.p?'pty':''} ${r.mp?'away':''}">${r.p?'👥 ':''}<b>${esc(r.n||'?')}</b> <small>Lv ${r.l||'?'}</small>${r.mp?`<div class="pmw">🗺️ ${esc(r.mp)}</div>`:''}<div class="ph"><i style="width:${r.k*100}%"></i></div></div>`).join('');
+}
+
+/* ---------- Party (som i MapleStory): bjud in genom att klicka på en spelare. Partyt hålls ihop via en egen
+   Supabase-kanal (små statusmeddelanden var 3:e sekund), så man kan vara på olika kartor samtidigt. På samma
+   karta hamnar partyt i samma spelkanal och delar EXP och guld. Ett party gäller så länge spelet är öppet. ---------- */
+const PARTY_HB = 3, PARTY_TO = 12;
+const myPid = () => G.party ? G.party.id : null;
+const partyMates = () => G.party ? Object.entries(G.party.mem).filter(([id])=>id!==Net.myId) : [];
+function pidOf(id){ return id===Net.myId ? myPid() : (G.others[id] && G.others[id].pid) || null; }
+function pidGroup(k){ const p=pidOf(k); return p ? netMemberIds().filter(i=>pidOf(i)===p) : [k]; }
+function partyLead(){ if(!G.party) return null; const L=G.party.lead; return G.party.mem[L] ? L : Object.keys(G.party.mem).sort((a,b)=>(G.party.mem[a].at||0)-(G.party.mem[b].at||0) || (a<b?-1:1))[0]; }
+function pMyStatus(){ const me=G.party.mem[Net.myId]; return {t:'st', id:Net.myId, name:G.ch.name, cls:G.ch.cls, lvl:G.ch.level, map:G.mapId, hp:Math.ceil(G.ch.hp), mhp:G.stats?G.stats.maxHp:1, chan:Net.role==='host'?Net.myId:Net.role==='guest'&&!Net.joining?Net.hostId:null, lead:G.party.lead, at:me?me.at:Date.now()}; }
+function partyBeat(){ if(!G.party || !G.ch) return; const st=pMyStatus(); G.party.mem[Net.myId]={...st, t:Date.now()}; Sig.partySend(st).catch(()=>{}); }
+async function partyStart(pid, lead){
+  G.party={id:pid, lead, mem:{}, hbT:PARTY_HB, born:Date.now()}; G.party.mem[Net.myId]={...pMyStatus(), at:Date.now(), t:Date.now()};
+  Net.lookDirty=true; if(Net.role==='host') hostUpdatePresence(); partyHudKey='';
+  try{ await Sig.partyJoin(pid, partyOnMsg); }catch(e){ console.warn('party',e); }
+  partyBeat(); refreshParty(); renderPartyHud(); AUTO.t=Math.min(AUTO.t,1.5);
+}
+function partyLeave(quiet){
+  if(!G.party) return; Sig.partySend({t:'bye', id:Net.myId}).catch(()=>{}).finally(()=>Sig.partyLeave().catch(()=>{}));
+  G.party=null; Net.lookDirty=true; partyHudKey=''; if(Net.role==='host') hostUpdatePresence();
+  if(!quiet){ log('👥 Du lämnade partyt.','#9fe0ff'); if(!autoWorldOn() && Net.auto && Net.role) netLeave(true); }
+  refreshParty(); renderPartyHud(); if(isOpen('insp')) renderInsp();
+}
+function partyOnMsg(m){
+  if(!G.party || !m || m.id===Net.myId) return;
+  if(m.t==='st'){
+    const neu=!G.party.mem[m.id];
+    if(neu && Object.keys(G.party.mem).length>=PARTY_MAX) return;
+    const was=G.party.mem[m.id]; G.party.mem[m.id]={...m, t:Date.now()};
+    if(neu){ log(`👥 <b>${esc(m.name)}</b> är med i partyt.`,'#9fe0ff'); partyBeat(); AUTO.t=Math.min(AUTO.t,1.5); }
+    else if(was.map!==m.map && m.map===G.mapId) AUTO.t=Math.min(AUTO.t,2);
+  } else if(m.t==='bye'){ const x=G.party.mem[m.id]; if(!x) return; delete G.party.mem[m.id]; log(`👥 <b>${esc(x.name)}</b> lämnade partyt.`,'#9fe0ff'); partyCheckAlone(); }
+  partyHudKey=''; refreshParty(); renderPartyHud(); if(isOpen('insp')) renderInsp();
+}
+function partyCheckAlone(){ if(G.party && !partyMates().length && Date.now()-G.party.born>15000){ const P=G.party; G.party=null; Sig.partyLeave().catch(()=>{}); Net.lookDirty=true; if(Net.role==='host') hostUpdatePresence(); toast('👥 Partyt upplöstes.'); log('👥 Partyt upplöstes – du är ensam kvar.','#9fe0ff'); refreshParty(); renderPartyHud(); } }
+function partyTick(dt){
+  if(!G.party) return;
+  G.party.hbT-=dt; if(G.party.hbT<=0){ G.party.hbT=PARTY_HB;
+    const now=Date.now(); for(const [id,m] of partyMates()) if(now-m.t>PARTY_TO*1000){ delete G.party.mem[id]; log(`👥 Tappade kontakten med <b>${esc(m.name)}</b> – borttagen ur partyt.`,'#9fe0ff'); partyHudKey=''; }
+    partyBeat(); partyCheckAlone(); if(isOpen('party')) renderParty(); renderPartyHud(); }
+}
+const ptySend = (to, p) => { const m={...p, t:'pty', to, from:Net.myId}; if(Net.role==='host') netTo(to, m); else netToHost(m); };
+function partyInvite(id){
+  const o=G.others[id];
+  if(!inParty() || !o){ toast('Spelaren måste vara på samma karta som du.'); return; }
+  if(G.party && G.party.mem[id]){ toast(`${esc(o.name)} är redan med i ditt party.`); return; }
+  if(G.party && Object.keys(G.party.mem).length>=PARTY_MAX){ toast(`Partyt är fullt (högst ${PARTY_MAX}).`); return; }
+  if(!G.party) G.pinv = G.pinv || (Net.myId.slice(0,6)+Date.now().toString(36));
+  ptySend(id, {k:'inv', pid:G.party?G.party.id:G.pinv, name:G.ch.name, lead:G.party?partyLead():Net.myId});
+  toast(`👥 Inbjudan skickad till <b>${esc(o.name)}</b>.`); log(`👥 Du bjöd in <b>${esc(o.name)}</b> till ditt party.`,'#9fe0ff');
+}
+function ptyOnMsg(from, m){
+  const nm=esc(m.name||nameOf(from));
+  if(m.k==='inv'){ if(G.party){ ptySend(from,{k:'busy', name:G.ch.name}); return; } partyAsk(from, m); return; }
+  if(m.k==='ok'){ if(G.party && m.pid===G.party.id){ partyBeat(); } else if(!G.party && m.pid===G.pinv){ G.pinv=null; partyStart(m.pid, Net.myId); } else return;
+    toast(`👥 <b>${nm}</b> gick med i ditt party!`); SFX.quest&&SFX.quest(); return; }
+  if(m.k==='no'){ toast(`👥 ${nm} tackade nej.`); return; }
+  if(m.k==='busy'){ toast(`👥 ${nm} är redan med i ett party.`); return; }
+}
+let partyAskT=null;
+function partyAsk(from, m){
+  const el=$('#ptyAsk'); clearTimeout(partyAskT);
+  el.innerHTML=`<div>👥 <b>${esc(m.name||nameOf(from))}</b> bjuder in dig till sitt party.</div><div class="trbtns"><button class="btn sm green" data-pq="ok">Gå med</button><button class="btn sm red" data-pq="no">Nej tack</button></div>`;
+  el.classList.remove('hidden'); SFX.quest&&SFX.quest();
+  const answer=ok=>{ clearTimeout(partyAskT); el.classList.add('hidden'); el.onclick=null;
+    if(ok && !G.party){ if(!G.others[from]){ toast('Spelaren är inte kvar på kartan.'); return; } partyStart(m.pid, m.lead||from); ptySend(from,{k:'ok', pid:m.pid, name:G.ch.name}); log(`👥 Du gick med i <b>${esc(m.name)}</b>s party. +5% EXP, och EXP och guld delas när ni är på samma karta.`,'#9fe0ff'); }
+    else ptySend(from,{k:'no', name:G.ch.name}); };
+  el.onclick=e=>{ const b=e.target.closest('[data-pq]'); if(b) answer(b.dataset.pq==='ok'); };
+  partyAskT=setTimeout(()=>answer(false), 30000);
 }
 
 /* =====================================================================
@@ -12247,7 +12417,7 @@ function update(dt){
   G.time+=dt; if(G.shakeT>0) G.shakeT=Math.max(0,G.shakeT-dt);
   if(G.mode==='game' && G.p){ updatePlayer(dt); checkContact(); }
   G.mprojs=G.mprojs||[];
-  updatePotCd(); updateMonsters(dt); spawnTick(dt); updateProjs(dt); updateMProjs(dt); updateBombs(dt); updateRain(dt); updateDrops(dt); updateFx(dt); netTick(dt); updateCamera(dt);
+  updatePotCd(); updateMonsters(dt); spawnTick(dt); updateProjs(dt); updateMProjs(dt); updateBombs(dt); updateRain(dt); updateHippie(dt); updateDrops(dt); updateFx(dt); netTick(dt); updateCamera(dt);
   if(G.mode==='game'){ arenaTick(dt); hudT-=dt; if(hudT<=0){ hudT=0.1; updateHud(); updateArenaHud(); } }
 }
 let last=performance.now();
