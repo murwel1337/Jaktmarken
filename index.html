@@ -1051,7 +1051,8 @@ function wpnTier(b){
 /* Förbrukningsvaror (köps i butiken, staplas upp till 20 per plats i väskan) */
 const STACK_MAX = 20, POT_STACK = 100, SCROLL_SLOTS = 6, SCROLL_CHANCE = 0.6;
 const SOUL_STACK = 1000;   // själar: 1000 per plats
-const stackMax = base => CONS[base] && CONS[base].soul ? SOUL_STACK : CONS[base] && CONS[base].kind==='pot' ? POT_STACK : STACK_MAX;   // drycker (även elixir och bomber) 100 per plats
+const MAT_STACK = 100;
+const stackMax = base => CONS[base] && CONS[base].soul ? SOUL_STACK : CONS[base] && (CONS[base].kind==='pot' || CONS[base].kind==='mat') ? (CONS[base].kind==='mat' ? MAT_STACK : POT_STACK) : STACK_MAX;   // drycker och material 100 per plats   // drycker (även elixir och bomber) 100 per plats
 const CONS = {
   hpPot: {kind:'pot',    name:'HP-dryck',    price:10, sell:2, hp:75, desc:'Återställer 75 HP.'},
   mpPot: {kind:'pot',    name:'Mana-dryck',  price:10, sell:2, mp:50, desc:'Återställer 50 mana.'},
@@ -1236,7 +1237,6 @@ const TREES = {
   ]},
   hippie:{name:'Hippie-ki-yay', talents:[
     {id:'h_radie', tier:1, max:3, icon:'💥', name:'Större smäll', v:[20,40,60], d:v=>`Bombpilens explosion får ${v}% större radie.`},
-    {id:'h_range', tier:1, max:3, icon:'🎯', name:'Örnöga', v:[5,10,15], d:v=>`+${v}% räckvidd på dina attacker.`},
     {id:'h_vass',  tier:1, max:3, icon:'✴️', name:'Vass spets', v:[10,20,30], d:v=>`+${v}% kritisk skada.`},
     {id:'h_snabb', tier:2, max:3, icon:'🪶', name:'Lätta fingrar', v:[4,8,12], d:v=>`+${v}% attackhastighet.`},
     {id:'h_blomma',tier:2, max:3, icon:'🌼', name:'Blomstring', v:[1,2,3], d:v=>`Flower power varar ${v} sekund${v>1?'er':''} längre.`},
@@ -1289,15 +1289,15 @@ TREES.visk_b = {name:'Baktalare', talents:[
 ]};
 const WFI_T = 5, BOMB_MULT = 1.5, BOMB_STUN = 1.5, FIRE_T = 5;   // Wait for it: en laddning var 5:e s · Bombpil: 150 % skada, bedövar 1,5 s · brinnande mark 5 s
 TREES.hippie_b = {name:'Snajp', talents:[
-  {id:'n_slow',  tier:1, max:3, icon:'🐢', name:'Tålamod',     v:[10,20,30], d:v=>`Du skjuter ${v}% långsammare, men alla dina attacker och förmågor gör ${v}% mer skada.`},
+  {id:'n_slow',  tier:1, max:3, icon:'🐢', name:'Tålamod',     v:[10,20,30], d:v=>`Du skjuter ${v/2}% långsammare, men alla dina attacker och förmågor gör ${v}% mer skada.`},
   {id:'n_range', tier:1, max:3, icon:'🔭', name:'Långt håll',  v:[10,20,30], d:v=>`+${v}% räckvidd.`},
-  {id:'n_glas',  tier:2, max:1, icon:'🍷', name:'Glaskanon', need:['n_slow',3], v:[1], d:()=>`−30 Str (mindre HP), men varje Str du har kvar ger även +0,1 attack.`},
+  {id:'n_glas',  tier:2, max:3, icon:'🍷', name:'Glaskanon', need:['n_slow',3], v:[30,20,10], d:v=>`−${v} Str (mindre HP), men varje Str du har kvar ger även +0,1 attack. Fler nivåer = mindre avdrag.`},
   {id:'n_wait',  tier:3, max:3, icon:'⏳', name:'Wait for it', v:[20,30,40], d:(v,r)=>`Var ${WFI_T}:e sekund laddar du upp en pil. Nästa basattack gör +${v}% skada. Du kan ha upp till ${r} laddning${r>1?'ar':''}.`},
   {id:'n_kill',  tier:4, max:3, icon:'💀', name:'Jaktlycka',   v:[33,67,100], d:v=>`När du dödar ett monster har du ${v}% chans att få en laddning av Wait for it.`},
 ]};
 TREES.hippie_c = {name:'Boomer', talents:[
   {id:'b_brand', tier:1, max:3, icon:'🔥', name:'Brinnande mark',  v:[40,80,120], d:v=>`Bombpilen lämnar en brinnande yta i ${FIRE_T} sekunder. Fiender i den tar totalt ${v}% av din basskada (fördelat över ${FIRE_T} s).`},
-  {id:'b_extra', tier:2, max:3, icon:'🎆', name:'Extra smällare',  v:[10,20,30],  d:v=>`Dina basattacker har ${v}% chans att även skjuta en bombpil (utan nedkylning).`},
+  {id:'b_extra', tier:2, max:3, icon:'🎆', name:'Extra smällare',  v:[5,10,15],  d:v=>`Dina basattacker har ${v}% chans att även skjuta en bombpil (utan nedkylning).`},
   {id:'b_kedja', tier:3, max:3, icon:'💥', name:'Kedjereaktion',   v:[10,20,30],  d:v=>`När du dödar en fiende har den ${v}% chans att explodera som en bombpil.`},
 ]};
 for(const k of ['skog_c','visk_c']) TREES[k] = {name:k.endsWith('_b')?'Träd 2':'Träd 3', locked:true, talents:[]};
@@ -2191,7 +2191,7 @@ function calcStats(ch){
   s[C.main] += L;   // varje level: +2 i klassens huvudstat, +1 i övriga
   s.eqAtk=0; s.eqMove=0;
   for(const k in ch.eq){ const it=ch.eq[k]; if(!it) continue; s.armor+=it.armor||0; for(const st of STATS) s[st]+=it[st]||0; if(it.slot!=='vapen') s.eqAtk+=it.atk||0; s.eqMove+=it.move||0; s.xpPct=(s.xpPct||0)+(it.xp||0); s.cdmg=(s.cdmg||0)+(it.cdmg||0); s.eqCdmg=(s.eqCdmg||0)+(it.cdmg||0); s.eqDodge=(s.eqDodge||0)+(it.dodge||0); s.eqAspd=(s.eqAspd||0)+(it.aspd||0); s.eqHpreg=(s.eqHpreg||0)+(it.hpreg||0); s.eqCdr=(s.eqCdr||0)+(it.cdr||0); }
-  if(ch.cls==='hippie' && rank('n_glas')){ s.str=Math.max(0,s.str-30); s.glasAtk=s.str*0.1; }   // Glaskanon: −30 Str, sedan +0,1 attack per kvarvarande Str
+  if(ch.cls==='hippie' && rank('n_glas')){ s.str=Math.max(0,s.str-tv('n_glas')); s.glasAtk=s.str*0.1; }   // Glaskanon: −30/−20/−10 Str, sedan +0,1 attack per kvarvarande Str
   s.crit = agiPct(s.agi,ch.level)*STAT_SCALE; s.dodge = Math.min(AGI_CAP, agiPct(s.agi,ch.level)*STAT_SCALE + (s.eqDodge||0)); s.cdr = Math.min(CDR_CAP, Math.max(0,s.int)*AGI_PCT(ch.level)*STAT_SCALE + (s.eqCdr||0) + acctB('viskare'));   // Agi→crit/undvikande och Int→nedkylning: 70 % · kontobonus från Viskare
   s.maxHp = Math.round(100 + s.str*5 + acctB('skog'));   // bas 100 HP, varje Str ger 5 HP   // kontobonus från Skogshuggare
   s.maxMp = C.noMana ? 0 : Math.round((20 + s.int*10)*(1+tv('v_klok')/100));
@@ -2204,7 +2204,7 @@ function calcStats(ch){
   s.dual = ch.cls==='psykopat' && !!ch.eq.vapen && ch.eq.vapen.wtype==='kniv' && !!w2 && w2.wtype==='kniv';   // två knivar
   s.aspd = 1 + C.aspd + acctB('hippie')/100 + tv('h_snabb')/100 + tv('p_snabb')/100 + (s.dual ? DUAL_ASPD : 0) + (G.p && G.ch===ch && G.p.ssT>0 ? tv('t_ssaspd')/100 : 0) + (G.p && G.ch===ch && G.p.buffT>0 ? 1 : 0) + (s.eqAspd||0)/100 - (rank('g_tung')?0.05:0);   // Flower power: +100% (Agi ger inte längre attackhastighet)
   s.move = 1 + s.eqMove/100;
-  s.range = 1 + tv('h_range')/100 + tv('n_range')/100;   // Örnöga · Långt håll
+  s.range = 1 + tv('n_range')/100;   // Långt håll
   const w = ch.eq.vapen;
   s.wMin = w ? w.atkMin : 1; s.wMax = w ? w.atkMax : 1;
   s.oMin = s.dual ? w2.atkMin : 0; s.oMax = s.dual ? w2.atkMax : 0;
@@ -2227,7 +2227,7 @@ function recalc(){
 const RAGE_CAP = 0.6;   // Bärsärk ger max +60 % attackhastighet
 const rageAspd = () => { const v=tv('s_raseri'); if(!v || !G.ch || !G.stats) return 0; return Math.min(RAGE_CAP, v*clamp(100-G.ch.hp/G.stats.maxHp*100,0,100)/100); };
 const trAspd = () => { const v=G.tr&&G.tr.vt; return (v && v.t>0 && trk()==='vargtand' ? v.n*0.06 : 0) + (G.tr && G.tr.haste>0 ? .5 : 0); };   // Vargtand på snöre · Magisk pinne
-const atkInterval = () => BASE_ATK_T / ((G.stats.aspd + rageAspd() + trAspd())*(1-tv('n_slow')/100));   // Tålamod: långsammare attacker
+const atkInterval = () => BASE_ATK_T / ((G.stats.aspd + rageAspd() + trAspd())*(1-tv('n_slow')/200));   // Tålamod: 5/10/15 % långsammare attacker
 // Vapnets slag + attack från huvudstat. Decimaler (t.ex. 1,2 per Str) avrundas slumpvis så snittet blir rätt.
 const rollOff = () => { const v=(randInt(G.stats.oMin,G.stats.oMax)+G.stats.statAtk)*OFF_MULT*(1+tv('t_off')/100); const f=Math.floor(v); return Math.max(1, f + (Math.random()<v-f?1:0)); };   // andra handens hugg
 const rollAtk = () => { let v=randInt(G.stats.wMin,G.stats.wMax)+G.stats.statAtk; if(rank('s_vrede') && G.ch.hp<G.stats.maxHp*.3) v*=1+tv('s_vrede')/100; if(rank('n_slow')) v*=1+tv('n_slow')/100; const f=Math.floor(v); return f + (Math.random()<v-f?1:0); };
@@ -2902,6 +2902,7 @@ function inFrontMonsters(range, maxN){
   res.sort((a,b)=>a[0]-b[0]);
   return res.slice(0,maxN).map(a=>a[1]);
 }
+const HIPPIE_UP = 125;   // hippiens pilar når 125 px uppåt (t.ex. från sidoplattformarna upp till toppen i Hidden Bandit lair)
 function rangedTarget(range, down=72, up=72){
   const p=G.p; let best=null, bd=1e9; const py=p.y-30;
   for(const m of G.monsters){
@@ -2950,7 +2951,7 @@ function basicAttack(){
   const p=G.p, s=G.stats; tutDone('atk');
   if(s.mode==='bow'){
     startAtkAnim('shoot'); SFX.bow();
-    const range = BOW_RANGE*s.range, t = rangedTarget(range, 115, 72);   // hippie når lite längre nedåt
+    const range = BOW_RANGE*s.range, t = rangedTarget(range, 115, HIPPIE_UP);   // hippie når lite längre nedåt och uppåt
     let dmg=rollAtk(), wfi=false;
     if(p.wfi>0 && rank('n_wait')){ p.wfi--; wfi=true; dmg=Math.round(dmg*(1+tv('n_wait')/100)); G.fx.push({type:'text', x:p.x, y:p.y-p.h-34, text:'⏳ Wait for it!', color:'#ffd23f', t:0, dur:.8, size:13}); }   // Wait for it
     G.projs.push({type:'arrow', x:p.x+p.face*18, y:p.y-33, vx:p.face*900, vy:0, speed:900, homing:1, target:t, dmg, dist:0, maxDist:t?99999:range, life:1.6, hit:new Set(), canBounce:true, chain:0, wfi});
@@ -3164,13 +3165,13 @@ const ABIL_USE = {
   },
   bombpil(){
     const p=G.p, s=G.stats; startSkillAnim('shoot');
-    const range=BOW_RANGE*s.range, t=rangedTarget(range,115,72);
+    const range=BOW_RANGE*s.range, t=rangedTarget(range,115,HIPPIE_UP);
     fireBomb(t, range);
   },
   flower(){ const p=G.p, d=4+tv('h_blomma'); p.buffT=d; p.buffMax=d; recalc(); for(let i=0;i<22;i++) fxPetal(p,true); log(`🌸 Flower power! +100% attackhastighet i ${d} sekunder.`,'#ffb3de'); },
   pilregn(){
     const p=G.p, s=G.stats; startSkillAnim('shoot');
-    const t=rangedTarget(BOW_RANGE*s.range,140,90), cx=t?t.x:p.x+p.face*220, cy=t?t.y:p.y, n=PILREGN_N+tv('h_regn');
+    const t=rangedTarget(BOW_RANGE*s.range,140,HIPPIE_UP+20), cx=t?t.x:p.x+p.face*220, cy=t?t.y:p.y, n=PILREGN_N+tv('h_regn');
     (G.rain=G.rain||[]).push({x:cx, y:cy, left:n, next:.25, gap:1.5/n, dir:p.face});
     for(let i=0;i<10;i++) particle(p.x+p.face*10, p.y-50, pick(['#fff3b0','#e8d0a0','#ffffff']), p.face*rand(10,60), rand(-360,-220), .5, 2.5, 300);
     netFx('rain', cx, cy);
@@ -3290,9 +3291,10 @@ function throwBomb(base){   // bomben flyger i en båge och exploderar där den 
   (G.bombs=G.bombs||[]).push({x, y, vx:(tx-x)/T, vy:(ty-y)/T-.5*g*T, g, t:0, T, tx, ty, c:base});
   markDirty(); refreshOpen(); return true;
 }
+const RAIN_W = 150;   // Pilregn: pilarna sprids ±150 px (tidigare ±85)
 function updateRain(dt){   // Pilregn: pilar faller en i taget över målområdet
   const L=G.rain; if(L && L.length) for(let i=L.length-1;i>=0;i--){ const r=L[i]; r.next-=dt;
-    while(r.left>0 && r.next<=0){ r.left--; r.next+=r.gap; const ax=r.x+rand(-85,85);
+    while(r.left>0 && r.next<=0){ r.left--; r.next+=r.gap; const ax=r.x+rand(-RAIN_W,RAIN_W);
       (G.rainA=G.rainA||[]).push({x:ax-r.dir*110, y:r.y-430, tx:ax, ty:r.y, t:0, T:.32, dmg:true}); }
     if(r.left<=0) L.splice(i,1); }
   const A=G.rainA; if(!A || !A.length) return;
@@ -3681,12 +3683,14 @@ function dragonFire(m, tgt){
 }
 function sendMProj(f){ if(f.src) f.sid=f.src.id; if(isHostNet()) netToGuests({t:'mfire', sid:f.sid, su:f.su, x:Math.round(f.x), y:Math.round(f.y), vx:Math.round(f.vx||0), vy:Math.round(f.vy||0), d:f.d, k:f.k, g:f.g, gy:f.gy, dl:f.delay, r:f.r, life:f.life, tx:f.tx, nr:f.nr, fi:f.fi, hr:f.hr, sv:f.sv, ring:f.ring}); }
 function throwAxe(m, tgt){   // banditbossens yxa flyger i en båge; vanliga banditer kastar en kniv rakt fram (vågrätt)
-  if(!m.d.boss){ const x=m.x+m.dir*18, y=m.y-30, dir=Math.sign(tgt.x-m.x)||m.dir, f={k:'knife', src:m, x, y, vx:dir*460, vy:0, d:Math.max(1,Math.round(m.d.touch*0.4)), life:1.35}; G.mprojs.push(f); sendMProj(f); SFX.swing&&SFX.swing(); return; }
+  if(!m.d.boss){ const x=m.x+m.dir*18, y=m.y-30, dir=Math.sign(tgt.x-m.x)||m.dir, dy=(tgt.y-26)-y, dx=Math.max(40,Math.abs(tgt.x-x)), vy=Math.abs(dy)<12?0:clamp(dy/(dx/460),-520,520);   // rakt fram, eller lite snett upp/ned mot plattformen intill
+    const f={k:'knife', src:m, x, y, vx:dir*460, vy, d:Math.max(1,Math.round(m.d.touch*0.4)), life:1.35}; G.mprojs.push(f); sendMProj(f); SFX.swing&&SFX.swing(); return; }
   const x=m.x+m.dir*20, y=m.y-(m.d.boss?50:34), tx=tgt.x, ty=tgt.y-30, g=700, T=clamp(Math.hypot(tx-x,ty-y)/330,.45,1.2);
   const f={k:'axe', src:m, x, y, vx:(tx-x)/T, vy:(ty-y)/T-.5*g*T, g, d:Math.max(1,Math.round(m.d.touch*0.4)), life:T+1.2};
   G.mprojs.push(f); sendMProj(f); SFX.swing && SFX.swing();
 }
 const FLAME_T = 1.6;
+const BANDIT_YR = 110;   // banditens kniv: når spelare upp till 110 px över eller under (sidoplattformarna i Hidden Bandit lair)
 const BEAM_CHG = 1, BEAM_T = .2, BEAM_CD = 8, BEAM_LEN = 560;   // Solstrålens stråle
 function emitFlame(m){   // en låga i eldkastarens stråle
   const a=rand(-.13,.13)+.05, sp=rand(380,470), x=m.x+m.dir*m.d.w*.62, y=m.y-m.d.h*.8;
@@ -3804,7 +3808,7 @@ function drawMProj(f){
     ctx.restore(); return;
   }
   if(f.k==='knife'){   // kastkniv som flyger rakt fram
-    ctx.save(); ctx.translate(f.x,f.y); ctx.scale(Math.sign(f.vx||1),1);
+    ctx.save(); ctx.translate(f.x,f.y); ctx.scale(Math.sign(f.vx||1),1); if(f.vy) ctx.rotate(Math.atan2(f.vy,Math.abs(f.vx||1)));
     ctx.strokeStyle='rgba(220,230,255,.35)'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(-34,0); ctx.lineTo(-12,0); ctx.stroke();
     ctx.fillStyle='#3a2414'; ctx.fillRect(-12,-2.2,9,4.4); ctx.fillStyle='#8a8a96'; ctx.fillRect(-4,-4,2.4,8);
     const g=ctx.createLinearGradient(0,-3,0,3); g.addColorStop(0,'#ffffff'); g.addColorStop(1,'#9a9aa8'); ctx.fillStyle=g; ctx.beginPath(); ctx.moveTo(-1.5,-3); ctx.lineTo(13,-1); ctx.lineTo(16,0); ctx.lineTo(13,1.5); ctx.lineTo(-1.5,3); ctx.closePath(); ctx.fill(); ctx.strokeStyle='#4a4a56'; ctx.lineWidth=1; ctx.stroke();
@@ -4053,7 +4057,7 @@ function updateMonsters(dt){
     if(m.d.axe){ m.axeCd=Math.max(0,(m.axeCd||0)-dt);
       if(!tgt) m.fightAt=null; else if(m.fightAt==null) m.fightAt=G.time;   // när den gick in i strid
       const knife=!m.d.boss, fresh=m.fightAt!=null && G.time-m.fightAt<1;   // vanliga banditer: knivar rakt fram, aldrig första sekunden
-      if(tgt && m.axeCd<=0 && !(m.rootT>0) && !fresh && Math.abs(tgt.x-m.x)<560 && (knife ? Math.abs((tgt.y-26)-(m.y-30))<30 : Math.abs(tgt.y-m.y)<320)){ m.axeCd=(m.d.axeEvery||2)*(m.d.boss?1:rand(.85,1.15)); m.dir=Math.sign(tgt.x-m.x)||m.dir; m.throwT=.3; throwAxe(m,tgt); } }
+      if(tgt && m.axeCd<=0 && !(m.rootT>0) && !fresh && Math.abs(tgt.x-m.x)<560 && (knife ? Math.abs((tgt.y-26)-(m.y-30))<BANDIT_YR : Math.abs(tgt.y-m.y)<320)){ m.axeCd=(m.d.axeEvery||2)*(m.d.boss?1:rand(.85,1.15)); m.dir=Math.sign(tgt.x-m.x)||m.dir; m.throwT=.3; throwAxe(m,tgt); } }
     if(m.throwT>0) m.throwT-=dt;
     if(m.d.rocks){ m.rockCd=(m.rockCd===undefined?2:m.rockCd)-dt;
       if(tgt && m.rockCd<=0 && Math.abs(tgt.x-m.x)<800){ m.rockCd=rand(5,7); m.throwT=.6; rockRain(m,tgt); } }
@@ -10332,7 +10336,7 @@ function renderShop(){
   let h=`<div class="tabs"><button class="tab ${tab==='buy'?'on':''}" data-stab="buy">🛒 Köp</button><button class="tab ${tab==='sell'?'on':''}" data-stab="sell">💰 Sälj</button></div>`;
   h+=`<div class="rowb" style="margin-bottom:8px"><span>Ditt guld: <b class="goldtxt">${ch.gold} 🪙</b></span><span class="hintx" style="color:var(--muted);font-size:12px">Väska: ${invCount(false)}/${INV_MAX} · Material: ${invCount(true)}/${MAT_MAX}</span></div>`;
   if(tab==='buy'){
-    h+=`<div class="shopinfo">Drycker staplas upp till ${POT_STACK} och scrolls upp till ${STACK_MAX} per plats i väskan. Scrolls har ${Math.round(SCROLL_CHANCE*100)}% chans att lyckas. Varje föremål har ${SCROLL_SLOTS} uppgraderingsplatser, och en plats förbrukas även om scrollen misslyckas. Använd scrolls från väskan (I).</div>`;
+    h+=`<div class="shopinfo">Drycker och material staplas upp till ${POT_STACK} och scrolls upp till ${STACK_MAX} per plats i väskan. Scrolls har ${Math.round(SCROLL_CHANCE*100)}% chans att lyckas. Varje föremål har ${SCROLL_SLOTS} uppgraderingsplatser, och en plats förbrukas även om scrollen misslyckas. Använd scrolls från väskan (I).</div>`;
     const SO=['hpPot','mpPot','hpPot2','mpPot2'], so=id=>SO.includes(id)?SO.indexOf(id):id==='scrReset'?99:10;
     for(const [id,c] of Object.entries(CONS).filter(([,c])=>c.price).sort((a,b)=>so(a[0])-so(b[0]))){
       h+=`<div class="srow ${tutStep()==='shop'&&id==='scrAtk'?'hl':''}"><div class="slot r-cons"><img src="${iconURL({base:id})}" alt=""></div><div class="sn"><b>${c.name}</b><small>${c.desc} · Du har ${consCount(id)}</small></div><span class="sp">${c.price} 🪙</span>
@@ -11135,14 +11139,16 @@ function merchantsUpdate(){   // anropas när man går in på en karta
 const MERCH_MAT_X = 10, MERCH_MAT_MAX = 100;
 function merchMats(){ const used=new Set(RECIPES.flatMap(r=>Object.keys(r.mats||{}))); return [...new Set(Object.values(MOBS).map(d=>d.mat).filter(Boolean))].filter(m=>CONS[m] && used.has(m) && CONS[m].sell); }
 function merchPool(lo,hi){ return [...new Set(Object.values(MOBS).flatMap(d=>d.pool||[]))].filter(b=>BASES[b] && BASES[b].req>=lo && BASES[b].req<=hi); }
+const JEW_STOCK = 2, JEW_PRICE = 1000;   // Solveigs smyckesscrolls
 function merchState(id){
   const ch=G.ch; ch.merch=ch.merch||{}; let S=ch.merch[id];
+  if(S && id==='solveig' && S.jew>JEW_STOCK) S.jew=JEW_STOCK;   // äldre sparfiler hade 5 i lager
   if(!S || S.lvl!==ch.level){
     S={lvl:ch.level};
     if(id==='bob'){ S.scr=2; S.mat=pick(merchMats()); S.matLeft=MERCH_MAT_MAX;
       const pool=merchPool(15,20); S.items=[]; for(let i=0;i<3 && pool.length;i++) S.items.push(makeItem(pick(pool),'uncommon',true));
       if(Math.random()<.3){ const p20=merchPool(20,20), pp=p20.length?p20:merchPool(17,20); if(pp.length) S.items.push(makeItem(pick(pp),'rare',true)); } }
-    else S.jew=5;
+    else S.jew=JEW_STOCK;
     ch.merch[id]=S; markDirty();
   }
   return S;
@@ -11164,7 +11170,7 @@ function renderMerch(){
       <button class="btn sm" data-ms="1" ${n?'':'disabled'}>Sälj 1</button><button class="btn sm gold" data-ms="${n}" ${n?'':'disabled'}>Sälj ${n||''}</button></div>`;
   } else {
     for(const [b,p] of SOUL_SHOP) h+=row(iconURL({base:b}),CONS[b].name,`${CONS[b].desc||''}`,p+' 🪙','s_'+b,ch.gold<p,`<button class="btn sm" data-mb="s10_${b}" ${ch.gold<p*10?'disabled':''}>Köp 10</button>`);
-    h+=row(iconURL({base:'scrJew'}),CONS.scrJew.name,`${CONS.scrJew.desc} · ${S.jew} kvar i lager`,'500 🪙','jew',!S.jew||ch.gold<500);
+    h+=row(iconURL({base:'scrJew'}),CONS.scrJew.name,`${CONS.scrJew.desc} · ${S.jew} kvar i lager`,JEW_PRICE+' 🪙','jew',!S.jew||ch.gold<JEW_PRICE);
   }
   $('#merchBody').innerHTML=h;
 }
@@ -11172,7 +11178,7 @@ function merchBuy(act){
   const ch=G.ch, id=G.ui.merch, S=merchState(id), pay=p=>{ if(ch.gold<p){ throttleMsg('merch','Du har inte råd.','#ff9b9b'); return false; } ch.gold-=p; return true; };
   const giveStack=(b,n)=>{ if(stackRoom(b)<n){ throttleMsg('merch','Väskan är full.','#ff9b9b'); return false; } return true; };
   if(act==='scr'){ if(!S.scr || !giveStack('scrAtk5',1) || !pay(500)) return; S.scr--; addStack('scrAtk5',1); log(`🛒 Du köpte <b>${CONS.scrAtk5.name}</b> av Butik Bob.`,'#ffd23f'); }
-  else if(act==='jew'){ if(!S.jew || !giveStack('scrJew',1) || !pay(500)) return; S.jew--; addStack('scrJew',1); log(`☀️ Du köpte <b>${CONS.scrJew.name}</b> av Solveig.`,'#ffd23f'); }
+  else if(act==='jew'){ if(!S.jew || !giveStack('scrJew',1) || !pay(JEW_PRICE)) return; S.jew--; addStack('scrJew',1); log(`☀️ Du köpte <b>${CONS.scrJew.name}</b> av Solveig.`,'#ffd23f'); }
   else if(act.startsWith('s10_') || act.startsWith('s_')){ const ten=act.startsWith('s10_'), b=act.slice(ten?4:2), n=ten?10:1, p=SOUL_SHOP.find(x=>x[0]===b)[1]*n; if(!giveStack(b,n) || !pay(p)) return; addStack(b,n); log(`☀️ Du köpte ${n} × <b>${CONS[b].name}</b> för ${p} guld.`,'#ffd23f'); }
   else if(act.startsWith('it')){ const i=+act.slice(2), it=S.items[i]; if(!it) return; if(invCount(false)>=INV_MAX){ throttleMsg('merch','Väskan är full.','#ff9b9b'); return; } if(!pay(gearPrice(it))) return; S.items.splice(i,1); ch.inv.push(it); G.ui.merchShow=null; log(`🛒 Du köpte <b style="color:${RAR[it.rarity].color}">${esc(itemName(it))}</b> av Butik Bob.`,'#ffd23f'); }
   SFX.coin&&SFX.coin(); markDirty(true); renderMerch(); refreshOpen();
@@ -11915,6 +11921,8 @@ function startGame(ch, isNew){
   ch.talents=ch.talents||{};
   if(ch.cls==='skog' && !ch.tv3){ for(const id of Object.keys(ch.talents)){ refunded+=ch.talents[id]||0; delete ch.talents[id]; } ch.hotbar=(ch.hotbar||[]).map(x=>x==='s_kada'?null:x); }   // Skogshuggarens träd har gjorts om
   ch.tv3=1;
+  { const top={}; ch.inv=(ch.inv||[]).filter(it=>{ if(!it || !isMatBase(it.base) || !(it.count>0)) return true;   // material får nu 100 per plats: slå ihop gamla 20-högar
+      const h=top[it.base]; if(h && h!==it && h.count<MAT_STACK){ const a=Math.min(MAT_STACK-h.count, it.count); h.count+=a; it.count-=a; } if(it.count<=0) return false; if(!h || h.count>=MAT_STACK) top[it.base]=it; return true; }); }
   ch.hotbar=(ch.hotbar||[]).map(x=>x && TAL[x] && TAL[x].active && TAL[x].tree!=='konto' && !(ch.talents[x]>0) ? null : x);   // olärda talangförmågor bort från snabbfältet
   for(const tk of CLASSES[ch.cls].trees){ const T=TREES[tk]; if(!T || T.locked) continue;   // poäng som inte längre uppfyller trädets krav återbetalas
     const bad=T.talents.some(t=>(ch.talents[t.id]||0)>0 && T.talents.filter(x=>x.tier<t.tier).reduce((a,x)=>a+(ch.talents[x.id]||0),0)<tierReq(t.tier));
@@ -12140,7 +12148,7 @@ function netShot(pr){ if(!inParty()) return; netBroadcast({t:'shot', id:Net.myId
 function spawnCosShot(S){ if(S.id===Net.myId) return; G.projs.push({type:S.ty, g:S.ty==='kniv'?KNIV_G:0, cos:true, x:S.x, y:S.y, vx:S.vx, vy:S.vy, speed:S.sp, homing:S.h, target:G.monById[S.tid]||null, dist:0, maxDist:S.md, life:S.ty==='log'?7:1.6, r:S.r||0, plat:null, rot:0, hit:new Set()}); }
 function netFx(k,x,y){ if(inParty()) netBroadcast({t:'fx', id:Net.myId, k, x:Math.round(x), y:Math.round(y)}); }
 function spawnNetFx(S){ if(S.id===Net.myId) return; if(S.k==='beam') G.fx.push({type:'beam', x:S.x, y:S.y, t:0, dur:1.6}); else if(S.k==='radial') G.fx.push({type:'radial', x:S.x, y:S.y, t:0, dur:.4});
-  else if(S.k==='rain'){ for(let i=0;i<8;i++) (G.rainA=G.rainA||[]).push({x:S.x+rand(-85,85)-110, y:S.y-430, tx:S.x+rand(-85,85), ty:S.y, t:-i*.19, T:.32}); }   // bara utseende, skadan räknas hos den som sköt
+  else if(S.k==='rain'){ for(let i=0;i<8;i++) (G.rainA=G.rainA||[]).push({x:S.x+rand(-RAIN_W,RAIN_W)-110, y:S.y-430, tx:S.x+rand(-RAIN_W,RAIN_W), ty:S.y, t:-i*.19, T:.32}); }   // bara utseende, skadan räknas hos den som sköt
   else if(S.k==='quake') G.fx.push({type:'quake', x:S.x, y:S.y, t:0, dur:.45, r:100, c:'#ffcf7a'});
   else if(S.k==='quake2') G.fx.push({type:'quake', x:S.x, y:S.y, t:0, dur:.55, r:210, c:'#ff9a3a'});
   else if(S.k==='smoke') smokePuff(S.x,S.y);
