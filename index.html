@@ -280,7 +280,12 @@ body.touch #win-bag .detail .btn.sm{padding:4px 8px;font-size:12px}
 
 /* Uppdragsframsteg som dyker upp en stund */
 /* Uppdragslogg och världskarta */
-#questLog .qh{display:flex;justify-content:space-between;align-items:center;gap:8px}
+#questLog .qh{display:flex;justify-content:space-between;align-items:center;gap:6px}
+#questLog .qtog{background:rgba(214,170,98,.18);border:1px solid rgba(214,170,98,.45);color:#f0d8a0;border-radius:6px;font-size:12px;line-height:1;width:24px;height:22px;padding:0;cursor:pointer;flex:none}
+#questLog .qht{flex:1;cursor:pointer;white-space:nowrap}#questLog .qsum{font-weight:800;color:#f0d8a0;letter-spacing:0}
+#questLog.col{min-width:0}#questLog.col .qh{margin-bottom:0}
+body.touch #questLog .qrows{max-height:38vh;overflow-y:auto;overscroll-behavior:contain}
+#questLog .qrows{max-height:60vh;overflow-y:auto}
 #questLog .qhl{font-size:10.5px;color:#f0d8a0;background:rgba(214,170,98,.18);border:1px solid rgba(214,170,98,.45);border-radius:6px;padding:1px 6px}
 #mmWrap{cursor:pointer}
 #wmHint{display:block;font-size:10px;color:#e8d8b0;opacity:.8;text-align:right;margin-top:2px}
@@ -568,6 +573,7 @@ body.touch #qbar{display:none}
 #partyBody{min-width:300px;max-width:560px}
 body.touch #rightCol{top:56px;right:8px}
 body.touch #questLog{min-width:150px;max-width:200px;font-size:11.5px;padding:4px 8px}
+body.touch #questLog.col{min-width:0;padding:3px 6px}
 body.touch .gf{font-size:11.5px}
 body.touch #partyHud{top:58px;left:156px;flex-direction:row;flex-wrap:wrap;max-width:46vw}
 body.touch .pm{min-width:0;padding:2px 6px}
@@ -1612,6 +1618,10 @@ const PARK_PLATS = [
 ];
 const PARK_ROPES = [{x:880, top:620, bottom:900}];
 // Solstrålehöjden: solig kulle ovanför Solparken – plattformar i trappsteg, lägret till vänster
+// Skogsrälsen och Träskstationen: platt mark med en träperrong, rälsen och ett parkerat stocktåg
+const STATION_PLATS = [{id:'g1', x1:0, x2:2500, y:900, solid:true, floor:1, safe:true}, {id:'perr', x1:300, x2:880, y:860, floor:2, wood:true, kind:'wood', safe:true}];
+const SWAMPST_PLATS = [{id:'g1', x1:0, x2:2450, y:900, solid:true, floor:1, safe:true}, {id:'perr', x1:1640, x2:2160, y:860, floor:2, wood:true, kind:'wood', safe:true}];
+const RIDE_PLATS = [{id:'g1', x1:0, x2:1500, y:900, solid:true, floor:1, safe:true}];   // tågets golv
 const SUNHILL_PLATS = [
   {id:'g1', x1:0, x2:2800, y:900, solid:true, floor:1},
   {id:'camp', x1:60, x2:380, y:760, floor:2, safe:true},
@@ -1779,6 +1789,15 @@ MAPS[7] = {name:'Bandittornet', terrain:'tower', start:{x:200,y:2000}, sign:{x:4
 // Nybörjargläntan: här vaknar nya gubbar. Fem flugsvampar och Tilda med de allra första uppdragen
 MAPS[21] = {name:'Nybörjargläntan', terrain:'glade', start:{x:200,y:812}, sign:{x:620,y:900}, wm:{x:.15,y:.91},
   spawns:[['flugsvamp','g1',[780,950,1120,1290,1450]]], portals:[{x:1545, y:900, to:1, toX:240, toY:900}]};
+function genStationDeco(){   // Skogsrälsen
+  for(const [x,s] of [[140,1],[520,1.15],[930,.9],[2440,1]]) DECO.back.push({t:'tree',x,y:900,s});
+  DECO.back.push({t:'house',x:590,y:900,s:1,wall:'#7a5a3a',roof:'#3a2a1a',sign:'🚂 Skogsrälsen'},{t:'lamp',x:330,y:860,s:.9},{t:'lamp',x:860,y:860,s:.9},
+    {t:'crates',x:420,y:860,s:.8},{t:'barrels',x:770,y:860,s:.8},{t:'bush',x:250,y:900,s:.8},{t:'bush',x:960,y:900,s:.7},{t:'fence',x1:0,x2:240,y:900});
+}
+function genSwampDeco(){   // Träskstationen: sliten och öde
+  DECO.back.push({t:'house',x:1900,y:900,s:.95,wall:'#4a4a3a',roof:'#24241e',sign:'🚂 Träskstationen'},{t:'lamp',x:1660,y:860,s:.85},{t:'crates',x:2110,y:860,s:.75},
+    {t:'barrels',x:1780,y:860,s:.7},{t:'bones',x:880,y:900,s:.8},{t:'mush',x:1240,y:900,s:.8},{t:'mush',x:2290,y:900,s:.7},{t:'tree',x:2420,y:900,s:.85});
+}
 // Hidden Bandit lair (dold karta bakom den trasiga källardörren i Bandittornet): två breda plan och ovanligt många banditer
 MAPS[20] = {name:'Hidden Bandit lair', terrain:'lair', hidden:true, hiddenOf:7, start:{x:130,y:900}, sign:{x:520,y:900},
   spawns:[['bandit','g1',[440,580,720,860,1000,1140,1280,1420,1560,1700,1840]], ['bandit','top',[460,600,740,880,1020,1160,1300,1440,1580]], ['bandit','sL',[240]], ['bandit','sR',[1760]]],
@@ -1830,7 +1849,13 @@ MAPS[19] = {name:'Drakslätten II', terrain:'wide', start:{x:2070,y:900}, sign:{
 MAPS[15] = {name:'Stockskogen', terrain:'logs', start:{x:250,y:760}, sign:{x:470,y:900}, wm:{x:.42,y:.12},
   spawns:[['stock','g1',[700,950,1200,1450,1700,1950,2200,2450,2700]], ['stock','a',[700,1000,1300,1600,1900,2200,2500,2800]],
     ['stock','b',[500,800,1100,1400,1700,2000,2300,2600]], ['stock','c',[1000,1300,1600,1900]]],
-  portals:[{x:70, y:900, to:14, toX:2930, toY:900}, {x:2930, y:900, to:18, toX:150, toY:900}]};
+  portals:[{x:70, y:900, to:14, toX:2930, toY:900}, {x:2930, y:900, to:18, toX:150, toY:900}, {x:1500, y:480, to:23, toX:200, toY:900}]};
+// Stocktåget: Skogsrälsen (uppe i mitten av Stockskogen) ⇄ Träskstationen i Träskregionen
+MAPS[23] = {name:'Skogsrälsen', terrain:'station', town:true, station:true, start:{x:200,y:900}, sign:{x:270,y:900}, wm:{x:.51,y:.065}, spawns:[],
+  portals:[{x:70, y:900, to:15, toX:1500, toY:480}]};
+MAPS[24] = {name:'Stocktåget', terrain:'train', ride:true, hidden:true, hiddenOf:23, start:{x:620,y:900}, spawns:[], portals:[]};
+MAPS[25] = {name:'Träskstationen', terrain:'swamp', isle:'trask', town:true, station:true, start:{x:1760,y:900}, sign:{x:2230,y:900}, wm:{x:.5,y:.52}, spawns:[],
+  portals:[{x:2370, y:900, closed:true}]};
 MAPS[11] = {name:'Arenan – Boss 1', terrain:'arena', start:{x:200,y:900}, sign:{x:330,y:900}, arenaStage:1, arenaBoss:'jattebar', spawns:[], portals:[]};
 MAPS[12] = {name:'Arenan – Boss 2', terrain:'arena', start:{x:200,y:900}, sign:{x:330,y:900}, arenaStage:2, arenaBoss:'mossjatte', spawns:[], portals:[]};
 MAPS[13] = {name:'Arenan – Boss 3', terrain:'arena', start:{x:200,y:900}, sign:{x:330,y:900}, arenaStage:3, arenaBoss:'askdrake', spawns:[], portals:[]};
@@ -1968,8 +1993,8 @@ function genArenaDeco(){
 }
 function genDeco(){
   DECO.back=[]; DECO.front=[]; DECO.pebbles={}; DECO.bottoms={};
-  ({town:genTownDeco, park:genParkDeco, wide:genWideDeco, tower:genTowerDeco, stone:genStoneDeco, cliff:genCliffDeco, plaza:genPlazaDeco, arena:genArenaDeco, lair:genLairDeco}[TERRAIN] || genHuntDeco)();
-  addFerns();
+  ({town:genTownDeco, park:genParkDeco, wide:genWideDeco, tower:genTowerDeco, stone:genStoneDeco, cliff:genCliffDeco, plaza:genPlazaDeco, arena:genArenaDeco, lair:genLairDeco, station:genStationDeco, swamp:genSwampDeco, train:()=>{}}[TERRAIN] || genHuntDeco)();
+  if(TERRAIN!=='train') addFerns();
 }
 const MOSS = (()=>{ const R=seeded(99), a=[]; for(let i=0;i<34;i++) a.push({r:4+R()*16, a:R()*Math.PI*2, l:.8+R()*2.2, c:['#5d8a33','#7fa93f','#a1bd52','#4a6e2a','#8a7a44'][Math.floor(R()*5)], w:1.2+R()*1.6}); const ch=[]; for(let i=0;i<9;i++) ch.push([R()*6.28,R()*6.28,['#6f9a3a','#9bb64e','#8a7a44'][i%3]]); return {arcs:a, chords:ch}; })();
 
@@ -3364,7 +3389,7 @@ function changeMap(to, x, y){
   initSpawns(); G.drops=[]; G.projs=[]; G.mprojs=[]; G.nums=[]; G.fx=[]; G.apeT=0; G.fires=[]; G.chainQ=[];
   $('#mapName').textContent=curMap().name; snapCam(); if(isOpen('quest')) renderQuest();
   for(let i=0;i<24;i++) particle(G.p.x+rand(-20,20),G.p.y-rand(0,70),pick(['#8fd0ff','#c9a2ff','#fff']),rand(-60,60),rand(-120,20),.7,3,0);
-  toast(`🌀 <b>${curMap().name}</b>`); log(`Du gick till <b>${curMap().name}</b>.`,'#ffe9a8'); mapArrivalNote();
+  if(curMap().ride) log(`🚂 Du klev på stocktåget.`,'#ffe9a8'); else { toast(`🌀 <b>${curMap().name}</b>`); log(`Du gick till <b>${curMap().name}</b>.`,'#ffe9a8'); } mapArrivalNote();
   if(isHostNet()){ netToGuests({t:'map', to, x:Math.round(G.p.x), y:G.p.y}); Net.monT=0; }
   if(G.arenaParty && !curMap().arenaStage && Net.role==='host'){ G.arenaParty=false; Net.auto=true; Sig.setLobby(autoLobby(G.mapId)).then(()=>hostUpdatePresence()).catch(()=>{}); }   // tillbaka från arenan: vanlig kanal igen
   hostUpdatePresence();
@@ -4507,6 +4532,13 @@ ART[20] = {...ART[7], sky:['#0a0706','#160f0b','#24180f'], glow:false, mote:'255
   soil:['#4a3a2c','#2a2018','#120c08'], grass:['#2a2616','#3e3820','#5a522e','#a89a68'], gradeTop:'rgba(40,20,5,.45)', gradeBot:'rgba(0,0,0,.5)'};   // Hidden Bandit lair: mörk källare
 ART[21] = {...ART[1], sky:['#5cb8f4','#a8dffb','#f4fcff']};   // Nybörjargläntan: extra ljus
 ART[18] = {...ART[15], sky:['#3a4a2e','#9a9a6a','#f0d8a0'], sunPos:[0.7,0.18], sun:'255,220,160', mote:'255,230,170', gradeTop:'rgba(255,220,160,.22)'};   // Stockskogen II: sen eftermiddag
+ART[23] = {...ART[15], sky:['#3a6a58','#8ab89a','#e2f0d2'], rayA:.12};   // Skogsrälsen: grön skog med varmt ljus
+ART[24] = {...ART[15], rayA:.06, leaves:0, moteN:20};   // Stocktåget (skogen – träsket tonas in under resan)
+ART[25] = {...ART[15], sky:['#2a332e','#56625a','#9aa292'], sunPos:[0.62,0.18], sun:'200,210,190', cloud:'#9aa49a', far:'#46524a', far2:'#3a463e', haze:'#7a867a', fog:'140,155,140',
+  forest1:'#2e3a2e', forest2:'#222e24', forest3:'#141c16', canopy:['#1e2a1a','#2e3a22','#4a5430','#6a7044'], trunk:['#1e1a14','#3a3226','#5a4e3a'],
+  grass:['#1e2a16','#2e3a1e','#4a5230','#7a7a4a'], soil:['#3e3424','#2a2418','#14100a'], rock:['#5a5a52','#7a786a','#2e2e28'],
+  light:'200,210,180', rayA:.03, mote:'190,230,140', moteN:34, moteA:.9, leaves:0, vign:'8,12,8', vignA:.7,
+  gradeTop:'rgba(120,140,120,.32)', gradeBot:'rgba(10,16,10,.45)', flowers:['#8a8a5a','#6a7a4a'], pines:.15};   // Träskstationen: dyster och öde
 const art = () => ART[G.mapId] || ART[1];
 function mkCv(w,h){ const c=document.createElement('canvas'); c.width=Math.max(1,Math.ceil(w)); c.height=Math.max(1,Math.ceil(h)); return c; }
 function hx2rgb(h){ const n=parseInt(h.slice(1),16); return [n>>16&255,n>>8&255,n&255]; }
@@ -4715,7 +4747,7 @@ function setLayer(par){
   return {x1:ox-60, x2:ox+VW/Z+60, y1:oy, y2:oy+VH/Z+20};
 }
 function drawBgLayer(L,alpha=1){
-  const v=setLayer(L.par), off=L.drift?G.time*L.drift:0;
+  const v=setLayer(L.par), off=(L.drift?G.time*L.drift:0) - (G.ride&&G.mapId===RIDE_MAP ? G.ride.dist*L.par*1.6 : 0);   // tåget: bakgrunden glider förbi
   if(v.y2<L.y0 || v.y1>L.y1) return;
   ctx.globalAlpha=alpha;
   for(let k=Math.floor((v.x1-off)/BGT)*BGT; k+off<v.x2; k+=BGT) ctx.drawImage(L.cv,k+off,L.y0,BGT,L.y1-L.y0);
@@ -5032,6 +5064,9 @@ const TERRAINS = {
   park: {w:2800, gy:900,  plats:PARK_PLATS,  ropes:PARK_ROPES,  walls:[]},
   meadow:{w:3000, gy:900, plats:MEADOW_PLATS, ropes:MEADOW_ROPES, walls:[]},
   sunhill:{w:2800, gy:900, plats:SUNHILL_PLATS, ropes:SUNHILL_ROPES, walls:[]},
+  station:{w:2500, gy:900, plats:STATION_PLATS, ropes:[], walls:[]},
+  swamp:{w:2450, gy:900, plats:SWAMPST_PLATS, ropes:[], walls:[]},
+  train:{w:1500, gy:900, plats:RIDE_PLATS, ropes:[], walls:[]},
   tower:{w:1400, gy:2000, plats:TOWER_PLATS, ropes:TOWER_ROPES, walls:[]},
   stone:{w:3000, gy:900,  plats:STONE_PLATS, ropes:STONE_ROPES, walls:[], prof:stoneProf},
   cliff:{w:3000, gy:900,  plats:CLIFF_PLATS, ropes:CLIFF_ROPES, walls:[], prof:cliffProf},
@@ -5444,6 +5479,8 @@ function drawSkyAndLayers(){
   ctx.setTransform(DPR,0,0,DPR,0,0); ctx.globalCompositeOperation='source-over'; ctx.globalAlpha=1;
   ctx.drawImage(SKY_CV,0,0,VW,VH);
   for(let i=PERF.low?1:0;i<BG.layers.length;i++) drawBgLayer(BG.layers[i]);
+  const RB=rideBg(), mx=RB?rideMix():0;   // tågresan: träsket tonas in över skogen
+  if(RB && mx>.002){ ctx.setTransform(DPR,0,0,DPR,0,0); ctx.globalAlpha=mx; ctx.drawImage(RB.sky,0,0,VW,VH); ctx.globalAlpha=1; for(let i=PERF.low?1:0;i<RB.bg.layers.length;i++) drawBgLayer(RB.bg.layers[i],mx); }
 }
 function drawAtmos(){
   const A=art(), Z=G.zoom, t=G.time;
@@ -5501,7 +5538,9 @@ function drawRimLight(){
 }
 function drawTerrain(){
   const V=G.view;
+  if(TERRAIN==='train'){ drawRide(); return; }
   for(const p of TERR){ if(p.x>V.x2+4||p.x+p.w<V.x1-4||p.y>V.y2+4||p.y+p.h<V.y1-4) continue; ctx.drawImage(p.cv,p.x,p.y,p.w,p.h); }
+  if(TERRAIN==='station'||TERRAIN==='swamp'){ drawStationTrain(); drawSwampFront(); }
 }
 function drawDecoBack(){
   const V=G.view;
@@ -5557,7 +5596,7 @@ function drawRopes(){
   }
 }
 function drawSign(){
-  const sg=curMap().sign, x=sg.x, y=sg.y, A=art();
+  const sg=curMap().sign; if(!sg) return; const x=sg.x, y=sg.y, A=art();
   if(x<G.view.x1-90||x>G.view.x2+90) return;
   ctx.fillStyle='rgba(0,0,0,.28)'; ell(ctx,x,y,46,6);
   for(const dx of [-40,40]){ const g=ctx.createLinearGradient(x+dx-5,0,x+dx+5,0); g.addColorStop(0,A.trunk[0]); g.addColorStop(1,A.trunk[2]); ctx.fillStyle=g; rr(ctx,x+dx-5,y-88,10,90,3); ctx.fill(); }
@@ -7804,6 +7843,8 @@ const LOOKS={
   torvald:{top:'#8a5a3a',fur:'#b08a5a',pants:'#3a2a1a',shoe:'#2a1a10',hair:'#c8742a',beard:'#c8742a',beardL:32,hat:'horned',cape:'#7a1a1e',item:'axe',belt:'#3a2a1a',s:1.15,eye:'#3a6a9a'},
   ylva:{top:'#4a3a30',pants:'#3a3030',shoe:'#3a2a20',hair:'#2a2230',hs:'long',hood:'#3a4a2a',item:'bow',eye:'#c08a2a',rim:'rgba(220,255,200,.4)'},
   ruben:{top:'#4a6a2a',pants:'#5a4630',shoe:'#3a2a1a',hair:'#5a3a1a',hat:'ranger',hatC:'#5a6a3a',item:'axe',beard:'#5a3a1a',beardL:16,eye:'#3d6b3a'},
+  sixten:{top:'#2a3a6a',vest:'#33467a',pants:'#232838',shoe:'#18181c',hair:'#6a4a2a',hat:'captain',hatC:'#2a3a6a',mous:1,item:'scroll',belt:'#5a3a1a',sash:'#d8b040',eye:'#3a2a1a'},
+  konduktor:{top:'#5a5244',vest:'#463e30',pants:'#3a3428',shoe:'#2a2218',hair:'#8a8478',beard:'#9a948a',hat:'captain',hatC:'#45443a',apron:'#6a5e4a',belt:'#2e2418',eye:'#4a4a3a'},
   stina:{top:'#a83a2a',stripes:'rgba(255,255,255,.35)',pants:'#3a4a6a',shoe:'#3a2a20',hair:'#c8501e',hs:'braid',hat:'beanie',hatC:'#2a4a7a',item:'pole',eye:'#2f6a9a'},
   bo:{top:'#7a5232',fur:'#4a3018',pants:'#4a3a2a',shoe:'#3a2a20',hair:'#3a2a1a',beard:'#3a2a1a',beardL:28,hat:'furhat',cape:'#5a3a1a',item:'spear',eye:'#3a4a2a'},
   saga:{top:'#6a3a8a',robe:1,pants:'#3a2a4a',shoe:'#3a2a30',hair:'#e8c870',hs:'long',item:'staff',gem:'#e0b0ff',belt:'#e8c25a',eye:'#5a3a8a'},
@@ -8660,7 +8701,7 @@ function render(){
   ctx.setTransform(s,0,0,s,-cx*s,-cy*s);
   G.view={x1:cx,y1:cy,x2:cx+VW/Z,y2:cy+VH/Z};
   if(TERRAIN==='lair') drawLairWall();
-  drawDecoBack(); drawTorches(); drawSign(); drawReadSigns(); drawWaySigns(); drawTerrain(); drawRimLight(); drawCamp(); drawRopes(); drawPortals(); drawHazards(); drawFires(); drawDecoFront(); drawShelter(false); drawNpcs();
+  drawSwampBack(); if(TERRAIN!=='train') drawDecoBack(); drawTorches(); drawSign(); drawReadSigns(); drawWaySigns(); drawTerrain(); drawRimLight(); drawCamp(); drawRopes(); drawPortals(); drawHazards(); drawFires(); drawDecoFront(); drawShelter(false); drawNpcs();
   for(const d of G.drops) drawDrop(d);
   for(const m of G.monsters) if(m.x>G.view.x1-60 && m.x<G.view.x2+60) drawMonster(m);
   if(G.mode==='game') drawOthers();
@@ -8673,7 +8714,7 @@ function render(){
   for(const f of G.fx) drawFx(f);
   drawAtmos();
   ctx.setTransform(s,0,0,s,-cx*s,-cy*s);
-  drawNums(); drawPortalHint();
+  drawNums(); drawPortalHint(); drawRideHud();
 }
 
 /* =====================================================================
@@ -10605,7 +10646,7 @@ $('#qlogBody').addEventListener('click',e=>{
   const m=e.target.closest('[data-wm]'); if(m){ G.ui.wmSel=+m.dataset.wm; G.ui.wmIsle=null; openWin('wmap'); return; }
   const q=e.target.closest('[data-cq]'); if(q){ G.ui.questId=q.dataset.cq; G.ui.questNpc=QUESTS[q.dataset.cq].npc; openWin('quest'); }
 });
-const npcWhere = id => MAPS[id].town ? 'i byn' : terrainOf(id)==='grove' ? 'vid lägret på platån i mitten av banan' : terrainOf(id)==='hunt' ? 'vid lägret på platån i mitten av banan' : 'vid lägret i början av banan';
+const npcWhere = id => MAPS[id].station ? 'på stationen' : MAPS[id].town ? 'i byn' : terrainOf(id)==='grove' ? 'vid lägret på platån i mitten av banan' : terrainOf(id)==='hunt' ? 'vid lägret på platån i mitten av banan' : 'vid lägret i början av banan';
 function mapArrivalNote(){
   if(!G.ch) return; questLogKey=null;
   for(const k of npcsOn(G.mapId)){ const id=npcQuest(k); if(id && questState(id)==='offer'){ log(`❗ ${NPCS[k].name} har ett uppdrag åt dig ${npcWhere(G.mapId)}.`,'#ffe066'); break; } }
@@ -10618,7 +10659,7 @@ function mapQuestMark(id){
   for(const k of npcsOn(id)){ const q=npcQuest(k); if(!q) continue; const st=questState(q); if(st==='complete') return '?'; if(st==='offer') mk='!'; else if(st==='active' && !mk) mk='📜'; }
   return mk;
 }
-const ISLES = {lov:{name:'Lövön', icon:'🍁'}, sol:{name:'Solön', icon:'🌻'}};
+const ISLES = {lov:{name:'Lövön', icon:'🍁'}, sol:{name:'Solön', icon:'🌻'}, trask:{name:'Träskregionen', icon:'🐸'}};
 const isleOf = id => (MAPS[id] && MAPS[id].isle) || 'lov';
 function paintWorld(cv, isle='lov'){
   // Världskarta i MapleStory-stil: en ö i havet med en region per bana, gula stigar mellan portalerna
@@ -10639,7 +10680,7 @@ function paintWorld(cv, isle='lov'){
   const lg=c.createLinearGradient(0,0,0,H); lg.addColorStop(0,'#86c562'); lg.addColorStop(1,'#5a9a40'); fillBlobs(0,lg);
   // regionernas färger
   for(const a of P){ const A=a.A, r=a.M.town?100:130;
-    const cols = a.M.terrain==='plaza' ? ['#e8c890','#c8a060'] : a.M.terrain==='cliff' ? ['#9ab8a0','#6a8a70'] : a.M.terrain==='wide' ? ['#c89a5a','#a8743a'] : a.M.terrain==='tower' ? ['#8a8890','#5e5a66'] : a.M.terrain==='stone' ? ['#e6d49a','#9ccf6a'] : a.M.town ? ['#e0a24a','#c8742a'] : [A.grass[0],A.grass[1]];
+    const cols = a.M.terrain==='swamp' ? ['#7a866a','#4a5a3e'] : a.M.terrain==='station' ? ['#a8c890','#6a9a5a'] : a.M.terrain==='plaza' ? ['#e8c890','#c8a060'] : a.M.terrain==='cliff' ? ['#9ab8a0','#6a8a70'] : a.M.terrain==='wide' ? ['#c89a5a','#a8743a'] : a.M.terrain==='tower' ? ['#8a8890','#5e5a66'] : a.M.terrain==='stone' ? ['#e6d49a','#9ccf6a'] : a.M.town ? ['#e0a24a','#c8742a'] : [A.grass[0],A.grass[1]];
     const rg=c.createRadialGradient(a.x,a.y,10,a.x,a.y,r); rg.addColorStop(0,cols[0]); rg.addColorStop(.6,cols[1]+'cc'); rg.addColorStop(1,cols[1]+'00');
     c.fillStyle=rg; c.beginPath(); c.ellipse(a.x,a.y,r,r*.72,0,0,7); c.fill(); }
   // detaljer per region
@@ -10656,7 +10697,7 @@ function paintWorld(cv, isle='lov'){
       continue; }
     if(M.terrain==='sunhill'){   // Solstrålehöjden: en kulle med en strålande sol
       c.fillStyle='#c8a84a'; c.beginPath(); c.ellipse(a.x,a.y+10,95,40,0,Math.PI,0); c.fill(); c.fillStyle='#e8d070'; c.beginPath(); c.ellipse(a.x-10,a.y+10,70,28,0,Math.PI,0); c.fill();
-      c.save(); c.translate(a.x+5,a.y-38); c.fillStyle='rgba(255,220,90,.35)'; circ(c,0,0,34); for(let k=0;k<12;k++){ c.rotate(TAU/12); c.fillStyle=k%2?'#ffb020':'#ffe066'; c.beginPath(); c.moveTo(14,-4); c.lineTo(30,0); c.lineTo(14,4); c.fill(); }
+      c.save(); c.translate(a.x+5,a.y-38); c.fillStyle='rgba(255,220,90,.35)'; circ(c,0,0,34); for(let k=0;k<12;k++){ c.rotate(Math.PI/6); c.fillStyle=k%2?'#ffb020':'#ffe066'; c.beginPath(); c.moveTo(14,-4); c.lineTo(30,0); c.lineTo(14,4); c.fill(); }
       c.fillStyle='#ffd23f'; circ(c,0,0,14); c.fillStyle='#3a2010'; circ(c,-4,-2,1.8); circ(c,4,-2,1.8); c.restore();
       continue; }
     if(M.terrain==='meadow'){   // Solrosängen: ett fält av solrosor
@@ -10694,6 +10735,10 @@ function paintWorld(cv, isle='lov'){
   c.fillStyle='rgba(60,35,10,.82)'; rr(c,12,10,150,34,8); c.fill(); c.strokeStyle='#e8c25a'; c.lineWidth=2; rr(c,12,10,150,34,8); c.stroke();
   c.fillStyle='#ffe6a0'; c.font='bold 20px Georgia,serif'; c.textAlign='center'; c.fillText(ISLES[isle].icon+' '+ISLES[isle].name,87,34);
   // båtleden till den andra ön
+  for(const a of P){ if(!a.M.station || a.M.isle!=='trask') continue;   // stocktåget mellan Lövön och Träskregionen
+    const lbl=a.M.isle==='trask'?'🚂 Tåg till Skogsrälsen (Lövön)':'🚂 Tåg till Träskregionen', up=a.y>H*.3; c.font='bold 14px Georgia,serif'; const tw=c.measureText(lbl).width+16, ly=up?a.y-58:a.y+56;
+    c.fillStyle='rgba(60,36,14,.85)'; rr(c,a.x-tw/2,ly-13,tw,24,8); c.fill(); c.fillStyle='#ffe9a8'; c.textAlign='center'; c.fillText(lbl,a.x,ly+4);
+    c.strokeStyle='#6a4a2a'; c.lineWidth=3; c.setLineDash([6,5]); c.beginPath(); c.moveTo(a.x,a.y+(up?-14:14)); c.lineTo(a.x,ly+(up?11:-13)); c.stroke(); c.setLineDash([]); }
   { const port=P.find(q=>q.M.portals.some(o=>o.boat)); if(port){ const toR=isle==='lov', ex=toR?W-30:30, ey=port.y+(toR?60:40);
       c.strokeStyle='rgba(255,255,255,.85)'; c.lineWidth=3; c.setLineDash([8,7]); c.beginPath(); c.moveTo(port.x,port.y+18); c.quadraticCurveTo((port.x+ex)/2,ey+30,ex,ey); c.stroke(); c.setLineDash([]);
       const lbl=toR?'⛵ Båt till Solön →':'← ⛵ Båt till Lövön'; c.font='bold 14px Georgia,serif'; const tw=c.measureText(lbl).width+16, lx=toR?ex-tw+10:ex-10;
@@ -10717,14 +10762,14 @@ function renderWmap(){
   for(const [sid,M] of Object.entries(MAPS)){ if(!M.wm || isleOf(+sid)!==isle) continue; const id=+sid, A=ART[id]||ART[1], [lo,hi]=mapLv(id), mk=mapQuestMark(id);
     h+=`<button class="wmn ${id===sel?'sel':''} ${id===HERE?'here':''}" data-wmn="${id}" style="left:${M.wm.x*100}%;top:${M.wm.y*100}%">
       <span class="wmimg ${M.town?'town':''}">${M.town?'🏠':''}</span>
-      <span class="wmname">${M.name}</span><span class="wmlv">${M.town?'By':`Lv ${lo}${hi>lo?'–'+hi:''}`}</span>
+      <span class="wmname">${M.name}</span><span class="wmlv">${M.town?(M.station?'🚂 Station':'By'):`Lv ${lo}${hi>lo?'–'+hi:''}`}</span>
       ${mk?`<span class="wmq ${mk==='?'?'done':''}">${mk}</span>`:''}${id===HERE?'<span class="wmpin">📍</span>':''}</button>`; }
   { const S=MAPS[sel], mobs=mapMobs(sel), [l0,l1]=mapLv(sel), below=S.wm.y<.46;
-    h+=`<div class="wmpop ${below?'below':''}" style="left:${clamp(S.wm.x,.16,.84)*100}%;top:${S.wm.y*100}%"><b>${S.name}</b><small>${S.town?'Säker by – inga monster':`Level ${l0}${l1>l0?'–'+l1:''}`}</small>
+    h+=`<div class="wmpop ${below?'below':''}" style="left:${clamp(S.wm.x,.16,.84)*100}%;top:${S.wm.y*100}%"><b>${S.name}</b><small>${S.town?(S.station?'🚂 Station – inga monster':'Säker by – inga monster'):`Level ${l0}${l1>l0?'–'+l1:''}`}</small>
       ${mobs.length?`<div class="wmpm">${mobs.map(t=>`<span><canvas data-mobq="${t}" width="84" height="64"></canvas><i>${MOBS[t].name}</i></span>`).join('')}</div>`:''}</div>`; }
   h+=`</div></div>`;
   const M=MAPS[sel], [lo,hi]=mapLv(sel);
-  h+=`<div class="wminfo"><div class="rowb"><b style="font-size:15px">${M.name}</b><span>${sel===HERE?'📍 Du är här':M.town?'🏡 Säker by – inga monster':`Rekommenderad level ${lo}${hi>lo?'–'+hi:''}`}</span></div>`;
+  h+=`<div class="wminfo"><div class="rowb"><b style="font-size:15px">${M.name}</b><span>${sel===HERE?'📍 Du är här':M.town?(M.station?'🚂 Station – inga monster':'🏡 Säker by – inga monster'):`Rekommenderad level ${lo}${hi>lo?'–'+hi:''}`}</span></div>`;
   h+=`<div class="wmmobs">${mapMobs(sel).map(t=>{ const d=MOBS[t]; return `<div class="wmmob"><canvas data-mobp="${t}" width="84" height="64"></canvas><b>${d.name}</b><small>Level ${d.lvl} · ${d.hp} HP</small>${(()=>{ const L=[...(d.mat?[CONS[d.mat].name]:[]), ...(d.extra||[]).map(([m])=>CONS[m].name), ...(d.loot||[]).map(([b])=>BASES[b].name), ...(d.pool.length||d.stoneWpn?['utrustning']:[])]; return L.length?`<small>Droppar: ${L.join(', ')}</small>`:''; })()}</div>`; }).join('')}</div>`;
   const npcs=npcsOn(sel);
   if(npcs.length) for(const k of npcs){ const q=npcQuest(k); h+=`<div class="chint" style="margin-top:4px">🧑 <b>${NPCS[k].name}</b> ${npcWhere(sel)}${q?` – ${QUESTS[q].name}: ${questStateTxt(q)}`:' – inga fler uppdrag'}</div>`; }
@@ -10755,7 +10800,7 @@ const MOB_SPECIAL = {
   jattebar:'👑 Arenaboss 1 (2 min). Kallar på 3 blåbär (20 HP) var 10:e sekund och kastar 5 bär i en båge mot dig var 20:e sekund – de exploderar där de landar (50 % av beröringsskadan).',
   mossjatte:'👑 Arenaboss 2 (2 min). Hoppar mot dig var 9:e sekund och skakar marken där den landar (röd ring, 90 % av beröringsskadan). Väcker 2 mossbollar (60 HP) var 14:e sekund.',
   askdrake:'👑 Arenaboss 3 (2 min). Laddar och sprutar 5 eldklot i en solfjäder var 6:e sekund och kallar ned 5 brinnande meteorer var 12:e sekund. Under 30 % HP blir den rasande och attackerar snabbare.',
-  bandit:'🪓 Kastar en yxa var 3:e sekund mot den som skadat den (40 % av beröringsskadan).',
+  bandit:'🔪 Kastar en kniv var 3:e sekund mot den som skadat den (40 % av beröringsskadan) – rakt fram, eller lite snett upp/ned mot en plattform intill.',
   banditboss:'🪓 Kastar en yxa varje sekund när striden börjat (40 % av beröringsskadan). Boss: 4× HP, 3× skada, +50 % EXP, kan inte bli silver. Återuppstår 30 sekunder efter att den dött.',
   eldtunga:'🔥 Stor röd drake. Laddar upp och sprutar en stråle eld framåt som en eldkastare (var 5–7 s). Miniboss med 7× HP – håll dig bakom den eller hoppa undan.',
   stockholm:'🪵 Långsam och seg (12× HP). Sprutar bark i en fontän runt sig var 5–7 s – barkbitarna faller ned överallt omkring den.',
@@ -10788,9 +10833,10 @@ function dbHTML(tab, q){
   } else if(tab==='map'){
     for(const [sid,M] of Object.entries(MAPS)){ if(M.hidden) continue; const id=+sid, sp=dbMapSpawns(id), [lo,hi]=mapLv(id);
       if(!hit(M.name+' '+Object.keys(sp).map(t=>MOBS[t].name).join(' '))) continue;
+      if(M.station){ h+=`<h3>${M.name} <small>· 🚂 station</small></h3><div class="dbrow"><div class="dbg">🚂 Stocktåg till ${M.isle==='trask'?'Skogsrälsen':'Träskstationen'} – biljett ${TICKET_PRICE} guld hos ${M.isle==='trask'?'Träskets Konduktör':'Stinsen Sixten'}, resan tar ${RIDE_T} s.</div><div class="dbg">🌀 Portaler till: ${[...new Set(M.portals.map(o=>o.closed?'🔒 (stängd)':MAPS[o.to].name))].join(', ')}</div></div>`; continue; }
       h+=`<h3>${M.name} <small>· ${M.town?'säker by':`level ${lo}${hi>lo?'–'+hi:''}`}</small></h3><div class="dbrow">`;
       if(Object.keys(sp).length){ h+=`<div class="dbmobs">${Object.entries(sp).map(([t,n])=>`<span><canvas data-dbmob="${t}" width="84" height="64"></canvas><b>${MOBS[t].name}</b><small>Lv ${MOBS[t].lvl} · ${n} st på kartan</small></span>`).join('')}</div>`;
-        h+=`<div class="dbg">♻️ Var 10:e sekund har varje dött monster (dött i minst 3 s) 75 % chans att återuppstå. Bossar har egen tid. ✦ 1 % chans att ett monster blir silver.</div>`; }
+        h+=`<div class="dbg">♻️ Var ${RESPAWN_EVERY}:e sekund har varje dött monster (dött i minst ${RESPAWN_MIN_DEAD} s) ${Math.round(RESPAWN_CHANCE*100)} % chans att återuppstå. Bossar har egen tid. ${id===21?'Inga silvermonster här.':`✦ ${fmtSv(RARE_CHANCE*100)} % chans att ett monster blir silver.`}</div>`; }
       if(M.arenaBoss){ const B=MOBS[M.arenaBoss]; h+=`<div class="dbmobs"><span><canvas data-dbmob="${M.arenaBoss}" width="84" height="64"></canvas><b>${B.name}</b><small>Lv ${B.lvl} · ${B.hp} HP</small></span></div><div class="dbg">⏱️ 2 minuter på dig. Kräver en silvernyckel (köps av Arenamästaren Torvald för 1 000 guld, eller 0,1 % från alla monster). När bossen dör öppnas en portal till nästa.</div>`; }
       if(M.hazards) h+=`<div class="dbg">🌵 Törnsnår som gör ${M.hazards[0].dmg||HAZARD_DMG} i skada om man nuddar dem (rulla igenom med Kullerbyttan).</div>`;
       if(M.mini) h+=`<div class="dbg">⚠️ <b>${MOBS[M.mini.type].name}</b> (miniboss): varje minut ${Math.round(M.mini.chance*100)} % chans att den dyker upp (bara en åt gången).</div>`;
@@ -10848,6 +10894,8 @@ const NPCS = {
   sunniva:{name:'Trädgårdsmästarinnan Sunniva', map:16, x:1080, y:900},
   gosta: {name:'Glassförsäljaren Gösta', map:16, x:1820, y:900},
   astrid:{name:'Astronomen Astrid', map:16, x:450, y:620},
+  sixten:{name:'Stinsen Sixten', map:23, x:960, y:900, train:{to:25}},
+  konduktor:{name:'Träskets Konduktör', map:25, x:1650, y:900, train:{to:23, back:true}},
 };
 // goals: monstertyp -> antal, eller 'scroll' -> antal använda scrolls. choose = välj ett av; give = får alla; classWpn = common-vapen (den levelns) för din klass.
 const QUESTS = {
@@ -11054,13 +11102,13 @@ Object.assign(QUESTS, {
     text:'Ängen är fortfarande full av upphetsade solrosor. Fäll 100 till, så får du ett vapen som lyser som solen.',
     goals:{solros:100}, exp:600, gold:800, classWpn:21, classRar:'rare'},
   solf1:{npc:'astrid', name:'Solförmörkelse', lvl:21,
-    text:'Uppe på Solstrålehöjden bor solstrålar – små solväsen som skjuter strålar rakt fram. Jag mäter hur snabbt ljuset kan släckas: fäll 5 solstrålar inom loppet av 5 sekunder, så blir det en liten solförmörkelse!',
-    how:['Gå genom portalen bredvid mig, uppe på platån i Solparken.','Skada flera solstrålar först, och fäll sedan 5 av dem snabbt efter varandra – klockan startar vid första dödsfallet.','När en solstråle börjar lysa och en prickig linje syns – hoppa eller gå bakom den!'],
+    text:'Uppe på Solstrålehöjden bor solstrålar – små solväsen som skjuter strålar rakt fram. Jag mäter hur snabbt ljuset kan släckas: fäll 8 solstrålar inom loppet av 8 sekunder, så blir det en liten solförmörkelse!',
+    how:['Gå genom portalen bredvid mig, uppe på platån i Solparken.','Skada flera solstrålar först, och fäll sedan 8 av dem snabbt efter varandra – klockan startar vid första dödsfallet.','När en solstråle börjar lysa och en prickig linje syns – hoppa eller gå bakom den!'],
     goals:{sol_eclipse:1}, exp:450, gold:600, cons:[['hpPot3',5]]},
   solf2:{npc:'astrid', name:'Solskydd', prev:'solf1',
-    text:'Fint! Nu vill jag se hur man undviker strålarna. Fäll 5 solstrålar utan att ta någon skada alls – tar du skada börjar räkningen om.',
+    text:'Fint! Nu vill jag se hur man undviker strålarna. Fäll 15 solstrålar utan att ta någon skada alls – tar du skada börjar räkningen om.',
     how:['Räkningen nollställs varje gång du tar skada, oavsett från vad.','Strålen går rakt fram – hoppa över den eller håll dig bakom solstrålen.'],
-    goals:{sol_nohit:5}, exp:550, gold:700, give:[['hjalm23','rare']], cons:[['hpPot3',5]]},
+    goals:{sol_nohit:15}, exp:550, gold:700, give:[['hjalm23','rare']], cons:[['hpPot3',5]]},
   gos1:{npc:'gosta', name:'Frön till glassen', lvl:19, prev:'sol2',   // Göstas kedja öppnas efter Sunnivas Kronblad till kransen
     text:'Solrosglass är det bästa som finns! Men jag har slut på frön. Ge mig 10 solrosfrön, så bjuder jag på något gott.',
     goals:{item_solfro:10}, exp:240, gold:350, cons:[['elxExp',2]]},
@@ -11087,7 +11135,7 @@ const QUEST_SHORT = {   // det NPC:n säger – kort och tydligt vad som ska gö
   sten1:'Ge stenbiten till Kapten Kerstin i Lövbyn.', drak1:'Döda 10 drakar. De spottar eld när du anfaller.', drak2:'Hämta en draktår – drakar tappar den ibland.', drak3:'Döda 200 drakar och lämna 3 draktårar.',
   sol1:'Döda 20 solrosor i Solrosängen (portalen i mitten).', sol2:'Döda 40 solrosor och lämna 5 kronblad.', sol3:'Döda 100 solrosor.',
   gos1:'Lämna 10 solrosfrön – solrosorna tappar dem.', gos2:'Döda 60 solrosor och lämna 15 solrosfrön.',
-  jakt5:'Rulla genom mitt törnsnår med Kullerbyttan – då tar du ingen skada!', solf1:'Fäll 5 solstrålar inom 5 sekunder på Solstrålehöjden (portalen uppe på platån).', solf2:'Fäll 5 solstrålar i rad utan att ta skada.', vildcr:'Gör ett par Vargskinnshandskar: Hantverk (H) → 🧵 Crafting.', band1:'Klättra upp i Bandittornet och besegra Banditbossen.', band2:'Döda 20 av varje monster i skogen.', band3:'Döda 50 banditer i Bandittornet. Akta dig för deras yxor!', pinn1:'Döda 30 vandrande pinnar med förmågor – inte med basattacken.', stock1:'Hoppa över 5 barkskott, rulla genom 5 stockar och fäll 40 stockar.', silver1:'Döda ett silvermonster av varje sort (inte bossar). De är sällsynta – 1 % chans.',
+  jakt5:'Rulla genom mitt törnsnår med Kullerbyttan – då tar du ingen skada!', solf1:'Fäll 8 solstrålar inom 8 sekunder på Solstrålehöjden (portalen uppe på platån).', solf2:'Fäll 15 solstrålar i rad utan att ta skada.', vildcr:'Gör ett par Vargskinnshandskar: Hantverk (H) → 🧵 Crafting.', sten2:'Fäll 80 stenkulor och Stenpappan 3 gånger på Stenmarken.', silver2:'Fäll två silverpinnar i Pinnskogen.', stock2:'Fäll 80 vandrande pinnar och 80 vandrande stockar.', stock3:'Fäll 120 vandrande stockar och Stockholmaren i Stockskogen II.', band1:'Klättra upp i Bandittornet och besegra Banditbossen.', band2:'Döda 20 av varje monster i skogen.', band3:'Döda 50 banditer i Bandittornet. Akta dig för deras yxor!', pinn1:'Döda 30 vandrande pinnar med förmågor – inte med basattacken.', stock1:'Hoppa över 5 barkskott, rulla genom 5 stockar och fäll 40 stockar.', silver1:'Döda ett silvermonster av varje sort (inte bossar). De är sällsynta – 1 % chans.',
 };
 const qShort = id => QUEST_SHORT[id] || (QUESTS[id].text.split(/(?<=[.!?])\s/)[0]);
 for(const id in QUESTS) QUESTS[id].exp=Math.round(QUESTS[id].exp*1.2*2);   // uppdrag ger 20 % mer EXP – och sedan dubbelt
@@ -11109,7 +11157,7 @@ for(const id in QUESTS) QUESTS[id].exp=Math.round(QUESTS[id].exp*1.2*2);   // up
 for(const id in QUESTS){ const Q=QUESTS[id]; if(Q.lvl && NPCS[Q.npc] && NPCS[Q.npc].map===5) Q.lvl=Math.max(1,Q.lvl-2); }   // uppdragen i Lövbyn kräver 2 level lägre
 const QUEST_ORDER_PRE = 0;
 const QUEST_ORDER = ['gl1','gl2','gl3','bar1','bar2','bar3','bar4','bar5','skr0','skr1','skr2','skr3','jakt1','jakt2','jakt3','jakt4','jakt5','pot1','pot2','pot3','pot4','pot5','vild1','vild2','vild3','vildsj','vildlw','vild4','bo1','bo2','bo3','fag1','fag2','fag3','saga0','saga1','saga2','saga3','gunnar0','gunnar1','gunnar2','gunnar3','sten1','sten2','drak1','drak2','drak3','band1','band2','band3','silver1','silver2','pinn1','stock1','stock2','stock3','sol1','sol2','sol3','gos1','gos2','solf1','solf2'];
-const QUEST_CHAINS = [ {npc:'berit', name:'Bärplockarens besvär'}, {npc:'sigvard', name:'Skrivarkonsten'}, {npc:'holger', name:'Vaktarens jakt'}, {npc:'vera', name:'Örtkvinnans brygder'}, {npc:'ylva', name:'Vargarnas spår'}, {npc:'bo', name:'Björnjakten'}, {npc:'fritiof', name:'Fågelplågan'}, {npc:'saga', name:'Skrivarmästarens prov'}, {npc:'gunnar', name:'Garvarens lära'}, {npc:'dagny', name:'Drakvaktens prov'}, {npc:'kerstin', name:'Bandittornet'}, {npc:'solve', name:'Silverjägaren'}, {npc:'ruben', name:'Pinnskogen'}, {npc:'stina', name:'Stockskogen'}, {npc:'sunniva', name:'Solrosornas uppror'}, {npc:'gosta', name:'Glassbaren'} ];
+const QUEST_CHAINS = [ {npc:'berit', name:'Bärplockarens besvär'}, {npc:'sigvard', name:'Skrivarkonsten'}, {npc:'holger', name:'Vaktarens jakt'}, {npc:'vera', name:'Örtkvinnans brygder'}, {npc:'ylva', name:'Vargarnas spår'}, {npc:'bo', name:'Björnjakten'}, {npc:'fritiof', name:'Fågelplågan'}, {npc:'saga', name:'Skrivarmästarens prov'}, {npc:'gunnar', name:'Garvarens lära'}, {npc:'dagny', name:'Drakvaktens prov'}, {npc:'kerstin', name:'Bandittornet'}, {npc:'solve', name:'Silverjägaren'}, {npc:'ruben', name:'Pinnskogen'}, {npc:'stina', name:'Stockskogen'}, {npc:'sunniva', name:'Solrosornas uppror'}, {npc:'gosta', name:'Glassbaren'}, {npc:'astrid', name:'Astronomens mätningar'} ];
 // Yrkesuppdragen och yrkes-NPC:erna är borttagna – Hantverkaren Siri på Jaktmarken I lär ut Crafting
 for(const id of ['skr0','skr1','skr2','skr3','saga0','saga1','saga2','saga3','gunnar0','gunnar1','gunnar2','gunnar3','vildlw','vild4','pot1','pot2','pot3','pot4','pot5']) delete QUESTS[id];
 for(const k of ['sigvard','saga','gunnar','vera']) delete NPCS[k];
@@ -11125,6 +11173,221 @@ QUEST_ORDER.splice(QUEST_ORDER.indexOf('bar5')+1, 0, 'cr1', 'cr2');
 QUEST_ORDER.splice(QUEST_ORDER.indexOf('vild2')+1, 0, 'vildcr');   // Ylva: hantverk mellan Flocken växer och Alfahannen
 for(let i=QUEST_CHAINS.length-1;i>=0;i--) if(!NPCS[QUEST_CHAINS[i].npc]) QUEST_CHAINS.splice(i,1);
 QUEST_CHAINS.splice(1, 0, {npc:'siri', name:'Hantverkarens lärling'});
+for(const id of QUEST_ORDER){ const n=QUESTS[id].npc; if(NPCS[n] && !QUEST_CHAINS.some(C=>C.npc===n)) QUEST_CHAINS.push({npc:n, name:NPCS[n].name}); }   // säkerhet: varje uppdrag syns i loggen och databasen
+/* =====================================================================
+   STOCKTÅGET: Skogsrälsen ⇄ Träskstationen (som båten i MapleStory)
+   Biljett 400 guld hos Stinsen Sixten / Träskets Konduktör. Resan tar 20 s på en tillfällig karta
+   där bakgrunden glider från skog till träsk (eller tillbaka).
+   ===================================================================== */
+const RIDE_T = 20, TICKET_PRICE = 400, RIDE_V = 560, RIDE_MAP = 24;
+const RIDE_TRAIN = {x0:40, cars:3, carW:330, gap:28};   // tågets vagnar på tågkartan (loket längst fram till höger)
+const rideMix = () => { const R=G.ride; if(!R) return 0; const k=clamp(R.t/RIDE_T,0,1), s=k<.18?0:k>.86?1:(k-.18)/.68, e=s*s*(3-2*s); return R.back ? 1-e : e; };   // 0 = skog, 1 = träsk
+function trainBuy(npcId){
+  const N=NPCS[npcId], ch=G.ch; if(!N || !N.train || !ch) return;
+  if(G.mapId!==N.map){ toast('Du måste stå vid stationen.'); return; }
+  if(ch.gold<TICKET_PRICE){ throttleMsg('train',`En biljett kostar ${TICKET_PRICE} guld – du har ${ch.gold}.`,'#ff9b9b'); return; }
+  ch.gold-=TICKET_PRICE; ch.rideTo=N.train.to; markDirty(true);
+  G.ride={to:N.train.to, back:!!N.train.back, t:0, dist:0, v:0, cache:{}, smokeT:0};
+  closeWin('quest'); SFX.quest&&SFX.quest();
+  log(`🎫 Du köpte en biljett (−${TICKET_PRICE} guld). Tåget går mot <b>${MAPS[N.train.to].name}</b>!`,'#ffd23f');
+  changeMap(RIDE_MAP, 620, 900);
+}
+function updateRide(dt){
+  if(G.mapId!==RIDE_MAP || G.mode!=='game' || !G.ch) { if(G.ride && G.mapId!==RIDE_MAP && G.ride.t>0) G.ride=null; return; }
+  if(!G.ride) G.ride={to:G.ch.rideTo||25, back:(G.ch.rideTo||25)===23, t:0, dist:0, v:0, cache:{}, smokeT:0};
+  const R=G.ride; R.t+=dt;
+  const k=R.t/RIDE_T, target = k<.1 ? RIDE_V*(k/.1) : k>.9 ? RIDE_V*Math.max(0,(1-k)/.1) : RIDE_V;
+  R.v=target; R.dist+=R.v*dt;
+  R.smokeT-=dt; if(R.smokeT<=0){ R.smokeT=.07+(1-R.v/RIDE_V)*.12; const lx=rideLocoX();
+    (G.rideSmoke=G.rideSmoke||[]).push({x:lx+266+rand(-4,4), y:900-152, r:9+rand(0,5), vx:-R.v*.55+rand(-20,20), vy:-60-rand(0,40), t:0, T:1.6+rand(0,.6)}); }
+  if(R.t>=RIDE_T){ const to=R.to; G.ride=null; G.rideSmoke=[]; G.ch.rideTo=null;
+    changeMap(to, to===25?1720:900, 900); SFX.quest&&SFX.quest(); log(`🚂 Tåget är framme vid <b>${MAPS[to].name}</b>.`,'#ffe9a8'); }
+}
+const rideLocoX = () => RIDE_TRAIN.x0 + RIDE_TRAIN.cars*(RIDE_TRAIN.carW+RIDE_TRAIN.gap);
+function updateTrainSmoke(dt){
+  const S=G.rideSmoke; if(!S || !S.length) return;
+  for(let i=S.length-1;i>=0;i--){ const p=S[i]; p.t+=dt; p.x+=p.vx*dt; p.y+=p.vy*dt; p.vy*=.985; p.r+=dt*(G.ride?26:12); if(p.t>=p.T) S.splice(i,1); }
+}
+/* ---------- tåget ritas med kod: vagnar och lok av stockar ---------- */
+const BARK = ['#3e2412','#6a4222','#916035'];
+function logSide(c,x1,x2,y,h,seed){
+  const g=c.createLinearGradient(0,y,0,y+h); g.addColorStop(0,BARK[2]); g.addColorStop(.4,BARK[1]); g.addColorStop(1,BARK[0]);
+  c.fillStyle=g; rr(c,x1,y,x2-x1,h,h/2); c.fill(); c.strokeStyle='rgba(28,14,4,.9)'; c.lineWidth=2; c.stroke();
+  c.strokeStyle='rgba(30,14,4,.4)'; c.lineWidth=1.3; let k=seed;
+  for(let x=x1+h*.7; x<x2-h*.7; x+=14+(k=(k*9301+49297)%233280)%18){ const yy=y+h*(.3+((k>>3)%5)*.1); c.beginPath(); c.moveTo(x,yy); c.lineTo(x+8+(k%7),yy+.5); c.stroke(); }
+  c.strokeStyle='rgba(255,230,180,.22)'; c.lineWidth=1.5; c.beginPath(); c.moveTo(x1+h*.5,y+h*.2); c.lineTo(x2-h*.5,y+h*.2); c.stroke();
+}
+function logCut(c,x,y,rx,ry){
+  c.fillStyle='#d9b27a'; c.beginPath(); c.ellipse(x,y,rx,ry,0,0,TAU2); c.fill(); c.strokeStyle='#3a2410'; c.lineWidth=1.6; c.stroke();
+  c.strokeStyle='rgba(130,80,36,.65)'; c.lineWidth=1; for(const k of [.68,.4]){ c.beginPath(); c.ellipse(x,y,rx*k,ry*k,0,0,TAU2); c.stroke(); }
+  c.fillStyle='#8a5a2a'; c.beginPath(); c.ellipse(x,y,rx*.14,ry*.14,0,0,TAU2); c.fill();
+}
+const TAU2 = Math.PI*2;
+function woodWheel(c,x,y,r,a){
+  c.fillStyle='rgba(0,0,0,.25)'; c.beginPath(); c.ellipse(x,y+r+1,r*.9,3,0,0,TAU2); c.fill();
+  c.fillStyle='#5a3618'; c.beginPath(); c.arc(x,y,r,0,TAU2); c.fill(); c.strokeStyle='#24140a'; c.lineWidth=3; c.stroke();
+  c.strokeStyle='#8a5c30'; c.lineWidth=2; c.beginPath(); c.arc(x,y,r-4,0,TAU2); c.stroke();
+  c.strokeStyle='#2e1a0a'; c.lineWidth=2.6; for(let i=0;i<4;i++){ const q=a+i*Math.PI/4*2; c.beginPath(); c.moveTo(x+Math.cos(q)*(r-4),y+Math.sin(q)*(r-4)); c.lineTo(x-Math.cos(q)*(r-4),y-Math.sin(q)*(r-4)); c.stroke(); }
+  c.fillStyle='#c89a5a'; c.beginPath(); c.arc(x,y,r*.22,0,TAU2); c.fill(); c.strokeStyle='#3a2410'; c.lineWidth=1.4; c.stroke();
+}
+function drawLogCar(c,x1,x2,Y,a,seed){
+  // stolpar och räcke på bortre sidan (bakom spelaren)
+  c.strokeStyle='#4a2c14'; c.lineWidth=5; c.lineCap='round';
+  for(const x of [x1+16,(x1+x2)/2,x2-16]){ c.beginPath(); c.moveTo(x,Y+2); c.lineTo(x,Y-30); c.stroke(); }
+  logSide(c,x1+8,x2-8,Y-36,11,seed+3);
+  // ram och hjul
+  c.fillStyle='#2e1a0c'; c.fillRect(x1+16,Y+38,x2-x1-32,12);
+  woodWheel(c,x1+62,Y+54,19,a); woodWheel(c,x2-62,Y+54,19,a);
+  // golvet: två liggande stockar
+  logSide(c,x1+3,x2-3,Y+18,22,seed+7); logSide(c,x1,x2,Y-1,22,seed);
+  logCut(c,x1+8,Y+10,5,10.5); logCut(c,x1+11,Y+29,4.5,10); logCut(c,x2-8,Y+10,5,10.5);
+  // rep som binder ihop
+  c.strokeStyle='#c8a46a'; c.lineWidth=3; for(const x of [x1+40,x2-40]){ c.beginPath(); c.moveTo(x,Y-1); c.lineTo(x,Y+40); c.stroke(); } c.strokeStyle='rgba(90,60,20,.6)'; c.lineWidth=1; for(const x of [x1+40,x2-40]) for(let y=Y+3;y<Y+40;y+=5){ c.beginPath(); c.moveTo(x-1.5,y); c.lineTo(x+1.5,y+3); c.stroke(); }
+}
+function drawLogLoco(c,x0,Y,a,t,moving){
+  // ram, hjul och vevstake
+  c.fillStyle='#2e1a0c'; c.fillRect(x0+8,Y+26,330,16);
+  const wy=Y+46; for(const x of [x0+70,x0+160,x0+250]) woodWheel(c,x,wy,27,a); woodWheel(c,x0+325,Y+58,15,a*1.8);
+  const px=Math.cos(a)*14, py=Math.sin(a)*14; c.strokeStyle='#c89a5a'; c.lineWidth=6; c.lineCap='round'; c.beginPath(); c.moveTo(x0+70+px,wy+py); c.lineTo(x0+250+px,wy+py); c.stroke();
+  c.strokeStyle='#5a3618'; c.lineWidth=2; c.stroke();
+  // pannan: en stor liggande stock med repband
+  logSide(c,x0+96,x0+322,Y-74,100,11);
+  c.fillStyle='#c8a46a'; for(const x of [x0+150,x0+212,x0+274]){ c.fillRect(x,Y-73,9,98); } c.strokeStyle='rgba(80,50,20,.7)'; c.lineWidth=1; for(const x of [x0+150,x0+212,x0+274]) for(let y=Y-70;y<Y+24;y+=6){ c.beginPath(); c.moveTo(x,y); c.lineTo(x+9,y+4); c.stroke(); }
+  logCut(c,x0+318,Y-24,15,49);
+  // lykta fram
+  const gl=c.createRadialGradient(x0+332,Y-86,2,x0+332,Y-86,46); gl.addColorStop(0,'rgba(255,230,140,.85)'); gl.addColorStop(1,'rgba(255,200,90,0)'); c.fillStyle=gl; c.beginPath(); c.arc(x0+332,Y-86,46,0,TAU2); c.fill();
+  c.fillStyle='#3a2410'; rr(c,x0+322,Y-98,20,22,3); c.fill(); c.fillStyle='#ffe08a'; rr(c,x0+326,Y-94,12,14,2); c.fill();
+  // ångdom och skorsten (ihålig stock med krage)
+  logSide(c,x0+168,x0+200,Y-96,26,5); c.fillStyle=BARK[1]; rr(c,x0+170,Y-100,28,30,12); c.fill(); c.strokeStyle='#2a160a'; c.lineWidth=2; c.stroke();
+  c.fillStyle=BARK[1]; c.beginPath(); c.moveTo(x0+250,Y-70); c.lineTo(x0+252,Y-132); c.lineTo(x0+282,Y-132); c.lineTo(x0+284,Y-70); c.closePath(); c.fill(); c.strokeStyle='#2a160a'; c.lineWidth=2; c.stroke();
+  c.strokeStyle='rgba(30,14,4,.4)'; c.lineWidth=1.2; for(let y=Y-124;y<Y-74;y+=11){ c.beginPath(); c.moveTo(x0+258,y); c.lineTo(x0+262,y+6); c.stroke(); }
+  c.fillStyle=BARK[2]; c.beginPath(); c.moveTo(x0+240,Y-132); c.lineTo(x0+294,Y-132); c.lineTo(x0+300,Y-150); c.lineTo(x0+234,Y-150); c.closePath(); c.fill(); c.stroke();
+  c.fillStyle='#d9b27a'; c.beginPath(); c.ellipse(x0+267,Y-150,33,5,0,0,TAU2); c.fill(); c.stroke(); c.fillStyle='#1a0c04'; c.beginPath(); c.ellipse(x0+267,Y-150,22,3,0,0,TAU2); c.fill();
+  // hytten av plankor med tak av en kluven stock
+  c.fillStyle='#7a4c26'; c.fillRect(x0,Y-118,112,146); c.strokeStyle='#2a160a'; c.lineWidth=2; c.strokeRect(x0,Y-118,112,146);
+  c.strokeStyle='rgba(40,20,6,.55)'; c.lineWidth=1.5; for(let x=x0+14;x<x0+112;x+=14){ c.beginPath(); c.moveTo(x,Y-118); c.lineTo(x,Y+28); c.stroke(); }
+  c.fillStyle='#1e1208'; rr(c,x0+26,Y-100,60,46,5); c.fill(); const wg=c.createLinearGradient(0,Y-100,0,Y-54); wg.addColorStop(0,'rgba(255,190,90,.55)'); wg.addColorStop(1,'rgba(255,140,40,.25)'); c.fillStyle=wg; rr(c,x0+29,Y-97,54,40,4); c.fill();
+  c.strokeStyle='#4a2c14'; c.lineWidth=3; c.beginPath(); c.moveTo(x0+56,Y-100); c.lineTo(x0+56,Y-54); c.stroke();
+  logSide(c,x0-14,x0+126,Y-134,18,21);
+  // plogen av käppar
+  c.strokeStyle='#5a3618'; c.lineWidth=4; for(let i=0;i<5;i++){ c.beginPath(); c.moveTo(x0+318+i*3,Y+18+i*8); c.lineTo(x0+352,Y+68); c.stroke(); }
+  c.strokeStyle='#2a160a'; c.lineWidth=1; for(let i=0;i<5;i++){ c.beginPath(); c.moveTo(x0+318+i*3,Y+18+i*8); c.lineTo(x0+352,Y+68); c.stroke(); }
+}
+function drawTrainSmoke(){
+  for(const p of G.rideSmoke||[]){ const k=p.t/p.T, a=(1-k)*.75; if(a<=0) continue;
+    const g=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r); g.addColorStop(0,`rgba(235,235,235,${a})`); g.addColorStop(.6,`rgba(200,200,205,${a*.6})`); g.addColorStop(1,'rgba(180,180,190,0)');
+    ctx.fillStyle=g; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,TAU2); ctx.fill(); }
+}
+function drawWholeTrain(x0, Y, a, moving){
+  const T=RIDE_TRAIN, bob=moving?Math.sin(G.time*17)*.9:0;
+  ctx.save(); ctx.translate(0,bob);
+  for(let i=0;i<T.cars;i++){ const x1=x0+i*(T.carW+T.gap), x2=x1+T.carW;
+    if(i>0){ ctx.strokeStyle='#c8a46a'; ctx.lineWidth=4; ctx.beginPath(); ctx.moveTo(x1-T.gap-6,Y+30); ctx.quadraticCurveTo(x1-T.gap/2,Y+40,x1+6,Y+30); ctx.stroke(); }
+    drawLogCar(ctx,x1,x2,Y,a,i*17+3); }
+  const lx=x0+T.cars*(T.carW+T.gap); ctx.strokeStyle='#c8a46a'; ctx.lineWidth=4; ctx.beginPath(); ctx.moveTo(lx-T.gap-6,Y+30); ctx.quadraticCurveTo(lx-T.gap/2,Y+40,lx+6,Y+30); ctx.stroke();
+  drawLogLoco(ctx,lx,Y,a,G.time,moving);
+  ctx.restore();
+}
+function drawRails(Y, scroll, x1, x2, mix){
+  ctx.fillStyle=mixHex('#7a6a52','#4a4a3a',mix); ctx.fillRect(x1,Y+78,x2-x1,16);
+  ctx.fillStyle='rgba(0,0,0,.18)'; for(let x=Math.floor((x1+scroll)/9)*9-scroll; x<x2; x+=9) ctx.fillRect(x,Y+82+((x*13)&3),3,2);
+  ctx.fillStyle=mixHex('#4e3018','#3a2a1a',mix); for(let x=Math.floor((x1+scroll)/38)*38-scroll; x<x2; x+=38) ctx.fillRect(x,Y+74,22,9);
+  ctx.fillStyle='#8a8a92'; ctx.fillRect(x1,Y+71,x2-x1,4); ctx.fillStyle='#c8c8d0'; ctx.fillRect(x1,Y+71,x2-x1,1.5);
+}
+/* ---------- tågkartan: marken rusar förbi och går från skog till träsk ---------- */
+function rideObj(i, mix){
+  const R=G.ride; let o=R.cache[i]; if(o) return o;
+  const h1=Math.abs(Math.sin(i*12.9898)*43758.5453)%1, h2=Math.abs(Math.sin(i*78.233)*12345.678)%1, sw=h2<mix;
+  o=R.cache[i]={sw, kind: h1<.12 ? 'none' : sw ? (h1<.45?'dead':h1<.7?'reeds':h1<.85?'stump':'pool') : (h1<.45?'pine':h1<.7?'oak':h1<.88?'bush':'post'), s:.75+h2*.5, dx:(h1*97)%60};
+  return o;
+}
+function drawRideObj(o,x,gy){
+  const s=o.s; ctx.save(); ctx.translate(x,gy); ctx.scale(s,s);
+  if(o.kind==='pine'){ ctx.fillStyle='#3a2414'; ctx.fillRect(-5,-30,10,30); for(const [w,y,col] of [[52,-30,'#1e4a26'],[42,-70,'#2a5a2e'],[30,-104,'#3a7038']]){ ctx.fillStyle=col; ctx.beginPath(); ctx.moveTo(-w,y); ctx.lineTo(0,y-58); ctx.lineTo(w,y); ctx.closePath(); ctx.fill(); } }
+  else if(o.kind==='oak'){ ctx.fillStyle='#4a2c16'; ctx.fillRect(-6,-60,12,60); for(const [dx,dy,r,col] of [[-22,-70,30,'#2e5a26'],[20,-74,32,'#2e5a26'],[0,-98,36,'#3c7030'],[-8,-104,18,'#5a8a3a']]){ ctx.fillStyle=col; ctx.beginPath(); ctx.arc(dx,dy,r,0,TAU2); ctx.fill(); } }
+  else if(o.kind==='bush'){ for(const [dx,dy,r,col] of [[-18,-14,18,'#2e5a26'],[14,-16,20,'#36662c'],[0,-26,18,'#4a7a34']]){ ctx.fillStyle=col; ctx.beginPath(); ctx.arc(dx,dy,r,0,TAU2); ctx.fill(); } }
+  else if(o.kind==='post'){ ctx.fillStyle='#5a3a1e'; ctx.fillRect(-4,-120,8,120); ctx.fillRect(-26,-112,52,6); ctx.fillStyle='#2a1a0a'; ctx.fillRect(-22,-116,4,4); ctx.fillRect(18,-116,4,4); }
+  else if(o.kind==='dead'){ ctx.strokeStyle='#3a3428'; ctx.lineCap='round'; ctx.lineWidth=10; ctx.beginPath(); ctx.moveTo(0,0); ctx.quadraticCurveTo(-6,-60,4,-120); ctx.stroke();
+    ctx.lineWidth=5; for(const [x1,y1,x2,y2] of [[2,-70,-34,-104],[3,-92,30,-128],[-12,-96,-28,-126],[4,-118,18,-140]]){ ctx.beginPath(); ctx.moveTo(x1,y1); ctx.quadraticCurveTo((x1+x2)/2,(y1+y2)/2-8,x2,y2); ctx.stroke(); }
+    ctx.strokeStyle='rgba(90,110,60,.7)'; ctx.lineWidth=2; for(const x of [-30,-22,26,30]){ ctx.beginPath(); ctx.moveTo(x,-104+(x>0?-22:0)); ctx.lineTo(x+2,-76+(x>0?-22:0)); ctx.stroke(); } }
+  else if(o.kind==='reeds'){ for(let k=0;k<7;k++){ const x=-18+k*6, h=40+(k*13)%26; ctx.strokeStyle='#5a6a32'; ctx.lineWidth=2.5; ctx.beginPath(); ctx.moveTo(x,0); ctx.quadraticCurveTo(x+3,-h/2,x+(k%2?4:-3),-h); ctx.stroke(); if(k%2){ ctx.fillStyle='#4a2c16'; rr(ctx,x+1,-h-12,6,14,3); ctx.fill(); } } }
+  else if(o.kind==='stump'){ ctx.fillStyle='#3a3226'; ctx.beginPath(); ctx.moveTo(-16,0); ctx.lineTo(-12,-34); ctx.lineTo(-4,-28); ctx.lineTo(2,-40); ctx.lineTo(10,-30); ctx.lineTo(16,0); ctx.closePath(); ctx.fill(); ctx.fillStyle='rgba(60,80,70,.7)'; ctx.beginPath(); ctx.ellipse(0,2,30,6,0,0,TAU2); ctx.fill(); }
+  else if(o.kind==='pool'){ ctx.fillStyle='rgba(50,70,60,.85)'; ctx.beginPath(); ctx.ellipse(0,0,60,9,0,0,TAU2); ctx.fill(); ctx.strokeStyle='rgba(180,200,170,.35)'; ctx.lineWidth=1.5; ctx.beginPath(); ctx.ellipse(-10,-1,30,3,0,0,TAU2); ctx.stroke(); }
+  ctx.restore();
+}
+function drawRide(){
+  const V=G.view, R=G.ride||{dist:0,v:0,cache:{}}, mix=rideMix(), Y=900, d=R.dist;
+  if(!R.cache) R.cache={};
+  // föremål som rusar förbi bakom tåget (parallax .8)
+  const SP=190, par=.8, base=Y+66;
+  ctx.fillStyle=mixHex('#3a6a2a','#3a4a30',mix); ctx.fillRect(V.x1,base-4,V.x2-V.x1,V.y2-base+4);
+  if(G.ride) for(let i=Math.floor((V.x1+d*par-220)/SP); i<=Math.ceil((V.x2+d*par+220)/SP); i++){ const o=rideObj(i,mix); if(o.kind==='none') continue; drawRideObj(o, i*SP+o.dx-d*par, base); }
+  // dimma över träsket
+  if(mix>.05){ ctx.save(); ctx.globalAlpha=mix*.32; for(let k=0;k<3;k++){ const yy=base-30-k*46, off=(G.time*(14+k*6)+k*300)%600; const g=ctx.createLinearGradient(0,yy-30,0,yy+30); g.addColorStop(0,'rgba(190,210,190,0)'); g.addColorStop(.5,'rgba(190,210,190,.8)'); g.addColorStop(1,'rgba(190,210,190,0)'); ctx.fillStyle=g; ctx.fillRect(V.x1-off,yy-30,V.x2-V.x1+600,60); } ctx.restore(); }
+  // marken under spåret
+  ctx.fillStyle=mixHex('#4a3a24','#2e2a1e',mix); ctx.fillRect(V.x1,Y+92,V.x2-V.x1,V.y2-Y);
+  drawRails(Y, d%38, V.x1-10, V.x2+10, mix);
+  drawWholeTrain(RIDE_TRAIN.x0, Y, d/22, !!G.ride && R.v>5);
+  drawTrainSmoke();
+}
+function drawRideHud(){
+  if(G.mapId!==RIDE_MAP || !G.ride) return;
+  const R=G.ride, left=Math.max(0,Math.ceil(RIDE_T-R.t)), txt=`🚂 Stocktåget mot ${MAPS[R.to].name} · framme om ${left} s`;
+  ctx.setTransform(DPR,0,0,DPR,0,0); ctx.font='bold 14px system-ui'; ctx.textAlign='center';
+  const w=Math.max(ctx.measureText(txt).width+30, 260), x=VW/2, y=G.touch?58:64;
+  ctx.fillStyle='rgba(30,20,10,.82)'; rr(ctx,x-w/2,y-18,w,40,10); ctx.fill(); ctx.strokeStyle='rgba(214,170,98,.7)'; ctx.lineWidth=1.5; ctx.stroke();
+  ctx.fillStyle='#ffe9a8'; ctx.fillText(txt,x,y);
+  ctx.fillStyle='rgba(0,0,0,.5)'; rr(ctx,x-w/2+12,y+8,w-24,6,3); ctx.fill(); ctx.fillStyle='#d6aa62'; rr(ctx,x-w/2+12,y+8,(w-24)*clamp(R.t/RIDE_T,0,1),6,3); ctx.fill();
+}
+/* ---------- stationerna: rälsen och ett parkerat tåg (bakom spelaren) ---------- */
+const STATION_TRAIN = {23:1060, 25:150};
+function drawStationTrain(){
+  const x0=STATION_TRAIN[G.mapId]; if(x0==null) return; const V=G.view, Y=826, sw=G.mapId===25;
+  drawRails(Y, 0, 0, WORLD.w, sw?1:0);
+  if(x0+1500<V.x1 || x0>V.x2) return;
+  drawWholeTrain(x0, Y, 0, false);
+  if(!G.stSmoke || G.stSmoke.m!==G.mapId) G.stSmoke={m:G.mapId, t:0, list:[]};
+  const S=G.stSmoke; S.t-=1/60; if(S.t<=0){ S.t=sw?.9:.45; S.list.push({x:x0+RIDE_TRAIN.cars*(RIDE_TRAIN.carW+RIDE_TRAIN.gap)+266, y:Y-152, r:7, vx:sw?-6:-12, vy:-28, t:0, T:2.6}); }
+  for(let i=S.list.length-1;i>=0;i--){ const p=S.list[i]; p.t+=1/60; p.x+=p.vx/60; p.y+=p.vy/60; p.r+=.25; if(p.t>p.T){ S.list.splice(i,1); continue; } const a=(1-p.t/p.T)*(sw?.45:.6);
+    const g=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r); g.addColorStop(0,`rgba(225,225,225,${a})`); g.addColorStop(1,'rgba(200,200,205,0)'); ctx.fillStyle=g; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,TAU2); ctx.fill(); }
+}
+/* ---------- Träskstationen: döda träd, vass, pölar och dimma ---------- */
+const SWAMP_TREES=[[90,1.1],[620,.9],[1720,1.2],[2050,.85],[2380,1]];
+function drawSwampBack(){
+  if(TERRAIN!=='swamp') return; const V=G.view;
+  for(const [x,s] of SWAMP_TREES){ if(x<V.x1-200||x>V.x2+200) continue; ctx.save(); ctx.translate(x,900); ctx.scale(s*1.6,s*1.6); ctx.globalAlpha=.9;
+    ctx.strokeStyle='#2e2a22'; ctx.lineCap='round'; ctx.lineWidth=12; ctx.beginPath(); ctx.moveTo(0,0); ctx.quadraticCurveTo(-8,-70,6,-150); ctx.stroke();
+    ctx.lineWidth=6; for(const [x1,y1,x2,y2] of [[3,-80,-44,-120],[4,-110,40,-150],[-10,-120,-34,-156],[6,-148,24,-176],[2,-60,30,-84]]){ ctx.beginPath(); ctx.moveTo(x1,y1); ctx.quadraticCurveTo((x1+x2)/2,(y1+y2)/2-10,x2,y2); ctx.stroke(); }
+    ctx.strokeStyle='rgba(110,130,80,.75)'; ctx.lineWidth=2.2; for(const [x,y,l] of [[-40,-118,30],[-30,-112,22],[36,-148,26],[28,-142,34],[-32,-152,20]]){ ctx.beginPath(); ctx.moveTo(x,y); ctx.quadraticCurveTo(x+3,y+l/2,x,y+l); ctx.stroke(); }
+    ctx.restore(); }
+}
+function drawSwampFront(){
+  if(TERRAIN!=='swamp') return; const V=G.view, t=G.time;
+  for(const [x,w] of [[480,90],[980,70],[1500,110],[2240,80]]){ if(x+w<V.x1||x-w>V.x2) continue; ctx.fillStyle='rgba(40,60,50,.9)'; ctx.beginPath(); ctx.ellipse(x,903,w,8,0,0,TAU2); ctx.fill(); ctx.strokeStyle='rgba(170,200,160,.28)'; ctx.lineWidth=1.4; ctx.beginPath(); ctx.ellipse(x-w*.2,902,w*.45,2.5,0,0,TAU2); ctx.stroke();
+    const rp=(t*.6+x)%2; if(rp<1){ ctx.strokeStyle=`rgba(190,210,180,${.4*(1-rp)})`; ctx.beginPath(); ctx.ellipse(x+w*.3,903,6+rp*18,1.5+rp*4,0,0,TAU2); ctx.stroke(); } }
+  for(const x of [300,560,1100,1380,1880,2180]){ if(x<V.x1-40||x>V.x2+40) continue; for(let k=0;k<6;k++){ const xx=x-15+k*6, h=34+(k*11)%22, sway=Math.sin(t*1.2+k+x)*2; ctx.strokeStyle='#4a5a2a'; ctx.lineWidth=2.4; ctx.beginPath(); ctx.moveTo(xx,902); ctx.quadraticCurveTo(xx+2,902-h/2,xx+sway,902-h); ctx.stroke(); if(k%2){ ctx.fillStyle='#3a2414'; rr(ctx,xx+sway-2.5,902-h-11,5,12,2.5); ctx.fill(); } } }
+  ctx.save(); ctx.globalAlpha=.22; for(let k=0;k<2;k++){ const yy=884-k*40, off=(t*(10+k*5)+k*400)%800; const g=ctx.createLinearGradient(0,yy-26,0,yy+26); g.addColorStop(0,'rgba(200,215,195,0)'); g.addColorStop(.5,'rgba(200,215,195,.9)'); g.addColorStop(1,'rgba(200,215,195,0)'); ctx.fillStyle=g; ctx.fillRect(V.x1-off,yy-26,V.x2-V.x1+800,52); } ctx.restore();
+}
+function drawConductorDirt(n){   // Träskets Konduktör: lerfläckar och flugor
+  ctx.save(); ctx.fillStyle='rgba(70,52,30,.55)';
+  for(const [dx,dy,r] of [[-7,-8,4],[5,-14,3],[-4,-30,3.5],[8,-38,2.5],[-9,-52,2.8],[3,-4,3.2]]){ ctx.beginPath(); ctx.ellipse(n.x+dx,n.y+dy,r,r*.7,.4,0,TAU2); ctx.fill(); }
+  ctx.fillStyle='#1a1a14'; for(let i=0;i<3;i++){ const a=G.time*(3+i)+i*2.1, x=n.x+Math.cos(a)*(16+i*5), y=n.y-70+Math.sin(a*1.3)*8; ctx.beginPath(); ctx.arc(x,y,1.5,0,TAU2); ctx.fill(); }
+  ctx.restore();
+}
+/* ---------- himmel och bakgrund för träsket (tonas in under resan) ---------- */
+let RIDE_BG=null;
+function makeSkyCv(A){
+  const sw=Math.max(2,Math.round(VW/2)), sh=Math.max(2,Math.round(VH/2)), cv=mkCv(sw,sh), y=cv.getContext('2d');
+  const sg=y.createLinearGradient(0,0,0,sh); sg.addColorStop(0,A.sky[0]); sg.addColorStop(.6,A.sky[1]); sg.addColorStop(1,A.sky[2]); y.fillStyle=sg; y.fillRect(0,0,sw,sh);
+  const g=y.createRadialGradient(sw*A.sunPos[0],sh*A.sunPos[1],0,sw*A.sunPos[0],sh*A.sunPos[1],sh*.5); g.addColorStop(0,`rgba(${A.sun},.35)`); g.addColorStop(1,`rgba(${A.sun},0)`); y.fillStyle=g; y.fillRect(0,0,sw,sh);
+  return cv;
+}
+function rideBg(){
+  if(G.mapId!==RIDE_MAP) return null;
+  const key=VW+'x'+VH+'|'+artQ();
+  if(!RIDE_BG || RIDE_BG.key!==key) RIDE_BG={key, bg:buildBg(ART[25],artQ()), sky:makeSkyCv(ART[25])};
+  return RIDE_BG;
+}
 /* ---------- Kringresande handlare: Butik Bob (Lövbyn, jämn level) och Solveig Solstråle (Solparken, udda level) ----------
    Var de står bestäms när man går in på kartan. Lagret följer gubben och fylls på när han/hon dyker upp på en ny level. */
 const MERCH = {
@@ -11221,7 +11484,7 @@ function drawMerchProps(id,n){   // Bobs vagn och Solveigs solstånd
 const chainQuests = npc => QUEST_ORDER.filter(id=>QUESTS[id].npc===npc);
 const npcsOn = mapId => Object.keys(NPCS).filter(k=>NPCS[k].map===mapId);
 const CRAFT_GOAL = {craft_handskar:['par handskar','Gör handskar','par handskar'], craft_hjalm:['mössor','Gör en mössa','mössa'], craft_skor:['par skor','Gör skor','par skor'], craft_vapen:['vapen','Gör ett vapen','vapen'], craft_pot:['drycker eller elixir','Brygg drycker','dryck'], craft_elix:['elixir','Brygg elixir','elixir']};
-const goalName = (t,n) => t==='sol_eclipse' ? `Fäll 5 solstrålar inom 5 sekunder${G.solBest?` (bästa: ${G.solBest}/5)`:''}` : t==='sol_nohit' ? `Fäll ${n} solstrålar i rad utan att ta skada` : t==='soul_wpn' ? `Ge ditt vapen själ (${n} ${n===1?'nivå':'nivåer'}) i väskan` : t==='jump_bark' ? `Hoppa över ${n} barkskott` : t==='roll_stock' ? `Rulla genom ${n} stockar med Kullerbyttan` : t.startsWith('abil_') ? `Döda ${n} ${MOBS[t.slice(5)].name.toLowerCase()} med förmågor (inte basattack)` : t==='roll_thorn' ? `Rulla genom Holgers törnsnår med Kullerbyttan${n>1?` ${n} gånger`:''}` : t==='use_elix' ? `Drick ${n} elixir` : t.startsWith('buy_') ? `Köp ${n} ${CONS[t.slice(4)].name} i butiken (B)` : t==='scroll_wpn' ? `Använd vapenscrolls på ditt vapen ${n} gånger` : t.startsWith('have_') ? `Samla ${n} ${CONS[t.slice(5)].name}` : t.startsWith('item_') ? `Lämna in ${n} ${CONS[t.slice(5)].name}` : t==='scroll' ? `Använd scrolls ${n} gånger` : CRAFT_GOAL[t] ? `Tillverka ${n} ${n===1?CRAFT_GOAL[t][2]:CRAFT_GOAL[t][0]} (hantverk, H)` : t.startsWith('silver_') ? `Döda ${n} ${RARE_DEFS[t.slice(7)].name}` : `Döda ${n} ${MOBS[t].name}`;
+const goalName = (t,n) => t==='sol_eclipse' ? `Fäll ${SOL_N} solstrålar inom ${SOL_N} sekunder${G.solBest?` (bästa: ${G.solBest}/${SOL_N})`:''}` : t==='sol_nohit' ? `Fäll ${n} solstrålar i rad utan att ta skada` : t==='soul_wpn' ? `Ge ditt vapen själ (${n} ${n===1?'nivå':'nivåer'}) i väskan` : t==='jump_bark' ? `Hoppa över ${n} barkskott` : t==='roll_stock' ? `Rulla genom ${n} stockar med Kullerbyttan` : t.startsWith('abil_') ? `Döda ${n} ${MOBS[t.slice(5)].name.toLowerCase()} med förmågor (inte basattack)` : t==='roll_thorn' ? `Rulla genom Holgers törnsnår med Kullerbyttan${n>1?` ${n} gånger`:''}` : t==='use_elix' ? `Drick ${n} elixir` : t.startsWith('buy_') ? `Köp ${n} ${CONS[t.slice(4)].name} i butiken (B)` : t==='scroll_wpn' ? `Använd vapenscrolls på ditt vapen ${n} gånger` : t.startsWith('have_') ? `Samla ${n} ${CONS[t.slice(5)].name}` : t.startsWith('item_') ? `Lämna in ${n} ${CONS[t.slice(5)].name}` : t==='scroll' ? `Använd scrolls ${n} gånger` : CRAFT_GOAL[t] ? `Tillverka ${n} ${n===1?CRAFT_GOAL[t][2]:CRAFT_GOAL[t][0]} (hantverk, H)` : t.startsWith('silver_') ? `Döda ${n} ${RARE_DEFS[t.slice(7)].name}` : `Döda ${n} ${MOBS[t].name}`;
 const goalShort = t => t==='sol_eclipse' ? 'Solförmörkelse' : t==='sol_nohit' ? 'Solstrålar utan skada' : t==='soul_wpn' ? 'Själ i vapnet' : t==='jump_bark' ? 'Hoppa över bark' : t==='roll_stock' ? 'Rulla genom stockar' : t.startsWith('abil_') ? MOBS[t.slice(5)].name+' (förmåga)' : t==='roll_thorn' ? 'Rulla genom törnet' : t==='use_elix' ? 'Drick elixir' : t.startsWith('buy_') ? 'Köp '+CONS[t.slice(4)].name : t==='scroll_wpn' ? 'Scrolla vapnet' : (t.startsWith('item_')||t.startsWith('have_')) ? CONS[t.slice(5)].name : t==='scroll' ? 'Scrolls' : CRAFT_GOAL[t] ? CRAFT_GOAL[t][1] : t.startsWith('silver_') ? RARE_DEFS[t.slice(7)].name : MOBS[t].name;
 function questState(id, ch=G.ch){
   const q=(ch.quests||{})[id], Q=QUESTS[id];
@@ -11281,13 +11544,14 @@ function questEvent(type){
   updateBagHi();
 }
 const questKill = questEvent;
+const SOL_N = 8;   // Solförmörkelse: 8 solstrålar inom 8 sekunder
 function solRayKill(){   // Solförmörkelse (5 inom 5 s) och Solskydd (5 utan skada)
-  const now=G.time; G.solKills=(G.solKills||[]).filter(x=>now-x<5); G.solKills.push(now);
+  const now=G.time; G.solKills=(G.solKills||[]).filter(x=>now-x<SOL_N); G.solKills.push(now);
   const p=G.p, n=G.solKills.length;
-  if(questState('solf1')==='active'){ G.solBest=Math.max(G.solBest||0, Math.min(5,n)); questLogKey=null;
-    if(p) G.fx.push({type:'text', x:p.x, y:p.y-p.h-40, text:n>=5?'🌑 Solförmörkelse!':`☀️ ${n}/5 inom 5 s`, color:n>=5?'#ffe066':'#ffd23f', t:0, dur:.9, size:n>=5?17:14});
-    if(n>=5){ G.solKills=[]; questEvent('sol_eclipse'); } }
-  if(questState('solf2')==='active' && p){ questEvent('sol_nohit'); const q=G.ch.quests.solf2; if(q && q.state==='active') G.fx.push({type:'text', x:p.x, y:p.y-p.h-40, text:`🛡️ ${q.prog.sol_nohit||0}/5 utan skada`, color:'#9fe0ff', t:0, dur:.9, size:14}); }
+  if(questState('solf1')==='active'){ G.solBest=Math.max(G.solBest||0, Math.min(SOL_N,n)); questLogKey=null;
+    if(p) G.fx.push({type:'text', x:p.x, y:p.y-p.h-40, text:n>=SOL_N?'🌑 Solförmörkelse!':`☀️ ${n}/${SOL_N} inom ${SOL_N} s`, color:n>=SOL_N?'#ffe066':'#ffd23f', t:0, dur:.9, size:n>=SOL_N?17:14});
+    if(n>=SOL_N){ G.solKills=[]; questEvent('sol_eclipse'); } }
+  if(questState('solf2')==='active' && p){ questEvent('sol_nohit'); const q=G.ch.quests.solf2; if(q && q.state==='active') G.fx.push({type:'text', x:p.x, y:p.y-p.h-40, text:`🛡️ ${q.prog.sol_nohit||0}/${QUESTS.solf2.goals.sol_nohit} utan skada`, color:'#9fe0ff', t:0, dur:.9, size:14}); }
 }
 function solNoHitReset(){
   const q=G.ch && G.ch.quests && G.ch.quests.solf2; if(!q || q.state!=='active' || !(q.prog.sol_nohit>0)) return;
@@ -11342,18 +11606,28 @@ function renderQuestLog(){
     else if(st==='active') rows.push(`<div class="ql" data-q="${id}"><b>📜 ${Q.name}</b>${goalRowsShort(Q,q).map(([g,v,n])=>`<div class="qgoal ${v>=n?'ok':''}"><span>${g}</span><span>${v}/${n}</span></div>`).join('')}</div>`);
     else if(st==='complete') rows.push(`<div class="ql done" data-q="${id}"><b>✔ ${Q.name}</b>Lämna in hos ${npc.name}</div>`);
   }
-  const key=rows.join('');
+  const col=qlogCollapsed(), nA=rows.filter(r=>r.startsWith('<div class="ql" ')).length, nD=rows.filter(r=>r.includes('ql done')).length, nO=rows.filter(r=>r.includes('ql offer')).length;
+  const key=(col?'c':'o')+rows.join('');
   if(key===questLogKey) return; questLogKey=key;
-  el.classList.remove('hidden');
-  el.innerHTML=`<div class="qh" data-qlog="1">UPPDRAG <span class="qhl">📖 logg${G.touch?'':' (Q)'}</span></div>`+key;
+  el.classList.remove('hidden'); el.classList.toggle('col', col);
+  const sum=[nA?`📜${nA}`:'', nD?`<span class="ok">✔${nD}</span>`:'', nO?`<span style="color:#ffe066">❗${nO}</span>`:''].filter(Boolean).join(' ');
+  el.innerHTML=`<div class="qh"><button class="qtog" data-qtog="1" title="${col?'Visa':'Dölj'} uppdragen">${col?'▸':'▾'}</button><span class="qht" data-qtog="1">UPPDRAG${col&&sum?` <span class="qsum">${sum}</span>`:''}</span><span class="qhl" data-qlog="1">📖 logg${G.touch?'':' (Q)'}</span></div>`+(col?'':`<div class="qrows">${rows.join('')}</div>`);
 }
-$('#questLog').addEventListener('click',e=>{ if(e.target.closest('[data-qlog]')){ openWin('qlog'); return; } const q=e.target.closest('[data-q]'); if(!q) return; G.ui.questId=q.dataset.q; G.ui.questNpc=QUESTS[q.dataset.q].npc; openWin('quest'); });
+function qlogCollapsed(){ const v=localStorage.getItem('jaktmarken_qcol'); return v===null ? !!G.touch : v==='1'; }   // mobil: hopfälld från början
+$('#questLog').addEventListener('click',e=>{ if(e.target.closest('[data-qtog]')){ e.stopPropagation(); localStorage.setItem('jaktmarken_qcol', qlogCollapsed()?'0':'1'); questLogKey=null; renderQuestLog(); return; } if(e.target.closest('[data-qlog]')){ openWin('qlog'); return; } const q=e.target.closest('[data-q]'); if(!q) return; G.ui.questId=q.dataset.q; G.ui.questNpc=QUESTS[q.dataset.q].npc; openWin('quest'); });
 function renderQuest(){
+  if(G.ui.qAbandon && G.ui.qAbandon!==G.ui.questId) G.ui.qAbandon=null;
   if(!G.ui.questNpc && !G.ui.questId){ const f=QUEST_ORDER.find(i=>['active','complete'].includes(questState(i))) || QUEST_ORDER.find(i=>questState(i)==='offer'); if(f){ G.ui.questId=f; G.ui.questNpc=QUESTS[f].npc; } }
   if(!G.ui.questNpc && !G.ui.questId){ $('#questBody').innerHTML=`<div>Du har inga uppdrag just nu.</div><div class="row" style="margin-top:10px"><button class="btn sec" data-qa="later">Stäng</button></div>`; return; }
   const npcId=G.ui.questNpc || (G.ui.questId && QUESTS[G.ui.questId].npc), npc=NPCS[npcId];
   const id=G.ui.questId;
   let h=npc?`<div style="font-weight:900;color:#ffe9a8;margin-bottom:6px">💬 ${npc.name}</div>`:'';
+  if(!id && npc && npc.train){   // biljett till stocktåget
+    const back=npc.train.back, to=MAPS[npc.train.to].name, can=G.ch.gold>=TICKET_PRICE;
+    h+=back ? `<div style="margin-bottom:8px">“Hrm… ännu en resenär. Inte många kommer hit, och ännu färre stannar. Tåget tillbaka till <b>${to}</b> kostar <b>${TICKET_PRICE} guld</b>. Resan tar ungefär ${RIDE_T} sekunder – ta dig härifrån medan du kan.”</div>`
+      : `<div style="margin-bottom:8px">“Välkommen till Skogsrälsen! Härifrån går stocktåget till <b>Träskregionen</b> – en dyster plats där monstren är <b>level 22 och uppåt</b>. En biljett kostar <b>${TICKET_PRICE} guld</b>, och resan tar ungefär ${RIDE_T} sekunder. Tillbaka kommer du med Träskets Konduktör.”</div>${G.ch.level<22?`<div class="qlow">⚠️ Du är level ${G.ch.level} – monstren i Träskregionen är level 22 och uppåt.</div>`:''}`;
+    h+=`<div style="margin:6px 0">🪙 Ditt guld: <b>${G.ch.gold}</b></div><div class="row"><button class="btn gold" data-train="${G.ui.questNpc}" ${can?'':'disabled'}>🎫 Köp biljett och åk (${TICKET_PRICE} 🪙)</button><button class="btn sec" data-qa="later">Inte nu</button></div>`;
+    $('#questBody').innerHTML=h; return; }
   if(!id && npc && npc.arena){
     const keys=consCount('silvernyckel');
     h+=`<div style="margin-bottom:8px">“Välkommen till arenan! Tre bossar väntar – en i taget, och du har <b>2 minuter</b> på dig per boss. Fäll bossen så öppnas en portal till nästa. Det kostar en <b>silvernyckel</b> att komma in. Alla monster kan tappa en (0,1 %), annars säljer jag dem för 1 000 guld.”</div>
@@ -11376,20 +11650,30 @@ function renderQuest(){
   const away = `<div style="color:#ffb86b;font-size:12.5px">Prata med ${npc.name} på ${MAPS[npc.map].name} för att ${st==='complete'?'lämna in':'ta'} uppdraget.</div>`;
   if(st==='locked') h+= Q.lvl&&G.ch.level<Q.lvl ? `<div class="row"><button class="btn sec" data-qa="later">Stäng</button></div>` : `<div style="color:var(--muted)">Gör de tidigare uppdragen först.</div>`;
   else if(st==='offer') h+= here ? `<div class="row"><button class="btn green" data-qa="accept">Acceptera</button><button class="btn sec" data-qa="later">Inte nu</button></div>` : away;
-  else if(st==='active') h+=`<div class="row"><button class="btn sec" data-qa="later">Stäng</button></div>`;
+  else if(st==='active') h+=`<div class="row"><button class="btn sec" data-qa="later">Stäng</button>${abandonBtn(id)}</div>`;
   else if(st==='complete'){
-    if(!here) h+=away;
+    if(!here) h+=away+`<div class="row" style="margin-top:6px">${abandonBtn(id)}</div>`;
     else if(Q.choose) h+=`<b>Välj din belöning:</b><div class="qchoices">${Q.choose.map(b=>{ const it=makeItem(b,Q.rarity); return `<div class="qchoice" style="border-color:${RAR[Q.rarity].color}" data-claim="${b}"><img src="${iconURL(it)}" alt=""><b style="color:${RAR[Q.rarity].color}">${it.name}</b><small>${WTYPE[it.wtype]} · Attack ${it.atkMin}–${it.atkMax}</small></div>`; }).join('')}</div>`;
     else h+=`<div class="row"><button class="btn gold" data-claim="">🎁 Hämta belöning</button></div>`;
   } else h+=`<div style="color:#7ee787">✔ Uppdraget är avklarat.</div>`;
   $('#questBody').innerHTML=h;
 }
 $('#questBody').addEventListener('click',e=>{
+  const tb=e.target.closest('[data-train]'); if(tb){ trainBuy(tb.dataset.train); return; }
   const ar=e.target.closest('[data-arena]'); if(ar){ if(ar.dataset.arena==='buy') buyArenaKey(); else enterArena(); return; }
   const c=e.target.closest('[data-claim]'); if(c){ claimQuest(G.ui.questId, c.dataset.claim); return; }
   const a=e.target.closest('[data-qa]'); if(!a) return;
-  if(a.dataset.qa==='accept') acceptQuest(G.ui.questId); else closeWin('quest');
+  if(a.dataset.qa==='accept') acceptQuest(G.ui.questId);
+  else if(a.dataset.qa==='abandon'){ if(G.ui.qAbandon===G.ui.questId) abandonQuest(G.ui.questId); else { G.ui.qAbandon=G.ui.questId; renderQuest(); } }
+  else closeWin('quest');
 });
+function abandonBtn(id){ const sure=G.ui.qAbandon===id; return `<button class="btn ${sure?'red':'sec'} sm" data-qa="abandon" style="margin-left:auto">${sure?'⚠️ Säker? Tryck igen för att överge':'🗑️ Överge uppdrag'}</button>`; }
+function abandonQuest(id){   // som i WoW: uppdraget och dess framsteg försvinner, och kan tas igen hos NPC:n
+  const ch=G.ch, Q=QUESTS[id]; if(!ch || !Q || !ch.quests[id] || !['active','complete'].includes(ch.quests[id].state)) return;
+  delete ch.quests[id]; G.ui.qAbandon=null; if(id==='solf1') G.solBest=0;
+  log(`🗑️ Du övergav uppdraget <b>${Q.name}</b>. Du kan ta det igen hos ${NPCS[Q.npc].name}.`,'#ff9b9b');
+  questLogKey=null; markDirty(true); questItemsSync(); updateBagHi(); refreshOpen(); renderQuest();
+}
 /* Rita NPC:er */
 function drawNpc(c0, id, n, face){
   const t=G.time;
@@ -11409,6 +11693,7 @@ function drawNpcs(){
     const face = G.p ? (G.p.x<n.x?-1:1) : 1;
     if(n.merch) drawMerchProps(id, n);
     drawNpc(ctx, id, n, face);
+    if(id==='konduktor') drawConductorDirt(n);
   }
   if(G.mode==='game' && G.p && !G.p.dead){
     const id=npcNear(); if(id){ const txt=G.touch?`Tryck på ${NPCS[id].name.split(' ')[1]} för att prata`:'Mellanslag för att prata';
@@ -11912,7 +12197,8 @@ function showCreate(){
 function startGame(ch, isNew){
   AUTO.t=1.5; AUTO.fail=0;
   { const k=G.acct&&G.acct.keys; if(Array.isArray(k) && k.length===9 && k.every(x=>typeof x==='string')){ KEYB=k.slice(); try{ localStorage.setItem('jaktmarken_keys', JSON.stringify(KEYB)); }catch(e){} } else if(G.acct && KEYB.join()!==KEY_DEF.join()) G.acct.keys=KEYB.slice(); }
-  ch.kills=ch.kills||{}; ch.map=MAPS[ch.map]?ch.map:1; if(MAPS[ch.map].arenaStage) ch.map=10;   // man börjar aldrig mitt i arenan ch.quests=ch.quests||{}; questLogKey=null; G.ui.questId=null; G.ui.questNpc=null; ch.prof=ch.prof||{}; for(const k in PROFS) ch.prof[k]=ch.prof[k]||{skill:1};
+  ch.kills=ch.kills||{}; ch.map=MAPS[ch.map]?ch.map:1; if(MAPS[ch.map].arenaStage) ch.map=10;   // man börjar aldrig mitt i arenan
+  if(MAPS[ch.map].ride){ ch.map=ch.rideTo||23; ch.rideTo=null; }   // laddade om mitt i tågresan: man är framme ch.quests=ch.quests||{}; questLogKey=null; G.ui.questId=null; G.ui.questNpc=null; ch.prof=ch.prof||{}; for(const k in PROFS) ch.prof[k]=ch.prof[k]||{skill:1};
   while(ch.exp>=expReq(ch.level)){ ch.exp-=expReq(ch.level); ch.level++; }   // ny EXP-kurva
   for(const id in ch.quests){ const q=ch.quests[id]; if(QUESTS[id] && q.state==='active' && questGoalsDone(id, ch)) q.state='complete'; }
   // Talangerna har gjorts om: okända talanger återbetalas och gamla förmågor tas bort från snabbfältet
@@ -12323,7 +12609,7 @@ async function netJoin(hostId, auto=false){
 const AUTO = {busy:false, t:3, fail:0};
 const autoWorldOn = () => localStorage.getItem('jaktmarken_auto')!=='0' && (Cloud.on || TESTNET);
 const autoLobby = map => 'jaktmarken-lobby-m'+map;
-const autoMapOk = () => G.mode==='game' && !curMap().arenaStage;
+const autoMapOk = () => G.mode==='game' && !curMap().arenaStage && !curMap().ride;   // tågresan görs ensam
 const chanWanted = () => (Cloud.on || TESTNET) && (autoWorldOn() || partyMates().some(([,m])=>m.map===G.mapId));   // av: bara när partyt är på samma karta
 const chanOk = (id,x,map) => id!==Net.myId && x.auto && x.mid===map && x.v===NET_VER && x.n<PARTY_MAX && ((myPid() && (x.pids||[]).includes(myPid())) || (autoWorldOn() && !x.priv));
 const chanSort = (a,b) => ((myPid()&&(b[1].pids||[]).includes(myPid()))?1:0)-((myPid()&&(a[1].pids||[]).includes(myPid()))?1:0) || b[1].n-a[1].n || (a[0]<b[0]?-1:1);
@@ -12533,7 +12819,7 @@ function update(dt){
   G.time+=dt; if(G.shakeT>0) G.shakeT=Math.max(0,G.shakeT-dt);
   if(G.mode==='game' && G.p){ updatePlayer(dt); checkContact(); }
   G.mprojs=G.mprojs||[];
-  updatePotCd(); updateMonsters(dt); spawnTick(dt); updateProjs(dt); updateMProjs(dt); updateBombs(dt); updateRain(dt); updateHippie(dt); updateDrops(dt); updateFx(dt); netTick(dt); updateCamera(dt);
+  updatePotCd(); updateMonsters(dt); spawnTick(dt); updateProjs(dt); updateMProjs(dt); updateBombs(dt); updateRain(dt); updateHippie(dt); updateRide(dt); updateTrainSmoke(dt); updateDrops(dt); updateFx(dt); netTick(dt); updateCamera(dt);
   if(G.mode==='game'){ arenaTick(dt); hudT-=dt; if(hudT<=0){ hudT=0.1; updateHud(); updateArenaHud(); } }
 }
 let last=performance.now();
