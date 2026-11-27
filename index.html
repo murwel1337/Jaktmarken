@@ -986,6 +986,10 @@ CRB('crBootSkugga','skor','Skuggdrakstövlar',18,14,{str:8,int:8,agi:8},{look:'s
 // Solön (level 21): solrosornas utrustning, Solkransen (Rare, 0,2 %) och en tillverkad solrosmantel
 for(const [id,slot,name] of [['brost21','brost','Solrosrustning'],['byxor21','byxor','Stjälkbyxor'],['handskar21','handskar','Bladhandskar'],['skor21','skor','Rotskor'],['balte21','balte','Solbälte']]){ gearBase(id,slot,name,21); BASES[id].look='sun'; }
 gearBase('yxa21','vapen','Solyxa',21,'yxa'); gearBase('bage21','vapen','Solstrålebåge',21,'bage'); gearBase('stav21','vapen','Solrosstav',21,'stav'); gearBase('kniv21','vapen','Solkniv',21,'kniv');
+// Solstrålehöjden (level 23): strålarnas utrustning
+for(const [id,slot,name] of [['brost23','brost','Strålrustning'],['byxor23','byxor','Strålbyxor'],['handskar23','handskar','Strålhandskar'],['skor23','skor','Strålstövlar'],['balte23','balte','Strålbälte']]){ gearBase(id,slot,name,23); BASES[id].look='sun'; }
+gearBase('hjalm23','hjalm','Strålkrona',23); gearBase('axel23','axel','Strålaxlar',23);
+gearBase('yxa23','vapen','Strålyxa',23,'yxa'); gearBase('bage23','vapen','Strålbåge',23,'bage'); gearBase('stav23','vapen','Strålstav',23,'stav'); gearBase('kniv23','vapen','Strålkniv',23,'kniv'); gearBase('nave23','vapen','Strålnävar',23,'nave');
 BASES.hjalmSol = {id:'hjalmSol', slot:'hjalm', name:'Solkransen', req:21, armor:13, fixed:{str:6,int:6,agi:6}, atk:3, xp:3, look:'sunC'};
 CRB('crCloakSol','mantel','Solrosmantel',22,14,{str:9,int:9,agi:9},{look:'sun2',move:4});
 const CR_MAIN = {yxa:'str', bage:'agi', stav:'int', kniv:'agi', nave:'str'};
@@ -1191,7 +1195,7 @@ const SKALLA_MULT = 1.6, SKALLA_DAZE = 1.5, SKALLA_VT = 5, SKALLA_VULN = 30;   /
 const BOMB_R = 85, KNIV_N = 10, KNIV_G = 820;
 const knivN = () => KNIV_N + tv('k_fler');
 const SPELLS = {
-  bombpil:  {cls:'hippie',  lvl:4, icon:'💣', name:'Bombpil',          cd:12, mp:8,  atk:true, d:()=>`Skjuter en pil som exploderar och gör ${BOMB_MULT*100}% skada på alla fiender i närheten (radie ${Math.round(BOMB_R*(1+tv('h_radie')/100))}). Fienderna blir bedövade i ${fmtSv(BOMB_STUN)} s (inte bossar).${rank('b_brand')?` Lämnar en brinnande yta i ${FIRE_T} s (${tv('b_brand')}% basskada per sekund).`:''}`},
+  bombpil:  {cls:'hippie',  lvl:4, icon:'💣', name:'Bombpil',          cd:12, mp:8,  atk:true, d:()=>`Skjuter en pil som exploderar och gör ${BOMB_MULT*100}% skada på alla fiender i närheten (radie ${Math.round(BOMB_R*(1+tv('h_radie')/100))}). Fienderna blir bedövade i ${fmtSv(BOMB_STUN)} s (inte bossar).${rank('b_brand')?` Lämnar en brinnande yta i ${FIRE_T} s (totalt ${tv('b_brand')}% basskada).`:''}`},
   flower:   {cls:'hippie',  lvl:8, icon:'🌸', name:'Flower power',     cd:20, mp:15, d:()=>`+100% attackhastighet i ${4+tv('h_blomma')} sekunder.`},
   pilregn:  {cls:'hippie',  lvl:12, icon:'🌧️', name:'Pilregn',         cd:14, mp:18, atk:true, d:()=>`Skjuter upp en skur pilar som regnar ner över fienden framför dig: ${PILREGN_N+tv('h_regn')} pilar under drygt 1,5 s. Varje pil gör 45% skada på alla fiender där den slår ner.`},
   eko:      {cls:'viskare', lvl:4, icon:'🌬️', name:'Ekande viskning',  cd:10, mp:10, atk:true, d:()=>{ const h=3+tv('v_ekohopp'), f=20-tv('v_ekoklar'); return `En viskning som gör ${ECHO_BASE}% skada och studsar vidare till ${h} fiender till. Tappar ${f}% skada per träff (${Array.from({length:h+1},(_,i)=>Math.max(0,ECHO_BASE-i*f)+'%').join(' → ')}).`; }},
@@ -1287,12 +1291,12 @@ const WFI_T = 5, BOMB_MULT = 1.5, BOMB_STUN = 1.5, FIRE_T = 5;   // Wait for it:
 TREES.hippie_b = {name:'Snajp', talents:[
   {id:'n_slow',  tier:1, max:3, icon:'🐢', name:'Tålamod',     v:[10,20,30], d:v=>`Du skjuter ${v}% långsammare, men alla dina attacker och förmågor gör ${v}% mer skada.`},
   {id:'n_range', tier:1, max:3, icon:'🔭', name:'Långt håll',  v:[10,20,30], d:v=>`+${v}% räckvidd.`},
-  {id:'n_glas',  tier:2, max:1, icon:'🍷', name:'Glaskanon', need:['n_slow',3], v:[1], d:()=>`−30 Str (mindre HP), men varje Str ger även +0,1 attack (räknat på din Str före avdraget).`},
+  {id:'n_glas',  tier:2, max:1, icon:'🍷', name:'Glaskanon', need:['n_slow',3], v:[1], d:()=>`−30 Str (mindre HP), men varje Str du har kvar ger även +0,1 attack.`},
   {id:'n_wait',  tier:3, max:3, icon:'⏳', name:'Wait for it', v:[20,30,40], d:(v,r)=>`Var ${WFI_T}:e sekund laddar du upp en pil. Nästa basattack gör +${v}% skada. Du kan ha upp till ${r} laddning${r>1?'ar':''}.`},
   {id:'n_kill',  tier:4, max:3, icon:'💀', name:'Jaktlycka',   v:[33,67,100], d:v=>`När du dödar ett monster har du ${v}% chans att få en laddning av Wait for it.`},
 ]};
 TREES.hippie_c = {name:'Boomer', talents:[
-  {id:'b_brand', tier:1, max:3, icon:'🔥', name:'Brinnande mark',  v:[40,80,120], d:v=>`Bombpilen lämnar en brinnande yta i ${FIRE_T} sekunder. Fiender i den tar ${v}% av din basskada per sekund.`},
+  {id:'b_brand', tier:1, max:3, icon:'🔥', name:'Brinnande mark',  v:[40,80,120], d:v=>`Bombpilen lämnar en brinnande yta i ${FIRE_T} sekunder. Fiender i den tar totalt ${v}% av din basskada (fördelat över ${FIRE_T} s).`},
   {id:'b_extra', tier:2, max:3, icon:'🎆', name:'Extra smällare',  v:[10,20,30],  d:v=>`Dina basattacker har ${v}% chans att även skjuta en bombpil (utan nedkylning).`},
   {id:'b_kedja', tier:3, max:3, icon:'💥', name:'Kedjereaktion',   v:[10,20,30],  d:v=>`När du dödar en fiende har den ${v}% chans att explodera som en bombpil.`},
 ]};
@@ -1409,6 +1413,7 @@ Object.assign(MOBS, {
 });
 // Solön (level 21): glada solrosor som laddar upp en solexplosion runt sig när en spelare kommer nära
 Object.assign(MOBS, {
+  solstrale: mobDefine({lvl:23, name:'Solstråle', speed:62, w:44, h:58, drop:0.025, pool:['brost23','byxor23','handskar23','skor23','balte23','hjalm23','axel23','yxa23','bage23','stav23','kniv23','nave23'], maxRar:'rare', map:22, beam:true}),
   solros: mobDefine({lvl:21, name:'Solros', speed:50, w:40, h:84, drop:0.02, pool:['brost21','byxor21','handskar21','skor21','balte21','yxa21','bage21','stav21','kniv21','nave21'], maxRar:'uncommon', mat:'solfro', matP:.15, map:17, sun:true, extra:[['kronblad',.08]]}),
 });
 // Arenabossar: kan inte bli silver, droppar alltid utrustning eller själar (arenaLoot)
@@ -1440,7 +1445,7 @@ MOBS.eldtunga = (()=>{ const b=mobDefine({lvl:20, name:'Eldtunga', speed:70, w:1
 MOBS.stockholm = (()=>{ const b=mobDefine({lvl:16, name:'Stockholmaren', speed:26, w:92, h:150, drop:0, pool:[], map:18, boss:true, mini:true, fountain:true,
   miniMsg:'🪵 <b style="color:#e8c08a">Stockholmaren</b> har vaknat i skogen!'}); b.hp*=12; b.touch=Math.round(b.touch*1.5); b.exp*=8; b.gold*=6; b.book=[1,5,15,40];
   b.loot=[['wMagiskPinne',.03,'epic'], ['tr_rotfaste',.03,'epic']]; b.extra=[['scrReset',.05]]; return b; })();
-const MOB_ORDER = ['flugsvamp','blabar','mossa','kissekatt','vildhund','varg','bjorn','skata','hok','pinne','stock','drake','sten','bandit','banditboss','stenappa','jattebar','mossjatte','askdrake','solros','eldtunga','stockholm'];
+const MOB_ORDER = ['flugsvamp','blabar','mossa','kissekatt','vildhund','varg','bjorn','skata','hok','pinne','stock','drake','sten','bandit','banditboss','stenappa','jattebar','mossjatte','askdrake','solros','solstrale','eldtunga','stockholm'];
 /* Silvermonster: 1% chans vid varje spawn. Dubbelt så stort, 5x HP och skada, 3x EXP, droppar alltid ett föremål. */
 const RARE_CHANCE = 0.01;
 const RARE_DEFS = {};
@@ -1606,6 +1611,14 @@ const PARK_PLATS = [
   {id:'upP', x1:380, x2:900, y:620, floor:2, safe:true},
 ];
 const PARK_ROPES = [{x:880, top:620, bottom:900}];
+// Solstrålehöjden: solig kulle ovanför Solparken – plattformar i trappsteg, lägret till vänster
+const SUNHILL_PLATS = [
+  {id:'g1', x1:0, x2:2800, y:900, solid:true, floor:1},
+  {id:'camp', x1:60, x2:380, y:760, floor:2, safe:true},
+  {id:'a', x1:520, x2:1250, y:760, floor:2}, {id:'b', x1:1450, x2:2300, y:760, floor:2},
+  {id:'c', x1:850, x2:1800, y:620, floor:3}, {id:'d', x1:2050, x2:2650, y:620, floor:3}, {id:'e', x1:1150, x2:1600, y:480, floor:4},
+];
+const SUNHILL_ROPES = [{x:340,top:760,bottom:900},{x:640,top:760,bottom:900},{x:960,top:620,bottom:760},{x:1550,top:760,bottom:900},{x:1700,top:620,bottom:760},{x:2150,top:620,bottom:900},{x:1300,top:480,bottom:620}];
 // Solrosängen: bred äng med några plattformar, ett säkert läger till vänster
 const MEADOW_PLATS = [
   {id:'g1', x1:0, x2:3000, y:900, solid:true, floor:1},
@@ -1786,11 +1799,15 @@ MAPS[10] = {name:'Arenaporten', town:true, terrain:'plaza', start:{x:200,y:900},
   spawns:[], portals:[{x:70, y:900, to:8, toX:2930, toY:845}, {x:1490, y:900, to:16, toX:320, toY:900, boat:true, w1:1420, w2:1600}]};
 // Solön: båten från Arenaporten går till Solparken. Där finns tre portaler: uppe på platån, i mitten och till höger.
 MAPS[16] = {name:'Solparken', town:true, terrain:'park', isle:'sol', start:{x:320,y:900}, sign:{x:540,y:900}, wm:{x:.3,y:.6},
-  spawns:[], portals:[{x:140, y:900, to:10, toX:1400, toY:900, boat:true, w1:0, w2:230}, {x:640, y:620, closed:true}, {x:1400, y:900, to:17, toX:200, toY:900}, {x:2700, y:900, closed:true}]};
+  spawns:[], portals:[{x:140, y:900, to:10, toX:1400, toY:900, boat:true, w1:0, w2:230}, {x:640, y:620, to:22, toX:200, toY:760}, {x:1400, y:900, to:17, toX:200, toY:900}, {x:2700, y:900, closed:true}]};
 MAPS[17] = {name:'Solrosängen', terrain:'meadow', isle:'sol', start:{x:200,y:760}, sign:{x:470,y:900}, wm:{x:.68,y:.4},
   spawns:[['solros','g1',[620,860,1100,1340,1580,1820,2060,2300,2540,2800]], ['solros','a',[620,880,1140]], ['solros','b',[1620,1880,2140]],
     ['solros','c',[1000,1250,1500,1750]], ['solros','d',[2500,2760]], ['solros','e',[1350,1550]]],
   portals:[{x:70, y:900, to:16, toX:1400, toY:900}]};
+MAPS[22] = {name:'Solstrålehöjden', terrain:'sunhill', isle:'sol', start:{x:200,y:760}, sign:{x:470,y:900}, wm:{x:.16,y:.24},
+  spawns:[['solstrale','g1',[620,900,1180,1460,1740,2020,2300,2580]], ['solstrale','a',[640,900,1160]], ['solstrale','b',[1560,1820,2080]],
+    ['solstrale','c',[1000,1300,1600]], ['solstrale','d',[2200,2480]], ['solstrale','e',[1260,1480]]],
+  portals:[{x:70, y:900, to:16, toX:640, toY:620}]};
 // Arenan: tre bossar i rad, 2 minuter per boss. Portaler skapas när bossen dör.
 // Pinnskogen (uppe till vänster från Lövbyn, där Drakslätten låg): ovanligt många vandrande pinnar
 MAPS[14] = {name:'Pinnskogen', terrain:'grove', start:{x:1500,y:760}, sign:{x:330,y:900}, wm:{x:.6,y:.16},
@@ -1838,6 +1855,13 @@ function genHuntDeco(){
     const depth = p.solid?150:22, arr=[];
     for(let i=0;i<w/(p.solid?28:40);i++) arr.push({x:p.x1+6+R()*(w-12), y:p.y+18+R()*depth, r:1.5+R()*3, c:pc(['#8d5f35','#c08a55','#9b6b40','#6f4a2a'])});
     DECO.pebbles[p.id]=arr;
+  }
+  if(TERRAIN==='sunhill'){   // Solstrålehöjden: glesa träd, buskar, stenar och några solrosor i gyllene ljus
+    for(const [x,s] of [[480,.95],[1900,1.1],[2700,.9]]) DECO.back.push({t:'tree',x,y:900,s});
+    for(let x=140;x<2760;x+=150+R()*170) DECO.back.push({t:R()<.3?'sunfl':R()<.6?'rock':'bush',x,y:900,s:.6+R()*.5});
+    for(const p of PLATS){ if(p.solid) continue; const w=p.x2-p.x1; for(let i=0;i<Math.max(1,w/300);i++){ const x=p.x1+30+R()*(w-60); DECO.back.push({t:R()<.4?'sunfl':R()<.7?'rock':'bush',x,y:p.y,s:.45+R()*.35}); } }
+    DECO.back.push({t:'fence',x1:60,x2:380,y:900});
+    DECO.back.sort((a,b)=>(a.t==='tree'?0:1)-(b.t==='tree'?0:1)); return;
   }
   if(TERRAIN==='meadow'){   // Solrosängen: stora solrosor, buskar och några träd
     for(const [x,s] of [[420,1],[1700,1.15],[2650,.95]]) DECO.back.push({t:'tree',x,y:900,s});
@@ -2167,7 +2191,7 @@ function calcStats(ch){
   s[C.main] += L;   // varje level: +2 i klassens huvudstat, +1 i övriga
   s.eqAtk=0; s.eqMove=0;
   for(const k in ch.eq){ const it=ch.eq[k]; if(!it) continue; s.armor+=it.armor||0; for(const st of STATS) s[st]+=it[st]||0; if(it.slot!=='vapen') s.eqAtk+=it.atk||0; s.eqMove+=it.move||0; s.xpPct=(s.xpPct||0)+(it.xp||0); s.cdmg=(s.cdmg||0)+(it.cdmg||0); s.eqCdmg=(s.eqCdmg||0)+(it.cdmg||0); s.eqDodge=(s.eqDodge||0)+(it.dodge||0); s.eqAspd=(s.eqAspd||0)+(it.aspd||0); s.eqHpreg=(s.eqHpreg||0)+(it.hpreg||0); s.eqCdr=(s.eqCdr||0)+(it.cdr||0); }
-  if(ch.cls==='hippie' && rank('n_glas')){ s.glasAtk=s.str*0.1; s.str=Math.max(0,s.str-30); }   // Glaskanon: −30 Str, +0,1 attack per Str (räknat före avdraget)
+  if(ch.cls==='hippie' && rank('n_glas')){ s.str=Math.max(0,s.str-30); s.glasAtk=s.str*0.1; }   // Glaskanon: −30 Str, sedan +0,1 attack per kvarvarande Str
   s.crit = agiPct(s.agi,ch.level)*STAT_SCALE; s.dodge = Math.min(AGI_CAP, agiPct(s.agi,ch.level)*STAT_SCALE + (s.eqDodge||0)); s.cdr = Math.min(CDR_CAP, Math.max(0,s.int)*AGI_PCT(ch.level)*STAT_SCALE + (s.eqCdr||0) + acctB('viskare'));   // Agi→crit/undvikande och Int→nedkylning: 70 % · kontobonus från Viskare
   s.maxHp = Math.round(100 + s.str*5 + acctB('skog'));   // bas 100 HP, varje Str ger 5 HP   // kontobonus från Skogshuggare
   s.maxMp = C.noMana ? 0 : Math.round((20 + s.int*10)*(1+tv('v_klok')/100));
@@ -2720,7 +2744,7 @@ function hurtPlayer(dmg, dir, o={}){
     G.fx.push({type:'text',x:p.x,y:p.y-p.h-16,text:'🔔 Puff! Borta.',color:'#e8d8ff',t:0,dur:1,size:14}); for(let i=0;i<14;i++) particle(p.x+rand(-14,14),p.y-rand(5,60),pick(['#e8d8ff','#fff','#c8b0ff']),rand(-50,50),rand(-60,0),.6,3,0); return false; }
   let real = dmg*100/(100+s.armor)*(1-elixV('def')/100)*(1-tv('s_bark')/100)*(o.melee?1-tv('g_kake')/100:1)*(1-cbtV('def')/100)*(T.drT>0?.7:1)*(T.big>0?.6:1)*(trk()==='rotfaste'&&T.still>=.5?.8:1);   // Järnkäke · Barkhudsbrygd · Hundvisslan   // armor (och Barkelixir) minskar skadan
   if(T.sh && T.sh.v>0 && T.sh.t>0){ const ab=Math.min(T.sh.v, real); T.sh.v-=ab; real-=ab; addNum(p.x+14, p.y-p.h-14, ab, 'dmg'); if(T.sh.v<=0.01){ T.sh=null; G.fx.push({type:'text',x:p.x,y:p.y-p.h-30,text:'Skölden brast!',color:'#cfe0ff',t:0,dur:.9,size:13}); } if(real<=0.001){ if(!o.noKb) p.inv=Math.max(p.inv,HURT_INV*.5); return true; } }   // sköld tar skadan först
-  G.ch.hp -= real; SFX.hurt();
+  G.ch.hp -= real; SFX.hurt(); if(real>0) solNoHitReset();
   addNum(p.x, p.y-p.h-6, real, 'hurt');
   if(trk()==='bjornhjarta' && G.ch.hp>0 && G.ch.hp<s.maxHp*.3 && G.time>=(T.bhCd||0)){ T.bhCd=G.time+60; T.sh={v:s.maxHp*.3, t:8, max:8}; G.fx.push({type:'text',x:p.x,y:p.y-p.h-34,text:'🐻 Björnhjärta!',color:'#ffb0a0',t:0,dur:1.2,size:14}); }
   if(rank('g_andra') && G.ch.hp>0 && G.ch.hp<s.maxHp*.3 && G.time>=(p.andraCd||0)){ p.andraT=ANDRA_T; p.andraCd=G.time+ANDRA_CD;   // Andra andningen
@@ -3490,6 +3514,7 @@ function gainKillExp(type, share, party, isKill, mult=1, book=false, rare=false,
   }
   const lv=bookLvl(ch.kills[type]||0,type);
   questKill(type); if(rare) questKill('silver_'+type); if(abil && isKill) questKill('abil_'+type);
+  if(isKill && type==='solstrale') solRayKill();
   const base=d.exp*mult*(1+lv*0.05)*(1+tv('k_exp')/100)*(1+elixV('exp')/100)*(1+((G.stats&&G.stats.xpPct)||0)/100)*share;
   const bonus=party?base*0.05:0;
   gainExp(base+bonus, party, bonus, party && !isKill);
@@ -3662,6 +3687,7 @@ function throwAxe(m, tgt){   // banditbossens yxa flyger i en båge; vanliga ban
   G.mprojs.push(f); sendMProj(f); SFX.swing && SFX.swing();
 }
 const FLAME_T = 1.6;
+const BEAM_CHG = 1, BEAM_T = .2, BEAM_CD = 8, BEAM_LEN = 560;   // Solstrålens stråle
 function emitFlame(m){   // en låga i eldkastarens stråle
   const a=rand(-.13,.13)+.05, sp=rand(380,470), x=m.x+m.dir*m.d.w*.62, y=m.y-m.d.h*.8;
   const f={k:'flame', src:m, x, y, vx:m.dir*Math.cos(a)*sp, vy:Math.sin(a)*sp, d:Math.max(1,Math.round(m.d.touch*.4)), life:rand(.6,.75)};
@@ -3714,6 +3740,15 @@ function updateMProjs(dt){
         SFX.boom&&SFX.boom(); G.mprojs.splice(i,1); }
       continue;
     }
+    if(f.k==='beam'){   // Solstrålen: laddar (tunn sikte-linje) och strålar sedan rakt fram i 0,2 s
+      const S=f.src||G.monById[f.sid];
+      if(f.t<f.delay && (!S || S.dead || S.stunT>0 || S.rootT>0)){ G.mprojs.splice(i,1); continue; }   // avbruten (bedövad, rotad eller död)
+      if(f.t>=f.delay && !f.fired){ f.fired=true; SFX.bow&&SFX.bow(); for(let k=0;k<16;k++) particle(f.x+f.vx*rand(0,f.r),f.y+rand(-8,8),pick(f.sv?['#ffffff','#bff4ff']:['#fff6c0','#ffd23f','#ffb020']),rand(-40,40),rand(-60,20),.4,rand(2,4),0); }
+      if(f.fired && !f.hitP && G.mode==='game' && p && !p.dead && p.inv<=0){ const x1=Math.min(f.x,f.x+f.vx*f.r), x2=Math.max(f.x,f.x+f.vx*f.r);
+        if(p.x+p.w/2>x1 && p.x-p.w/2<x2 && p.y-p.h<f.y+11 && p.y>f.y-11){ f.hitP=true; hurtPlayer(f.d, f.vx||1, {src:S}); } }
+      if(f.t>=f.life) G.mprojs.splice(i,1);
+      continue;
+    }
     if(f.k==='rock'){
       if(f.t>=f.delay){
         if(G.mode==='game' && p && !p.dead && p.inv<=0 && Math.abs(p.x-f.x)<f.r && Math.abs(p.y-f.gy)<70) hurtPlayer(f.d, Math.sign(p.x-f.x)||1, {src:f.src||G.monById[f.sid]});
@@ -3741,7 +3776,20 @@ function updateMProjs(dt){
     }
   }
 }
+function drawBeam(f){
+  const x2=f.x+f.vx*f.r, t=f.t||0;
+  ctx.save(); ctx.lineCap='round';
+  if(t<f.delay){ const k=t/f.delay;   // laddning: blinkande siktlinje som blir tydligare
+    ctx.globalAlpha=.25+k*.55*(.6+.4*Math.sin(t*30)); ctx.strokeStyle=f.sv?'#bff4ff':'#ffd23f'; ctx.lineWidth=1.5+k*2.5; ctx.setLineDash([12,9]); ctx.lineDashOffset=-t*120*f.vx; line(ctx,f.x,f.y,x2,f.y); ctx.setLineDash([]);
+    ctx.globalCompositeOperation='lighter'; const g=ctx.createRadialGradient(f.x,f.y,0,f.x,f.y,10+k*22); g.addColorStop(0,f.sv?'rgba(230,250,255,.95)':'rgba(255,250,210,.95)'); g.addColorStop(1,'rgba(255,190,40,0)'); ctx.fillStyle=g; ctx.globalAlpha=.9; circ(ctx,f.x,f.y,10+k*22);
+  } else { const k=1-clamp((t-f.delay)/(f.life-f.delay),0,1);   // strålen
+    ctx.globalCompositeOperation='lighter'; ctx.globalAlpha=.9*k+.1;
+    for(const [w,col] of [[34,f.sv?'rgba(150,220,255,.35)':'rgba(255,170,30,.35)'],[18,f.sv?'rgba(200,240,255,.8)':'rgba(255,215,70,.85)'],[7,'rgba(255,255,235,1)']]){ ctx.strokeStyle=col; ctx.lineWidth=w*(.7+.3*k); line(ctx,f.x,f.y,x2,f.y); }
+    ctx.fillStyle='rgba(255,250,210,.9)'; circ(ctx,f.x,f.y,14*k+4); }
+  ctx.restore();
+}
 function drawMProj(f){
+  if(f.k==='beam') return drawBeam(f);
   if(f.sv) return drawSilverProj(f);
   if(f.k==='flame'){   // låga: växer och bleknar
     const k=clamp((f.t||0)/.7,0,1), r=9+k*24; ctx.save(); ctx.globalCompositeOperation='lighter'; ctx.globalAlpha=1-k*.75;
@@ -3953,7 +4001,7 @@ function drawSilverProj(f){
       ctx.fillStyle='rgba(255,255,255,.8)'; ctx.beginPath(); ctx.moveTo(-1,-4); ctx.lineTo(-5,-17); ctx.lineTo(-3,-44); ctx.lineTo(-1,-20); ctx.closePath(); ctx.fill();
       ctx.restore(); } }
 }
-const SILV_OWN=new Set(['flugsvamp','kissekatt','vildhund','varg','bjorn','skata','hok','pinne','stock','drake','solros']);   // har egen silverdesign med kristaller
+const SILV_OWN=new Set(['flugsvamp','kissekatt','vildhund','varg','bjorn','skata','hok','pinne','stock','drake','solros','solstrale']);   // har egen silverdesign med kristaller
 function silverAura(m,base){
   const t=G.time, fly=base.fly, cx=m.x, cy=fly?m.y-base.h*.9:m.y, R=base.w*1.2+16, Ry=fly?R*.55:R*.28, chg=m.svT>0||m.svC;
   ctx.save(); ctx.globalCompositeOperation='lighter';
@@ -4017,6 +4065,12 @@ function updateMonsters(dt){
     if(m.d.bark){ m.barkCd=Math.max(0,(m.barkCd===undefined?1.5:m.barkCd)-dt); const calm=G.time-(m.hurtAt??-99)>=2;   // skjuter tidigast 2 s efter att den tagit skada
       if(m.barkPend){ if(!(m.chargeT>0) || !calm){ m.barkPend=false; m.chargeT=0; } else { m.chargeT-=dt; if(tgt) m.dir=Math.sign(tgt.x-m.x)||m.dir; if(m.chargeT<=0){ m.chargeT=0; m.barkPend=false; m.throwT=.35; shootBark(m); } } }
       else if(calm && tgt && m.barkCd<=0 && !(m.rootT>0) && Math.abs(tgt.x-m.x)>40 && Math.abs(tgt.x-m.x)<620 && Math.abs(tgt.y-m.y)<40){ m.barkCd=rand(2.8,4); m.dir=Math.sign(tgt.x-m.x)||m.dir; m.chargeT=.5; m.barkPend=true; } }
+    if(m.d.beam){ m.beamCd=Math.max(0,(m.beamCd===undefined?1:m.beamCd)-dt); const calm=G.time-(m.hurtAt??-99)>=2;   // Solstrålen: laddar 1 s, strålar 0,2 s, 8 s nedkylning, tidigast 2 s efter att den tagit skada
+      if(m.beamPend){ m.chargeT-=dt; if(m.chargeT<=0 || m.stunT>0 || m.rootT>0){ m.chargeT=0; m.beamPend=false; } }
+      else if(calm && m.hurtAt!=null && tgt && m.beamCd<=0 && !(m.rootT>0) && !(m.stunT>0) && Math.abs(tgt.x-m.x)<BEAM_LEN-20 && Math.abs(tgt.x-m.x)>10 && Math.abs(tgt.y-m.y)<50){
+        m.beamCd=BEAM_CD; m.dir=Math.sign(tgt.x-m.x)||m.dir; m.chargeT=BEAM_CHG+BEAM_T; m.beamPend=true; m.state='idle';
+        const f={k:'beam', src:m, x:m.x+m.dir*20, y:m.y-30, vx:m.dir, r:BEAM_LEN, delay:BEAM_CHG, life:BEAM_CHG+BEAM_T, d:Math.max(1,Math.round(m.d.touch*1.3)), sv:m.rare?1:0};
+        G.mprojs.push(f); sendMProj(f); SFX.cast&&SFX.cast(); } }
     if(m.d.sun){ m.sunCd=Math.max(0,(m.sunCd===undefined?1.5:m.sunCd)-dt);   // solrosen: laddar bara när en spelare är inom räckhåll
       if(m.chargeT>0){ m.chargeT-=dt; if(m.chargeT<=0) m.chargeT=0; }
       else if(m.sunCd<=0 && !(m.rootT>0) && playerNear(m,SUN_R*.9)){ m.sunCd=rand(5,7); m.chargeT=SUN_CHG; m.state='idle';
@@ -4187,7 +4241,7 @@ function explode(pr){
   if(bomb) for(let i=0;i<8;i++) particle(pr.x,pr.y,pick(['#55504a','#77706a']),rand(-80,80),rand(-120,-20),.9,5,-30);
   if(pr.cos) return;
   for(const m of G.monsters){ if(m.dead||m.spawnT>0||m.pend) continue; if(Math.hypot(m.x-pr.x,aimY(m,pr.y)-pr.y)<R+m.d.w/3){ hitMonster(m, pr.dmg, {dir:Math.sign(m.x-pr.x)||1}); if(bomb && !m.dead && !m.d.boss) stunMonster(m, BOMB_STUN); } }   // Bombpil bedövar (inte bossar)
-  if(bomb && rank('b_brand')) addFire(pr.x, pr.y, R*.8, Math.max(1,Math.round(rollAtk()*tv('b_brand')/100)));   // Brinnande mark
+  if(bomb && rank('b_brand')) addFire(pr.x, pr.y, R*.8, Math.max(1,Math.round(rollAtk()*tv('b_brand')/100/FIRE_T)));   // Brinnande mark: totalt 40/80/120 %, en femtedel per sekund
 }
 // Stockrullning: rullar längs plattformen, trillar ner från kanter och stannar vid en vägg
 function updateLog(pr, dt){
@@ -4437,6 +4491,8 @@ ART[16] = {...ART[8], sky:['#1e8ef0','#86d4ff','#fff4cc'], sunPos:[0.5,0.08], su
   flowers:['#ffd23f','#ff8c3a','#ffffff','#ff5a8a'], gradeTop:'rgba(255,236,170,.32)', beach:true};   // Solparken: solig strandby
 ART[17] = {...ART[8], beach:false, sky:['#3a9ae8','#9ad8f8','#fff0c0'], sunPos:[0.7,0.1], sun:'255,248,200', grass:['#2a6a1a','#4aa02a','#9ad83c','#f4f8a0'],
   soil:['#8a6a3a','#5a4426','#2a2014'], flowers:['#ffd23f','#ffb020','#fff6a0','#ff8c3a'], leaf:['#ffd23f','#9ad83c'], leaves:8, mote:'255,240,150', moteN:40, gradeTop:'rgba(255,230,150,.3)'};   // Solrosängen
+ART[22] = {...ART[17], sky:['#ff9a3a','#ffd27a','#fff6d8'], sunPos:[0.22,0.16], sun:'255,240,180', light:'255,226,150', rayA:.24, grass:['#5a6a1a','#9aa82a','#d8d84a','#fff8b0'],
+  soil:['#a8743a','#6a4622','#30200e'], flowers:['#ffd23f','#ffffff','#ffb020','#ff8c3a'], leaf:['#ffd23f','#ffe9a0'], leaves:10, mote:'255,230,140', moteN:70, moteA:.9, gradeTop:'rgba(255,210,120,.34)', gradeBot:'rgba(90,40,10,.22)'};   // Solstrålehöjden: gyllene ljus
 ART[19] = {...ART[6], sky:['#1e1420','#7a2a1e','#e86a2a'], sunPos:[0.2,0.24], sun:'255,120,60', far:'#5a3a3a', far2:'#4a2a2a', haze:'#b86a4a', fog:'184,106,74',
   mote:'255,140,60', moteN:50, gradeTop:'rgba(255,110,60,.35)', gradeBot:'rgba(40,10,10,.45)'};   // Drakslätten II: askig glöd
 ART[15] = {...ART[1], sky:['#2e5a4a','#7aa88a','#d8ecc8'], sunPos:[0.3,0.12], sun:'240,255,210', far:'#4e7a66', far2:'#3e6a56', haze:'#a8c8a8', fog:'168,200,168',
@@ -4971,6 +5027,7 @@ const TERRAINS = {
   logs2:{w:3000, gy:900,  plats:LOGS2_PLATS, ropes:[], walls:[]},
   park: {w:2800, gy:900,  plats:PARK_PLATS,  ropes:PARK_ROPES,  walls:[]},
   meadow:{w:3000, gy:900, plats:MEADOW_PLATS, ropes:MEADOW_ROPES, walls:[]},
+  sunhill:{w:2800, gy:900, plats:SUNHILL_PLATS, ropes:SUNHILL_ROPES, walls:[]},
   tower:{w:1400, gy:2000, plats:TOWER_PLATS, ropes:TOWER_ROPES, walls:[]},
   stone:{w:3000, gy:900,  plats:STONE_PLATS, ropes:STONE_ROPES, walls:[], prof:stoneProf},
   cliff:{w:3000, gy:900,  plats:CLIFF_PLATS, ropes:CLIFF_ROPES, walls:[], prof:cliffProf},
@@ -7756,6 +7813,7 @@ const LOOKS={
   tilda:{top:'#e86a8a',pants:'#5a7a3a',shoe:'#6a4a2a',hair:'#f2c84a',hs:'braid',hat:'sunhat',hatC:'#e8d088',item:'basket',belt:'#8a5a32',eye:'#3a8a4a'},
   siri:{top:'#4a7ac8',apron:'#9a6a3a',pants:'#5a4a3a',shoe:'#4a3020',hair:'#cf5a2a',hs:'bun',item:'hammer',belt:'#5a3a1a',sleeve:'#3a62a8',eye:'#2f6a9a',fur:'#e8d8b0'},
   bengt:{top:'#eeeae0',vest:'#2a3a5a',belt:'#1a1a2a',pants:'#2a2a3a',shoe:'#1a1410',hair:'#8a8a8a',glasses:1,mous:'#8a8a8a',item:'book',eye:'#4a5a7a'},
+  astrid:{top:'#2a3a7a',dress:'#24306a',cape:'#1a2250',pants:'#2a2a4a',shoe:'#1a1a2a',hair:'#d8d8e8',hs:'bun',item:'binoc',sash:'#ffd23f',gem:'#ffd23f',eye:'#3a4a9a'},
   gosta:{top:'#f0f0f0',stripes:'rgba(232,74,106,.5)',apron:'#ffffff',pants:'#3a3a4a',shoe:'#2a2a2a',hair:'#3a2e2e',mous:'#3a2e2e',hat:'striped',item:'cone',eye:'#2f6a9a'},
 };
 const NPC_NAMES={berit:'Jägaren Berit',sigvard:'Skrivaren Sigvard',holger:'Vaktaren Holger',vera:'Örtkvinnan Vera',fritiof:'Fågelskådaren Fritiof',torvald:'Arenamästaren Torvald',ylva:'Spårerskan Ylva',ruben:'Skogvaktaren Ruben',stina:'Flottaren Stina',bo:'Björnjägaren Bo',saga:'Skrivarmästare Saga',gunnar:'Garvaren Gunnar',kerstin:'Kapten Kerstin',solve:'Silversmeden Sölve',dagny:'Drakvakten Dagny',sunniva:'Trädgårdsmästarinnan Sunniva',gosta:'Glassförsäljaren Gösta'};
@@ -8217,7 +8275,29 @@ function sunN(c,t,o){
   c.restore();
 }
 
+function rayN(c,t,o){
+  const m=o.m||{}, R=!!m.rare, ch=o.charge>0?clamp(1-((o.charge-BEAM_T)/BEAM_CHG),0,1):0, fire=o.charge>0 && o.charge<=BEAM_T, walk=o.walk, bl=blinkM(t,2.6)&&!ch;
+  const P=R?{c1:'#ffffff',c2:'#bfe6ff',c3:'#7aa8d8',r1:'#ffffff',r2:'#a8d8ff',ink:SVP.ink,eye:SVP.eye}:{c1:'#fff6c0',c2:'#ffd23f',c3:'#ff9a1a',r1:'#ffe066',r2:'#ffb020',ink:'#6a3a06',eye:'#4a2408'};
+  const bob=Math.sin(t*3.2)*3+(walk?-Math.abs(Math.sin(t*9))*2:0), cy=-32+bob;
+  shadow(c,18-bob*.6,4,.22);
+  c.save(); c.translate(0,cy);
+  glow(c,0,0,30+ch*24+(fire?20:0),R?'#bff4ff':'#ffd23f',.45+ch*.4+(fire?.3:0));
+  const n=10, spin=t*(.6+ch*5);
+  for(let i=0;i<n;i++){ const a=i/n*TAU+spin, L=(i%2?9:14)+Math.sin(t*6+i)*1.5+ch*5; c.save(); c.rotate(a);
+    pp(c,()=>{ c.moveTo(14,-4.2); c.lineTo(15+L,0); c.lineTo(14,4.2); c.closePath(); },i%2?P.r2:P.r1,P.ink,{box:[14,-4,L+2,8],lw:1.4,hi:.35}); c.restore(); }
+  pp(c,()=>{ c.ellipse(0,0,16,16,0,0,TAU); },P.c2,P.ink,{box:[-16,-16,32,32],lx:.3,hi:.5},x=>{ const g=x.createRadialGradient(-5,-6,1,0,0,16); g.addColorStop(0,P.c1); g.addColorStop(.6,'rgba(255,255,255,0)'); x.fillStyle=g; x.fillRect(-16,-16,32,32); });
+  const det=ch>.05||fire;
+  eyeM(c,-1,-2,3.2,4.4,P.eye,{blink:bl,ink:P.ink,look:.25,...(det?{lid:.32,lidCol:P.c2,lidS:-1}:{}),glow:R?SVP.eye:(det?'#fff3a0':null)});
+  eyeM(c,8,-2,3.2,4.4,P.eye,{blink:bl,ink:P.ink,look:.25,...(det?{lid:.32,lidCol:P.c2,lidS:1}:{}),glow:R?SVP.eye:(det?'#fff3a0':null)});
+  blush(c,[[-6,4],[12,4]],2.2);
+  c.strokeStyle=P.ink; c.lineWidth=1.5; c.lineCap='round'; c.beginPath();
+  if(det){ c.ellipse(5,6,1.8+ch*1.6,1.5+ch*1.6,0,0,TAU); c.fillStyle=fire?'#fffbe0':'#7a3a0a'; c.fill(); c.stroke(); }
+  else { c.arc(4,3.5,3,.15*Math.PI,.85*Math.PI); c.stroke(); }
+  if(R) crysRow(c,[[-6,-14,-.4,7],[2,-16,0,9],[10,-14,.4,7]]);
+  c.restore();
+}
 Object.assign(MOB,{
+  solstrale:wrap((c,t,o)=>rayN(c,t,o), .78),
   kissekatt:wrap((c,t,o)=>catN(c,t,o), .58),
   vildhund: wrap((c,t,o)=>dogN(c,t,o), .6),
   varg:     wrap((c,t,o)=>wolfN(c,t,o), .62),
@@ -10570,6 +10650,11 @@ function paintWorld(cv, isle='lov'){
         c.fillStyle='#f0e6dc'; c.beginPath(); c.moveTo(X,Y+18-mh); c.lineTo(X+8,Y+18-mh*.75); c.lineTo(X,Y+18-mh*.8); c.lineTo(X-8,Y+18-mh*.75); c.fill(); }
       c.fillStyle='rgba(255,120,40,.6)'; circ(c,a.x-30,a.y-60,6); c.fillStyle='rgba(120,110,100,.5)'; for(let i=0;i<4;i++) circ(c,a.x-30+i*5,a.y-70-i*9,5+i*2);
       continue; }
+    if(M.terrain==='sunhill'){   // Solstrålehöjden: en kulle med en strålande sol
+      c.fillStyle='#c8a84a'; c.beginPath(); c.ellipse(a.x,a.y+10,95,40,0,Math.PI,0); c.fill(); c.fillStyle='#e8d070'; c.beginPath(); c.ellipse(a.x-10,a.y+10,70,28,0,Math.PI,0); c.fill();
+      c.save(); c.translate(a.x+5,a.y-38); c.fillStyle='rgba(255,220,90,.35)'; circ(c,0,0,34); for(let k=0;k<12;k++){ c.rotate(TAU/12); c.fillStyle=k%2?'#ffb020':'#ffe066'; c.beginPath(); c.moveTo(14,-4); c.lineTo(30,0); c.lineTo(14,4); c.fill(); }
+      c.fillStyle='#ffd23f'; circ(c,0,0,14); c.fillStyle='#3a2010'; circ(c,-4,-2,1.8); circ(c,4,-2,1.8); c.restore();
+      continue; }
     if(M.terrain==='meadow'){   // Solrosängen: ett fält av solrosor
       for(let i=0;i<26;i++){ const an=R()*6.28, d=(.2+R()*.8)*105, X=a.x+Math.cos(an)*d, Y=a.y+Math.sin(an)*d*.6;
         c.strokeStyle='#3e8a22'; c.lineWidth=2; line(c,X,Y+5,X,Y-6); c.fillStyle='#ffd23f'; for(let k=0;k<8;k++){ const b=k/8*6.28; circ(c,X+Math.cos(b)*4,Y-8+Math.sin(b)*4,2.4); } c.fillStyle='#7a4a1a'; circ(c,X,Y-8,2.4); }
@@ -10656,6 +10741,7 @@ $('#wmapBody').addEventListener('click',e=>{ const gt=e.target.closest('[data-gm
 /* ---------- Databas: alla uppdrag, kartor och monster (nås från startskärmen, gubbvalet och menyn) ---------- */
 const MOB_SPECIAL = {
   solros:'🌻 Laddar upp en solexplosion runt sig (1,4 s) när en spelare kommer nära – gå undan från den gula ringen!',
+  solstrale:'☀️ Laddar i 1 s och skjuter sedan en solstråle rakt fram (var 8:e sekund, tidigast 2 s efter att den tagit skada). Hoppa över strålen eller gå bakom den!',
   pinne:'🪵 När den blivit träffad studsar den och kastar sig som ett spjut i en båge mot dig.',
   stock:'🪵 Skjuter barkbitar längs marken mot den som anfallit den – hoppa över dem!',
   drake:'🔥 Eldboll: laddar 1 s och skjuter mot den som anfallit den (100 % av beröringsskadan), nedkylning 5 s.',
@@ -10757,6 +10843,7 @@ const NPCS = {
   dagny: {name:'Drakvakten Dagny', map:6, x:1900, y:900},
   sunniva:{name:'Trädgårdsmästarinnan Sunniva', map:16, x:1080, y:900},
   gosta: {name:'Glassförsäljaren Gösta', map:16, x:1820, y:900},
+  astrid:{name:'Astronomen Astrid', map:16, x:450, y:620},
 };
 // goals: monstertyp -> antal, eller 'scroll' -> antal använda scrolls. choose = välj ett av; give = får alla; classWpn = common-vapen (den levelns) för din klass.
 const QUESTS = {
@@ -10962,6 +11049,14 @@ Object.assign(QUESTS, {
   sol3:{npc:'sunniva', name:'Solens vrede', prev:'sol2',
     text:'Ängen är fortfarande full av upphetsade solrosor. Fäll 100 till, så får du ett vapen som lyser som solen.',
     goals:{solros:100}, exp:600, gold:800, classWpn:21, classRar:'rare'},
+  solf1:{npc:'astrid', name:'Solförmörkelse', lvl:21,
+    text:'Uppe på Solstrålehöjden bor solstrålar – små solväsen som skjuter strålar rakt fram. Jag mäter hur snabbt ljuset kan släckas: fäll 5 solstrålar inom loppet av 5 sekunder, så blir det en liten solförmörkelse!',
+    how:['Gå genom portalen bredvid mig, uppe på platån i Solparken.','Skada flera solstrålar först, och fäll sedan 5 av dem snabbt efter varandra – klockan startar vid första dödsfallet.','När en solstråle börjar lysa och en prickig linje syns – hoppa eller gå bakom den!'],
+    goals:{sol_eclipse:1}, exp:450, gold:600, cons:[['hpPot3',5]]},
+  solf2:{npc:'astrid', name:'Solskydd', prev:'solf1',
+    text:'Fint! Nu vill jag se hur man undviker strålarna. Fäll 5 solstrålar utan att ta någon skada alls – tar du skada börjar räkningen om.',
+    how:['Räkningen nollställs varje gång du tar skada, oavsett från vad.','Strålen går rakt fram – hoppa över den eller håll dig bakom solstrålen.'],
+    goals:{sol_nohit:5}, exp:550, gold:700, give:[['hjalm23','rare']], cons:[['hpPot3',5]]},
   gos1:{npc:'gosta', name:'Frön till glassen', lvl:19, prev:'sol2',   // Göstas kedja öppnas efter Sunnivas Kronblad till kransen
     text:'Solrosglass är det bästa som finns! Men jag har slut på frön. Ge mig 10 solrosfrön, så bjuder jag på något gott.',
     goals:{item_solfro:10}, exp:240, gold:350, cons:[['elxExp',2]]},
@@ -10988,7 +11083,7 @@ const QUEST_SHORT = {   // det NPC:n säger – kort och tydligt vad som ska gö
   sten1:'Ge stenbiten till Kapten Kerstin i Lövbyn.', drak1:'Döda 10 drakar. De spottar eld när du anfaller.', drak2:'Hämta en draktår – drakar tappar den ibland.', drak3:'Döda 200 drakar och lämna 3 draktårar.',
   sol1:'Döda 20 solrosor i Solrosängen (portalen i mitten).', sol2:'Döda 40 solrosor och lämna 5 kronblad.', sol3:'Döda 100 solrosor.',
   gos1:'Lämna 10 solrosfrön – solrosorna tappar dem.', gos2:'Döda 60 solrosor och lämna 15 solrosfrön.',
-  jakt5:'Rulla genom mitt törnsnår med Kullerbyttan – då tar du ingen skada!', vildcr:'Gör ett par Vargskinnshandskar: Hantverk (H) → 🧵 Crafting.', band1:'Klättra upp i Bandittornet och besegra Banditbossen.', band2:'Döda 20 av varje monster i skogen.', band3:'Döda 50 banditer i Bandittornet. Akta dig för deras yxor!', pinn1:'Döda 30 vandrande pinnar med förmågor – inte med basattacken.', stock1:'Hoppa över 5 barkskott, rulla genom 5 stockar och fäll 40 stockar.', silver1:'Döda ett silvermonster av varje sort (inte bossar). De är sällsynta – 1 % chans.',
+  jakt5:'Rulla genom mitt törnsnår med Kullerbyttan – då tar du ingen skada!', solf1:'Fäll 5 solstrålar inom 5 sekunder på Solstrålehöjden (portalen uppe på platån).', solf2:'Fäll 5 solstrålar i rad utan att ta skada.', vildcr:'Gör ett par Vargskinnshandskar: Hantverk (H) → 🧵 Crafting.', band1:'Klättra upp i Bandittornet och besegra Banditbossen.', band2:'Döda 20 av varje monster i skogen.', band3:'Döda 50 banditer i Bandittornet. Akta dig för deras yxor!', pinn1:'Döda 30 vandrande pinnar med förmågor – inte med basattacken.', stock1:'Hoppa över 5 barkskott, rulla genom 5 stockar och fäll 40 stockar.', silver1:'Döda ett silvermonster av varje sort (inte bossar). De är sällsynta – 1 % chans.',
 };
 const qShort = id => QUEST_SHORT[id] || (QUESTS[id].text.split(/(?<=[.!?])\s/)[0]);
 for(const id in QUESTS) QUESTS[id].exp=Math.round(QUESTS[id].exp*1.2*2);   // uppdrag ger 20 % mer EXP – och sedan dubbelt
@@ -11009,7 +11104,7 @@ for(const id in QUESTS) QUESTS[id].exp=Math.round(QUESTS[id].exp*1.2*2);   // up
 })();
 for(const id in QUESTS){ const Q=QUESTS[id]; if(Q.lvl && NPCS[Q.npc] && NPCS[Q.npc].map===5) Q.lvl=Math.max(1,Q.lvl-2); }   // uppdragen i Lövbyn kräver 2 level lägre
 const QUEST_ORDER_PRE = 0;
-const QUEST_ORDER = ['gl1','gl2','gl3','bar1','bar2','bar3','bar4','bar5','skr0','skr1','skr2','skr3','jakt1','jakt2','jakt3','jakt4','jakt5','pot1','pot2','pot3','pot4','pot5','vild1','vild2','vild3','vildsj','vildlw','vild4','bo1','bo2','bo3','fag1','fag2','fag3','saga0','saga1','saga2','saga3','gunnar0','gunnar1','gunnar2','gunnar3','sten1','sten2','drak1','drak2','drak3','band1','band2','band3','silver1','silver2','pinn1','stock1','stock2','stock3','sol1','sol2','sol3','gos1','gos2'];
+const QUEST_ORDER = ['gl1','gl2','gl3','bar1','bar2','bar3','bar4','bar5','skr0','skr1','skr2','skr3','jakt1','jakt2','jakt3','jakt4','jakt5','pot1','pot2','pot3','pot4','pot5','vild1','vild2','vild3','vildsj','vildlw','vild4','bo1','bo2','bo3','fag1','fag2','fag3','saga0','saga1','saga2','saga3','gunnar0','gunnar1','gunnar2','gunnar3','sten1','sten2','drak1','drak2','drak3','band1','band2','band3','silver1','silver2','pinn1','stock1','stock2','stock3','sol1','sol2','sol3','gos1','gos2','solf1','solf2'];
 const QUEST_CHAINS = [ {npc:'berit', name:'Bärplockarens besvär'}, {npc:'sigvard', name:'Skrivarkonsten'}, {npc:'holger', name:'Vaktarens jakt'}, {npc:'vera', name:'Örtkvinnans brygder'}, {npc:'ylva', name:'Vargarnas spår'}, {npc:'bo', name:'Björnjakten'}, {npc:'fritiof', name:'Fågelplågan'}, {npc:'saga', name:'Skrivarmästarens prov'}, {npc:'gunnar', name:'Garvarens lära'}, {npc:'dagny', name:'Drakvaktens prov'}, {npc:'kerstin', name:'Bandittornet'}, {npc:'solve', name:'Silverjägaren'}, {npc:'ruben', name:'Pinnskogen'}, {npc:'stina', name:'Stockskogen'}, {npc:'sunniva', name:'Solrosornas uppror'}, {npc:'gosta', name:'Glassbaren'} ];
 // Yrkesuppdragen och yrkes-NPC:erna är borttagna – Hantverkaren Siri på Jaktmarken I lär ut Crafting
 for(const id of ['skr0','skr1','skr2','skr3','saga0','saga1','saga2','saga3','gunnar0','gunnar1','gunnar2','gunnar3','vildlw','vild4','pot1','pot2','pot3','pot4','pot5']) delete QUESTS[id];
@@ -11120,8 +11215,8 @@ function drawMerchProps(id,n){   // Bobs vagn och Solveigs solstånd
 const chainQuests = npc => QUEST_ORDER.filter(id=>QUESTS[id].npc===npc);
 const npcsOn = mapId => Object.keys(NPCS).filter(k=>NPCS[k].map===mapId);
 const CRAFT_GOAL = {craft_handskar:['par handskar','Gör handskar','par handskar'], craft_hjalm:['mössor','Gör en mössa','mössa'], craft_skor:['par skor','Gör skor','par skor'], craft_vapen:['vapen','Gör ett vapen','vapen'], craft_pot:['drycker eller elixir','Brygg drycker','dryck'], craft_elix:['elixir','Brygg elixir','elixir']};
-const goalName = (t,n) => t==='soul_wpn' ? `Ge ditt vapen själ (${n} ${n===1?'nivå':'nivåer'}) i väskan` : t==='jump_bark' ? `Hoppa över ${n} barkskott` : t==='roll_stock' ? `Rulla genom ${n} stockar med Kullerbyttan` : t.startsWith('abil_') ? `Döda ${n} ${MOBS[t.slice(5)].name.toLowerCase()} med förmågor (inte basattack)` : t==='roll_thorn' ? `Rulla genom Holgers törnsnår med Kullerbyttan${n>1?` ${n} gånger`:''}` : t==='use_elix' ? `Drick ${n} elixir` : t.startsWith('buy_') ? `Köp ${n} ${CONS[t.slice(4)].name} i butiken (B)` : t==='scroll_wpn' ? `Använd vapenscrolls på ditt vapen ${n} gånger` : t.startsWith('have_') ? `Samla ${n} ${CONS[t.slice(5)].name}` : t.startsWith('item_') ? `Lämna in ${n} ${CONS[t.slice(5)].name}` : t==='scroll' ? `Använd scrolls ${n} gånger` : CRAFT_GOAL[t] ? `Tillverka ${n} ${n===1?CRAFT_GOAL[t][2]:CRAFT_GOAL[t][0]} (hantverk, H)` : t.startsWith('silver_') ? `Döda ${n} ${RARE_DEFS[t.slice(7)].name}` : `Döda ${n} ${MOBS[t].name}`;
-const goalShort = t => t==='soul_wpn' ? 'Själ i vapnet' : t==='jump_bark' ? 'Hoppa över bark' : t==='roll_stock' ? 'Rulla genom stockar' : t.startsWith('abil_') ? MOBS[t.slice(5)].name+' (förmåga)' : t==='roll_thorn' ? 'Rulla genom törnet' : t==='use_elix' ? 'Drick elixir' : t.startsWith('buy_') ? 'Köp '+CONS[t.slice(4)].name : t==='scroll_wpn' ? 'Scrolla vapnet' : (t.startsWith('item_')||t.startsWith('have_')) ? CONS[t.slice(5)].name : t==='scroll' ? 'Scrolls' : CRAFT_GOAL[t] ? CRAFT_GOAL[t][1] : t.startsWith('silver_') ? RARE_DEFS[t.slice(7)].name : MOBS[t].name;
+const goalName = (t,n) => t==='sol_eclipse' ? `Fäll 5 solstrålar inom 5 sekunder${G.solBest?` (bästa: ${G.solBest}/5)`:''}` : t==='sol_nohit' ? `Fäll ${n} solstrålar i rad utan att ta skada` : t==='soul_wpn' ? `Ge ditt vapen själ (${n} ${n===1?'nivå':'nivåer'}) i väskan` : t==='jump_bark' ? `Hoppa över ${n} barkskott` : t==='roll_stock' ? `Rulla genom ${n} stockar med Kullerbyttan` : t.startsWith('abil_') ? `Döda ${n} ${MOBS[t.slice(5)].name.toLowerCase()} med förmågor (inte basattack)` : t==='roll_thorn' ? `Rulla genom Holgers törnsnår med Kullerbyttan${n>1?` ${n} gånger`:''}` : t==='use_elix' ? `Drick ${n} elixir` : t.startsWith('buy_') ? `Köp ${n} ${CONS[t.slice(4)].name} i butiken (B)` : t==='scroll_wpn' ? `Använd vapenscrolls på ditt vapen ${n} gånger` : t.startsWith('have_') ? `Samla ${n} ${CONS[t.slice(5)].name}` : t.startsWith('item_') ? `Lämna in ${n} ${CONS[t.slice(5)].name}` : t==='scroll' ? `Använd scrolls ${n} gånger` : CRAFT_GOAL[t] ? `Tillverka ${n} ${n===1?CRAFT_GOAL[t][2]:CRAFT_GOAL[t][0]} (hantverk, H)` : t.startsWith('silver_') ? `Döda ${n} ${RARE_DEFS[t.slice(7)].name}` : `Döda ${n} ${MOBS[t].name}`;
+const goalShort = t => t==='sol_eclipse' ? 'Solförmörkelse' : t==='sol_nohit' ? 'Solstrålar utan skada' : t==='soul_wpn' ? 'Själ i vapnet' : t==='jump_bark' ? 'Hoppa över bark' : t==='roll_stock' ? 'Rulla genom stockar' : t.startsWith('abil_') ? MOBS[t.slice(5)].name+' (förmåga)' : t==='roll_thorn' ? 'Rulla genom törnet' : t==='use_elix' ? 'Drick elixir' : t.startsWith('buy_') ? 'Köp '+CONS[t.slice(4)].name : t==='scroll_wpn' ? 'Scrolla vapnet' : (t.startsWith('item_')||t.startsWith('have_')) ? CONS[t.slice(5)].name : t==='scroll' ? 'Scrolls' : CRAFT_GOAL[t] ? CRAFT_GOAL[t][1] : t.startsWith('silver_') ? RARE_DEFS[t.slice(7)].name : MOBS[t].name;
 function questState(id, ch=G.ch){
   const q=(ch.quests||{})[id], Q=QUESTS[id];
   if(q) return q.state;
@@ -11180,6 +11275,19 @@ function questEvent(type){
   updateBagHi();
 }
 const questKill = questEvent;
+function solRayKill(){   // Solförmörkelse (5 inom 5 s) och Solskydd (5 utan skada)
+  const now=G.time; G.solKills=(G.solKills||[]).filter(x=>now-x<5); G.solKills.push(now);
+  const p=G.p, n=G.solKills.length;
+  if(questState('solf1')==='active'){ G.solBest=Math.max(G.solBest||0, Math.min(5,n)); questLogKey=null;
+    if(p) G.fx.push({type:'text', x:p.x, y:p.y-p.h-40, text:n>=5?'🌑 Solförmörkelse!':`☀️ ${n}/5 inom 5 s`, color:n>=5?'#ffe066':'#ffd23f', t:0, dur:.9, size:n>=5?17:14});
+    if(n>=5){ G.solKills=[]; questEvent('sol_eclipse'); } }
+  if(questState('solf2')==='active' && p){ questEvent('sol_nohit'); const q=G.ch.quests.solf2; if(q && q.state==='active') G.fx.push({type:'text', x:p.x, y:p.y-p.h-40, text:`🛡️ ${q.prog.sol_nohit||0}/5 utan skada`, color:'#9fe0ff', t:0, dur:.9, size:14}); }
+}
+function solNoHitReset(){
+  const q=G.ch && G.ch.quests && G.ch.quests.solf2; if(!q || q.state!=='active' || !(q.prog.sol_nohit>0)) return;
+  q.prog.sol_nohit=0; questLogKey=null; markDirty(); if(isOpen('quest')) renderQuest();
+  const p=G.p; if(p) G.fx.push({type:'text', x:p.x, y:p.y-p.h-56, text:'💥 Träffad – Solskydd börjar om', color:'#ff8a7a', t:0, dur:1.2, size:13});
+}
 function questPop(id, type){
   const Q=QUESTS[id], q=G.ch.quests[id], n=Q.goals[type], v=Math.min(n,q.prog[type]||0), box=$('#qProg'), key=id+'|'+type;
   let el=[...box.children].find(x=>x.dataset.k===key);
