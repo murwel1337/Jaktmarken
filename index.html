@@ -1506,18 +1506,20 @@ MOBS.stockholm = (()=>{ const b=mobDefine({lvl:16, name:'Stockholmaren', speed:2
   b.loot=[['wMagiskPinne',.03,'epic'], ['tr_rotfaste',.03,'epic']]; b.extra=[['scrReset',.05]]; return b; })();
 /* ---------- Träskregionen: ödlor (källaren under Träskhuset), krokodiler och minibossen Krokoloco ---------- */
 const ODLA_CHG = 1, ODLA_RUSH_T = 5, ODLA_RUSH = 80, ODLA_CD = 10;   // Ödlan: laddar 1 s när den skadats, rusar sedan +80 % fart i 5 s, 10 s nedkylning
+const KMAN_CD = 3.5, KMAN_CHG = .55, KMAN_RANGE = 520;   // Krokoman: laddar 0,55 s och spottar gift, 3,5 s nedkylning
 const KROK_BOT_CD = 5, POOL_T = 10, POOL_R = 62, POOL_DPS = 50, KROK_POIS = {dps:30, t:5, slow:.2, chance:.2};
 Object.assign(MOBS, {
   odla:     mobDefine({lvl:22, name:'Ödla',     speed:70, w:64,  h:34, drop:0.02, pool:ODLA_POOL, maxRar:'uncommon', map:29, rush:true, extra:[['scrInt5',.01]]}),
   krokodil: mobDefine({lvl:25, name:'Krokodil', speed:56, w:104, h:44, drop:0.02, pool:KROK_POOL, maxRar:'uncommon', map:30, pois:true, rwpn:.01}),
 });
-MOBS.krokoloco = (()=>{ const b=mobDefine({lvl:25, name:'Krokoloco', speed:46, w:70, h:118, drop:0, pool:[], map:30, boss:true, mini:true, bottles:true,
+MOBS.krokoman = mobDefine({lvl:27, name:'Krokoman', speed:54, w:56, h:84, drop:0.02, pool:KROK_POOL, maxRar:'uncommon', map:31, spit:true, rwpn:.01});   /* krokodil på två ben: spottar gift i stället för att bitas */
+MOBS.krokoloco = (()=>{ const b=mobDefine({lvl:25, name:'Krokoloco', speed:46, w:70, h:118, drop:0, pool:[], map:31, boss:true, mini:true, bottles:true,
   miniMsg:'🐊 <b style="color:#9fe08a">Krokoloco</b> har vadat upp ur träsket!'}); b.hp*=12; b.touch=Math.round(b.touch*1.5); b.exp*=8; b.gold*=6; b.book=[1,5,15,40];
   b.oneOf=[['byxorKrok',.2,'rare'],['scrGlov',.4],['balteKrok',.2,'rare'],['scrReset',.2]]; return b; })();   // droppar alltid exakt en av dessa
 // Arenans fjärde boss: lika mycket starkare än Askdraken som Askdraken är starkare än Mossjätten
 MOBS.bbandit = arenaBoss({lvl:23, name:'Banditernas bandit', speed:Math.round(68*68/52), w:120, h:150, map:26, stage:4}, Math.round(7000*7000/4000), Math.round(1700*1700/1000), Math.round(500*500/320));
 MOBS.bbandit.touch = Math.round(MOBS.askdrake.touch*MOBS.askdrake.touch/MOBS.mossjatte.touch);
-const MOB_ORDER = ['flugsvamp','blabar','mossa','kissekatt','vildhund','varg','bjorn','skata','hok','pinne','stock','drake','sten','bandit','banditboss','stenappa','jattebar','mossjatte','askdrake','solros','solstrale','eldtunga','stockholm','odla','krokodil','krokoloco','bbandit'];
+const MOB_ORDER = ['flugsvamp','blabar','mossa','kissekatt','vildhund','varg','bjorn','skata','hok','pinne','stock','drake','sten','bandit','banditboss','stenappa','jattebar','mossjatte','askdrake','solros','solstrale','eldtunga','stockholm','odla','krokodil','krokoloco','bbandit','krokoman'];
 /* Silvermonster: 1% chans vid varje spawn. Dubbelt så stort, 5x HP och skada, 3x EXP, droppar alltid ett föremål. */
 const RARE_CHANCE = 0.01;
 const RARE_DEFS = {};
@@ -1715,6 +1717,10 @@ const SEWER_ROPES = [{x:260, top:760, bottom:900}, {x:2140, top:760, bottom:900}
 // Krokodilträsket: dyig mark med två lerbankar och en hög tuva i mitten
 const CROC_PLATS = [{id:'g1', x1:0, x2:3000, y:900, solid:true, floor:1},
   {id:'a', x1:350, x2:1250, y:760, floor:2}, {id:'b', x1:1750, x2:2650, y:760, floor:2}, {id:'c', x1:1000, x2:2000, y:620, floor:3}];
+// Krokodilträsket 2: längre in i träsket – lerbankar i tre nivåer
+const CROC2_PLATS = [{id:'g1', x1:0, x2:3200, y:900, solid:true, floor:1},
+  {id:'a', x1:300, x2:1050, y:760, floor:2}, {id:'b', x1:1350, x2:1900, y:640, floor:3}, {id:'c', x1:2150, x2:2950, y:760, floor:2}, {id:'d', x1:800, x2:1450, y:520, floor:4}];
+const CROC2_ROPES = [{x:400, top:760, bottom:900}, {x:2850, top:760, bottom:900}, {x:1620, top:640, bottom:900}, {x:950, top:520, bottom:760}, {x:2250, top:640, bottom:760}];
 const CROC_ROPES = [{x:450, top:760, bottom:900}, {x:2550, top:760, bottom:900}, {x:1100, top:620, bottom:760}, {x:1900, top:620, bottom:760}];
 const RIDE_PLATS = [{id:'g1', x1:0, x2:1500, y:900, solid:true, floor:1, safe:true}];   // tågets golv
 const SUNHILL_PLATS = [
@@ -1890,13 +1896,14 @@ function genStationDeco(){   // Skogsrälsen
     {t:'crates',x:420,y:860,s:.8},{t:'barrels',x:770,y:860,s:.8},{t:'bush',x:250,y:900,s:.8},{t:'bush',x:960,y:900,s:.7},{t:'fence',x1:0,x2:240,y:900});
 }
 /* ---------- Träskregionen: dekor och egna ritfunktioner ---------- */
-const SWAMPY = t => ['swamp','swhouse','jq','croc'].includes(t);
+const SWAMPY = t => ['swamp','swhouse','jq','croc','croc2'].includes(t);
 function genSwHouseDeco(){ TORCHES=[];
   DECO.back.push({t:'tree',x:260,y:900,s:.9},{t:'lamp',x:600,y:900,s:.85},{t:'barrels',x:900,y:900,s:.75},{t:'mush',x:980,y:900,s:.7},{t:'crates',x:1760,y:900,s:.75},
     {t:'bones',x:1980,y:900,s:.8},{t:'mush',x:2200,y:900,s:.8},{t:'tree',x:2380,y:900,s:1},{t:'lamp',x:2460,y:900,s:.8});
 }
 function genJqDeco(){ TORCHES=[]; DECO.back.push({t:'mush',x:520,y:JQ_GY,s:.8},{t:'bones',x:900,y:JQ_GY,s:.8},{t:'tree',x:1300,y:JQ_GY,s:.9},{t:'mush',x:1150,y:JQ_GY,s:.7}); }
 function genSewerDeco(){ TORCHES=[]; DECO.back.push({t:'barrels',x:420,y:900,s:.8},{t:'crates',x:1150,y:900,s:.8},{t:'bones',x:1600,y:900,s:.8},{t:'barrels',x:2300,y:900,s:.75},{t:'crates',x:900,y:760,s:.65},{t:'bones',x:1900,y:760,s:.7}); }
+function genCroc2Deco(){ TORCHES=[]; DECO.back.push({t:'tree',x:150,y:900,s:1.15},{t:'bones',x:620,y:900,s:1},{t:'mush',x:1180,y:900,s:.9},{t:'tree',x:1750,y:900,s:1.2},{t:'bones',x:2120,y:900,s:.85},{t:'mush',x:2650,y:900,s:.85},{t:'tree',x:3080,y:900,s:1.05}); }
 function genCrocDeco(){ TORCHES=[]; DECO.back.push({t:'tree',x:200,y:900,s:1},{t:'mush',x:700,y:900,s:.8},{t:'bones',x:1300,y:900,s:.9},{t:'tree',x:1600,y:900,s:1.1},{t:'mush',x:2100,y:900,s:.8},{t:'bones',x:2450,y:900,s:.8},{t:'tree',x:2900,y:900,s:.95}); }
 // Själva huset (ritas en gång till en egen canvas och sedan bakom plattformarna)
 let SWHOUSE_CV=null;
@@ -2080,9 +2087,12 @@ MAPS[29] = {name:'Ödlekällaren', terrain:'sewer', isle:'trask', start:{x:120,y
   spawns:[['odla','g1',[450,700,950,1200,1450,1700,1950,2200]], ['odla','a',[350,600,850]], ['odla','b',[1550,1800,2050]], ['odla','c',[850,1100,1350,1600]]],
   portals:[{x:50, y:900, to:27, toX:1330, toY:630}]};
 MAPS[30] = {name:'Krokodilträsket', terrain:'croc', isle:'trask', start:{x:120,y:900}, sign:{x:330,y:900}, wm:{x:.58,y:.24},
-  mini:{type:'krokoloco', plat:'g1', x:2200, chance:.3},
   spawns:[['krokodil','g1',[520,820,1120,1420,1720,2020,2320,2620,2860]], ['krokodil','a',[520,800,1100]], ['krokodil','b',[1900,2200,2500]], ['krokodil','c',[1200,1500,1800]]],
-  portals:[{x:50, y:900, to:27, toX:1300, toY:490}]};
+  portals:[{x:50, y:900, to:27, toX:1300, toY:490}, {x:2950, y:900, to:31, toX:130, toY:900}]};
+MAPS[31] = {name:'Krokodilträsket 2', terrain:'croc2', isle:'trask', start:{x:130,y:900}, sign:{x:330,y:900}, wm:{x:.4,y:.2},
+  mini:{type:'krokoloco', plat:'g1', x:2500, chance:.3},   // Krokoloco flyttad hit från Krokodilträsket
+  spawns:[['krokoman','g1',[560,900,1240,1580,1920,2260,2700,3000]], ['krokoman','a',[480,720,960]], ['krokoman','b',[1450,1780]], ['krokoman','c',[2300,2550,2800]], ['krokoman','d',[950,1300]]],
+  portals:[{x:50, y:900, to:30, toX:2870, toY:900}]};
 MAPS[11] = {name:'Arenan – Boss 1', terrain:'arena', start:{x:200,y:900}, sign:{x:330,y:900}, arenaStage:1, arenaBoss:'jattebar', spawns:[], portals:[]};
 MAPS[12] = {name:'Arenan – Boss 2', terrain:'arena', start:{x:200,y:900}, sign:{x:330,y:900}, arenaStage:2, arenaBoss:'mossjatte', spawns:[], portals:[]};
 MAPS[26] = {name:'Arenan – Boss 4', terrain:'arena', start:{x:200,y:900}, sign:{x:330,y:900}, arenaStage:4, arenaBoss:'bbandit', spawns:[], portals:[]};
@@ -2222,7 +2232,7 @@ function genArenaDeco(){
 }
 function genDeco(){
   DECO.back=[]; DECO.front=[]; DECO.pebbles={}; DECO.bottoms={};
-  ({town:genTownDeco, park:genParkDeco, wide:genWideDeco, tower:genTowerDeco, stone:genStoneDeco, cliff:genCliffDeco, plaza:genPlazaDeco, arena:genArenaDeco, lair:genLairDeco, station:genStationDeco, swamp:genSwampDeco, swhouse:genSwHouseDeco, jq:genJqDeco, sewer:genSewerDeco, croc:genCrocDeco, train:()=>{}}[TERRAIN] || genHuntDeco)();
+  ({town:genTownDeco, park:genParkDeco, wide:genWideDeco, tower:genTowerDeco, stone:genStoneDeco, cliff:genCliffDeco, plaza:genPlazaDeco, arena:genArenaDeco, lair:genLairDeco, station:genStationDeco, swamp:genSwampDeco, swhouse:genSwHouseDeco, jq:genJqDeco, sewer:genSewerDeco, croc:genCrocDeco, croc2:genCroc2Deco, train:()=>{}}[TERRAIN] || genHuntDeco)();
   if(!['train','jq','sewer'].includes(TERRAIN)) addFerns();
 }
 const MOSS = (()=>{ const R=seeded(99), a=[]; for(let i=0;i<34;i++) a.push({r:4+R()*16, a:R()*Math.PI*2, l:.8+R()*2.2, c:['#5d8a33','#7fa93f','#a1bd52','#4a6e2a','#8a7a44'][Math.floor(R()*5)], w:1.2+R()*1.6}); const ch=[]; for(let i=0;i<9;i++) ch.push([R()*6.28,R()*6.28,['#6f9a3a','#9bb64e','#8a7a44'][i%3]]); return {arcs:a, chords:ch}; })();
@@ -3006,10 +3016,10 @@ function hurtPlayer(dmg, dir, o={}){
   if(T.invT>0 && !o.noDodge) return false;   // Kattens bjällra: osynlig
   if(!o.noDodge && trk()==='bjallra' && G.time>=(T.bjCd||0) && Math.random()<.2){ T.invT=2; T.bjCd=G.time+15; trDeaggro();
     G.fx.push({type:'text',x:p.x,y:p.y-p.h-16,text:'🔔 Puff! Borta.',color:'#e8d8ff',t:0,dur:1,size:14}); for(let i=0;i<14;i++) particle(p.x+rand(-14,14),p.y-rand(5,60),pick(['#e8d8ff','#fff','#c8b0ff']),rand(-50,50),rand(-60,0),.6,3,0); return false; }
-  let real = o.raw ? dmg : dmg*100/(100+s.armor)*(1-elixV('def')/100)*(1-tv('s_bark')/100)*(o.melee?1-tv('g_kake')/100:1)*(1-cbtV('def')/100)*(T.drT>0?.7:1)*(T.big>0?.6:1)*(trk()==='rotfaste'&&T.still>=.5?.8:1);   // Järnkäke · Barkhudsbrygd · Hundvisslan   // armor (och Barkelixir) minskar skadan
+  let real = o.raw ? dmg : dmg*(o.melee?100/(100+s.armor):1)*(1-elixV('def')/100)*(1-tv('s_bark')/100)*(o.melee?1-tv('g_kake')/100:1)*(1-cbtV('def')/100)*(T.drT>0?.7:1)*(T.big>0?.6:1)*(trk()==='rotfaste'&&T.still>=.5?.8:1);   // Järnkäke · Barkhudsbrygd · Hundvisslan   /* armor minskar BARA beröringsskada (o.melee), inte monstrens förmågor, projektiler, gift eller taggbuskar */
   if(T.sh && T.sh.v>0 && T.sh.t>0){ const ab=Math.min(T.sh.v, real); T.sh.v-=ab; real-=ab; addNum(p.x+14, p.y-p.h-14, ab, 'dmg'); if(T.sh.v<=0.01){ T.sh=null; G.fx.push({type:'text',x:p.x,y:p.y-p.h-30,text:'Skölden brast!',color:'#cfe0ff',t:0,dur:.9,size:13}); } if(real<=0.001){ if(!o.noKb) p.inv=Math.max(p.inv,HURT_INV*.5); return true; } }   // sköld tar skadan först
   G.ch.hp -= real; SFX.hurt(); if(real>0) solNoHitReset();
-  if(o.src && o.src.d && o.src.d.pois && real>0 && Math.random()<KROK_POIS.chance) poisonPlayer(KROK_POIS.dps, KROK_POIS.t, '🐊 Krokodilgift!');   /* krokodilens bett */
+  if(o.melee && o.src && o.src.d && o.src.d.pois && real>0 && Math.random()<KROK_POIS.chance) poisonPlayer(KROK_POIS.dps, KROK_POIS.t, '🐊 Krokodilgift!');   /* krokodilens bett */
   addNum(p.x, p.y-p.h-6, real, 'hurt');
   if(trk()==='bjornhjarta' && G.ch.hp>0 && G.ch.hp<s.maxHp*.3 && G.time>=(T.bhCd||0)){ T.bhCd=G.time+60; T.sh={v:s.maxHp*.3, t:8, max:8}; G.fx.push({type:'text',x:p.x,y:p.y-p.h-34,text:'🐻 Björnhjärta!',color:'#ffb0a0',t:0,dur:1.2,size:14}); }
   if(rank('g_andra') && G.ch.hp>0 && G.ch.hp<s.maxHp*.3 && G.time>=(p.andraCd||0)){ p.andraT=ANDRA_T; p.andraCd=G.time+ANDRA_CD;   // Andra andningen
@@ -3075,6 +3085,12 @@ function poisonTick(p, dt){
   if(G.ch.hp<=0.05){ G.ch.hp=0; p.poisT=0; die(); }
 }
 /* Krokoloco kastar en giftflaska i en båge mot spelaren – den lämnar en giftpöl i 10 s */
+function krokSpit(m, tgt){   // Krokomans giftspott: flyger i en låg båge mot spelaren och förgiftar vid träff
+  const x=m.x+m.dir*26, y=m.y-m.d.h*.8, tx=tgt.x, ty=tgt.y-30, g=380, T=clamp(Math.hypot(tx-x,ty-y)/440,.3,1.25);
+  const f={k:'spit', src:m, x, y, vx:(tx-x)/T, vy:(ty-y)/T-.5*g*T, g, d:Math.max(1,Math.round(m.d.touch*.5)), life:T+.9};
+  G.mprojs.push(f); sendMProj(f); SFX.swing&&SFX.swing();
+  for(let k=0;k<6;k++) particle(x,y,pick(['#9aff6a','#5ac83a','#d8ffb0']),m.dir*rand(30,90),rand(-60,10),.35,rand(2,3),200);
+}
 function krokBottle(m, tgt){
   const tx=clamp(tgt.x+rand(-30,30),40,WORLD.w-40), gy=(tgt.onGround===false||tgt.y==null)?m.y:tgt.y, x=m.x+m.dir*22, y=m.y-115, g=1100, T=.95;
   const f={k:'gbottle', src:m, x, y, vx:(tx-x)/T, vy:(gy-y)/T-.5*g*T, g, gy, r:POOL_R, d:Math.max(1,Math.round(m.d.touch*.45)), life:T+.8};
@@ -3092,7 +3108,7 @@ function jqBush(h){
 }
 /* Hoppbanan: giftdroppar under plattform 15 och 20. Droppen växer (så man kan se när den släpper), faller sedan rakt ned
    och stannar på första plattformen under. Träff: 10 skada direkt + 10 skada per sekund i 2 tick – varje tick knuffar till dig. */
-const DRIP_CD = 5, DRIP_GROW = 1.4, DRIP_DMG = 10, DRIP_TICKS = 2;
+const DRIP_CD = 3, DRIP_GROW = 1.4, DRIP_DMG = 10, DRIP_TICKS = 2;
 const JQ_DRIP = [[15,1],[20,-1]].map(([n,side],i)=>{ const [x1,x2,y]=JQ_P[n-1], x=side>0?x1+16:x2-16; let floor=JQ_GY; for(const [a,b,yy] of JQ_P) if(yy>y && x>=a-4 && x<=b+4 && yy<floor) floor=yy; return {n, x, y0:y+24, floor, off:i*2.5}; });
 function jqDripHit(p, dir){
   hurtPlayer(DRIP_DMG, dir, {noDodge:true, raw:true});
@@ -4143,14 +4159,16 @@ function updateMProjs(dt){
     if(f.k==='axe'||f.k==='knife'){ if(Math.random()<.3) particle(f.x,f.y,'rgba(200,200,210,.6)',0,0,.2,2,0); }
     else if(f.k==='flame'){ if(Math.random()<.35) particle(f.x,f.y,pick(['#ff7a1a','#ffd23f','#ff4a1a','#5a2a1a']),rand(-30,30),rand(-60,-10),.35,rand(2,4),-60); }
     else if(f.k==='barkf'){ if(f.vy>0 && f.y>=groundY(f.x)-3){ for(let k=0;k<6;k++) particle(f.x,f.y,pick(['#5a3a1c','#8a6038','#d8b07a']),rand(-80,80),rand(-120,-20),.4,2.5,400); G.mprojs.splice(i,1); continue; } }
+    else if(f.k==='spit'){ if(Math.random()<.6) particle(f.x-f.vx*.02,f.y,pick(['#9aff6a','#5ac83a','#d8ffb0']),rand(-15,15),rand(-15,15),.35,rand(1.8,2.8),60);
+      if(f.vy>0 && f.y>=groundY(f.x)-2){ for(let k=0;k<10;k++) particle(f.x,f.y-2,pick(['#9aff6a','#3a8a2a','#d8ffb0']),rand(-90,90),rand(-140,-30),.45,rand(2,3.5),600); G.mprojs.splice(i,1); continue; } }
     else if(f.k==='shard'){ if(Math.random()<.7) particle(f.x-f.vx*.02,f.y,pick(['#ffffff','#bff4ff','#9fdcff']),rand(-15,15),rand(-15,15),.3,2.4,0); }
     else if(f.k==='bark'){ if(Math.random()<.4) particle(f.x-f.vx*.02,f.y+3,pick(['#8a6038','#c8a878']),rand(-10,10),rand(-20,5),.3,2,100); }
     else if(Math.random()<.8) particle(f.x-f.vx*.02,f.y,pick(['#ff7a1a','#ffd23f','#ff4a1a']),rand(-20,20),rand(-30,10),.35,3,-40);
     let hit=false;
     if(f.k==='bark' && !f.jumped && G.mode==='game' && p && !p.dead && !p.onGround && !p.climb && Math.abs(f.x-p.x)<16 && p.y<f.y-3 && f.y-p.y<110){ f.jumped=true; G.fx.push({type:'text',x:p.x,y:p.y-p.h-18,text:'🦘 Över!',color:'#7dff8a',t:0,dur:1,size:14}); questEvent('jump_bark'); }
-    if(G.mode==='game' && p && !p.dead && p.inv<=0 && Math.abs(f.x-p.x)<p.w/2+9+(f.hr||0) && f.y>p.y-p.h-(f.hr||0) && f.y<p.y+4+(f.hr||0)){ hurtPlayer(f.d, Math.sign(f.vx)||1, {src:f.src||G.monById[f.sid]}); hit=true; }
+    if(G.mode==='game' && p && !p.dead && p.inv<=0 && Math.abs(f.x-p.x)<p.w/2+9+(f.hr||0) && f.y>p.y-p.h-(f.hr||0) && f.y<p.y+4+(f.hr||0)){ const hp0=hurtPlayer(f.d, Math.sign(f.vx)||1, {src:f.src||G.monById[f.sid]}); hit=true; if(f.k==='spit' && hp0!==false) poisonPlayer(KROK_POIS.dps, KROK_POIS.t, '🐊 Krokogift!'); }
     if(hit || f.life<=0 || f.y>WORLD.h || f.x<0 || f.x>WORLD.w){
-      if(hit) for(let k=0;k<14;k++) particle(f.x,f.y,f.k==='shard'?pick(['#ffffff','#bff4ff','#6ac4ff']):f.k==='bark'?pick(['#5a3a1c','#8a6038','#d8b07a']):(f.k==='axe'||f.k==='knife')?pick(['#d8d8e0','#8a8a96','#ff6b6b']):pick(['#ff7a1a','#ffd23f','#fff1b0']),rand(-140,140),rand(-140,60),.4,3.5,200);
+      if(hit) for(let k=0;k<14;k++) particle(f.x,f.y,f.k==='spit'?pick(['#9aff6a','#5ac83a','#d8ffb0']):f.k==='shard'?pick(['#ffffff','#bff4ff','#6ac4ff']):f.k==='bark'?pick(['#5a3a1c','#8a6038','#d8b07a']):(f.k==='axe'||f.k==='knife')?pick(['#d8d8e0','#8a8a96','#ff6b6b']):pick(['#ff7a1a','#ffd23f','#fff1b0']),rand(-140,140),rand(-140,60),.4,3.5,200);
       G.mprojs.splice(i,1);
     }
   }
@@ -4178,6 +4196,11 @@ function drawMProj(f){
     ctx.restore(); return; }
   if(f.k==='beam') return drawBeam(f);
   if(f.sv) return drawSilverProj(f);
+  if(f.k==='spit'){ ctx.save(); ctx.translate(f.x,f.y); ctx.rotate(Math.atan2(f.vy||0,f.vx||1));   // giftspott: grön klick med svans
+    ctx.globalAlpha=.35; ctx.fillStyle='#7ad84a'; ctx.beginPath(); ctx.ellipse(-11,0,14,4,0,0,7); ctx.fill(); ctx.globalAlpha=1;
+    const g=ctx.createRadialGradient(-1,-2,0,0,0,8); g.addColorStop(0,'#eaffc8'); g.addColorStop(.45,'#8ae04a'); g.addColorStop(1,'#2e7a1a'); ctx.fillStyle=g; ctx.strokeStyle='#123a0a'; ctx.lineWidth=1.6;
+    ctx.beginPath(); ctx.moveTo(8,0); ctx.quadraticCurveTo(6,-6.5,-1,-6.5); ctx.quadraticCurveTo(-8,-6,-11,0); ctx.quadraticCurveTo(-8,6,-1,6.5); ctx.quadraticCurveTo(6,6.5,8,0); ctx.fill(); ctx.stroke();
+    ctx.fillStyle='rgba(255,255,255,.85)'; ctx.beginPath(); ctx.ellipse(1,-3,2.4,1.4,0,0,7); ctx.fill(); ctx.restore(); return; }
   if(f.k==='flame'){   // låga: växer och bleknar
     const k=clamp((f.t||0)/.7,0,1), r=9+k*24; ctx.save(); ctx.globalCompositeOperation='lighter'; ctx.globalAlpha=1-k*.75;
     const g=ctx.createRadialGradient(f.x,f.y,0,f.x,f.y,r); g.addColorStop(0,'rgba(255,250,200,1)'); g.addColorStop(.35,'rgba(255,170,40,.9)'); g.addColorStop(1,'rgba(255,50,0,0)');
@@ -4480,6 +4503,9 @@ function updateMonsters(dt){
       else if(m.rushCd<=0 && m.hurtAt!=null && G.time-m.hurtAt<.25 && tgt && !(m.rootT>0)){ m.rushCd=ODLA_CD; m.rushCh=ODLA_CHG; m.chargeT=ODLA_CHG; m.state='idle'; } }
     if(m.d.bottles){ m.botCd=(m.botCd===undefined?2:m.botCd)-dt; if(m.throwT>0) m.throwT-=dt;   // Krokoloco: en giftflaska var 5:e sekund i strid
       if(tgt && m.botCd<=0 && !(m.rootT>0) && Math.abs(tgt.x-m.x)<700 && Math.abs(tgt.y-m.y)<260){ m.botCd=KROK_BOT_CD; m.throwT=.5; m.dir=Math.sign(tgt.x-m.x)||m.dir; krokBottle(m,tgt); } }
+    if(m.d.spit){ m.spitCd=Math.max(0,(m.spitCd===undefined?1:m.spitCd)-dt);   // Krokoman: laddar 0,55 s och spottar gift mot den som anfallit den
+      if(m.spitPend){ m.chargeT-=dt; if(tgt) m.dir=Math.sign(tgt.x-m.x)||m.dir; if(m.chargeT<=0){ m.chargeT=0; m.spitPend=false; if(tgt && !(m.rootT>0)){ m.throwT=.35; krokSpit(m,tgt); } } }
+      else if(tgt && m.spitCd<=0 && !(m.rootT>0) && Math.abs(tgt.x-m.x)>30 && Math.abs(tgt.x-m.x)<KMAN_RANGE && Math.abs(tgt.y-m.y)<200){ m.spitCd=KMAN_CD*rand(.9,1.1); m.dir=Math.sign(tgt.x-m.x)||m.dir; m.chargeT=KMAN_CHG; m.spitPend=true; m.state='idle'; } }
     if(m.rare && !m.d.boss && silverAI(m,dt,tgt)) continue;
     if(m.d.spear && spearAI(m,dt,tgt)) continue;
     if(m.d.arena){ arenaBossAI(m,dt,tgt); if(m.leap) continue; }
@@ -5013,6 +5039,7 @@ ART[27] = {...ART[25], rayA:.06};   // Träskhuset
 ART[28] = {...ART[25], sky:['#33403a','#6a7a6a','#aab6a2'], haze:'#8a968a'};   // Hoppbanan
 ART[29] = {...ART[20], soil:['#3a4438','#232a22','#101410'], grass:['#2a3a24','#3a4a2e','#4a5a36','#7a8a5a'], mote:'170,230,140', moteN:16, moteA:.4, gradeTop:'rgba(10,30,15,.45)', gradeBot:'rgba(0,0,0,.5)'};   // Ödlekällaren
 ART[30] = {...ART[25], sky:['#26302a','#4a5a48','#86947e'], fog:'120,150,110'};   // Krokodilträsket
+ART[31] = {...ART[30], sky:['#1c2620','#3a4a3a','#6e7e66'], fog:'110,145,100', mote:'170,255,120', moteN:22, moteA:.45};   // Krokodilträsket 2: mörkare och giftigare
 function buildBg(A,q){
   const L=[], lx=A.sunPos[0]>.5?1:-1, R=seeded(1000+G.mapId*77);
   // Moln
@@ -5451,6 +5478,7 @@ const TERRAINS = {
   jq:{w:1460, gy:JQ_GY, plats:JQ_PLATS, ropes:[], walls:[]},
   sewer:{w:2400, gy:900, plats:SEWER_PLATS, ropes:SEWER_ROPES, walls:[]},
   croc:{w:3000, gy:900, plats:CROC_PLATS, ropes:CROC_ROPES, walls:[]},
+  croc2:{w:3200, gy:900, plats:CROC2_PLATS, ropes:CROC2_ROPES, walls:[]},
   train:{w:1500, gy:900, plats:RIDE_PLATS, ropes:[], walls:[]},
   tower:{w:1400, gy:2000, plats:TOWER_PLATS, ropes:TOWER_ROPES, walls:[]},
   stone:{w:3000, gy:900,  plats:STONE_PLATS, ropes:STONE_ROPES, walls:[], prof:stoneProf},
@@ -8774,79 +8802,199 @@ function shroomN(c,t,o){
   c.restore(); c.restore();
 }
 MOB.flugsvamp=wrap((c,t,o)=>shroomN(c,t,o),.78);
-/* ---------- Träskregionen: ödla, krokodil, Krokoloco och Banditernas bandit ---------- */
+/* ---------- Träskregionen: ödla, krokodil, Krokoman, Krokoloco och Banditernas bandit ----------
+   Samma teknik som vargen, björnen och katten: hela kroppen är EN siluett (renderCre) med en kontur,
+   skuggning och mönster läggs i siluetten, bortre ben ritas mörkare bakom, detaljer (ögon, tänder, klor) ovanpå. */
+function spikeRow(c,pts,h,fill,ink){   // rundade ryggtaggar längs en lista [x,y,storlek]
+  for(const [x,y,k] of pts){ const H=h*(k??1), W=H*.75; pp(c,()=>{ c.moveTo(x-W,y+2); c.quadraticCurveTo(x-W*.2,y-H*.7,x+W*.15,y-H); c.quadraticCurveTo(x+W*.35,y-H*.3,x+W,y+2); c.closePath(); },fill,ink,{box:[x-W,y-H,W*2,H+2],lw:1.6}); } }
+function teethRow(c,x0,x1,y,step,len,dir,ink){   // tandrad: dir 1 = nedåt, -1 = uppåt
+  c.fillStyle='#fffbe8'; c.strokeStyle=ink; c.lineWidth=.9*LWM+.3; let i=0;
+  for(let x=x0;x<=x1;x+=step,i++){ const L=len*(i%3===1?1.35:1)*(x>x1-step*1.5?.8:1); c.beginPath(); c.moveTo(x-step*.42,y); c.lineTo(x,y+dir*L); c.lineTo(x+step*.42,y); c.closePath(); c.fill(); c.stroke(); } }
+function clawsAt(c,x,y,n,len,col){ c.strokeStyle=col; c.lineWidth=1.5; c.lineCap='round'; for(let i=0;i<n;i++){ const xx=x+(i-(n-1)/2)*3.6; c.beginPath(); c.moveTo(xx,y); c.quadraticCurveTo(xx+len*.7,y-.4,xx+len,y+1.6); c.stroke(); } }
+function lizLeg(list,hx,hy,ph,fr,walk,L,w){   // krälande ben: överarmen ut, underbenet ned, tår framåt
+  const sw=walk?Math.sin(ph)*.55:0, lift=walk?Math.max(0,Math.sin(ph+1.4))*.45:0;
+  const P=chain(list,hx,hy,[[L,(fr?.75:-.7)+sw],[L,(fr?-.85:.8)-sw*.5+(fr?lift:-lift)]],[w,w*.78,w*.62]), e=P[P.length-1];
+  paw(list,e[0]+w*.28,e[1]-w*.12,w*.62,w*.3); return e; }
+
+/* ---------- Ödla ---------- */
 function odlaN(c,t,o){
-  const m=o.m||{}, R=!!m.rare, P=R?{b:'#dfe7f2',d:'#8a9ab4',bel:'#ffffff',sp:'#9fdcff',ink:SVP.ink,eye:SVP.eye}:{b:'#6aa23a',d:'#3e6a22',bel:'#e0dc9a',sp:'#d0702a',ink:'#14200a',eye:'#ffd23f'};
-  const ch=(o.charge||0)>0, rush=(m.rushT||0)>0, walk=o.walk||rush, ph=t*(rush?20:walk?11:2), sh=ch?Math.sin(t*70)*1.3:0, bob=walk?Math.abs(Math.sin(ph))*1.5:0;
-  shadow(c,34,5,.25); c.save(); c.translate(sh,(ch?3:0)-bob);
-  // ben bakom kroppen
-  const leg=(x,a,col)=>{ c.save(); c.translate(x,-9); c.rotate(a); pp(c,()=>{ c.moveTo(-3,0); c.lineTo(3,0); c.lineTo(6,9); c.lineTo(10,10); c.lineTo(9,13); c.lineTo(1,12); c.closePath(); },col,P.ink,{box:[-3,0,13,13],lw:1.6}); c.restore(); };
-  const sw=walk?Math.sin(ph)*.6:0; leg(-10,-sw,P.d); leg(16,sw,P.d);
-  // svans
-  const tw=Math.sin(t*(walk?8:2))*5;
-  pp(c,()=>{ c.moveTo(-14,-16); c.quadraticCurveTo(-40,-14+tw*.5,-62,-6+tw); c.quadraticCurveTo(-42,-4+tw*.3,-14,-5); c.closePath(); },P.d,P.ink,{box:[-62,-18,48,16]});
-  // kropp och mage
-  pp(c,()=>{ c.ellipse(2,-12,24,10,0,0,TAU); },P.b,P.ink,{box:[-22,-22,48,20]},x=>{ x.fillStyle=P.bel; x.beginPath(); x.ellipse(4,-5,20,5,0,0,TAU); x.fill(); x.fillStyle='rgba(0,0,0,.12)'; for(let i=0;i<5;i++){ x.beginPath(); x.ellipse(-12+i*8,-16,2.5,2,0,0,TAU); x.fill(); } });
-  // ryggtaggar
-  c.fillStyle=P.sp; c.strokeStyle=P.ink; c.lineWidth=1.4; for(let i=0;i<6;i++){ const x=-16+i*7, y=-21+Math.abs(i-2.5)*.6; c.beginPath(); c.moveTo(x-3,y+2); c.lineTo(x,y-4-(ch?2:0)); c.lineTo(x+3,y+2); c.closePath(); c.fill(); c.stroke(); }
-  // huvud
-  pp(c,()=>{ c.moveTo(18,-20); c.quadraticCurveTo(34,-26,44,-14); c.quadraticCurveTo(46,-8,38,-6); c.lineTo(20,-6); c.closePath(); },P.b,P.ink,{box:[18,-26,28,20]});
-  c.strokeStyle=P.ink; c.lineWidth=1.4; c.beginPath(); c.moveTo(30,-9); c.lineTo(43,-10); c.stroke();
-  if(HURT) hurtEye(c,30,-17,3.5,P.ink,1); else { eyeM(c,30,-17,3.2,3.6,ch?'#ff4a2a':P.eye,{blink:blinkM(t,.4),ink:P.ink,look:.4,glow:R?SVP.eye:(ch?'#ff4a2a':null)}); }
-  if(ch||rush){ const fl=Math.sin(t*30)>0; if(fl){ c.strokeStyle='#e83a4a'; c.lineWidth=1.6; c.beginPath(); c.moveTo(44,-9); c.lineTo(52,-9); c.moveTo(52,-9); c.lineTo(55,-12); c.moveTo(52,-9); c.lineTo(55,-6); c.stroke(); } }
-  // ben framför kroppen
-  leg(-4,sw,P.b); leg(22,-sw,P.b);
+  const m=o.m||{}, R=!!m.rare, ch=(o.charge||0)>0, rush=(m.rushT||0)>0, walk=o.walk||rush;
+  const s=t*(rush?17:walk?10:1), sh=ch?Math.sin(t*70)*1.6:0, bob=walk?Math.abs(Math.sin(s))*1.8:Math.sin(t*2)*.6, hb=walk?Math.sin(s+.8)*1.2:Math.sin(t*1.4)*1;
+  const line='#16240a', box=[-112,-90,200,96], fb=-bob-8;
+  shadow(c,46,6,.28); c.save(); c.translate(sh,ch?2:0);
+  // bortre benen
+  const far=[]; lizLeg(far,24,-24+fb,s+Math.PI,1,walk,13,11); lizLeg(far,-24,-24+fb,s,0,walk,13,11);
+  renderCre(c,'odlaFar',box,far,x=>{ x.fillStyle='#3e6a22'; for(const p of far) x.fill(p); },x=>{ vgrad(x,box,[[0,'rgba(0,0,0,0)'],[1,'rgba(0,0,0,.3)']]); },line,2.4);
+  // ryggkam (reser sig när den laddar)
+  const tail=[]; for(let i=0;i<10;i++){ const k=i/9; tail.push([-30-i*8.6, -28+fb*(1-k)+i*2+Math.sin(t*(walk?8:2)-i*.6)*k*6-k*k*k*16]); }
+  const crest=[]; for(let i=0;i<7;i++){ const x=-30+i*9.5; crest.push([x,-41+fb-Math.sin(i/6*Math.PI)*3+(i>4?(i-4)*1.5:0),(.8+.25*Math.sin(i/6*Math.PI))*(ch?1.45:1)]); }
+  for(let i=1;i<5;i++) crest.push([tail[i][0],tail[i][1]-11+i*1.2,.75-i*.12]);
+  spikeRow(c,crest,9,R?'#9fdcff':'#e8702a',line);
+  // siluett: svans, kropp, huvud och närmre ben
+  const S=[]; tube(S,tail,[24,21,18,15,12,10,8,6,4,2.4]);
+  S.push(sm([[-38,-22],[-34,-34],[-16,-42],[6,-44],[24,-41],[38,-34],[40,-22],[28,-13],[6,-11],[-16,-11],[-32,-14]].map(p=>[p[0],p[1]+fb])));
+  const hy=fb+hb, H=new Path2D(); H.ellipse(50,-38+hy,21,17,0,0,TAU); S.push(H); const Sn=new Path2D(); Sn.ellipse(66,-31+hy,15,10,-.08,0,TAU); S.push(Sn);
+  const fF=lizLeg(S,30,-24+fb,s,1,walk,13,12.5), fB=lizLeg(S,-20,-24+fb,s+Math.PI,0,walk,13,12.5);
+  renderCre(c,'odla',box,S,x=>{ x.fillStyle='#6aa83a'; for(const p of S) x.fill(p); },x=>{
+    vgradY(x,box,-48+fb,-8+fb,[[0,'rgba(24,64,10,.55)'],[.4,'rgba(0,0,0,0)'],[.7,'rgba(255,250,190,.15)'],[1,'rgba(242,236,170,.75)']]);
+    x.fillStyle='rgba(28,70,14,.5)'; for(let i=0;i<5;i++){ x.beginPath(); x.ellipse(-26+i*13,-38+fb,3.4,6,.2,0,TAU); x.fill(); }   // ränder över ryggen
+    for(let i=2;i<9;i+=2){ const p=tail[i]; x.beginPath(); x.ellipse(p[0],p[1]-2,3,6.5-i*.4,.3,0,TAU); x.fill(); }
+    x.fillStyle='rgba(255,210,90,.55)'; const r=rng(17); for(let i=0;i<14;i++){ x.beginPath(); x.arc(-34+r()*70,-36+r()*12+fb,1.2+r()*1.3,0,TAU); x.fill(); }   // gula prickar
+    rad(x,6,-14+fb,30,'rgba(244,238,176,.6)'); rad(x,60,-24+hy,14,'rgba(244,238,176,.7)');
+    rad(x,0,-42+fb,26,'rgba(220,255,170,.28)'); rad(x,44,-52+hy,13,'rgba(255,255,220,.35)'); rad(x,70,-38+hy,8,'rgba(255,255,220,.25)');
+    strands(x,[-116,-78,204,84],380,23,0,[1.2,2.6],['rgba(20,50,8,.35)','rgba(230,255,190,.25)'],0);
+    vgradY(x,box,-14,0,[[0,'rgba(0,0,0,0)'],[1,'rgba(10,30,4,.4)']]);
+  },line,3.6);
+  // detaljer: tår, mun, näsborre, öga, tunga
+  for(const e of [fF,fB]) clawsAt(c,e[0]+8,e[1]-1,3,3.2,'#f4f0d8');
+  c.strokeStyle=line; c.lineWidth=1.6; c.lineCap='round'; c.beginPath(); c.moveTo(79,-31+hy); c.quadraticCurveTo(70,-24+hy,56,-27+hy); c.quadraticCurveTo(53,-28+hy,52,-31+hy); c.stroke();
+  c.fillStyle=line; ell(c,77,-36+hy,1.5,1.1); c.fill();
+  eyeM(c,53,-44+hy,6.5,7,ch?'#ff5a2a':R?'#5fe6ff':'#ffcc33',{slit:true,blink:!ch&&blinkM(t,.4),ink:line,look:.38,glow:R?SVP.eye:(ch?'#ff4a2a':null),lid:ch?.32:.12,lidCol:R?'#c8d4e4':'#5a9a32',lidS:ch?-.8:-.2});
+  if(ch||rush){ if(Math.sin(t*26)>0){ c.strokeStyle='#e8344a'; c.lineWidth=1.8; c.beginPath(); c.moveTo(78,-30+hy); c.lineTo(88,-30+hy); c.lineTo(92,-33+hy); c.moveTo(88,-30+hy); c.lineTo(92,-27+hy); c.stroke(); } }
   if(rush && Math.random()<.4) particle((m.x||0)-(m.dir||1)*30, (m.y||0)-2, 'rgba(180,170,140,.7)', -(m.dir||1)*rand(20,60), rand(-40,-10), .4, rand(2,4), 200);
   c.restore();
 }
+
+/* ---------- Krokodil ---------- */
 function krokN(c,t,o){
-  const m=o.m||{}, R=!!m.rare, P=R?{b:'#dfe7f2',d:'#8a9ab4',bel:'#ffffff',ink:SVP.ink,eye:SVP.eye}:{b:'#4a7a34',d:'#2e5222',bel:'#c8c890',ink:'#0e1a08',eye:'#e8e040'};
-  const walk=o.walk, ph=t*(walk?8:1.6), snap=Math.max(0,Math.sin(t*1.7+(m.id||0)))**8, jaw=HURT?.35:snap*.45, sw=walk?Math.sin(ph)*.5:0;
-  shadow(c,52,6,.28); c.save();
-  const leg=(x,a,col)=>{ c.save(); c.translate(x,-8); c.rotate(a); pp(c,()=>{ c.moveTo(-5,0); c.lineTo(5,0); c.lineTo(7,8); c.lineTo(12,9); c.lineTo(11,12); c.lineTo(-2,11); c.closePath(); },col,P.ink,{box:[-5,0,17,12],lw:1.6}); c.restore(); };
-  leg(-24,-sw,P.d); leg(16,sw,P.d);
-  // svans med taggar
-  const tw=Math.sin(t*(walk?6:1.5))*6;
-  pp(c,()=>{ c.moveTo(-30,-20); c.quadraticCurveTo(-64,-16+tw*.5,-92,-4+tw); c.quadraticCurveTo(-62,-2+tw*.3,-30,-3); c.closePath(); },P.d,P.ink,{box:[-92,-22,62,20]});
-  // kropp
-  pp(c,()=>{ c.ellipse(-4,-14,36,12,0,0,TAU); },P.b,P.ink,{box:[-40,-26,72,24]},x=>{ x.fillStyle=P.bel; x.beginPath(); x.ellipse(-2,-5,32,5,0,0,TAU); x.fill();
-    x.fillStyle='rgba(0,0,0,.18)'; for(let i=0;i<7;i++) for(let j=0;j<2;j++){ x.beginPath(); x.ellipse(-30+i*9+j*4,-20+j*5,3,2.2,0,0,TAU); x.fill(); } });
-  c.fillStyle=P.d; c.strokeStyle=P.ink; c.lineWidth=1.3; for(let i=0;i<8;i++){ const x=-34+i*8; c.beginPath(); c.moveTo(x-3,-24); c.lineTo(x,-29); c.lineTo(x+3,-24); c.closePath(); c.fill(); c.stroke(); }
-  // huvud: lång nos med tänder, underkäken öppnas ibland
-  c.save(); c.translate(28,-14);
-  c.save(); c.rotate(jaw); pp(c,()=>{ c.moveTo(0,0); c.lineTo(46,2); c.quadraticCurveTo(52,4,46,8); c.lineTo(2,9); c.closePath(); },P.b,P.ink,{box:[0,0,52,9]});
-    c.fillStyle='#fffbe8'; for(let x=8;x<44;x+=6){ c.beginPath(); c.moveTo(x,2); c.lineTo(x+2.5,-3); c.lineTo(x+5,2); c.closePath(); c.fill(); } c.restore();
-  pp(c,()=>{ c.moveTo(-2,-10); c.quadraticCurveTo(10,-14,26,-9); c.lineTo(50,-4); c.quadraticCurveTo(57,-1,50,3); c.lineTo(2,2); c.closePath(); },P.b,P.ink,{box:[-2,-14,58,17]});
-  c.fillStyle='#fffbe8'; for(let x=10;x<48;x+=6){ c.beginPath(); c.moveTo(x,2); c.lineTo(x+2.5,7); c.lineTo(x+5,2); c.closePath(); c.fill(); }
-  c.fillStyle=P.ink; c.beginPath(); c.arc(50,-4,1.4,0,TAU); c.fill();
-  pp(c,()=>{ c.ellipse(10,-12,6,5,0,0,TAU); },P.b,P.ink,{box:[4,-17,12,10]});
-  if(HURT) hurtEye(c,10,-13,3,P.ink,1); else eyeM(c,10,-13,2.6,2.8,P.eye,{blink:blinkM(t,.9),ink:P.ink,look:.5,glow:R?SVP.eye:null});
+  const m=o.m||{}, R=!!m.rare, walk=o.walk, s=t*(walk?7:1), bob=walk?Math.abs(Math.sin(s))*1.4:0, fb=-bob-6, br=Math.sin(t*1.6)*.6;
+  const snap=Math.max(0,Math.sin(t*1.7+(m.id||0)))**8, jaw=HURT?.3:snap*.36, line='#0d1806', box=[-142,-110,296,116];
+  shadow(c,70,7,.3);
+  // bortre ben och bortre ögonknöl
+  const far=[]; lizLeg(far,34,-24+fb,s+Math.PI,1,walk,13,18); lizLeg(far,-34,-24+fb,s,0,walk,13,18); { const p=new Path2D(); p.arc(84,-70+fb,10,0,TAU); far.push(p); }
+  renderCre(c,'krokFar',box,far,x=>{ x.fillStyle='#2e5220'; for(const p of far) x.fill(p); },x=>{ vgrad(x,box,[[0,'rgba(0,0,0,0)'],[1,'rgba(0,0,0,.3)']]); },line,2.6);
+  // svans och ryggtaggar
+  const tail=[]; for(let i=0;i<10;i++){ const k=i/9; tail.push([-44-i*9.6, -34+fb*(1-k)+i*2.6+Math.sin(t*(walk?5:1.4)-i*.5)*k*7]); }
+  const tw=[42,37,32,27,22,17,13,9,5.5,2.6], ridge=[];
+  for(let i=0;i<7;i++){ const x=-42+i*13; ridge.push([x,-56+fb-Math.sin(i/6*Math.PI)*8+br,1-.1*Math.abs(i-3)/3]); }
+  for(let i=1;i<9;i++) ridge.push([tail[i][0],tail[i][1]-tw[i]/2+2,1.05-i*.1]);
+  spikeRow(c,ridge,9,R?'#c8d4e4':'#2a4a1a',line);
+  // underkäken (öppnas ibland) med munhåla och tänder
+  c.save(); c.translate(60,-31+fb);
+  c.fillStyle='#6a1a22'; c.beginPath(); c.moveTo(0,-1); c.lineTo(78,-1); c.lineTo(Math.cos(jaw)*76,Math.sin(jaw)*76); c.closePath(); c.fill();
+  c.rotate(jaw); teethRow(c,16,70,1,7,5,-1,line);
+  pp(c,()=>{ c.moveTo(0,-3); c.lineTo(72,0); c.quadraticCurveTo(82,2,76,9); c.lineTo(8,11); c.quadraticCurveTo(-4,9,0,-3); c.closePath(); },R?'#d8e0ec':'#557f36',line,{box:[0,-3,80,14],lw:2.4},x=>{ x.fillStyle='rgba(236,232,170,.7)'; x.fillRect(0,5,80,8); });
   c.restore();
-  leg(-16,sw,P.b); leg(22,-sw,P.b);
+  // siluett: svans, kropp, huvud med lång nos, nära ögonknöl, närmre ben
+  const S=[]; tube(S,tail,tw);
+  S.push(sm([[-54,-28],[-50,-48],[-30,-62],[0,-66+br],[30,-64+br],[52,-56],[62,-42],[58,-24],[40,-16],[10,-13],[-24,-14],[-48,-18]].map(p=>[p[0],p[1]+fb])));
+  S.push(sm([[46,-58],[62,-68],[84,-68],[100,-58],[120,-53],[136,-48],[144,-41],[140,-32],[120,-31],[94,-30],[70,-30],[52,-36]].map(p=>[p[0],p[1]+fb])));
+  for(const [x,y,r] of [[70,-68,13],[138,-43,8.5]]){ const p=new Path2D(); p.arc(x,y+fb,r,0,TAU); S.push(p); }
+  const fF=lizLeg(S,40,-24+fb,s,1,walk,13,20), fB=lizLeg(S,-30,-24+fb,s+Math.PI,0,walk,13,20);
+  renderCre(c,'krok',box,S,x=>{ x.fillStyle='#4f8236'; for(const p of S) x.fill(p); },x=>{
+    vgradY(x,box,-66+fb,-10+fb,[[0,'rgba(12,34,6,.6)'],[.35,'rgba(0,0,0,.06)'],[.72,'rgba(0,0,0,0)'],[1,'rgba(230,226,160,.55)']]);
+    for(let r=0;r<2;r++) for(let i=0;i<9;i++){ const xx=-46+i*11+r*5, yy=-58+r*9+Math.abs(i-4)*1.2+fb;   // pansarplattor på ryggen
+      x.fillStyle='rgba(18,44,8,.5)'; x.beginPath(); x.roundRect(xx,yy,8,6,2.5); x.fill(); x.fillStyle='rgba(200,240,150,.22)'; x.fillRect(xx+1.5,yy+.8,5,1.4); }
+    x.fillStyle='rgba(16,40,8,.45)'; for(let i=1;i<10;i+=2){ const p=tail[i]; x.beginPath(); x.ellipse(p[0],p[1],3.5,tw[i]*.5,.15,0,TAU); x.fill(); }   // band på svansen
+    rad(x,0,-14+fb,46,'rgba(236,232,170,.55)'); x.strokeStyle='rgba(120,110,60,.35)'; x.lineWidth=1; for(let i=0;i<10;i++){ const xx=-40+i*9; x.beginPath(); x.moveTo(xx,-23+fb); x.lineTo(xx-1,-13+fb); x.stroke(); }   // magplattor
+    rad(x,10,-56+fb,38,'rgba(210,255,170,.2)'); rad(x,104,-50+fb,26,'rgba(220,255,180,.24)'); rad(x,68,-76+fb,10,'rgba(255,255,220,.35)'); rad(x,138,-46+fb,7,'rgba(255,255,220,.3)');
+    rad(x,92,-34+fb,16,'rgba(236,232,170,.35)');
+    strands(x,[-154,-98,302,104],520,29,0,[1.2,2.4],['rgba(14,36,6,.35)','rgba(220,255,180,.22)'],0);
+    vgradY(x,box,-14,0,[[0,'rgba(0,0,0,0)'],[1,'rgba(8,24,4,.45)']]);
+  },line,3.8);
+  // detaljer ovanpå: övre tänder, näsborrar, öga, klor
+  teethRow(c,74,134,-31+fb,7,6,1,line);
+  c.fillStyle=line; ell(c,140,-47+fb,2,1.3,.3); c.fill(); ell(c,145,-45.5+fb,1.6,1.1,.3); c.fill();
+  c.strokeStyle=line; c.lineWidth=1.4; c.beginPath(); c.moveTo(56,-34+fb); c.quadraticCurveTo(64,-30+fb,72,-31+fb); c.stroke();
+  eyeM(c,71,-69+fb,7.2,7.6,R?'#5fe6ff':'#e8e040',{slit:true,blink:blinkM(t,.9),ink:line,look:.45,glow:R?SVP.eye:null,lid:.36,lidCol:R?'#d8e0ec':'#4f8236',lidS:-.55});
+  for(const e of [fF,fB]) clawsAt(c,e[0]+11,e[1]-1,3,4,'#f4f0d8');
+}
+
+/* ---------- Krokoman: krokodil på två ben som spottar gift ---------- */
+function krokomanN(c,t,o){
+  const m=o.m||{}, R=!!m.rare, ch=(o.charge||0)>0, thr=(m.throwT||0)>0, walk=o.walk&&!ch;
+  const s=t*(walk?7.5:1), bob=walk?Math.abs(Math.sin(s))*2.2:Math.sin(t*2)*.8, br=Math.sin(t*2.2)*1.2, fb=-bob;
+  const jaw=HURT?.35:ch?.55:thr?.42:Math.max(0,Math.sin(t*1.3+(m.id||0)))**10*.25, lean=ch?-.06:thr?.08:0;
+  const line='#0d1806', box=[-100,-176,200,182], body=R?'#dfe7f2':'#4f8a32', dark=R?'#8a9ab4':'#2e5420';
+  shadow(c,40,6,.3);
+  const leg=(list,hx,ph)=>{ const sw=walk?Math.sin(ph)*.45:0, lift=walk?Math.max(0,Math.sin(ph+1.4))*.6:0;
+    const P=chain(list,hx,-56+fb,[[25,.28+sw],[25,-.5-lift]],[26,20,16]), e=P[P.length-1]; paw(list,e[0]+8,e[1]-1,13,6); return e; };
+  const arm=(list,sx,sy,ph,near)=>{ const sw=ch?-.75:thr?.7:walk?Math.sin(ph)*.45:Math.sin(t*1.8)*.08;
+    const P=chain(list,sx,sy,[[19,.15+sw],[17,.75+(ch?-.2:thr?.6:0)]],[15,12,10]), e=P[P.length-1]; paw(list,e[0]+2,e[1]+1,7.5,6.5); return e; };
+  c.save(); c.rotate(lean);
+  // bortre ben, bortre arm och bortre ögonknöl
+  const far=[]; leg(far,-4,s+Math.PI+(walk?0:.5)); arm(far,16,-106+fb,s,0); { const p=new Path2D(); p.arc(34,-155+fb,8,0,TAU); far.push(p); }
+  renderCre(c,'kmanFar',box,far,x=>{ x.fillStyle=dark; for(const p of far) x.fill(p); },x=>{ vgrad(x,box,[[0,'rgba(0,0,0,0)'],[1,'rgba(0,0,0,.3)']]); },line,2.6);
+  // svans och ryggtaggar
+  const tail=[]; for(let i=0;i<9;i++){ const k=i/8; tail.push([-18-i*8.5+Math.sin(t*(walk?6:1.6)-i*.5)*k*5, -54+fb*(1-k)+i*i*.62+k*4]); }
+  const tw=[30,27,24,20,16,12,9,6,3], ridge=[];
+  for(let i=0;i<6;i++) ridge.push([-24+i*1.2,-66-i*9+fb,.95]);
+  for(let i=1;i<8;i++) ridge.push([tail[i][0]+2,tail[i][1]-tw[i]/2+1,1-i*.1]);
+  c.save(); for(const r of ridge){ c.save(); c.translate(r[0],r[1]); c.rotate(r[1]<-62+fb?-1.25:-.3); spikeRow(c,[[0,0,r[2]]],8,R?'#c8d4e4':'#2a4a1a',line); c.restore(); } c.restore();
+  // underkäken med munhåla (lyser grönt när den laddar spottet)
+  c.save(); c.translate(14,-122+fb);
+  c.fillStyle=ch?'#3a7a1a':'#6a1a22'; c.beginPath(); c.moveTo(0,-1); c.lineTo(64,-1); c.lineTo(Math.cos(jaw)*60,Math.sin(jaw)*60); c.closePath(); c.fill();
+  if(ch||thr){ glow(c,30,6,22,'#9aff6a',.7); c.fillStyle='rgba(170,255,110,.85)'; c.beginPath(); c.ellipse(26,4+jaw*14,10,4+jaw*6,jaw*.5,0,TAU); c.fill(); }
+  c.rotate(jaw); teethRow(c,18,56,0,7,4.5,-1,line);
+  pp(c,()=>{ c.moveTo(0,-3); c.lineTo(58,-1); c.quadraticCurveTo(68,1,62,8); c.lineTo(6,11); c.quadraticCurveTo(-4,8,0,-3); c.closePath(); },R?'#d8e0ec':'#5a9038',line,{box:[0,-3,68,14],lw:2.4},x=>{ x.fillStyle='rgba(236,232,170,.75)'; x.fillRect(0,5,70,8); });
+  c.restore();
+  // siluett: svans, ben, bål och huvud
+  const S=[]; tube(S,tail,tw);
+  const fe=leg(S,-12,s-(walk?0:.5));
+  S.push(sm([[-24,-48],[-30,-72],[-26,-96],[-14,-112+br*.4],[6,-118+br*.5],[22,-112+br*.4],[30,-92],[28,-68],[20,-50],[2,-42],[-14,-43]].map(p=>[p[0],p[1]+fb])));
+  S.push(sm([[-4,-126],[-2,-142],[10,-152],[26,-151],[36,-146],[56,-142],[72,-138],[82,-132],[78,-124],[56,-123],[32,-121],[8,-118]].map(p=>[p[0],p[1]+fb])));
+  for(const [x,y,r] of [[20,-152,10],[78,-134,7]]){ const p=new Path2D(); p.arc(x,y+fb,r,0,TAU); S.push(p); }
+  renderCre(c,'kman',box,S,x=>{ x.fillStyle=body; for(const p of S) x.fill(p); },x=>{
+    vgrad(x,[box[0],-160+fb,box[2],170],[[0,'rgba(12,34,6,.35)'],[.25,'rgba(0,0,0,0)'],[.8,'rgba(0,0,0,.08)'],[1,'rgba(8,24,4,.45)']]);
+    x.fillStyle='rgba(18,44,8,.45)'; for(let r=0;r<4;r++) for(let i=0;i<2;i++){ const xx=-26+i*9, yy=-100+r*12+fb; x.beginPath(); x.roundRect(xx,yy,7,8,2.5); x.fill(); }   // pansarplattor på ryggen
+    for(let i=1;i<9;i+=2){ const p=tail[i]; x.beginPath(); x.ellipse(p[0],p[1],3,tw[i]*.5,.4,0,TAU); x.fill(); }
+    rad(x,14,-80+fb,26,'rgba(238,232,172,.85)'); x.strokeStyle='rgba(120,110,60,.45)'; x.lineWidth=1.2; for(let i=0;i<6;i++){ const yy=-104+i*9+fb; x.beginPath(); x.moveTo(2,yy); x.quadraticCurveTo(14,yy+2.5,27,yy); x.stroke(); }   // magplattor
+    rad(x,-6,-108+fb,22,'rgba(210,255,170,.25)'); rad(x,48,-140+fb,22,'rgba(220,255,180,.24)'); rad(x,18,-158+fb,8,'rgba(255,255,220,.35)'); rad(x,46,-126+fb,12,'rgba(236,232,170,.4)');
+    strands(x,[-98,-174,196,178],520,31,0,[1.2,2.4],['rgba(14,36,6,.32)','rgba(220,255,180,.2)'],0);
+  },line,3.8);
+  // höftskynke och bälte
+  pp(c,()=>{ c.moveTo(-20,-56+fb); c.lineTo(28,-58+fb); c.lineTo(26,-46+fb); c.lineTo(18,-40+fb); c.lineTo(12,-46+fb); c.lineTo(4,-38+fb); c.lineTo(-4,-46+fb); c.lineTo(-12,-40+fb); c.lineTo(-22,-48+fb); c.closePath(); },'#7a5230',line,{box:[-22,-60,50,22],lw:2},x=>{ x.strokeStyle='rgba(40,20,8,.4)'; x.lineWidth=1; for(const xx of [-10,2,14]){ x.beginPath(); x.moveTo(xx,-54+fb); x.lineTo(xx+1,-44+fb); x.stroke(); } });
+  c.fillStyle='#4a3018'; c.beginPath(); c.roundRect(-23,-62+fb,52,7,3); c.fill(); c.strokeStyle=line; c.lineWidth=1.6; c.stroke();
+  pp(c,()=>{ c.ellipse(16,-58.5+fb,6,4.5,0,0,TAU); },'#efe6cc',line,{box:[10,-63,12,9],lw:1.4}); c.fillStyle='#3a2a18'; ell(c,14.5,-59+fb,1.4,1.4); c.fill(); ell(c,17.5,-59+fb,1.4,1.4); c.fill();   // dödskalle-spänne
+  // närmre armen (egen kontur så den syns mot magen)
+  const A=[]; const he=arm(A,2,-106+fb,s+Math.PI,1);
+  renderCre(c,'kmanArm',box,A,x=>{ x.fillStyle=body; for(const p of A) x.fill(p); },x=>{ vgrad(x,[box[0],-112+fb,box[2],40],[[0,'rgba(220,255,180,.35)'],[.5,'rgba(0,0,0,0)'],[1,'rgba(0,0,0,.3)']]); },line,3.2);
+  clawsAt(c,he[0]+6,he[1]+2,3,3.5,'#f4f0d8'); clawsAt(c,fe[0]+16,fe[1]-1,3,4,'#f4f0d8');
+  // övre tänder, näsborre, öga och ögonbryn
+  teethRow(c,34,74,-122+fb,7,5,1,line);
+  c.fillStyle=line; ell(c,80,-138+fb,1.8,1.2,.3); c.fill();
+  eyeM(c,21,-153+fb,6,6.5,R?'#5fe6ff':ch?'#c8ff4a':'#f0d838',{slit:true,blink:!ch&&blinkM(t,.7),ink:line,look:.45,glow:R?SVP.eye:(ch?'#9aff6a':null),lid:ch?.3:.2,lidCol:body,lidS:-.7});
+  if((ch||thr) && Math.random()<.35) particle((m.x||0)+(m.dir||1)*28, (m.y||0)-70, pick(['#9aff6a','#5ac83a','#d8ffb0']), rand(-10,10), rand(10,40), .5, rand(1.6,2.6), 300);   // giftdregel
   c.restore();
 }
+
+/* ---------- Krokoloco: galningen i krokodilskinn ---------- */
 function krokolocoN(c,t,o){
-  const L=LOOKS.krokoloco, sc=L.s, m=o.m||{}, thr=(m.throwT||0)>0, br=Math.sin(t*2.2+(L.ph||0))*1.1;
+  const L=LOOKS.krokoloco, sc=L.s, m=o.m||{}, thr=(m.throwT||0)>0, br=Math.sin(t*2.2+(L.ph||0))*1.1, line='#10260a', sw=Math.sin(t*(o.walk?7:1.6))*(o.walk?3:1.2);
+  // krokodilskinnsmantel med svans bakom kroppen
+  c.save(); c.scale(sc,sc);
+  pp(c,()=>{ c.moveTo(-4,-62+br); c.quadraticCurveTo(-24,-50,-26,-22); c.quadraticCurveTo(-28,-8,-34,-4); c.quadraticCurveTo(-50,-2+sw*.3,-66,-4+sw); c.quadraticCurveTo(-48,-9,-30,-12); c.quadraticCurveTo(-14,-14,-10,-30); c.lineTo(6,-58+br); c.closePath(); },'#4a7e2c',line,{box:[-66,-64,72,62],lw:2.2},
+    x=>{ x.fillStyle='rgba(16,40,8,.45)'; for(let r=0;r<5;r++) for(let i=0;i<2;i++){ x.beginPath(); x.roundRect(-24+i*8-r*1.5,-54+r*9,6,6,2); x.fill(); } for(let i=0;i<4;i++){ x.beginPath(); x.ellipse(-38-i*7,-7,2.6,3.6,0,0,TAU); x.fill(); }
+      x.fillStyle='rgba(230,226,160,.4)'; x.fillRect(-60,-3,40,3); });
+  spikeRow(c,[[-24,-44,.8],[-27,-34,.85],[-29,-24,.8],[-36,-8,.7],[-46,-7,.6],[-56,-6,.5]].map(([x,y,k])=>[x,y+(x<-30?sw*((-30-x)/36):0),k]),6,'#2a4a1a',line);
+  c.restore();
   drawPerson(c,t,{...L, walk:o.walk});
   c.save(); c.scale(sc,sc); c.translate(0,-74+br);
-  // krokodilhuvud som huva: överkäke med tänder, ögon och fjäll
-  pp(c,()=>{ c.moveTo(-27,-2); c.bezierCurveTo(-30,-36,12,-42,30,-24); c.lineTo(54,-17); c.quadraticCurveTo(61,-12,54,-6); c.lineTo(22,-5); c.quadraticCurveTo(0,2,-27,-2); c.closePath(); },'#4f8a2e','#10260a',{box:[-30,-42,91,44]},
-    x=>{ x.fillStyle='rgba(0,0,0,.2)'; for(let i=0;i<9;i++){ x.beginPath(); x.ellipse(-20+i*7,-26+Math.abs(i-3)*1.5,2.8,2,0,0,TAU); x.fill(); } });
-  c.fillStyle='#fffbe8'; for(let x=24;x<53;x+=6){ c.beginPath(); c.moveTo(x,-7); c.lineTo(x+2.5,0); c.lineTo(x+5,-7); c.closePath(); c.fill(); }
-  for(const ex of [2,16]){ pp(c,()=>{ c.ellipse(ex,-33,6,5,0,0,TAU); },'#4f8a2e','#10260a',{box:[ex-6,-38,12,10]}); c.fillStyle='#e8e040'; c.beginPath(); c.ellipse(ex,-33,3,3,0,0,TAU); c.fill(); c.fillStyle='#111'; c.fillRect(ex-.8,-35.5,1.6,5); }
-  c.fillStyle='#10260a'; c.beginPath(); c.arc(54,-15,1.5,0,TAU); c.fill();
+  // krokodilhuvud som huva: ryggtaggar, fjällplattor, överkäke med tänder och stora ögonknölar
+  spikeRow(c,[[-24,-18,.7],[-18,-28,.85],[-8,-35,.9],[4,-37,.85]],7,'#2a4a1a',line);
+  pp(c,()=>{ c.moveTo(-27,-2); c.bezierCurveTo(-30,-36,12,-42,30,-24); c.lineTo(54,-17); c.quadraticCurveTo(62,-12,55,-5); c.lineTo(22,-5); c.quadraticCurveTo(0,2,-27,-2); c.closePath(); },'#4f8a2e',line,{box:[-30,-42,92,44]},
+    x=>{ x.fillStyle='rgba(16,40,8,.42)'; for(let r=0;r<2;r++) for(let i=0;i<6;i++){ x.beginPath(); x.roundRect(-20+i*8+r*3,-30+r*8+Math.abs(i-2.5)*1.2,6,5,2); x.fill(); }
+      x.fillStyle='rgba(236,232,170,.55)'; x.fillRect(20,-9,40,4); const g=x.createRadialGradient(36,-22,0,36,-22,18); g.addColorStop(0,'rgba(220,255,180,.35)'); g.addColorStop(1,'rgba(220,255,180,0)'); x.fillStyle=g; x.fillRect(16,-40,40,36); });
+  teethRow(c,24,52,-6,6,5,1,line);
+  pp(c,()=>{ c.arc(56,-13,5,0,TAU); },'#4f8a2e',line,{box:[51,-18,10,10],lw:1.6}); c.fillStyle=line; ell(c,57,-15,1.3,.9); c.fill();
+  for(const ex of [2,16]){ pp(c,()=>{ c.ellipse(ex,-33,7,6.5,0,0,TAU); },'#4f8a2e',line,{box:[ex-7,-40,14,13],lw:1.8});
+    eyeM(c,ex,-33.5,4.6,4.8,'#d8ff40',{slit:true,ink:line,look:.4,glow:'#b0ff4a',lid:.3,lidCol:'#4f8a2e',lidS:-.6,lw:1.6}); }
   c.restore();
-  // giftflaskan i handen (lyfts när han kastar)
-  c.save(); c.scale(sc,sc); c.translate(18,-30-(thr?24:0)); c.rotate(thr?-1.4:.15);
+  // giftflaskan i handen (lyfts när han kastar) och två små flaskor på bältet
+  c.save(); c.scale(sc,sc);
+  for(const [bx,col] of [[-7,'#3e9a2a'],[-1,'#7ad84a']]){ c.fillStyle=col; c.strokeStyle='#10300c'; c.lineWidth=1.2; c.beginPath(); c.ellipse(bx,-31,2.6,3.6,0,0,TAU); c.fill(); c.stroke(); c.fillStyle='#8a6a40'; c.fillRect(bx-1,-37,2,3); }
+  c.translate(18,-30-(thr?24:0)); c.rotate(thr?-1.4:.15);
+  if(thr) glow(c,0,0,18,'#9aff6a',.6);
   c.fillStyle='#3e9a2a'; c.strokeStyle='#10300c'; c.lineWidth=1.8; c.beginPath(); c.ellipse(0,0,7,9,0,0,TAU); c.fill(); c.stroke(); c.fillStyle='#8a6a40'; c.fillRect(-2.5,-14,5,7); c.strokeRect(-2.5,-14,5,7);
-  c.fillStyle='rgba(220,255,180,.7)'; c.beginPath(); c.ellipse(-2.5,-2,2,4,0,0,TAU); c.fill(); c.restore();
+  c.fillStyle='rgba(220,255,180,.7)'; c.beginPath(); c.ellipse(-2.5,-2,2,4,0,0,TAU); c.fill(); c.fillStyle='#fff'; c.font='bold 8px system-ui'; c.textAlign='center'; c.fillText('☠',0,5); c.restore();
 }
 LOOKS.myra={top:'#8a3a2a',stripes:'rgba(255,214,120,.35)',apron:'#c8b088',pants:'#4a3a2a',shoe:'#3a2a1a',hair:'#d8541e',hs:'bun',item:'basket',belt:'#5a3a1a',eye:'#3a6a2a',rim:'rgba(255,190,140,.4)'};
 LOOKS.krokoloco={top:'#3e6a2a',fur:'#2a4a1a',pants:'#3a4422',shoe:'#1e2a10',hair:'#3a2a10',beard:'#3a2a10',beardL:26,belt:'#5a3a1a',sash:'#8ae04a',eye:'#c8e040',s:1.25,rim:'rgba(180,255,140,.35)'};
 const BB_LOOK={...BOSS_LOOK, top:['#1e1a22','#0c0a10'], tricorn:['#141018','#ffd23f'], eq:{vapen:{wtype:'yxa',req:24,rarity:'epic'}, axel:{req:20,rarity:'epic'}, mantel:{req:20,rarity:'legendary'}, balte:{req:20,rarity:'epic'}}};
 Object.assign(MOB,{
-  odla:     wrap((c,t,o)=>odlaN(c,t,o), 1.0),
-  krokodil: wrap((c,t,o)=>krokN(c,t,o), 1.0),
+  odla:     wrap((c,t,o)=>odlaN(c,t,o), .54),
+  krokodil: wrap((c,t,o)=>krokN(c,t,o), .58),
+  krokoman: wrap((c,t,o)=>krokomanN(c,t,o), .56),
   krokoloco:wrap((c,t,o)=>krokolocoN(c,t,o), .95),
   bbandit:  wrap((c,t,o)=>banditN(c,t,o,BB_LOOK), 2.3),
 });
@@ -10484,7 +10632,7 @@ function renderBag(){
   const m=C.main, row=(k,v,cls='')=>`<span class="${cls}">${k}</span><b class="${cls}">${v}</b>`;
   const modeTxt = s.mode==='bow'?'Pilskott':s.mode==='whisper'?`Viskning (${fmtSv(s.manaCost)} mana)`:s.dual?`Två knivar (andra hand ${fmt1(s.oMin*OFF_MULT+s.statAtk*OFF_MULT)}–${fmt1(s.oMax*OFF_MULT+s.statAtk*OFF_MULT)})`:'Närstrid';
   $('#statList').innerHTML = row('Str'+(m==='str'?' ★':''),s.str,m==='str'?'main':'')+row('Int'+(m==='int'?' ★':''),s.int,m==='int'?'main':'')+row('Agi'+(m==='agi'?' ★':''),s.agi,m==='agi'?'main':'')
-    +row('Attack',`${fmt1(s.atkMin)}–${fmt1(s.atkMax)}`)+row('Armor',s.armor)+row('Max HP',s.maxHp)+row('Max mana',s.maxMp>0?s.maxMp:'– (ingen mana)')
+    +row('Attack',`${fmt1(s.atkMin)}–${fmt1(s.atkMax)}`)+row('Armor',s.armor+' <span style="opacity:.6;font-size:.8em;font-weight:normal">(mot beröring)</span>')+row('Max HP',s.maxHp)+row('Max mana',s.maxMp>0?s.maxMp:'– (ingen mana)')
     +row('HP-reg',fmt1(s.hpReg)+'/s')+(s.maxMp>0?row('Mana-reg',fmt1(s.mpReg)+'/s'):'')+row('Attackhastighet',Math.round((s.aspd+rageAspd())*100)+'%')+row('Kritisk chans',fmtSv(Math.round(s.crit*10)/10)+'%','agi')+(s.cdmg?row('Kritisk skada',Math.round((CRIT_MULT*100)+s.cdmg)+'%'):'')+(s.xpPct?row('EXP från monster','+'+s.xpPct+'%'):'')+row('Undvikande',fmtSv(Math.round(s.dodge*10)/10)+'%','agi')+row('Kortare nedkylning',fmtSv(Math.round(s.cdr*10)/10)+'%','int')+row('Rörelse',Math.round(s.move*100)+'%')
     +(ch.cls==='hippie'?row('Räckvidd',Math.round(s.range*100)+'%'):'')+row('Basattack',modeTxt)
     +(s.book?row('📖 Monsterbok',`+${s.book} alla stats${s.bookAtk?`, +${s.bookAtk} attack`:''}`):'')
@@ -11169,7 +11317,7 @@ function paintWorld(cv, isle='lov'){
   const lg=c.createLinearGradient(0,0,0,H); lg.addColorStop(0,'#86c562'); lg.addColorStop(1,'#5a9a40'); fillBlobs(0,lg);
   // regionernas färger
   for(const a of P){ const A=a.A, r=a.M.town?100:130;
-    const cols = ['swhouse','jq','croc'].includes(a.M.terrain) ? ['#7a866a','#4a5a3e'] : a.M.terrain==='sewer' ? ['#6a7068','#3a443c'] : a.M.terrain==='swamp' ? ['#7a866a','#4a5a3e'] : a.M.terrain==='station' ? ['#a8c890','#6a9a5a'] : a.M.terrain==='plaza' ? ['#e8c890','#c8a060'] : a.M.terrain==='cliff' ? ['#9ab8a0','#6a8a70'] : a.M.terrain==='wide' ? ['#c89a5a','#a8743a'] : a.M.terrain==='tower' ? ['#8a8890','#5e5a66'] : a.M.terrain==='stone' ? ['#e6d49a','#9ccf6a'] : a.M.town ? ['#e0a24a','#c8742a'] : [A.grass[0],A.grass[1]];
+    const cols = ['swhouse','jq','croc','croc2'].includes(a.M.terrain) ? ['#7a866a','#4a5a3e'] : a.M.terrain==='sewer' ? ['#6a7068','#3a443c'] : a.M.terrain==='swamp' ? ['#7a866a','#4a5a3e'] : a.M.terrain==='station' ? ['#a8c890','#6a9a5a'] : a.M.terrain==='plaza' ? ['#e8c890','#c8a060'] : a.M.terrain==='cliff' ? ['#9ab8a0','#6a8a70'] : a.M.terrain==='wide' ? ['#c89a5a','#a8743a'] : a.M.terrain==='tower' ? ['#8a8890','#5e5a66'] : a.M.terrain==='stone' ? ['#e6d49a','#9ccf6a'] : a.M.town ? ['#e0a24a','#c8742a'] : [A.grass[0],A.grass[1]];
     const rg=c.createRadialGradient(a.x,a.y,10,a.x,a.y,r); rg.addColorStop(0,cols[0]); rg.addColorStop(.6,cols[1]+'cc'); rg.addColorStop(1,cols[1]+'00');
     c.fillStyle=rg; c.beginPath(); c.ellipse(a.x,a.y,r,r*.72,0,0,7); c.fill(); }
   // detaljer per region
@@ -11279,7 +11427,8 @@ $('#wmapBody').addEventListener('click',e=>{ const gt=e.target.closest('[data-gm
 /* ---------- Databas: alla uppdrag, kartor och monster (nås från startskärmen, gubbvalet och menyn) ---------- */
 const MOB_SPECIAL = {
   odla:'🦎 När den skadas stannar den, darrar och laddar i 1 s – sedan rusar den mot dig med +80 % fart i 5 s (10 s nedkylning).',
-  krokodil:'🐊 20 % chans att förgifta dig när den skadar dig: −20 % fart och 30 skada per sekund i 5 s.',
+  krokodil:'🐊 20 % chans att förgifta dig när den biter dig (beröring): −20 % fart och 30 skada per sekund i 5 s.',
+  krokoman:'🐊 Spottar gift när den är arg (laddar 0,55 s, var 3,5:e s): träffen förgiftar dig alltid – −20 % fart och 30 skada per sekund i 5 s. Armor skyddar inte.',
   krokoloco:'🧪 Miniboss: kastar giftflaskor var 5:e sekund i strid. Flaskorna blir giftpölar som ligger kvar i 10 s – gå ur dem!',
   bbandit:'🗡️ Kastar knivar i solfjäder, rökbomber som faller ner runt dig och visslar in banditer. Blir rasande under 30 % HP.',
   solros:'🌻 Laddar upp en solexplosion runt sig (1,4 s) när en spelare kommer nära – gå undan från den gula ringen!',
@@ -11647,8 +11796,8 @@ Object.assign(QUESTS, {
     how:['Klättra upp till mellanvåningen i huset och gå in genom portalen där.','När en ödla stannar och darrar laddar den – i 5 sekunder rusar den mot dig med nästan dubbel fart.','Silvermonster är sällsynta (1 % när ett monster kommer tillbaka).'],
     goals:{odla:80, silver_odla:1}, exp:100, gold:900, cons:[['hpPot3',10],['scrInt5',1]]},
   tro2:{npc:'myra', name:'Krokodiltårar', prev:'tro1',
-    text:'Uppe på vinden leder en portal ut till krokodilträsket. Krokodilerna är giftiga, och värst av allt är Krokoloco – en galning i krokodilskinn som kastar giftflaskor. Fäll 80 krokodiler och Krokoloco.',
-    how:['Klättra hela vägen upp till översta våningen och gå in i portalen.','Krokodilerna kan förgifta dig när de skadar dig: −20 % fart och skada varje sekund i 5 s.','Krokoloco dyker upp ibland (30 % chans varje minut). Gå ur hans giftpölar!'],
+    text:'Uppe på vinden leder en portal ut till krokodilträsket. Krokodilerna är giftiga, och värst av allt är Krokoloco – en galning i krokodilskinn som kastar giftflaskor. Han håller till längre in, i Krokodilträsket 2. Fäll 80 krokodiler och Krokoloco.',
+    how:['Klättra hela vägen upp till översta våningen och gå in i portalen.','Krokodilerna kan förgifta dig när de skadar dig: −20 % fart och skada varje sekund i 5 s.','Krokoloco finns i Krokodilträsket 2 (portalen längst till höger i krokodilträsket) och dyker upp ibland (30 % chans varje minut). Gå ur hans giftpölar!'],
     goals:{krokodil:80, krokoloco:1}, exp:100, gold:1500, cons:[['hpPot3',10],['scrAtk4',1]]},
 });
 for(const id in QUESTS) QUESTS[id].exp=Math.round(QUESTS[id].exp*1.2*2);   // uppdrag ger 20 % mer EXP – och sedan dubbelt
@@ -11685,7 +11834,7 @@ for(let i=QUEST_ORDER.length-1;i>=0;i--) if(!QUESTS[QUEST_ORDER[i]]) QUEST_ORDER
 QUEST_ORDER.splice(QUEST_ORDER.indexOf('bar5')+1, 0, 'cr1', 'cr2');
 QUEST_ORDER.splice(QUEST_ORDER.indexOf('vild2')+1, 0, 'vildcr');
 QUEST_ORDER.push('trj1','trj2','tro1','tro2');   // Myra i Träskhuset
-Object.assign(QUEST_SHORT, {trj1:'Riv dig på 7 olika taggbuskar på hoppbanan (portalen längst till höger).', trj2:'Ta dig upp till flaggan högst upp på hoppbanan.', tro1:'Fäll 80 ödlor och 1 silverödla i källaren (portalen på mellanvåningen).', tro2:'Fäll 80 krokodiler och Krokoloco i krokodilträsket (portalen högst upp i huset).'});   // Ylva: hantverk mellan Flocken växer och Alfahannen
+Object.assign(QUEST_SHORT, {trj1:'Riv dig på 7 olika taggbuskar på hoppbanan (portalen längst till höger).', trj2:'Ta dig upp till flaggan högst upp på hoppbanan.', tro1:'Fäll 80 ödlor och 1 silverödla i källaren (portalen på mellanvåningen).', tro2:'Fäll 80 krokodiler i krokodilträsket (portalen högst upp i huset) och Krokoloco i Krokodilträsket 2 (längst till höger).'});   // Ylva: hantverk mellan Flocken växer och Alfahannen
 for(let i=QUEST_CHAINS.length-1;i>=0;i--) if(!NPCS[QUEST_CHAINS[i].npc]) QUEST_CHAINS.splice(i,1);
 QUEST_CHAINS.splice(1, 0, {npc:'siri', name:'Hantverkarens lärling'});
 QUEST_CHAINS.push({npc:'myra', name:'Träskhuset: hoppbanan, ödlorna och krokodilerna'});
